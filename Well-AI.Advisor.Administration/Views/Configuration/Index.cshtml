@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "Configuration";
+}
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid-AssignTask, .k-grid-AssignTask:hover {
+            background-color: #ffff
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+    </style>
+</section>
+<section class="content">
+    <div class="row">
+        <div id="PageHeading" class="col-md-6"><strong>Configuration</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.ConfigurationViewModel>()
+            .Name("ConfigurationGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.FriendlyName).Width(250);
+                columns.Bound(p => p.ConstantName).Width(250);
+                columns.Bound(p => p.Value);
+                columns.Bound(p => p.Index).Hidden();
+
+            })
+            .ToolBar(toolbar => toolbar.Create().Text("Add"))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditConfiguration").Window(w => w.Title("Edit Configuration").Width(700)))
+           .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .Selectable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(15)
+                .Read(read => read.Action("Configuration_Read", "Configuration"))
+                .Model(model => model.Id(p => p.Index))
+                .Create(update => update.Action("Configuration_Create", "Configuration"))
+                .Update(update => update.Action("Configuration_Update", "Configuration"))
+                .Events(events => events.Error("error"))
+            ).Events(e =>
+            {
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+                e.Save("OnGridSave");
+            }))
+    </div>
+</section>
+
+
+@(Html.Kendo().Window().Name("PassWordChangesWindow")
+    .Title("Change Password")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+    .Height(350)
+
+)
+
+<script>
+
+    $(document).ready(function () {
+
+    });
+
+    function OnGridSave(e) {
+        setTimeout(function () {
+            $('#ConfigurationGrid').data('kendoGrid').dataSource.read().then(function () {
+                $('#ConfigurationGrid').data('kendoGrid').refresh();
+            });
+        }, 1600);
+    }
+
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Configuration");
+            $('.k-grid-update').text("Save"); $("#IsActive").prop('checked', true).trigger("change");
+
+        }
+    }
+
+    function DataBound(e) {
+        var grid = this;
+
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#ConfigurationGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+
+
+
+</script>
+

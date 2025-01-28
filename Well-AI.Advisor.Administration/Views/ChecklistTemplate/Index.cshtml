@@ -1,0 +1,336 @@
+﻿@model WellAI.Advisor.Model.Administration.WellTypeModel
+@{
+    ViewData["Title"] = "Index";
+    var WellTypes = (List<WellAI.Advisor.Model.Administration.WellTypeModel>)ViewData["WellTypes"];
+}
+<head>
+    <script src="~/js/checklisttemplate.js"></script>
+</head>
+
+<section class="content">
+
+    <div>
+        <div class="row" style="padding-top:30px !important;">
+            <div class="col-md-3" style="padding-left:0px !important;">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.WellTypeId, "Well Design")
+                </div>
+                <div class="k-edit-field">
+                    @(Html.Kendo().MaskedTextBox()
+                .Name("WellDesignTypeName")
+                .HtmlAttributes(new { style = "display:none;" })
+                      )
+                    @(Html.Kendo().DropDownList()
+              .Name("WellTypeName")
+              .DataTextField("WellTypeName")
+              .DataValueField("WellTypeId")
+              .OptionLabel("Select Well Design")
+              .DataSource(source =>
+              {
+                  source.Read(read =>
+                  {
+                      read.Action("GetWellType", "ChecklistTemplate");//.Data("FilterCategory");
+                  });//.ServerFiltering(true);
+              })
+              //.BindTo(WellTypes)
+              .Events(e => e.Change("OnWellTypeChange"))
+             .HtmlAttributes(new { required = "required", validationmessage = "WellType Name is required" })
+                )
+                </div>
+            </div>
+
+            <div class="col-md-7" style="padding-left:0px !important;">
+                <div class="" style="padding: 0px;">
+                    <button class="btn btn-primary" id="AddWellDesign" onclick="AddWellType()"><i class='fa fa-plus'></i></button>
+                    <button class="btn btn-primary" id="EditWellDesign" onclick="EditWellType()"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-primary" id="BtnWellDesignDelete" onclick="WellDesignDelete()"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-primary" id="CancelWellDesign" onclick="CancelWellDesign()">Cancel</button>
+                    <button class="btn btn-primary" id="btnImportTasks" onclick="ImportTasksFromServiceMaster()">Load Tasks</button>
+                    <button class="btn btn-primary" id="btnAddTasks" onclick="LoadTasksPopup()">Add Task</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.ChecklistTemplateModel>()
+            .Name("CheckList")
+            .HtmlAttributes(new { @class = "ra-section" , style = "width:100%" })
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.TaskOrder).Hidden(true);
+                columns.Bound(p => p.Name).Width(250).Title("Task Name").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.CategoryName).Width(250).Title("Category").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.ServiceDuration).Title("Duration").Width(70).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains")));
+                columns.Bound(p => p.StageTypeName).Width(100).Title("Stage").Filterable(filterable => filterable.UI("stageFilter"));
+                columns.Bound(p => p.ServiceCategoryId).Hidden();
+                columns.Bound(p => p.IsActiveCategory).Hidden();
+                columns.Bound(p => p.IsSpecialServices).Title("Type").ClientTemplate("#if (IsSpecialServices == 1 ) { #" +
+                    "<span>Task</span>" +
+                    "# } else if(IsSpecialServices == 2){ #" +
+                    "<span>Service</span>" +
+                    "# } else if(IsSpecialServices == 3){ #" +
+                    "<span>Special Service</span>" +
+                    "# } else if(IsSpecialServices == 4){ #" +
+                    "<span>Supply</span>" +
+                    "# } #").Width(100).Filterable(false);
+                columns.Command(command =>
+                {
+                    command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:18px;color:black;'></i>").Click("customDelete");
+                    command.Custom("down").Text("<i class='fa fa-arrow-down' style='font-size:18px;color:black;'></i>").Click("moveDown");
+                    command.Custom("up").Text("<i class='fa fa-arrow-up' style='font-size:18px;color:black;'></i>").Click("moveUp");
+
+                }).Title("Action").Width(80);
+            })
+                .Selectable()
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditTask").Window(w => w.Title("Edit Task").Width(700)))
+                .ToolBar(toolbar => toolbar.Create().Text("New Task"))
+                .Filterable()
+                //.Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .Sortable()
+                .Resizable(r => r.Columns(true))
+                .Reorderable(r => r.Columns(true))
+                .Scrollable(r => r.Enabled(true))
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            .Sort(sort =>
+            {
+                sort.Add("TaskOrder").Ascending();
+            })
+            .Model(model => model.Id(p => p.TaskId))
+            //.Read(Read => Read.Action("ReadCheckListTemplate", "CheckListTemplate"))
+            .Create(update => update.Action("Task_Create", "CheckListTemplate"))
+            .Update(update => update.Action("Task_Update", "CheckListTemplate"))
+            //.Events(events => events.Error("error"))
+            ).Events(e =>
+            {
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+            })
+             )
+        </div>
+
+        <div class="row" style="padding-top:30px !important;">
+            <div class="col-md-12">
+                <div>
+                    <button id="BtnAddChecklit" onclick="SaveTasks()" class="btn btn-primary pull-right">Save All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+@(Html.Kendo().Window().Name("AddTaskListWindow")
+    .Title("Add Tasks")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+
+)
+@(Html.Kendo().Window().Name("WellTypeWindow")
+    .Title("Validation")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+     <div id="WinContant">Please select Welldesign Name. </div>
+
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(400)
+    .Height(60)
+    .Draggable(true)
+)
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var grid = $("#CheckList").data("kendoGrid");
+        grid.table.kendoSortable({
+            filter: ">tbody >tr",
+            hint: $.noop,
+            cursor: "move",
+            placeholder: function (element) {
+                return element.clone().addClass("k-state-hover").css("opacity", 0.80);
+            },
+            container: "#CheckList tbody",
+            change: function (e) {
+                var skip = grid.dataSource.skip(),
+                    oldIndex = e.oldIndex,
+                    newIndex = e.newIndex,
+                    data = grid.dataSource.data(),
+                    dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+                grid.dataSource.remove(dataItem);
+                grid.dataSource.insert(newIndex, dataItem);
+            }
+        });
+    });
+
+    function onBenchMarkChange(e) {
+        var ChkValue = $('#BenchMark').is(':checked');
+        if (ChkValue) {
+            $("#PreSpud").attr("disabled", true);
+        } else {
+            $("#PreSpud").attr("disabled", false);
+        }
+    }
+
+    function onPreSpudChange() {
+        var ChkValue = $('#PreSpud').is(':checked');
+        if (ChkValue) {
+            $("#BenchMark").attr("disabled", true);
+        } else {
+            $("#BenchMark").attr("disabled", false);
+        }
+    }
+</script>
+<style>
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+    }
+    .k-grid tbody tr {
+        cursor: move;
+    }
+    .k-action-buttons .k-button:last-child {
+        background-color: black !important;
+    }
+
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .k-grid-AssignTask, .k-grid-AssignTask:hover {
+        background-color: #ffff
+    }
+
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+
+    .k-window-content #sidebar .k-edit-label {
+        margin-left: -50px;
+    }
+
+    .k-window-content .k-edit-form-container {
+        width: inherit;
+    }
+
+    .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .k-widget.k-window {
+    }
+
+    span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+        color: #000000 !important;
+        background-color: #ffff !important;
+        width: 100%;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .row {
+        padding-top: 3px;
+    }
+
+    #PageHeading {
+        font-size: 16px;
+        margin: 15px;
+    }
+
+    .k-upload {
+        display: inline-block;
+        max-height: 116px;
+    }
+
+    .content {
+        margin-right: 15px !important;
+        margin-left: 15px !important;
+    }
+
+    #CheckList {
+        margin-top: 20px !important;
+    }
+
+    .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+        border-color: white !important;
+        color: black !important;
+        background-color: white !important;
+    }
+
+    /*.k-button {
+        background-color: unset !important;
+    }*/
+
+    #AddTasks {
+        background-color: #007bff !important;
+    }
+
+    #CloseTasks {
+        background-color: black !important;
+    }
+    /* .k-i-close{
+        display:none !important;
+    }*/
+
+    .k-button.k-primary {
+        border-color: #007bff;
+        color: #ffffff;
+        background-color: #007bff !important;
+    }
+
+    .k-grid-down {
+        background-color: unset !important;
+    }
+
+    .k-grid-up, .k-grid-Delete, .k-grid-down {
+        background-color: unset !important;
+    }
+
+    .k-button.k-button-icontext.k-grid-Delete {
+        display: unset !important;
+    }
+
+    .button .k-button {
+        color: black !important;
+    }
+
+        .button .k-button .k-primary {
+            color: white !important;
+        }
+    /*.k-window {
+        top: 210px !important;
+    }*/
+
+    #CheckList .k-grid-content {
+        height: 567px !important;
+    }
+
+    #TasksGrid .k-grid-content {
+        height: 400px !important;
+        min-height: 150px !important;
+    }
+
+    .k-window {
+        top: 200px !important;
+    }
+</style>

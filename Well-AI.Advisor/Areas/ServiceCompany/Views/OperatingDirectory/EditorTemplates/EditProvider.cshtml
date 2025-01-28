@@ -1,0 +1,102 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile
+@{
+    ViewData["Title"] = "Add Service Provider";
+    var companydata = (List<SelectListItem>)ViewData["Companies"];
+    var statusdata = (List<SelectListItem>)ViewData["Statuses"];
+    var approvedata = (List<SelectListItem>)ViewData["Approvals"];
+    var pecdata = (List<SelectListItem>)ViewData["PEC"];
+    var msadata = (List<WellAI.Advisor.Model.ServiceCompany.Models.ServiceMSA>)ViewData["msa"];
+    var insuranceData = (List<WellAI.Advisor.Model.ServiceCompany.Models.ServiceInsurance>)ViewData["ServiceInsuranceFiles"];
+}
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        var valcompany = $("#CompanyId").val();
+        $("#ddlCompany").data("kendoDropDownList").value(valcompany);    
+        var Insurance = $("#InsuranceId").val();
+        $("#InsuranceId").data("kendoDropDownList").value(Insurance);
+    });
+</script>
+
+<div class="k-edit-form-container" id="wrapper">
+    <div id="content">
+        <div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.CompanyId, "Operating Company")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.CompanyId)
+            </div>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlCompany")
+                .DataValueField("Value")
+                .DataTextField("Text")
+                .Enable(false)
+                .AutoBind(false)
+                .Events(e => e.Change("companyChange"))
+                .BindTo(companydata)
+            )
+        </div>
+        <div class="k-edit-label">
+            @Html.LabelFor(model => model.InsuranceId, "Insurance Document")
+
+        </div>
+        <div class="k-edit-field edt">
+            @*<div style="height:0px;">
+            @Html.Kendo().MaskedTextBoxFor(model => model.InsuranceId)
+        </div>*@
+            <div style="visibility:hidden;height:0px !important;">
+                @Html.TextBoxFor(model => model.InsuranceId, new { @Class = "k-textbox", @id = "HideTxtBox" })
+            </div>
+            <script>
+                function filterData() {
+                    return {
+                        CompanyId: $("#ddlCompany").val()
+                    };
+                }
+            </script>
+            @(Html.Kendo().DropDownListFor(model => model.InsuranceId)
+                .DataValueField("InsId")
+                .DataTextField("Attachment")
+                .Events(e => e.Change("InsuranceChange"))
+                .BindTo(insuranceData)
+           )
+        </div>
+        <div class="k-edit-label">
+            @Html.LabelFor(model => model.InsuranceExpire, "Insurance expire")
+        </div>
+        <div class="k-edit-field edt">
+            @Html.Kendo().DatePickerFor(model => model.InsuranceExpire).HtmlAttributes(new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.InsuranceExpire)
+        </div>
+
+        @*<div class="k-edit-label">
+            @Html.LabelFor(model => model.Preferred, "Preferred?")
+        </div>
+        <div class="k-edit-field prefswitch">
+            <div class="hidwrap">
+                @Html.Kendo().MaskedTextBoxFor(model => model.Preferred)
+            </div>
+            @(Html.Kendo().Switch()
+                      .Name("switchpref").Enabled(true)
+                      .Messages(c => c.Checked("YES").Unchecked("NO"))
+                      .Events(ev => ev.Change("preferredChange"))
+            )
+            @Html.ValidationMessageFor(model => model.Preferred)
+        </div>
+        <div class="k-edit-label">
+            @Html.LabelFor(model => model.Secondary, "Secondary?")
+        </div>
+        <div class="k-edit-field secswitch">
+            <div class="hidwrap">
+                @Html.Kendo().MaskedTextBoxFor(model => model.Secondary)
+            </div>
+            @(Html.Kendo().Switch()
+                      .Name("switchsec").Enabled(true)
+                      .Messages(c => c.Checked("YES").Unchecked("NO"))
+                      .Events(ev => ev.Change("secondaryChange"))
+            )
+            @Html.ValidationMessageFor(model => model.Secondary)
+        </div>*@
+    </div>
+</div>

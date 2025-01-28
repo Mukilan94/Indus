@@ -1,0 +1,313 @@
+﻿<h2 style="text-align:center">Cost Summary</h2>
+<div class="row form-fields-wrapper1">
+    <table class="table table-responsive table-hover">
+       @* <thead>
+            <tr id="header" style="display:block;height:20px">
+                <th style="width:150px; height:20px"><label>Package</label></th>
+                <th style="min-width: 150px; text-align: center;height:20px">Price <label id="lblUnitType"></label></th>
+                <th style="min-width: 60px;width:60px; text-align: center;height:20px"><label id="lblUnitTypeForCount"></label> </th>
+                <th style="min-width: 150px; text-align: center;height:20px"><label>Total</label></th>
+            </tr>
+        </thead>*@
+        <tbody>
+            <tr id="header" style="display:block;height:35px">
+                <th style="width:150px;"><label>Package</label></th>
+                <th style="min-width: 150px; text-align: center;">Price <label id="lblUnitType"></label></th>
+                <th style="min-width: 60px;width:90px; text-align: center;"><label id="lblUnitTypeForCount"></label> </th>
+                <th style="min-width: 150px; text-align: center;"><label>Total</label></th>
+            </tr>
+            <tr id="trDispatch" style="display:block">
+                <td style="width:150px;">Dispatch(User)</td>
+                <td style="min-width: 150px; text-align: center">$ <label id="lblDispatchUnitPrice"></label></td>
+                <td style="min-width: 60px;width:60px; text-align: center">
+                    @*<input id="txtDispatchCount" type="number" title="numeric" value="1" min="0" max="100" step="1" />*@
+
+                    <input type="number" id="txtDispatchCount" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" onkeypress="return isNumberKey(event)" value="1" min="0" max="999" minlength="1" maxlength="3" style="width: 80px; text-align: right; " />
+
+
+
+                    <!--<div class="k-d-flex k-justify-content-center" style="padding-top: 54px;">
+        <div class="k-w-300">
+            <ul id="fieldlist">
+                <li>-->
+                    @*<input type="number" id="txtDispatchCount" value="" style="width:50px;text-align:right" />*@
+                    <!--</li>
+
+            </ul>
+        </div>
+
+
+    </div>-->
+
+                </td>
+                <td style="min-width: 150px; text-align: center"> <label id="lblDispatchTotalValue"></label></td>
+            </tr>
+            <tr id="trProvider" style="display:none">
+                <td style="width:150px;">Provider(User)</td>
+                <td style="min-width: 150px; text-align: center">$ <label id="lblProviderUnitPrice"></label></td>
+                <td style="min-width: 60px;text-align: center">
+                    <input type="number" id="txtProviderCount" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" onkeypress="return isNumberKey(event)" value="1" min="0" max="999" minlength="1" maxlength="3" style="width: 80px; text-align: right; " />
+                </td>
+                <td style="min-width: 150px; text-align: center"> <label id="lblProviderTotalValue"></label></td>
+                </tr>
+            <tr id="trOperator" style="display:none">
+                <td style="width:150px;">Operator(Rig)</td>
+                <td style="min-width: 150px; text-align: center">$ <label id="lblOperatorUnitPrice"></label></td>
+                <td style="min-width: 60px;text-align: center">
+                    <input type="number" id="txtOperatorCount" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" onkeypress="return isNumberKey(event)" value="1" min="0" max="999" minlength="1" maxlength="3"  style="width: 80px; text-align: right; " />
+                </td>
+                <td style="min-width: 150px; text-align: center"> <label id="lblOperatorTotalValue"></label></td>
+            </tr>
+            <tr id="total" style="display:block">
+                <td style="min-width: 373px;">Total</td>
+                <td style="min-width: 200px; text-align: center"><label id="lblTotalValue"></label></td>
+            </tr>
+            <tr>
+                <td style="min-width: 250px;">
+                    <input type="checkbox" id="chkrenew" style="color:steelblue;" />
+
+                    @*<a id="authorize" style="float:right" target="_blank" href="https://www.authorize.net/en-us/about-us/terms.html">Terms & Conditions</a>*@
+
+                    <a id="authorize" style="float:right" onclick="LoadTerms()"
+                         href="javascript:">Terms & Conditions</a>
+                @*<a role="button" style="float:right" target="_blank"   onclick="LoadTerms()">Terms & Conditions</a>*@
+                </td>
+                @*<td style="min-width: 250px; text-align: center">
+                  
+                </td>*@
+
+                
+            </tr>
+        </tbody>       
+    </table>    
+</div>
+
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+  <script>
+                $(document).ready(function() {
+                    // create NumericTextBox from input HTML element
+                    $("#txtDispatchCount").kendoNumericTextBox({
+                        format: "0",
+                        decimals: 0,
+                        min: 1,
+                       
+                    });
+                    $("#txtProviderCount").kendoNumericTextBox({
+                        //label: ""
+                        format: "0",
+                        decimals: 0,
+                        min: 1,
+
+                    });
+                    $("#txtOperatorCount").kendoNumericTextBox({
+                        //label: ""
+                        format: "0",
+                        decimals: 0,
+                        min: 1,
+
+                    });
+
+                    // create Curerncy NumericTextBox from input HTML element
+                    $("#currency").kendoNumericTextBox({
+						label: "",
+                        format: "c",
+                        decimals: 3
+                    });
+
+                    // create Percentage NumericTextBox from input HTML element
+                    $("#percentage").kendoNumericTextBox({
+						label: "",
+                        format: "p0",
+                        min: 0,
+                        max: 0.1,
+                        step: 0.01
+                    });
+
+                    // create NumericTextBox from input HTML element using custom format
+                    $("#custom").kendoNumericTextBox({
+						label: "",
+                        format: "#.00 kg"
+                    });
+                });
+            </script>
+
+            <style>
+               #fieldlist {
+                    margin: 0 0 -2em;
+                    padding: 0;
+                }
+
+                #fieldlist li {
+                    list-style: none;
+                    padding-bottom: 2em;
+                }
+            </style>
+
+
+<script>
+
+    $(document).ready(function () {
+        SetUnitPriceAndLabelCaptions();
+    });
+
+    var DispatchVal=0, ProviderVal=0, OperatorVal=0;
+    $('#chkrenew').kendoCheckBox({
+        checked: true,
+        label: "Automatically renew my subscription"
+    });
+
+    if ($("#chkrenew").prop("checked") === true) {
+
+        $("#authorize").css("display", "block");
+
+    }
+
+    $("#chkrenew").on('click', function () {
+        ///debugger;
+        if ($("#chkrenew").prop("checked") === true) {
+
+            $("#authorize").css("display", "block");
+
+        }
+        else {
+            $("#authorize").css("display", "none");
+
+        }
+
+
+    });
+
+    $("#txtDispatchCount").on('change paste keyup',function () {
+        
+         DispatchVal = parseFloat($(this).val() * parseFloat($("#lblDispatchUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+            $("#lblDispatchTotalValue").text('$' + DispatchVal);
+            $("#lblProviderTotalValue").text('$' + ProviderVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+            $("#lblTotalValue").text('$' + parseFloat(Total).toFixed(2));
+        }
+        
+       else if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === false && $("#chkOperator").prop("checked") === false) {
+            $("#lblDispatchTotalValue").text('$' + DispatchVal);
+            var Total = $("#lblDispatchTotalValue").text();
+            $("#lblTotalValue").text($("#lblDispatchTotalValue").text());
+        }
+        else if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+            $("#lblDispatchTotalValue").text('$' + DispatchVal);
+            $("#lblOperatorTotalValue").text('$' + OperatorVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+            $("#lblTotalValue").text('$' + parseFloat(Total).toFixed(2));
+        }
+
+    });
+    $("#txtProviderCount").on('change paste keyup', function () {
+        ProviderVal = parseFloat($(this).val() * parseFloat($("#lblProviderUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+            $("#lblProviderTotalValue").text('$' + ProviderVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+            $("#lblTotalValue").text('$' + parseFloat(Total).toFixed(2));
+        }
+        else if ($("#chkDispatch").prop("checked") === false && $("#chkProvider").prop("checked") === true) {
+            $("#lblProviderTotalValue").text('$' + ProviderVal);
+            var Total = $("#lblProviderTotalValue").text();
+            $("#lblTotalValue").text($("#lblProviderTotalValue").text());
+        }
+    });
+   $("#txtOperatorCount").on('change paste keyup', function () 
+   {
+
+       
+        OperatorVal = parseFloat($(this).val() * parseFloat($("#lblOperatorUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+            $("#lblOperatorTotalValue").text('$' + OperatorVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+            $("#lblTotalValue").text('$' + parseFloat(Total).toFixed(2));
+        }
+        else if ($("#chkDispatch").prop("checked") === false && $("#chkOperator").prop("checked") === true) {
+            $("#lblOperatorTotalValue").text('$' + OperatorVal);
+            var Total = $("#lblOperatorTotalValue").text();
+            $("#lblTotalValue").text($("#lblOperatorTotalValue").text());
+        }
+   });
+
+  
+
+</script>
+<link href="~/css/common.css" rel="stylesheet" />
+<style>
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    ul.dropdown-menu > li {
+        max-width: 60px;
+        color: steelblue;
+    }
+
+    .k-wizard .k-wizard-step {
+        padding-top: 0px;
+    }
+
+    .form-fields-wrapper1 {
+        font-size: 12px;
+        font-weight: normal;
+        /* padding-left: 150px; */
+        padding-left: 120px;
+    }
+
+    .table {
+        color: steelblue;
+        padding-left: 80px;
+    }
+
+    .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .k-wizard {
+        font-size: 12px;
+    }
+
+    .form-control1 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control2 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control3 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control4 {
+        width: 200px;
+        margin-top: 25px;
+        padding-inline-end: unset;
+    }
+
+    .lable1 {
+        margin-bottom: 10px;
+    }
+
+    .p {
+        text-align: center;
+    }
+  
+</style>

@@ -1,0 +1,194 @@
+﻿
+@using System.Security.Claims;
+@{
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var userName = userIdentity.Name;
+}
+@(Html.Kendo().Window().Name("VideoDetails")
+    .Title("Video Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+        {
+            e.Close("onClose");
+        })
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+@(Html.Kendo().Window().Name("AnswerCall")
+    .Title("Answer Call")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+    {
+        e.Close("onAnswerClose");
+    })
+    .Modal(true)
+    .Draggable(true).Width(300)
+)
+<style>
+    .videoleftpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+
+    .videorightpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    div#details-container div#local-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+
+    div#details-container div#remote-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+
+    .k-pager-wrap.k-pager-sm .k-pager-numbers {
+        border-color: #007BFF;
+    }
+</style>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+@*<script src="//media.twiliocdn.com/sdk/js/client/v1.8/twilio.min.js"></script>*@
+<script src="//media.twiliocdn.com/sdk/js/video/releases/2.17.1/twilio-video.min.js"></script>
+<script src="~/js/video.js"></script>
+<script src="~/js/notification.js"></script>
+<script type="text/x-kendo-template" id="templateVideo">
+    <div id="details-container">
+        <div class="videoleftpart">
+            <div id="remote-media"></div>
+        </div>
+        <div class="videorightpart">
+            <div id="local-media"></div>
+        </div>
+        <div class="text-center">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowClose();"><span class="k-icon k-i-cancel"></span>End Call</button>
+        </div>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="templateAnswerCall">
+    <div id="details-container">
+        <audio id="answerAudio" controls autoplay hidden>
+            <source src="https://api.twilio.com/cowbell.mp3" type="audio/mpeg">
+        </audio>
+        <p> Incoming Call from: #= UserName !=null ? UserName : '' #</p>
+        <div class="videoleftpart">
+            <button type="button" class="btn btn-success" onclick="answerCallPopup();"> <i class="fa fa-video-camera"> </i> Accept</button>
+        </div>
+        <div class="videorightpart">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowCloseAnswer();"> <span class="k-icon k-i-cancel"> </span> Reject</button>
+        </div>
+    </div>
+</script>
+<script>
+   var videoRoom = 'WellAI';
+    var answerCallUser = '';
+    var selectedClientContact = [];
+    var isAnswerCall = false;
+    var senderUser = '';
+    var receiverUser = '';
+    $(document).ready(function () {
+        
+        isAnswerCall = false;
+        chatHub.on('ReceiveVideoNotification', function (sender, receiver, roomName) {
+            if (receiver === '@userName') {
+                senderUser = sender;
+                receiverUser = receiver;
+                videoRoom = roomName;
+                answerCallUser = sender;
+                answerCall(sender);
+                setTimeout(function () {
+                    windowAutoClose();
+                }, 30000);
+            }
+        });
+    });
+    var videoTemplate = kendo.template($("#templateVideo").html());
+    var answerCallTemplate = kendo.template($("#templateAnswerCall").html());
+
+    function answerCall(userName) {
+        var title = "Incoming Call";
+        var dataItem = {
+            UserName: userName
+        };
+        var wnd = $("#AnswerCall").data("kendoWindow");
+
+        wnd.title(title);
+        wnd.content(answerCallTemplate(dataItem));
+        wnd.center().open();
+    }
+    function answerCallPopup() {
+        isAnswerCall = true;
+        //Phase II Changes - 03/11/2021
+        if ($("#answerAudio")[0] != undefined)
+            $("#answerAudio")[0].pause();
+        openVideoPoupu(answerCallUser);
+        var wnd = $("#AnswerCall").data("kendoWindow");
+        wnd.close();
+    }
+
+    function openVideoPoupu(userName) {
+        joinRoom(videoRoom);
+        var title = "Call From: " + userName;
+        var dataItem = "";
+        var wnd = $("#VideoDetails").data("kendoWindow");
+
+        wnd.title(title);
+        wnd.content(videoTemplate(dataItem));
+        wnd.center().open();
+    }
+    function onAnswerClose(e) {
+        if ($("#answerAudio")[0] != undefined)
+            $("#answerAudio")[0].pause();
+    }
+    function onClose(e) {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        chatHub.invoke("SendVideoNotification", senderUser, receiverUser, 'Close');
+    }
+    function windowClose() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        var wnd = $("#VideoDetails").data("kendoWindow");
+        chatHub.invoke("SendVideoNotification", senderUser, receiverUser, 'Close');
+         
+        wnd.close();
+        remote.wnd.close();
+    }
+    function windowAutoClose() {
+        if (!isAnswerCall) {
+            windowCloseAnswer();
+        }
+    }
+    function windowCloseAnswer() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+
+        var wnd = $("#AnswerCall").data("kendoWindow");
+        //Phase II Changes - 03/11/2021
+        if ($("#answerAudio")[0] != undefined)
+            $("#answerAudio")[0].pause();
+        chatHub.invoke("SendVideoNotification", senderUser, receiverUser, 'Close');
+        wnd.close();
+         
+    }
+</script>

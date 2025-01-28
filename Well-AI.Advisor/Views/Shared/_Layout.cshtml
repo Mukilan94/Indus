@@ -1,0 +1,1202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Well-AI Advisor: @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/css/ionicons.min.css" />
+    <link rel="stylesheet" href="~/css/AdminLTE.css">
+    <link rel="stylesheet" href="~/css/telerik.css" />
+    <link rel="stylesheet" href="~/css/brand.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/scripts/jszip.min.js"></script>
+    <script src="~/lib/scripts/kendo.all.min.js"></script>
+    <script src="~/lib/scripts/kendo.aspnetmvc.min.js"></script>
+    <script src="~/lib/scripts/kendo.timezones.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    @*timer scripts*@
+    <script src="~/lib/jquery/dist/moment.js"></script>
+    <script src="~/lib/jquery/dist/moment-timezone.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <script src="https://media.twiliocdn.com/sdk/js/conversations/v2.0/twilio-conversations.min.js"></script>
+    <script src="~/lib/Twilio/twilio.min.js"></script>
+    @*<script src="//media.twiliocdn.com/sdk/js/client/v1.8/twilio.min.js"></script>*@
+    <script src="//media.twiliocdn.com/sdk/js/video/releases/2.17.1/twilio-video.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/wellai.js" asp-append-version="true"></script>
+    <!-- Used for Twilio Chat, Phone Call and Video Call -->
+    <!-- Used for Twilio Chat, Phone Call and Video Call -->
+    @*<script src="//media.twiliocdn.com/sdk/js/chat/v3.3/twilio-chat.min.js"></script>*@
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/phonecall.js"></script>
+    <script src="~/js/notification.js"></script>
+    <script src="~/js/video.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    @*<script src="~/js/quickstart.js"></script>*@
+
+    <style>
+        #AdvisorLogo {
+            padding: 4px 5px 14px 39px;
+        }
+
+        .content-wrapper {
+            margin-top: 50px !important;
+        }
+
+        #footerText {
+            padding: 4px 5px 0PX 39px;
+        }
+
+        .k-pager-numbers-wrap .k-dropdown {
+            display: none;
+        }
+
+        .nav-profile-wrapper > .navbar-nav {
+            flex-direction: row !important;
+        }
+
+        .user-menu {
+            width: 280px;
+        }
+
+        .wellslistlayout {
+            border-width: 0px !important;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            color: black;
+            font-size: 10px;
+        }
+
+        .nav-left-company {
+            display: inline;
+            margin-right: 10px;
+        }
+        /*------------- #NOTIFICATION --------------*/
+        .notification-list {
+            margin-bottom: 0;
+        }
+
+            .notification-list li {
+                padding: 10px 20px 10px 20px;
+                border-bottom: 1px solid #e6ecf5;
+                display: block;
+                position: relative;
+                transition: all .3s ease;
+                line-height: 25px;
+            }
+
+            .notification-list .notification-list li > * {
+                margin-bottom: 0;
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .notification-list .notification-list li:hover {
+                background-color: #fafbfd;
+            }
+
+            .notification-list .notification-list li:hover {
+                opacity: 1;
+            }
+
+            .notification-list .notification-list li.un-read {
+                background-color: #f7f9fc;
+            }
+
+            .notification-list .selectize-dropdown-content > *.un-read .notification-icon, .notification-list li.un-read .notification-icon {
+                color: #9da2c1;
+                fill: #9da2c1;
+            }
+
+            .notification-list .selectize-dropdown-content > * {
+                cursor: pointer;
+            }
+
+                .notification-list .selectize-dropdown-content > *:last-child {
+                    border-bottom: none;
+                }
+
+            .notification-list .notification-friend {
+                display: inline-block;
+            }
+
+            .notification-list .more {
+                position: absolute;
+                right: 10px;
+                top: 5px;
+                font-size: 10px;
+                color: #d6d9e6;
+                opacity: 0;
+            }
+
+                .notification-list .more i + i {
+                    margin-left: 5px;
+                }
+
+                .notification-list .more svg + i {
+                    margin-left: 5px;
+                }
+
+                .notification-list .more i + svg {
+                    margin-left: 5px;
+                }
+
+                .notification-list .more svg + svg {
+                    margin-left: 5px;
+                }
+
+            .notification-list.chat-message {
+                background-color: transparent;
+            }
+
+        .notification-friend {
+            margin-bottom: 0;
+        }
+
+        .friend-requests .notification-icon {
+            margin-top: 0;
+        }
+
+        .friend-requests .notification-friend {
+            display: block;
+        }
+
+        .friend-requests .accepted .notification-friend {
+            display: inline-block;
+        }
+
+        .friend-requests .accepted .notification-link {
+            color: #00b7ff;
+        }
+
+        .friend-requests .accepted .notification-icon {
+            margin-top: 10px;
+        }
+
+        .friend-requests .chat-message-item {
+            font-size: 12px;
+        }
+
+        .chat-message-item-duration {
+            font-size: 10px;
+            color: #0B0B0B;
+        }
+
+        .notification {
+            width: 300px;
+            max-height: 590px;
+            overflow-y: auto;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto !important;
+            object-fit: contain !important;
+        }
+
+        .sidebar-toggle:before {
+            content: url('../img/logohumb.png');
+            display: block;
+        }
+
+        .sidebar-toggle {
+            float: left;
+            background-color: transparent;
+            background-image: none;
+            padding-top: -3px;
+            font-family: fontAwesome;
+        }
+
+        .CmpLogo {
+            height: 45px;
+            margin-top: -10px;
+            width: 200px;
+            padding: 5px;
+            margin-left: 10px;
+            object-fit: contain;
+        }
+
+        .mySelect {
+            padding: .2em 0;
+            font-size: 1em;
+        }
+    </style>
+
+    <style>
+        .dropbtn {
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            border: none;
+            cursor: default;
+        }
+
+            .dropbtn:hover, .dropbtn:focus {
+            }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            max-height: 300px;
+        }
+
+            .dropdown-content a {
+                color: black;
+                padding: 10px 24px;
+                text-decoration: none;
+                display: block;
+            }
+
+        .dropdown a:hover {
+            background-color: #ddd;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+
+@using Microsoft.AspNetCore.Identity
+@using WellAI.Advisor.Model.Identity;
+@using WellAI.Advisor.DLL.Data;
+@using Microsoft.AspNetCore.Http;
+@using System.Collections.Generic;
+@using WellAI.Advisor.DLL.Entity;
+@using System.Security.Claims;
+@using Microsoft.Extensions.Configuration
+@inject SignInManager<WellIdentityUser> SignInManager
+@inject UserManager<WellIdentityUser> UserManager
+@inject IConfiguration Configuration
+@{
+    
+
+    string AccountType = HttpContextAccessor.HttpContext.Session.GetString("AccountType");
+    var CloseBidTimeInterval = @Configuration.GetSection("ClosingBidNotificationInterval")["inteval"];
+    var handlingController = this.ViewContext.RouteData.Values["controller"].ToString();
+    string AdminSupportUser = HttpContextAccessor.HttpContext.Session.GetString("AdminSupportUser");
+    string AdminSupportPhone = HttpContextAccessor.HttpContext.Session.GetString("AdminSupportPhone");
+    string AdminSupportUserId = HttpContextAccessor.HttpContext.Session.GetString("AdminSupportUserId");
+    string AdminSupportUserName = HttpContextAccessor.HttpContext.Session.GetString("AdminSupportUserName");
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;
+    var UserSessionRefresh = Configuration.GetSection("UserSessionRefrsh")["RefreshTime"];
+
+}
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <!-- Header Navbar -->
+            <nav class="navbar-static-top" role="navigation" id="mainNav" style="display:none;width:auto !important;">
+                @Html.Hidden("timeInterval", CloseBidTimeInterval)
+                <!-- Sidebar toggle button-->
+                @if (AccountType == "1")
+                {
+                    <span href="#" id="WellLogo" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                        <span class="sr-only"></span>
+                    </span>
+                    <span class="sidebar-logo" id="SideLogo" href="javascript:void(0)">
+                        <img id="ImgLogo" class="logo-img" @*src="~/img/logoname.png"*@>
+                    </span>
+                }
+                else
+                {
+                    <span href="#" id="WellLogo" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                        <span class="sr-only"></span>
+                    </span>
+                    <span id="SideLogo" class="sidebar-logo" href="javascript:void(0)">
+                        <img id="ImgLogo" class="logo-img" @*src="~/img/logoname.png"*@>
+                    </span>
+                }
+            </nav>
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <div class="nav-profile-wrapper">
+                        <ul class="nav navbar-nav left-nav">
+                            <!-- User Account Menu -->
+                            <partial name="_LoginPartial" />
+                            @if (AccountType == "0")
+                            {
+                                <li class="wellfilterli">
+                                    @await Component.InvokeAsync("WellFilter")
+                                </li>
+                            }
+                            @if (AccountType == "1")
+                            {
+                                <li class="operfilterli">
+                                    @await Component.InvokeAsync("OperatorFilter")
+                                </li>
+                            }
+                            @if (AccountType == "3")
+                            {
+                                <li class="wellfilterli">
+                                    @await Component.InvokeAsync("WellFilter")
+                                </li>
+                            }
+                            @if (AccountType == "4")
+                            {
+                                <li class="operfilterli">
+                                    @await Component.InvokeAsync("OperatorFilter")
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="nav-notify-wrapper">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <div class="nav-notify-left">
+                                <div class="nav-left-company">
+                                    <span>@WellAIAppContext.Current.Session.GetString("CompanyName")</span>
+                                </div>
+                                <div class="nav-left-time">
+                                    <span id="Timer">@TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "Central Standard Time") CST</span>
+                                </div>
+                                <div class="nav-left-settings">
+                                    @await Component.InvokeAsync("Gear")
+                                </div>
+                            </div>
+                            @if (AccountType != "2")
+                            {
+                                <div class="nav-notify-center">
+                                    <div class="nav-center-call">
+                                        <span class="nav-center-call-description dropdown-toggle callnotification" aria-expanded="false">
+                                            <span id="CallCount">@WellAIAppContext.Current.Session.GetString("CallCount")</span>
+                                            <span id="CallText">Missed Calls</span>
+                                        </span> <i class="fa fa-video-camera"></i>
+                                        <div class="dropdown-menu notification" id="divcallmenu"></div>
+                                        <div class="dropdown-menu notification" id="divmessagemenu"></div>
+                                        <div class="dropdown-menu notification" id="divhelpmenu"></div>
+                                    </div>
+                                </div>
+                            }
+                                <div class="nav-notify-right">
+                                    <div class="nav-right-mes">
+                                        <span class="nav-right-mes-description dropdown-toggle messagenotification" data-toggle="dropdown" aria-expanded="false">
+                                            <span id="messageCount">@WellAIAppContext.Current.Session.GetString("MessageCount")</span>
+                                            <span id="MessageText">Notifications</span>
+                                        </span> <i class="fa fa-envelope"></i>
+                                    </div>
+                                </div>
+                                <div class="nav-notify-end">
+                                    <div class="nav-center-end  ">
+                                        <div class="dropdown  nav-center-end-description  ">
+                                            <i onclick="myFunction()" class="dropbtn dropdown-toggle" style="font-style:normal !important;margin-left:-50px">Help</i>
+                                            <div id="myDropdown" class="dropdown-menu dropdown-content notification-event" style="margin-left:-80px">
+                                                @if (AccountType != "2")
+                                                {
+
+                                                    <span class="chat-message-item olymp-three-dots-icon" style="font-size: medium;"><a href="#" class=" fa fa-comment" style="font-weight: bold;color:green;" onclick="showTwilioChat('@AdminSupportUserName','@AdminSupportUser','@AdminSupportUserId')">&nbsp;<span style="font-family:Roboto;">Chat</span></a></span><hr />
+                                                    <span class="chat-message-item olymp-three-dots-icon" style="font-size: medium;"><a href="#" class="fa fa-mobile-phone" style="font-weight: bold; color:#3639A4;" onclick="MakePhoneCall(@AdminSupportPhone)">&nbsp;<span>Phone Call</span></a></span><hr />
+                                                    <span class="chat-message-item olymp-three-dots-icon" style="font-size: medium;"><a href="#" class="fa fa-video-camera" style="font-weight: bold;color:#007BFF;" onclick="showVideo('@AdminSupportUserName','@AdminSupportUser','@AdminSupportUserId')">&nbsp;<span>Video Call</span></a></span><hr />
+
+                                                }
+                                                @if (AccountType == "1" || AccountType == "2")
+                                                    {
+                                                        <span class="chat-message-item olymp-three-dots-icon" style="font-size: medium;"><a href="@Url.Action("Index","SupportTicketsSRV")" class="fa fa-question" style="font-weight: bold;color:#ff6344;">&nbsp;Support</a></span><hr />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="chat-message-item olymp-three-dots-icon" style="font-size: medium;"><a href="@Url.Action("Index","SupportTickets")" class="fa fa-question" style="font-weight: bold;color:#ff6344;">&nbsp;Support</a></span><hr />
+                                                    }
+                                                </div>
+                                            <i id="HelpIcon" class="ion-help"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <partial name="_VideoTemplate" />
+                            }
+                        </div>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <div>
+            <aside class="main-sidebar" id="MainSideBar">
+                <section class="sidebar">
+                    @await Component.InvokeAsync("Nav")
+                </section>
+                <!-- Sidebar toggle button-->
+                <div class="footer navbar-fixed-bottom">
+                    @Html.Hidden("timeInterval", CloseBidTimeInterval)
+                    @if (AccountType == "1")
+                    {
+                        <div id="AdvisorLogo">
+                            <span href="#" class="sidebar-toggle" id="Slide-togle" role="button">
+                                <span class="sr-only"></span>
+                            </span>
+                            <span class="sidebar-logo" href="javascript:void(0)">
+                                <img class="logo-img" src="~/img/logoname.png">
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="AdvisorLogo">
+                            <span href="#" class="sidebar-toggle" id="Slide-togle" role="button">
+                                <span class="sr-only"></span>
+                            </span>
+                            <span class="sidebar-logo" href="javascript:void(0)">
+                                <img class="logo-img" src="~/img/logoname.png">
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="footer navbar-fixed-bottom" data-toggle="push-menu" style="font-size:20px;margin:0px;padding-bottom:60px;text-align:right;">
+                    <span id="collapse" class="fa fa-2x mr-3 " style="color: #0257b1;"></span>
+                </div>
+                <footer class="footer navbar-fixed-bottom" id="footerText">
+                    <span>Copyright © @DateTime.Now.Year Well-AI</span>
+                </footer>
+            </aside>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                @await Component.InvokeAsync("Breadcrumb")
+                @RenderBody()
+                <!-- /.content -->
+            </div>
+            <!-- /.content-wrapper -->
+            <!-- Main Footer -->
+        </div>
+    </div>
+
+    @(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+    .Events(ev => ev.Close("onCallWindowClose"))
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+    
+
+
+    <script type="text/javascript">
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+        // Close the dropdown if the user clicks outside of it
+        //window.onclick = function (event) {
+        $('body').on('click', function () {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    var IsTrue = openDropdown.classList.contains('show');
+                    if (IsTrue == true) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        });
+        //  }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#collapse').addClass('fa-angle-double-left');
+            $('[data-toggle=push-menu]').click(function () {
+                SidebarCollapse();
+            });
+            function SidebarCollapse() {
+                $('#collapse').toggleClass('fa-angle-double-left fa-angle-double-right');
+            }
+
+            setInterval(timer,1000);
+
+            UserSessionRefresh();
+
+
+        });
+
+        var ScrollCount = 0;
+
+        function timer() {
+
+            //Changed timer logic
+            //Jquery timer
+            var Time = moment.tz("America/Chicago").format('hh:mm:ss A');
+            var Date = moment.tz("America/Chicago").format('MM/DD/YYYY');
+           //console.log('cst:' + moment.tz("America/Chicago").format('hh:mm:ss A'));
+            //momentNow.tz("America/Los_Angeles");
+            document.getElementById('Timer').innerHTML = Date + " " + Time + " CST";
+
+            //C# timer
+            //$.ajax({
+            //    url: '/OperatingDashboard/TimeFunction',
+            //    type: 'GET',
+            //    async: false,
+            //    success: function (ResponseData) {
+            //        document.getElementById('Timer').innerHTML = ResponseData;
+            //    }
+            //});
+            //setTimeout(timer, 1000);
+        }
+
+        function UserSessionRefresh()
+        {
+            var Time = parseInt('@UserSessionRefresh');
+            if (setTimeout(UserSessionRefresh, Time)) {
+                $.ajax({
+                    url: '/Identity/Account/Login?handler=RefreshUserSession',
+                    type: 'GET',
+                    async: true,
+                    success: function (data) {
+                        console.log("Session Refresh completed");
+                    }
+                });
+            }
+        }
+
+
+		$(function() {
+			var triigerfunction;
+			var timeInterval = $("#timeInterval").val();
+			$.ajax({
+				url: '/Identity/Account/Login?handler=NotificationCount',
+                type: 'GET',
+                async:true,
+				success: function (data) {
+					var MessageCount = data.messageValue /*+ ' Notifications'*/;
+					var callCount = data.callValue /*+ ' Missed Calls'*/;
+                    $('#CallCount').text(callCount);
+                    $('#messageCount').text(MessageCount);
+				}
+			});
+			myVar = setInterval("CheckClosingBids()", 60000);
+		});
+		function CheckClosingBids() {
+			$.ajax({
+				url: '/Identity/Account/Login?handler=ClosingNotificationBids',
+				type: 'GET',
+				success: function (data) {
+					console.log('Update Completed');
+				}
+			});
+		}
+        $(window).on('beforeunload', function () {
+            //your ajax call to server
+            //var posturl = '@Html.Raw(Url.Action("Logout", "Account", new { area = "Identity" }))';
+            $("#logoutForm").submit();
+		});
+		$('.callnotification').click(function () {
+			var isNotificationEmpty = $(this).html().includes("0");
+			if (!isNotificationEmpty) {
+				$.ajax({
+					url: '/Identity/Account/Login?handler=RefreshView',
+					type: 'GET',
+					data: { notificationType: 0 },
+					beforeSend: function (xhr) {
+						$(".loadingimg").show();
+
+						xhr.setRequestHeader("XSRF-TOKEN",
+							$('input:hidden[name="__RequestVerificationToken"]').val());
+					},
+					success: function (data) {
+						$('#divcallmenu').html(data);
+                        $('#divmessagemenu').hide("slow");
+                        $('#divcallmenu').slideToggle("fast");
+                        $('#myDropdown').removeClass('show');
+					}
+				});
+			}
+        });
+        var count = 1;
+        $('.messagenotification').click(function () {
+            var isNotificationEmpty = $(this).html().includes("0");
+			//if (!isNotificationEmpty) {
+				$.ajax({
+					url: '/Identity/Account/Login?handler=RefreshView',
+                    type: 'GET',
+                    data: { notificationType: 1 },
+					beforeSend: function (xhr) {
+						$(".loadingimg").show();
+						xhr.setRequestHeader("XSRF-TOKEN",
+							$('input:hidden[name="__RequestVerificationToken"]').val());
+					},
+					success: function (data) {
+						$('#divmessagemenu').html(data);
+                        $('#divcallmenu').hide("fast");
+                        $('#divmessagemenu').slideToggle("fast");
+                        $('#myDropdown').removeClass('show');
+                        count = 1;
+                    }
+				});
+        });
+
+        const container = document.querySelector('#divmessagemenu');
+        var skipCount = 7;
+        var takeCount = 7;
+        var msgCount = @WellAIAppContext.Current.Session.GetString("MessageCount");
+        var scrolled = true;
+        $("#divmessagemenu").on('scroll', function ()
+        {
+            if (scrolled)
+            {
+                skipCount = skipCount * count;
+                takeCount = 7;
+                takeCount = takeCount * (count + 1);
+                if (msgCount >= takeCount) {
+                    //alert(msgCount + " - " + takeCount );
+                    scrolled = false;
+                    //if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+                        // alert("2");
+                        $.ajax({
+                            url: '/Identity/Account/Login?handler=ScrollView',
+                            type: 'GET',
+                            data: { notificationType: 1, skip: skipCount, take: takeCount },
+                            beforeSend: function (xhr) {
+                                $(".loadingimg").show();
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            success: function (data) {
+                                $('#divmessagemenu').html(data);
+                              //  window.scrollTop(0);
+                            }
+                        });
+
+
+                        setTimeout(function () { scrolled = true; }, 500);
+
+                        count = count + 1;
+                   // };
+                }
+
+                
+            }
+        })
+
+
+       
+
+        
+
+        $('.helpnotification').click(function () {
+            var isNotificationEmpty = $(this).html().includes("0");
+                        $('#divcallmenu').hide("fast");
+                        $('#divmessagemenu').hide("fast");
+                        $('#divhelpmenu').slideToggle("fast");
+
+        });
+		function togglePanal(ctrl) {
+			$(ctrl).parent().hide();
+			};
+        $(function () {
+            if (@AccountType == 2 ) {
+                $.ajax({
+					url: '/OperatingDashboard/CorporateProfileData',
+					type: 'GET',
+					async: false,
+                    success: function (response) {
+						if (response !== null) {
+							var logopath = response;
+							if (logopath !== null && logopath !== "") {
+								$("#ImgLogo").removeAttr("src");
+								$("#ImgLogo").attr("src", logopath);
+                                document.getElementById("WellLogo").style.display = "none";
+                                document.getElementById("mainNav").style.display = "block";
+								document.getElementById("ImgLogo").classList.remove("logo-img")
+								document.getElementById("ImgLogo").classList.add("CmpLogo")
+							}
+                            else {
+                                $("#ImgLogo").attr("src", "/img/logoname.png");
+                                document.getElementById("WellLogo").style.display = "block";
+                                document.getElementById("mainNav").style.display = "block";
+								document.getElementById("ImgLogo").classList.add("logo-img")
+                                document.getElementById("ImgLogo").classList.remove("CmpLogo")
+                            }
+						}
+					}
+				});
+            }
+            else if (@AccountType == 0 ) {
+				$.ajax({
+					url: '/OperatingDashboard/CorporateProfileData',
+					type: 'GET',
+					async: false,
+                    success: function (response) {
+						if (response !== null) {
+							var logopath = response;
+							if (logopath !== null && logopath !== "") {
+								$("#ImgLogo").removeAttr("src");
+								$("#ImgLogo").attr("src", logopath);
+                                document.getElementById("WellLogo").style.display = "none";
+                                document.getElementById("mainNav").style.display = "block";
+								document.getElementById("ImgLogo").classList.remove("logo-img")
+								document.getElementById("ImgLogo").classList.add("CmpLogo")
+							}
+                            else {
+                                $("#ImgLogo").attr("src", "/img/logoname.png");
+                                document.getElementById("WellLogo").style.display = "block";
+                                document.getElementById("mainNav").style.display = "block";
+								document.getElementById("ImgLogo").classList.add("logo-img")
+                                document.getElementById("ImgLogo").classList.remove("CmpLogo")
+                            }
+						}
+					}
+				});
+			}
+			else {
+                $.ajax({
+                    url: '/ServiceDashboard/CorporateProfileData',
+                    type: 'GET',
+                    async: false,
+                    success: function (response) {
+                        if (response !== null) {
+                            var logopath = response;
+                            if (logopath !== null && logopath !== "") {
+                                $("#ImgLogo").removeAttr("src");
+                                $("#ImgLogo").attr("src", logopath);
+                                document.getElementById("WellLogo").style.display = "none";
+                                document.getElementById("mainNav").style.display = "block";
+                                document.getElementById("ImgLogo").classList.remove("logo-img")
+                                document.getElementById("ImgLogo").classList.add("CmpLogo")
+                            }
+                            else {
+                                $("#ImgLogo").attr("src", "/img/logoname.png");
+                                document.getElementById("WellLogo").style.display = "block";
+                                document.getElementById("mainNav").style.display = "block";
+                                document.getElementById("ImgLogo").classList.add("logo-img")
+                                document.getElementById("ImgLogo").classList.remove("CmpLogo")
+                            }
+                        }
+                    }
+                });
+			}
+		});
+    </script>
+
+    <!-- Used for Twilio Chat , Phone call and Video Call-->
+    <script type="text/javascript">
+        var contactUserId = '';
+        //Twilio Phone Call, Video Call and Chat
+        function MakePhoneCall(phoneNumber) {
+            debugger;
+            console.log("Calling : " + phoneNumber);
+            $("#wndCall").empty();
+            $("#wndCall").text("Calling....");
+            var wnd = $("#Call").data("kendoWindow");
+            wnd.content();
+            wnd.center().open();
+            $('#wndCall').load('/Communication/ManageCall/', { phone: phoneNumber }, function (response, status, xhr) {
+                if (status == "error") {
+                    try {
+                        var msge = $.parseJSON(response);
+                    } catch (e) {
+                        console.log("Error parsing server response");
+                    }
+                }
+            });
+        }
+       function showVideo(userName, receiver, contactUserID) {
+         var url = '@Url.Action("GenerateRoomName", "Token")';
+           $.getJSON(url, function (data) {
+            videoRoom = data;
+            chatHub.invoke("SendVideoNotification", '@senderUser', receiver, videoRoom);
+               openVideoPoupu(userName);
+               //Phase II Changes - 03/11/2021
+               contactUserId = contactUserID;
+           });
+           console.log(' Layout Show Video');
+        //Phase II Changes - 03/11/2021
+	    var callMessage = 'Video Call From ' + '@senderUser';
+        SaveCommunicationNotification(contactUserID, callMessage,'Video Call');
+    }
+    var videoTemplate = kendo.template($("#template").html());
+    var answerCallTemplate = kendo.template($("#templateAnswerCall").html());
+    function answerCall(userName) {
+        var title = "Incoming Call";
+        var dataItem = {
+            UserName: userName
+        };
+        var wnd = $("#AnswerCall").data("kendoWindow");
+        wnd.title(title);
+        wnd.content(answerCallTemplate(dataItem));
+        wnd.center().open();
+    }
+    function answerCallPopup() {
+        isAnswerCall = true;
+        answerCallPopup
+        //$("#answerAudio")[0].pause();
+        openVideoPoupu(answerCallUser);
+        var wnd = $("#AnswerCall").data("kendoWindow");
+        wnd.close();
+    }
+        function onClose(e) {
+            //Phase II Changes - 03/11/2021
+            @*if (isAnswerCall == false) {
+	            var callMessage = 'Video Call From ' + '@senderUser';
+                SaveCommunicationNotification(contactUserId, callMessage, 'Video Call');
+            }*@
+            //tempcomment
+            leaveRoomIfJoined();
+            //closeWindowsIfOpen();
+    }
+    function windowClose() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        var wnd = $("#VideoDetails").data("kendoWindow");
+        wnd.close();
+    }
+    function windowAutoClose() {
+        if (!isAnswerCall) {
+            windowCloseAnswer();
+        }
+    }
+    function windowCloseAnswer() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        var wnd = $("#AnswerCall").data("kendoWindow");
+        //Phase II Changes
+        $("#answerAudio")[0].pause();
+        wnd.close();
+    }
+        //Phase II Changes
+        //Message Type - Chat/Video Call
+        function SaveCommunicationNotification(receiver, msg, msgType) {
+            var posturl = 'Communication/SaveMessageNotification?toUser=' + receiver + "&message=" + msg + "&type=1" + "&messageType=" + msgType;
+            $.ajax({
+                url: posturl,
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (data) {
+                    }
+                }
+            });
+        }
+    //Twilio Chat Integration
+    function UpdateStatusDisconnected() {
+        var posturl = '@Html.Raw(Url.Action("UpdateStatusNotification", "Communication"))';
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+        function showTwilioChat(userName, receiver, contactUserID) {
+            UpdateStatusDisconnected();
+            console.log('receiver ' + receiver);
+        selectedProfile = receiver;
+        var dataItem = {
+            UserName: userName
+        };
+        var wnd = $("#TwilioChat").data("kendoWindow");
+        var title = "Chat with " + userName;
+        wnd.title(title);
+        wnd.center().open();
+        var WndClose = $("#TwilioChat").data("kendoWindow");
+         WndClose.bind("close");
+        window.chat = $("#chat").data("kendoChat");
+        chat.view.element[0].childNodes[0].innerHTML = "";
+        CreateOrJoinChatChannel(receiver);
+    }
+    function CreateOrJoinChatChannel(receiver) {
+        var profileEmail = receiver;//$('#profileEmail').text();
+        GetTwilioUserChannels(profileEmail);
+    }
+    function LeaveChatRoom(profileEmail) {
+        LeaveTwilioChatRoom(profileEmail);
+    }
+    //Karthik
+    function LeaveTwilioChatRoom(profileEmail,userId) {
+        var loginUser = '@senderUser';
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+        var leaveChannelSuccess = false;
+        var bChannelExists = false;
+        console.log("profileEmail @@ LeaveChatRoom: " + profileEmail);
+        console.log("loginUser @@ LeaveChatRoom : " + loginUser);
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+            $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client @@Twilio');
+                chatClient = client;
+                chatClient.getSubscribedConversations().then(function (paginator) {
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+                        console.log('Channel: ' + channel.friendlyName);
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+                            JoinUserChannel(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+                            JoinUserChannel(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+                            break;
+                        }
+                    }
+                });
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+        return leaveChannelSuccess;
+    }
+    //profileEmail is toUser
+    function GetTwilioUserChannels(profileEmail) {
+        var loginUser = '@senderUser';
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+        var bChannelExists = false;
+        //alert('GetTwilioUserChannels call ');
+       console.log("profileEmail : " + profileEmail);
+       console.log("loginUser : " + loginUser);
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+       window.chat = $("#chat").data("kendoChat");
+        $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client');
+                    chatClient = client;
+                //Join the new invitations from other users
+                //chatClient.on('channelInvited', function (channel) {
+                //    console.log('Invited to channel ' + channel.friendlyName);
+                //    // Join the channel that you were invited to
+                //    channel.join();
+                //    JoinUserChannel(channel, profileEmail);
+                //});
+                chatClient.getSubscribedConversations().then(function (paginator) {
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+                        console.log('Channel: ' + channel.friendlyName);
+                        //check for touser (profileEmail) and fromuser (UserName)
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+                            JoinUserChannel(channel, profileEmail);
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+                            JoinUserChannel(channel, profileEmail);
+                            break;
+                        }
+                    }
+                     if (bChannelExists.toString() == 'false') {
+                        var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "Communication",
+                                        new { fromUser = "sender", toUser = "receiver" }))'
+                            .replace("sender", loginUser)
+                            .replace("receiver", profileEmail)
+                        $.ajax({
+                            url: posturl,
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+                                var result = data.toString();
+                                if (result == 'undefined' || result == '') {
+                                    CreateUserChannel('c_' + profileEmail + '_' + loginUser, profileEmail);
+                                }
+                                else {
+                                }
+                            }
+                        });
+                    }
+                });
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+    }
+        function saveChannelInTwilioUserMapping(receiver, sid, userIdentity, uniqueName) {
+            var posturl = '@Html.Raw(Url.Action("AddUserChannelInTwilioMappings", "Communication",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID", userIdentity= "userid", channelUniqueName = "channelname"}))'
+                .replace("sender", loginUserId)
+                .replace("receiver", receiver)
+                .replace("channelSID", sid)
+                .replace("userid", userIdentity)
+                .replace("channelname", uniqueName)
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+            }
+        });
+    }
+    function inviteUsertoChannel(sid, receiver) {
+         var posturl = '@Html.Raw(Url.Action("UpdateUserChannelInvitationStatus", "Communication",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+    function leaveUserFromChannel(sid, receiver) {
+         var posturl = '@Html.Raw(Url.Action("UpdateLeaveUserChannelStatus", "Communication",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    console.log('Status updated');
+                }
+            },
+            error: function (request, error) {
+                console.log('leaveUserFromChannel ' + error);
+            },
+        });
+    }
+    function getUserChannelId(fromuser, touser) {
+        var channelId = "";
+         var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "Communication",
+                       new { fromUser = "sender", toUser = "receiver" }))'
+                         .replace("sender", fromuser)
+                         .replace("receiver", touser)
+        $.ajax({
+            url: posturl,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                   channelId = data;
+                }
+            }
+        });
+        return channelId;
+        }
+
+        function onCallWindowClose() {
+            debugger;
+            //if (call != undefined) {
+            //    call.disconnect();
+            //}
+            //disconnectCall();
+        }
+
+        function closecallWindow(){
+            //$("#wndCall").data("kendoWindow").close();
+            var window = $("#Call").data("kendoWindow");
+            window.close();
+        }
+    </script>
+
+    <!--For Chat Window-->
+    <script type="text/x-kendo-template" id="template">
+        <div id="details-container">
+            <div class="videoleftpart">
+                <div id="remote-media"></div>
+            </div>
+            <div class="videorightpart">
+                <div id="local-media"></div>
+            </div>
+            <div class="text-center">
+                <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowClose();"><span class="k-icon k-i-cancel"></span>End Call</button>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-kendo-template" id="templateChat">
+        <div id="details-container">
+            <div class="centerpart">
+                Chat Window
+            </div>
+            <div class="chatrightpart">
+                <div id="chat-local-media"></div>
+            </div>
+        </div>
+    </script>
+
+    @(Html.Kendo().Window().Name("TwilioChat")
+    .Title("Chat")
+    .Visible(false)
+	.Content(@<text>
+         @(Html.Kendo().Chat()
+                    .Name("chat")
+                    .Toolbar(toolbar =>
+                    {
+                        toolbar.Toggleable(true);
+                        toolbar.Buttons(buttons =>
+                        {
+                        });
+                    })
+                    .Events(e =>
+                    {
+                        e.Post("onPost");
+                    })
+            )
+   </text>
+    )
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+        {
+            e.Close("onClose");
+        })
+    .Modal(true)
+    .Draggable(true).Width(600).Height(600)
+)
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

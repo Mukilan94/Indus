@@ -1,0 +1,66 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadsGridFileModel
+@{
+    ViewData["Title"] = "Edit MSA";
+}
+<style>
+    .switchwrap{
+        margin-top:15px;
+    }
+</style>
+<script type="text/javascript" language="javascript">
+	$(document).ready(function () {
+        var isactiveval = $("#IsActive").val();
+        if (isactiveval == "true") {
+            $("#switchactivep").data("kendoSwitch").toggle();
+            $(".switchwrap .k-switch-label-on").show();
+            $(".switchwrap .k-switch-label-off").hide();
+        }
+        else {
+            $(".switchwrap .k-switch-label-on").hide();
+            $(".switchwrap .k-switch-label-off").show();
+        }
+    });
+    function isactiveChange(e) {
+        if (e.checked) {
+            $("#IsActive").data("kendoMaskedTextBox").value("true");
+            $("#IsActive").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").show();
+            $(".switchwrap .k-switch-label-off").hide();
+        }
+        else {
+            $("#IsActive").data("kendoMaskedTextBox").value("false");
+            $("#IsActive").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").hide();
+            $(".switchwrap .k-switch-label-off").show();
+        }
+    }
+</script>
+<div class="k-edit-form-container" id="wrapper">
+    <div class="row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.Expire)
+        </div>
+        <div class="col-sm-9">
+            @(Html.Kendo().DatePickerFor(model => model.Expire)
+                .Min(DateTime.Now)
+                .HtmlAttributes(new { required = "required", validationmessage = "Please select Date of Expiration" })
+            )
+            @Html.ValidationMessageFor(model => model.Expire)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+        </div>
+        <div class="col-sm-9 switchwrap">
+            <div class="maskactive">
+                @Html.Kendo().MaskedTextBoxFor(model => model.IsActive)
+            </div>
+            @(Html.Kendo().Switch()
+                        .Name("switchactivep").Enabled(true)
+                        .Messages(c => c.Checked("Active").Unchecked("Inactive"))
+                        .Events(ev => ev.Change("isactiveChange"))
+            )
+            @Html.ValidationMessageFor(model => model.IsActive)
+        </div>
+    </div>
+</div>

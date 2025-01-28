@@ -1,0 +1,123 @@
+﻿@model WellAI.Advisor.Model.Identity.UserDetailsModel
+
+<script>
+    (function ($, kendo) {
+        $.extend(true, kendo.ui.validator, {
+            rules: {               
+                payment: function (input) {
+                    if (input.is("[name='PaymentDetails\\.PaymentType']") && input.attr("required")) {
+                        input.attr("data-payment-msg", "Payment Type is required");
+
+                        return input.parents('[data-role="form"]').find("[type=radio][name='PaymentDetails\\.PaymentType']").is(":checked");
+                    }
+
+                    return true;
+                },
+                validmaskNumber: function (input) {
+                    if (input.is("[name='PaymentDetails\\.CardNumber']") && input.val() != "") {
+                        var maskedtextbox = input.data("kendoMaskedTextBox");
+                        return maskedtextbox.value().indexOf(maskedtextbox.options.promptChar) === -1;
+                    }
+
+                    return true;
+                },
+                validmaskCSV: function (input) {
+                    if (input.is("[name='PaymentDetails\\.CSVNumber']") && input.val() != "") {
+                        var maskedtextbox = input.data("kendoMaskedTextBox");
+                        return maskedtextbox.value().indexOf(maskedtextbox.options.promptChar) === -1;
+                    }
+
+                    return true;
+                }
+            }
+        });
+    })(jQuery, kendo);
+</script>
+
+ <div class="demo-section wide" style="width:700px">
+  
+      
+</div>
+
+<style>
+    .payment-type input {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .justify-payment {
+        display:flex;
+        justify-content: space-between;
+    }
+
+    .card {
+        cursor: pointer;
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: inline-block;
+        width: 135px;
+        height: 70px;
+        border: 1px solid;
+        filter: brightness(1.8) grayscale(1) opacity(.7);
+        margin: 2px;
+    }
+
+    .card:hover {
+        filter: brightness(1.2) grayscale(.5) opacity(.9);
+    }
+
+    .card:focus {
+        box-shadow: 0 0 0 2px #d5d5d5;
+	    outline: none;
+    }
+
+    .visa {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196578.png);
+    }
+
+    .mastercard {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196561.png);
+    }
+
+    .paypal {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196565.png);
+    }
+
+    .payment-type input:active + .card {
+        opacity: .9;
+    }
+
+    .payment-type input:checked + .card {
+        filter: none;
+    }
+</style>
+
+<script>
+    function onDone(e) {
+        e.originalEvent.preventDefault();
+        kendo.alert("Thank you for registering! Registration details would be sent to your email.");
+    }    
+
+    function paymentEditor(container, item) {
+            container.append($(
+                '<div class="payment-type">' +
+                    '<ul class="k-radio-list k-list-horizontal justify-payment">' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="visa" name="' + item.field + '" value="Visa" class="k-radio k-radio-md" required />' +
+                            '<label for="visa" class="card visa" tabindex="0"></label>' +
+                        '</li>' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="mastercard" name="' + item.field + '" value="MasterCard" class="k-radio k-radio-md" required />' +
+                            '<label for="mastercard" class="card mastercard" tabindex="0"></label>' +
+                        '</li>' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="paypal" name="' + item.field + '" value="PayPal" class="k-radio k-radio-md" required />' +
+                            '<label for="paypal" class="card paypal" tabindex="0">' +
+                        '</li>' +
+                    '</ul>' +
+                '</div>' +
+                '<span class="k-invalid-msg" data-for="' + item.field + '"></span>'
+            ));
+    }
+</script>

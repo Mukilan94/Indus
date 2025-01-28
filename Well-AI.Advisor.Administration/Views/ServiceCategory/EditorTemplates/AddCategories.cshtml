@@ -1,0 +1,18 @@
+﻿@model WellAI.Advisor.Model.Administration.ServiceCategoryModel
+
+<div class="row"><div class="col-md-12 errors"></div></div>
+<div class="row">
+    @Html.HiddenFor(m => m.ServiceCategoryId)
+    <div class="col-md-4">Phase</div>
+    <div class="col-md-8">@Html.TextBoxFor(model => model.Name, new { style = "width:100%" })</div>
+</div>
+<div class="row">
+    <div class="col-md-4">Description</div>
+    <div class="col-md-8">@Html.TextAreaFor(model => model.Description, new { style = "width:100%" })</div>
+</div>
+<div class="row">
+    <div class="col-md-4">Active</div>
+    <div class="col-md-2">
+        @(Html.Kendo().CheckBoxFor(m=>m.IsActive))
+    </div>
+ </div>

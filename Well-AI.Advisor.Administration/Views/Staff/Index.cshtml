@@ -1,0 +1,263 @@
+﻿@{
+    var Status = ViewBag.Status;
+    ViewData["Title"] = "Staff";
+}
+    <section class="content-header">
+        <style>
+            html,
+            body {
+                height: auto;
+                min-height: 100%;
+                max-height: 100%;
+                overflow: hidden;
+            }
+            .k-edit-buttons {
+                border-style: none;
+            }
+
+            .k-grid-AssignTask, .k-grid-AssignTask:hover {
+                background-color: #ffff
+            }
+
+            .k-grid .k-grid-add:hover {
+                color: #fff !important;
+            }
+
+            .k-window-content #sidebar .k-edit-label {
+                margin-left: -50px;
+            }
+
+            .k-window-content .k-edit-form-container {
+                width: inherit;
+            }
+
+            .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+                background-color: #fff;
+            }
+
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+
+            .k-widget.k-window {
+            }
+
+            span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+                color: #000000 !important;
+                background-color: #ffff !important;
+                width: 100%;
+            }
+
+            .row {
+                padding-top: 3px;
+            }
+            .fa-share-square-o{
+                color:black !important;
+                font-size:16px !important;
+            }
+        </style>
+        <style>
+
+            li.k-button {
+                color: black;
+                background-color: white;
+            }
+
+            .k-grid-edit, .k-grid-Resetpassword {
+                background-color: transparent !important;
+            }
+            .k-button {
+                border-style: none
+            }
+
+            .k-edit-buttons {
+                border-style: none;
+            }
+
+            .k-grid .k-grid-add:hover {
+                color: #fff !important;
+            }
+            .k-grid-content {
+                height: auto !important;
+            }
+
+            .k-window-content #sidebar .k-edit-label {
+                margin-left: -50px;
+            }
+
+            .k-window-content .k-edit-form-container {
+                width: inherit;
+            }
+
+            .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+                background-color: #fff;
+            }
+
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+
+            .k-widget.k-window {
+            }
+
+            span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+                color: #000000 !important;
+                background-color: #ffff !important;
+                width: 100%;
+            }
+
+            .row {
+                padding-top: 3px;
+            }
+            #PageHeading {
+                font-size: 16px;
+                margin: 15px;
+            }
+        </style>
+    </section>
+<section class="content">
+    <div class="row">
+        @if (Status == "active")
+        {
+            <div id="PageHeading" class="col-md-6"><strong>Active Staff</strong></div>
+        }
+        else
+        {
+            <div id="PageHeading" class="col-md-6"><strong>In - Active Staff</strong></div>
+        }
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.RegisterStaffViewModel>()
+            .Name("StaffGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.FullName);
+                columns.Bound(p => p.Email).Width(350); ;
+                columns.Bound(p => p.PhoneNumber).Width(180);
+                columns.Bound(p => p.Id).Hidden();
+                columns.Bound(p => p.IsActive).Hidden();
+
+                if (ViewBag.Status == "active")
+                {
+                    columns.Command(command =>
+                    {
+
+                        command.Custom("Resetpassword").Text("<i class='fa fa-share-square-o' aria-hidden='true'></i>").Click("resetpasswordUserPassword");
+                    }).Title("Action").Width(80);
+                }
+            })
+            .ToolBar(toolbar => toolbar.Create().Text("Add"))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditStaff").Window(w => w.Title("Edit Staff").Width(500).Events(e => e.Close("UpdateStages"))))
+             .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .Selectable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(15)
+                .Read(read => read.Action("Staff_Read", "Staff",new { status = ViewBag.Status }))
+                .Model(model => model.Id(p => p.Id))
+                .Create(update => update.Action("Staff_Create", "Staff"))
+                .Update(update => update.Action("Staff_Update", "Staff"))
+                .Events(events => events.Error("error"))
+            ).Events(e =>
+            {
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+            }))
+    </div>
+</section>
+<div style="width:400px !important">
+    <div id="dialog"></div>
+</div>
+<script>
+
+    $(document).ready(function () {
+         var Status = '@ViewBag.Status';
+        if (Status == "deactivate") {
+            $("#StaffGrid").data("kendoGrid").setOptions({
+                toolbar: null
+            });
+        }
+    });
+
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Staff");
+            $('.k-grid-update').text("Save"); $("#IsActive").prop('checked', true).trigger("change");
+            $("#IsActive").removeAttr("disabled");
+        }
+    }
+
+    function DataBound(e) {
+        var grid = this;
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#StaffGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function UpdateStages(e) {
+        $("#StaffGrid").data("kendoGrid").dataSource.read();
+    }
+
+    function resetpasswordUserPassword(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var dialog = $("#dialog");
+        dialog.kendoDialog({
+            width: "500px !important",
+            title: "Reset Password",
+            closable: true,
+            modal: true,
+            content: "<p><input type='hidden' id='userEmail' value='" + dataItem.Email + "'>Are You sure want to reset password for <strong>" + dataItem.FullName + " </strong>? Once you click yes, Reset password e-mail sent to <strong> " + dataItem.Email + " </strong><p>",
+            actions: [
+                { text: 'No', action: onCancel },
+                { text: 'Yes', primary: false, action: onOK }
+            ]
+        });
+        dialog.data("kendoDialog").open();
+    }
+
+    function onCancel(e) {
+
+    }
+
+    function onOK(e) {
+        var email = $("#userEmail").val();
+        $.ajax({
+            url: "/Staff/ForgotPassword?username=" + email,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+</script>
+

@@ -1,0 +1,149 @@
+﻿
+<div class="auction-bottom">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.TaskModel>()
+            .Name("TasksGrid")
+            .Columns(columns =>
+            {
+                columns.Select().Width(50);
+                columns.Bound(p => p.Name).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Title("TASK NAME");
+                columns.Bound(p => p.Description).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.StageTypeName).Title("Stage").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                columns.Bound(p => p.CategoryName).Title("Category").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                columns.Bound(p => p.IsActive).Hidden().Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                //columns.Bound(p => p.Day).Width(75).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                //columns.Bound(p => p.ScheduleTime).Format("{0:h:mm tt}").Width(150).Filterable(false);
+                columns.Bound(p => p.ServiceDuration).Width(100).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.Depth).Width(100).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                //columns.Bound(p => p.LeadTime).Width(100).Filterable(false);                       
+            })
+            .Filterable(ftb => ftb.Mode(GridFilterMode.Row))              
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .Columns(columns => { columns.Select(); })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .Sort(sort =>
+                 {
+                     sort.Add("Name").Ascending();
+                 })
+                .Read(read => read.Action("Task_Read", "ChecklistTemplate", new { checklistTemplateId = ViewBag.CheckListTemplateId }))
+                .Model(model => model.Id(p => p.TaskId))
+            ).Events(e => e.Change("OnChange")))
+</div>
+
+<div class="k-edit-buttons k-state-default">
+    <button id="AddTasks"  class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Add</button>
+    <button id="CloseTasks"  class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+
+<style type="text/css">
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var WellTypeId = $("#WellTypeName").data("kendoDropDownList").value();
+    });
+
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    $(".k-grid-cancel").click(function () {
+        var window = $("#AddTaskListWindow").data("kendoWindow");
+        window.close();
+    });
+
+    $(".k-grid-update").click(function () {
+        
+        var sourcegrid = $('#TasksGrid').data('kendoGrid');        
+        var destinationgrid = $('#CheckList').data('kendoGrid');
+        var TasksData = destinationgrid.dataSource.data();
+        const SelectedItems = sourcegrid.select();
+        let isExitingTask = [];
+        if (SelectedItems.length > 0) {
+            sourcegrid.select().each(function () {
+                var dataItem = sourcegrid.dataItem($(this));
+                var ScheduleTime;
+                if (dataItem.ScheduleTime) {
+                    var ScheduleTimehours = dataItem.ScheduleTime.Value.Hours;
+                    var ScheduleTimeminutes = dataItem.ScheduleTime.Value.Minutes
+                    ScheduleTime = ScheduleTimehours + ":" + ScheduleTimeminutes;
+                } else {
+                    ScheduleTime = "00:00";
+                }
+
+                var taskData = {
+                    Name: dataItem.Name,
+                    TaskId: dataItem.TaskId,
+                    IsBiddable: dataItem.IsBiddable,                  
+                    CategoryName: dataItem.CategoryName,
+                    ServiceCategoryId: dataItem.ServiceCategoryId,
+                    Depth: dataItem.Depth,
+                    Description: dataItem.Description,
+                    IsSpecialServices: dataItem.IsSpecialServices,
+                    SeletedDependency: dataItem.SeletedDependency,
+                    ServiceDuration: dataItem.ServiceDuration,
+                    StageTypeName: dataItem.StageTypeName,
+                    StageType: dataItem.StageType,
+                    LeadTime: dataItem.LeadTime,
+                    Day: dataItem.Day,
+                    IsActive: dataItem.IsActive,
+                    ExportToMaster: dataItem.ExportToMaster,
+                    ServiceDurationDays: dataItem.ServiceDurationDays,
+                    ServiceDurationHours: dataItem.ServiceDurationHours,
+                    ServiceDurationMinutes: dataItem.ServiceDurationMinutes,
+                    ScheduleTime: ScheduleTime == "" ? "00:00" : ScheduleTime,
+                    Dependency: dataItem.Dependency,
+                    IsPreSpud: dataItem.IsPreSpud,
+                    IsBenchMark: dataItem.IsBenchMark
+                };
+
+
+                let TaskExits = false
+                for (var i = 0; i < TasksData.length; i++) {
+                    if (TasksData[i].TaskId == dataItem.TaskId) {
+                        TaskExits = true;
+                        isExitingTask.push(dataItem.Name);
+                    }
+                }
+
+                if (TaskExits !== true) {
+                    destinationgrid.dataSource.insert(taskData);
+                }
+
+            });
+
+            if (isExitingTask.length > 0 && isExitingTask.length <= 3) {
+                planalert("Tasks " + "<b>" + isExitingTask.join(", ") + "</b>" + " already added into list. ", "Information");
+            }
+            else if (isExitingTask.length > 3) {
+                planalert("<b>" + isExitingTask.length + "</b>" + " Tasks already added into list. ", "Information");
+            }
+
+            destinationgrid.refresh();
+            var window = $("#AddTaskListWindow").data("kendoWindow");
+            window.close();
+        } else {
+
+            planalert("Please select tasks.","Information");
+        }
+    
+    });
+
+
+
+    function CalculateDays(days, hours, minutes) {       
+        var calDays = days != 00 ? days * 24 : 00;
+        var calMinutes = (minutes / 100.00);
+        var result = parseFloat(calDays) + parseFloat(hours) + parseFloat(calMinutes);
+        return result;
+    }
+</script>

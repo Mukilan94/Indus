@@ -1,0 +1,273 @@
+﻿@model WellAI.Advisor.Areas.OperatingCompany.Controllers.EditProfileController.InputModel
+@{
+    ViewData["Title"] = "Edit profile";
+}
+
+@using (Html.BeginForm("Update", "EditProfile", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <section class="content">
+        <div class="row">
+            <div class="col-md-8">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.UserId" />
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.FirstName"></label>
+                        <input asp-for="@Model.FirstName" class="form-control" required />
+                        <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.MiddleName"></label>
+                        <input asp-for="@Model.MiddleName" class="form-control" />
+                        <span asp-validation-for="@Model.MiddleName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.LastName"></label>
+                        <input asp-for="@Model.LastName" class="form-control" required />
+                        <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-9">
+                        <label asp-for="@Model.JobTitle"></label>
+                        <input asp-for="@Model.JobTitle" class="form-control" />
+                        <span asp-validation-for="@Model.JobTitle" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-9">
+                        <label asp-for="@Model.Address"></label>
+                        <input asp-for="@Model.Address" class="form-control" />
+                        <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.City"></label>
+                        <input asp-for="@Model.City" class="form-control" />
+                        <span asp-validation-for="@Model.City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.State"></label>
+                        <input asp-for="@Model.State" class="form-control" />
+                        <span asp-validation-for="@Model.State" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.Zip"></label>
+                        <input id="txtzip" required asp-for="@Model.Zip" class="form-control" />
+                        <span asp-validation-for="@Model.Zip" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.Phone"></label>
+                        <input id="txtphone" asp-for="@Model.Phone" class="form-control" required />
+                        <span asp-validation-for="@Model.Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="@Model.Mobile"></label>
+                        <input id="txtmobile" required asp-for="@Model.Mobile" class="form-control" />
+                        <span asp-validation-for="@Model.Mobile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input asp-for="@Model.Email" type="hidden" class="form-control" />
+                </div>
+                <div class="k-edit-buttons k-state-default">
+                    <button type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Update</button>
+                    <button type="button" onclick="window.location='@Url.Action("Index", "OperatingDashboard")'" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+                    <button type="button" id="btnPasswordChange" class="k-button k-button-icontext k-primary k-grid-update" onclick="OnPassWordChange()">Change Password</button>
+                </div>
+            </div>
+            <div class="col-sm-4" style="margin-top: 10px;">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Logo</label>
+                    </div>
+                    <div class="col-sm-10">
+                        <input type="file" id="ProfileImage" name="ProfileImage">
+                    </div>
+                </div>
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-sm-12">
+                        <div id="preview">
+                            <img width=150 height=150 src="@Model.ProfileImageName" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@(Html.Kendo().Window().Name("PassWordChangesWindow")
+    .Title("Change Password")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+    .Height(350)
+
+)
+<script>
+
+    function OnPassWordChange() {
+        debugger;
+        var window = $("#PassWordChangesWindow").data("kendoWindow");
+        window.refresh({
+            url: "/ServiceEditProfile/OnPassWordChange"
+        });
+
+        $("#PassWordChangesWindow").closest(".k-window").css({
+            top: 150,
+            left: 650,
+            height: 400
+        });
+
+        window.open();
+    }
+
+
+
+    function CancelEdit() {
+        var dialog = $("#PassWordChangesWindow").data("kendoWindow");
+        setTimeout(function () {
+            dialog.close();
+        }, 500);
+    }
+
+    function Cancel() {
+        window.location.href = "/ServiceDashboard/Index";
+    }
+
+</script>
+<style>
+    .k-edit-buttons {
+        border-style: none;
+        text-align: left;
+    }
+
+    .content {
+        margin: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var logopath = $("#ProfileImageName").val();
+        if (logopath != undefined && logopath != "") {
+            $("<img width=150 height=150>").attr("src", logopath).appendTo($("#preview"));
+        }
+        debugger;
+        $("#ProfileImage").kendoUpload({
+            "multiple": false,
+            remove: function (e) {
+                $("#preview").empty();
+                $("#LogoPath").val("");
+                $("#LogoPath").trigger("change");
+            },
+            select: function (e) {
+                $("#preview").empty();
+                for (var i = 0; i < e.files.length; i++) {
+                    var file = e.files[i].rawFile;
+
+                    if (file) {
+                        var reader = new FileReader();
+
+                        reader.onloadend = function () {
+                            $("<img width=150 height=150>").attr("src", this.result).appendTo($("#preview"));
+                            $("#LogoPath").val(this.result);
+                            $("#LogoPath").trigger("change");
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+      
+
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtmobile").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtzip").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>

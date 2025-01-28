@@ -1,0 +1,235 @@
+﻿@page
+@model SubscriptionModel
+@{
+    ViewData["Title"] = "Subscription";
+    string totalcost = "0";
+
+    if (!string.IsNullOrWhiteSpace(Model.Input.CurrentSubscription))
+    {
+        var totalcostModel = Model.Input.Subscriptions.Where(x => x.PackageId.ToString() == Model.Input.CurrentSubscription).FirstOrDefault();
+        if (totalcostModel != null)
+        {
+            totalcost = totalcostModel.PackageAmount.Replace("$", " ");
+        }
+    }
+}
+<div class="row login-row">
+    <div class="col-md-3 login-logo"></div>
+    <div class="col-md-6" style="padding-top:6.5%;">
+        <div class="blockstyle">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <section>
+                        <div>
+                            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <input type="hidden" asp-for="Input.UserId" />
+                                <input value="@totalcost" id="hdnSelctedPackPrice" type="hidden" />
+
+                                <div id="list">
+                                    <div>
+                                        @{
+                                            foreach (var std in Model.Input.Subscriptions)
+                                            {
+                                                <div class="k-card">
+                                                    <div class="k-card-body">
+                                                        <div class="card-header">
+                                                            <h4 class="card-title text-center" style="color:white">@std.Name</h4>&nbsp;
+                                                            <h5 class="card-subtitle text-center" style="color:white">@std.PackageAmount</h5>
+                                                        </div>
+                                                        <div class="k-card-body text-left" style="padding: 10px 0px 0px 0px;">
+                                                            @Html.Raw(std.Description)
+                                                        </div>
+                                                    </div>
+                                                    <div class="k-card-actions k-card-actions-vertical">
+                                                        @if (Model.Input.CurrentSubscription == std.PackageId.ToString())
+                                                        {
+                                                            <span class="k-card-action selectedpack" id=@string.Format("mySpan{0}",@std.PackageId)>
+                                                                <input value="@std.PackageId" asp-for="Input.Subscription" type="hidden" />
+                                                                <button class="k-button k-flat k-primary" type="button" style="color:black"
+                                                                        onclick="changeValueSubscription('@std.PackageId', @std.PackageAmount.Replace("$"," "));">
+                                                                    Subscribe
+                                                                </button>
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="k-card-action" id=@string.Format("mySpan{0}",@std.PackageId)>
+                                                                <input value="@std.PackageId" asp-for="Input.Subscription" type="hidden" />
+                                                                <button class="k-button k-flat k-primary" style="color:black" type="button"
+                                                                        onclick="changeValueSubscription('@std.PackageId', @std.PackageAmount.Replace("$"," "));">
+                                                                    Subscribe
+                                                                </button>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        }
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="form-group row">
+
+                                        <div class="col-sm-12">
+                                            <label>How many Rigs would you like to Access?</label>
+                                            <input type="number" asp-for="Input.NoOfRigs" min="0" value="@Model.Input.NoOfRigs" id="txtTotalRigs" onchange="CalculateTotalCost()" class="col-md-1"/>
+                                        </div>
+                                        <br /><br />
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12">
+                                            <label style="font-size:x-large; text-align:center;"> The Cost Total Subscription cost: $ <span id="spnTotalCost">@totalcost</span></label>
+                                        </div>
+                                    </div>
+
+
+                                    @if (!string.IsNullOrWhiteSpace(Model.Input.CurrentSubscription))
+                                    {
+                                        <a class="k-button btn-default" href="/Identity/Account/Company?userId=@Model.Input.UserId">Back</a>
+                                    }
+                                    <button type="submit" class="btn btn-primary float-right" style="background-color:#007bff">Save and Continue</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<script src="~/js/common.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var noOfdRigs = $('#txtTotalRigs').val();
+
+        if (noOfdRigs == '') {
+            $('#hdnSelctedPackPrice').val(0);
+            $('#spnTotalCost').text(0);
+        }
+        else {
+            var totalcost = parseFloat($('#hdnSelctedPackPrice').val()) * parseFloat(noOfdRigs);
+            $('#spnTotalCost').text(totalcost.toFixed(2));
+        }
+        $("#list").kendoSortable({
+            filter: ".k-card",
+            cursor: "move",
+            placeholder: function (element) {
+                return element.clone().css("opacity", 0.1);
+            },
+            hint: function (element) {
+                return element.clone().css("width", element.width()).removeClass("k-state-selected");
+            }
+        });
+    });
+</script>
+<style>
+    .selectedpack {
+        background-color: #007AFC !important
+    }
+
+    .card-header {
+        padding-left: 0px;
+        background-color: #007AFC;
+    }
+
+    .center {
+        text-align: center;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .card {
+        background-color: #151d32 !important;
+        color: white;
+    }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding-left: 0 !important;
+    }
+    .k-card {
+        margin: 10px;
+        display: inline-block;
+        margin: 0 0 2% 0;
+        width: 33%;
+        background-color: #fff;
+        border: 7px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .k-card-body {
+        min-height:200px;
+        padding: 5px;
+    }
+
+    .col-md-4 span {
+        color: #000000;
+    }
+
+    .form-group label {
+        color: #000000;
+    }
+
+    .blockstyle {
+        padding: 0px; 
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 4px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+        color: #000000;
+        min-height:512px !important;
+        height:auto !important;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-total {
+        width: 80px;
+        text-align: center;
+        font-size: x-large
+    }
+
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .k-dropdown .k-dropdown-wrap .k-input {
+        background-color: #fff;
+        color: #000 !important;
+    }
+
+    .k-dropdown {
+        width: 100% !important;
+    }
+
+        .k-dropdown .k-dropdown-wrap .k-select {
+            color: #000;
+            background-color: #fff;
+        }
+
+    #inputstate, #inputcategory {
+        height: 0px;
+    }
+</style>

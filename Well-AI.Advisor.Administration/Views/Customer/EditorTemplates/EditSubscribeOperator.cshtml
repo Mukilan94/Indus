@@ -1,0 +1,112 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile
+@{
+    ViewData["Title"] = "Edit Subscribe Operator";
+}
+<div class="k-edit-form-container" id="wrapper">
+    <div id="content">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.RigViewModel>()
+                .Name("SubscribeOperatorRigs")
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.RigName).Hidden(true);
+                    columns.Bound(p => p.CompanyId).Hidden(true);
+                    columns.Select().Width(100);
+                    columns.Bound(p => p.RigName);
+
+                })
+                .ToolBar(t =>
+                {
+                    t.Search();
+                })
+                .Search(search => { search.Field(x => x.RigName);})
+                 .PersistSelection()
+                 .Sortable()
+                .Scrollable(scrollable => scrollable.Endless(true))
+                 .HtmlAttributes(new { style = "height:543px;" })
+                 .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Batch(true)
+                    .Model(model =>
+                    {
+                        model.Id(p => p.RigId);
+                        model.Field(p => p.RigName).Editable(false);
+                        model.Field(p => p.CompanyId).Editable(false);
+                    })
+                    .Read(read => read.Action("ReadSubscibeOPerator_Rigs", "Customer"))
+                )
+                .Events(e =>
+                {
+                    e.Change("OnRigEdit");
+                    e.DataBound("OnRigDataBound");
+                })
+        )
+    </div>
+</div>
+    <script type="text/javascript">
+        var SelectedEditRigs = [];
+
+        $(function () {          
+
+            $(".k-grid-update").click(function () {
+                sessionStorage.clear();
+                if (SelectedEditRigs.length > 0) {
+                    $.ajax({
+                        url: "/Customer/Update_SubscibeOPerator_Rigs?SelectedRigs=" + SelectedEditRigs,
+                        type: "POST",
+                        data: JSON.stringify(SelectedEditRigs),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            console.log(data);
+                            if (data.success == true) {
+                                $('#WindowContent').css('color', 'black');
+                                var wnd = $("#OperatorRigs").data("kendoWindow");
+                                wnd.center().open();
+                                wnd.wrapper.find('.k-window-titlebar').css({
+                                    color: 'white',
+                                    'background-color': 'red'
+                                });
+
+                            } else {
+                                setTimeout(function () {
+                                    $('#SubscribedOperators').data('kendoGrid').dataSource.read().then(function () {
+                                        $('#SubscribedOperators').data('kendoGrid').refresh();
+                                    });
+                                }, 1000);
+                            }
+
+                        }
+                    });
+                }
+            });
+        });
+
+
+
+            
+    </script>
+
+<style>
+    .k-edit-form-container {
+        width: 100%;
+        min-width: 400px;
+        border-color: inherit;
+         position: relative; 
+    }
+    #SubscirberRigs{
+        height:250px !important;
+    }
+    .wrapper{
+        height:400px;
+    }
+    #SubscribeOperatorRigs .k-grid-content {
+        max-height: 420px !important;
+        min-height: 0px !important;
+        height: auto !important;
+    }
+    #SubscribeOperatorRigs {
+        max-height: 543px !important;
+        min-height: 0px !important;
+       height: auto !important;
+    }
+</style>

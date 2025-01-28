@@ -1,0 +1,94 @@
+﻿<div class="demo-section wide">
+    @(Html.Kendo().Wizard()
+        .Name("wizard")
+        .LoadOnDemand(true)
+        .ReloadOnSelect(false)
+        .Steps(steps =>
+                {
+                    steps.Add().ContentUrl(Url.Content("~/shared/ajaxContent1.html"))
+                    .Buttons(b =>
+                        {
+                            b.Next();
+                        });
+                    steps.Add().ContentUrl(Url.Content("~/shared/ajaxContent2.html"));
+                    steps.Add().ContentUrl(Url.Content("~/shared/ajaxContent3.html"))
+                    .Buttons(b =>
+                        {
+                            b.Previous();
+                            b.Next();
+                        });
+                    steps.Add().ContentUrl(Url.Content("~/shared/ajaxContent4.html"))
+                    .Buttons(b =>
+                        {
+                            b.Previous();
+                            b.Done();
+                        });
+                })
+        .Events(events =>
+        {
+            events.Done("onDone");
+            events.Select("onSelect");
+            events.Reset("onReset");
+            events.ContentLoad("onContentLoad");
+        })
+    )
+</div>
+
+<script>
+    function onDone(e) {
+        var form = $('#attendeeDetails').getKendoForm();
+        var talkDDLValue = $("#talk").data("kendoDropDownList").value();
+        var workshopDDLValue = $("#workshop").data("kendoDropDownList").value();
+
+        if (!form.validate()) {
+            e.sender.stepper.steps()[1].setValid(false);
+            kendo.alert("Please complete registration form");
+            e.sender.select(1);
+        } else if (talkDDLValue == "" || workshopDDLValue == "") {
+            e.sender.stepper.steps()[1].setValid(true);
+            e.sender.stepper.steps()[2].setValid(false);
+            kendo.alert("Please select the talk and workshop you want to subscribe for");
+            e.sender.select(2);
+        }
+        else {
+            e.sender.stepper.steps()[1].setValid(true);
+            e.sender.stepper.steps()[2].setValid(true);
+            kendo.alert("Thank you for registering! Registration details would be sent to your email");
+        }
+    };
+
+    function onSelect(e) {
+        if (e.step.options.index == 3) {
+            updateSelection(e);
+        }
+    };
+
+    function onReset(e) {
+        var form = $('#attendeeDetails').getKendoForm();
+        if (form) {
+            form.clear();
+        }
+    };
+
+    function onContentLoad(e) {
+        if (e.step.options.index == 3) {
+            updateSelection(e);
+        }
+    };
+
+    function updateSelection(e) {
+        var selectedTalk = e.sender.wrapper.find('#talk').getKendoDropDownList().dataItem();
+        var selectedWorkshop = e.sender.wrapper.find('#workshop').getKendoDropDownList().dataItem();
+        $('#selectedTalk').html(selectedTalk.id === '' ? '' : selectedTalk.title);
+        $('#selectedWorkshop').html(selectedWorkshop.id === '' ? '' : selectedWorkshop.title);
+    };
+</script>
+
+<style>
+    .wizardContainer {
+        display: flex;
+        height: 250px;
+        justify-content: center;
+        align-items: center;
+    }
+</style>

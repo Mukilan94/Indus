@@ -1,0 +1,72 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadsModel
+@{
+    ViewData["Title"] = "Uploads";
+}
+<content class="content-header">
+    <style>
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+    </style>
+    <script type="text/javascript">
+        function wellChange(e) {
+            var ddlWellValue = $("#ddlWellsp").data("kendoDropDownList").value();
+            $("#WellIdDrill").val(ddlWellValue);
+            $("#WellIdDrill").trigger("change");
+        }
+        function wellChangeCement(e) {
+            var ddlWellValue = $("#ddlWellsc").data("kendoDropDownList").value();
+            $("#WellIdCement").val(ddlWellValue);
+            $("#WellIdCement").trigger("change");
+        }
+        function wellChangePermits(e) {
+            var ddlWellValue = $("#ddlWellsdp").data("kendoDropDownList").value();
+            $("#WellIdPermits").val(ddlWellValue);
+            $("#WellIdPermits").trigger("change");
+        }
+        function wellChangeMud(e) {
+            var ddlWellValue = $("#ddlWellsm").data("kendoDropDownList").value();
+            $("#WellIdMud").val(ddlWellValue);
+            $("#WellIdMud").trigger("change");
+        }
+        function vendorChange(e) {
+            var ddlVendorValue = $("#ddlVendors").data("kendoDropDownList").value();
+            $("#VendorId").val(ddlVendorValue);
+            $("#VendorId").trigger("change");
+        }
+        function tabSelect(e) {
+            kendo.ui.progress(e.sender.element, true);
+        }
+        function tabShow(e) {
+            kendo.ui.progress(e.sender.element, false);
+        }
+    </script>
+</content>
+<section class="content">
+    @(Html.Kendo().TabStrip()
+        .Name("uploads")
+        .TabPosition(TabStripTabPosition.Left)
+        .Animation(animation =>
+        {
+            animation.Open(config =>
+            {
+                config.Fade(FadeDirection.In);
+            });
+        })
+        .SelectedIndex(Model.sid)
+        .Items(items =>
+        {
+            items.Add().Text("Drill Programs").LoadContentFrom("DrillPrograms", "Upload");
+            items.Add().Text("Mud Programs").LoadContentFrom("MudPrograms", "Upload");
+            items.Add().Text("Cement Programs").LoadContentFrom("CementPrograms", "Upload");
+            items.Add().Text("Drill Permits").LoadContentFrom("DrillPermits", "Upload");
+            items.Add().Text("MSAs").LoadContentFrom("Msas", "Upload");
+        })
+        .Events(x => x.Select("tabSelect").Show("tabShow"))
+    )
+</section>

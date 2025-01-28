@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewData["Title"] = "Rigs";
+    Layout = null;
+
+}
+
+<section class="content-header">
+    <style>
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+           
+ border-radius: 10px;
+        }
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-i-close {
+            padding-left: 5px;
+        }
+
+        .fa-trash {
+            display: block !important;
+            color: black !important;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+        .k-i-close {
+            display:none !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section>
+    @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.Rig_register>()
+    .Name("rigdatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Rig_id).Hidden();
+        columns.Bound(p => p.Rig_Name).Title("Rig").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Command(command => {  
+            command.Destroy().Text("<i class='fa fa-trash' style='font-size:20px;'></i>");
+        }).Width(100).Title("Action");
+
+    })
+    .Sortable()
+    .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar => toolbar.Create().Text("Add New Rig"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditRig").Window(w => w.Title("Edit Rig Details").Width(500)).DisplayDeleteConfirmation(false))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.Rig_id))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("RigData_Create", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Read(read => read.Action("GetRigMasterRead", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Update(update => update.Action("RigData_Update", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Destroy(update => update.Action("RigData_Destroy", "Customer", new { tenantId = ViewBag.TenantId }))
+    )
+    .Events(e =>
+    {
+        e.Edit("RenameRigWindow").DataBound("OnDataBound").Save("OnRigGridSave");
+
+    })
+    )
+</section>

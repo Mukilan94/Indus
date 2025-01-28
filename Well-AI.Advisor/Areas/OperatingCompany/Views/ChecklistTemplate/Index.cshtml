@@ -1,0 +1,225 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.ChecklistTemplateModel
+@{
+    ViewData["Title"] = "CheckList Template";
+}
+<head>
+    <script src="~/js/OperatingCompany/checklisttemplate.js"></script>
+</head>
+
+<section>
+</section>
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ChecklistTemplateModel>()
+        .Name("templates")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.TemplateId).Hidden();
+            columns.Bound(p => p.TenantId).Hidden();
+            columns.Bound(p => p.WellTypeId).Hidden();
+            columns.Bound(p => p.TemplateName).Width(50).ClientTemplate("<a href='" + @Url.Action("Details", "ChecklistTemplate", new { CheckListId = "#=TemplateId#" }) + "' class='linkstyle' >#=TemplateName#</a>"); ;
+            columns.Bound(p => p.WellType).Width(30).Title("Well Design");
+            columns.Bound(p => p.CreatedUser).Title("Created By").Width(20);
+            columns.Bound(p => p.CreatedDate).Format("{0: MM/dd/yyyy}").Title("Created On").Width(13);
+            columns.Bound(p => p.TaskCount).Title("Tasks Count").Width(13);
+            columns.Command(command =>
+            {
+                command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:18px;color:black;'></i>").Click("ChecklistTemplateDelete");
+            }).Title("Action").Width(6);
+            columns.Bound(b => b.IsDefault).Width(10).ClientTemplate("<input class='defaulttemplate' type='checkbox' id='Default_#:TemplateId#' data-role='switch' value='true' #if (IsDefault == true) {# checked #} # />");
+        })
+        .Pageable(p =>p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .PersistSelection()
+        .Sortable()
+        .ToolBar(toolBar =>
+        {
+            toolBar.Custom().Text("Add Template").HtmlAttributes(new { id = "NewTemplate", onclick = "AddNewTemplate();" });
+        })
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(15)
+                .Batch(false)
+                .Model(model => model.Id(p => p.TemplateId))
+                .Read(read => read.Action("ReadChecklistTemplatesList", "ChecklistTemplate"))
+        )
+        .Events(e => e.DataBound("OnDataBound"))
+    )
+    @(Html.Kendo().Window().Name("AddTemplateWindow")
+    .Title("Add Template")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(800)
+    .Height(500)
+
+)
+    @(Html.Kendo().Window().Name("TemplateWindow")
+    .Title("Information")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+     <div id="WinContant"> </div>
+
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(400)
+    .Height(60)
+    .Draggable(true)
+)
+
+</section>
+
+
+<style>
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+    }
+    #NewTemplate:hover{
+        color : white !important;
+    }
+    /*.content {
+        margin-right: 15px !important;
+        margin-left: 15px !important;
+    }*/
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .k-grid-AssignTask, .k-grid-AssignTask:hover {
+        background-color: #ffff
+    }
+
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+
+    .k-window-content #sidebar .k-edit-label {
+        margin-left: -50px;
+    }
+
+    .k-window-content .k-edit-form-container {
+        width: inherit;
+    }
+
+    .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .k-widget.k-window {
+    }
+
+    span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+        color: #000000 !important;
+        background-color: #ffff !important;
+        width: 100%;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    /*.row {
+        padding-top: 3px;
+        margin-right: 15px !important;
+        margin-left: 15px !important;
+    }*/
+
+    #PageHeading {
+        font-size: 16px;
+        margin: 15px;
+    }
+
+    .k-upload {
+        display: inline-block;
+        max-height: 116px;
+    }
+
+    /*.content {
+        margin-right: 15px !important;
+        margin-left: 15px !important;
+    }*/
+
+    #templates {
+        margin-top: 20px !important;
+    }
+
+    .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+        border-color: white !important;
+        color: black !important;
+        background-color: white !important;
+    }
+
+    /*.k-button {
+        background-color: unset !important;
+    }*/
+
+    #AddTasks {
+        background-color: #007bff !important;
+    }
+
+    #CloseTasks {
+        background-color: black !important;
+    }
+    /* .k-i-close{
+        display:none !important;
+    }*/
+
+    .k-button.k-primary {
+        border-color: #007bff;
+        color: #ffffff;
+        background-color: #007bff !important;
+    }
+
+    .k-grid-down {
+        background-color: unset !important;
+    }
+
+    .k-grid-up, .k-grid-Delete, .k-grid-down {
+        background-color: unset !important;
+    }
+
+    .k-button.k-button-icontext.k-grid-Delete {
+        display: unset !important;
+    }
+
+    .button .k-button {
+        color: black !important;
+    }
+
+        .button .k-button .k-primary {
+            color: white !important;
+        }
+    /*.k-window {
+        top: 210px !important;
+    }*/
+
+   /* #templates .k-grid-content {
+        height: 567px !important;
+    }
+*/
+    #TasksGrid .k-grid-content {
+        height: 400px !important;
+        min-height: 150px !important;
+    }
+  
+</style>

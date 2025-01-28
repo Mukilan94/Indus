@@ -1,0 +1,259 @@
+﻿@model WellAI.Advisor.Model.Identity.UserDetailsModel
+
+<script>
+    (function ($, kendo) {
+        $.extend(true, kendo.ui.validator, {
+            rules: {               
+                payment: function (input) {
+                    if (input.is("[name='PaymentDetails\\.PaymentType']") && input.attr("required")) {
+                        input.attr("data-payment-msg", "Payment Type is required");
+
+                        return input.parents('[data-role="form"]').find("[type=radio][name='PaymentDetails\\.PaymentType']").is(":checked");
+                    }
+
+                    return true;
+                },
+                validmaskNumber: function (input) {
+                    if (input.is("[name='PaymentDetails\\.CardNumber']") && input.val() != "") {
+                        var maskedtextbox = input.data("kendoMaskedTextBox");
+                        return maskedtextbox.value().indexOf(maskedtextbox.options.promptChar) === -1;
+                    }
+
+                    return true;
+                },
+                validmaskCSV: function (input) {
+                    if (input.is("[name='PaymentDetails\\.CSVNumber']") && input.val() != "") {
+                        var maskedtextbox = input.data("kendoMaskedTextBox");
+                        return maskedtextbox.value().indexOf(maskedtextbox.options.promptChar) === -1;
+                    }
+
+                    return true;
+                }
+            }
+        });
+    })(jQuery, kendo);
+</script>
+
+ <div class="demo-section wide" style="width:700px">
+
+    @(Html.Kendo().Wizard()
+        .Name("wizard")
+        .Events(ev => ev.Done("onDone"))
+        .Tag("form")
+        .HtmlAttributes(new { @novalidate ="" })
+        .Steps(s =>
+        {
+            s.Add<WellAI.Advisor.Model.Identity.UserDetailsModel>()
+            .Title("Account Details")
+            .Form(f => f
+                .Validatable(v =>
+                {
+                    v.ValidateOnBlur(true);
+                    v.ValidationSummary(vs => vs.Enable(false));
+                })
+                .FormData(Model)
+                .Items(items =>
+                {
+                    items.Add().Field(p => p.AccountDetails.Username).Label(l => l.Text("Username:"));
+                    items.Add().Field(p => p.AccountDetails.Email).Label(l => l.Text("Email:"));
+                    items.Add().Field(p => p.AccountDetails.Password).Label(l => l.Text("Password:")).InputHtmlAttributes(new { @type = "password" }).Hint("Hint: enter alphanumeric characters only.");
+                })
+            )
+                .Buttons(b =>
+                {
+                    b.Next();
+                });
+            s.Add<WellAI.Advisor.Model.Identity.UserDetailsModel>()
+            .Title("Personal details")
+            .Form(f => f
+                .Validatable(v =>
+                {
+                    v.ValidateOnBlur(true);
+                    v.ValidationSummary(vs => vs.Enable(false));
+                })
+                .FormData(Model)
+                .Items(items =>
+                {
+                    items.Add().Field(p => p.PersonalDetails.FullName).Label(l => l.Text("Full Name:"));
+                    items.Add()
+                        .Field(p => p.PersonalDetails.Country)
+                        .Label(label => label.Text("Country:"))
+                        .Editor(e =>
+                        {
+                            e.AutoComplete()
+                            .DataTextField("Text")
+                            .BindTo(new List<SelectListItem>() {
+                                new SelectListItem() {
+                                    Text = "France",
+                                },
+                                new SelectListItem() {
+                                    Text = "Germany",
+                                },
+                                new SelectListItem() {
+                                    Text = "Italy",
+                                },
+                                new SelectListItem() {
+                                    Text = "Netherlands",
+                                },
+                                new SelectListItem() {
+                                    Text = "Norway",
+                                },
+                                new SelectListItem() {
+                                    Text = "Spain",
+                                }
+                            });
+                        });
+                    items.Add()
+                        .Field(p => p.PersonalDetails.Gender).Label(l => l.Text("Gender:"))                        
+                        .Editor(e => e.RadioGroup()
+                            .LabelPosition("before")
+                            .Layout("horizontal")
+                            .Items(i =>
+                            {
+                                i.Add().Label("Female").Value("1");
+                                i.Add().Label("Male").Value("2");
+                                i.Add().Label("Other").Value("3");
+                            }));
+
+                    items.Add()
+                        .Field(p => p.PersonalDetails.About)
+                        .Label(l => l.Text("About:").Optional(true));
+                })
+            )
+                .Buttons(b =>
+                {
+                    b.Previous();
+                    b.Next();
+                });
+            s.Add<WellAI.Advisor.Model.Identity.UserDetailsModel>()
+            .Title("Payment Details")
+            .Form(f => f
+                .Validatable(v =>
+                {
+                    v.ValidateOnBlur(true);
+                    v.ValidationSummary(vs => vs.Enable(false));
+                })
+                .Layout("grid")
+                .Grid(g => g.Cols(3).Gutter(10))
+                .FormData(Model)
+                .Items(items =>
+                {
+                    items.Add()
+                        .Field(p => p.PaymentDetails.PaymentType)
+                        .Label(label => label.Text("Payment Type:"))
+                        .EditorTemplateHandler("paymentEditor")
+                        .ColSpan(3);
+                    items.Add()
+                        .Field(p => p.PaymentDetails.CardNumber)
+                        .InputHtmlAttributes(new { data_validmaskNumber_Msg = "Card number is incomplete" })
+                        .Label(label => label.Text("Card Number:"))
+                        .Editor(e => e.MaskedTextBox().Mask("0000-0000-0000-0000"))
+                        .ColSpan(2);
+                    items.Add()
+                        .Field(p => p.PaymentDetails.CSVNumber)
+                        .InputHtmlAttributes(new { data_validmaskCSV_Msg = "CSV code is incomplete" })
+                        .Label(label => label.Text("CSV Number:"))
+                        .Editor(e => e.MaskedTextBox().Mask("000"))
+                        .ColSpan(1);
+                    items.Add()
+                        .Field(p => p.PaymentDetails.ExpirationDate)
+                        .Label(label => label.Text("Expiration Date:"))
+                        .Editor(e => e.DateInput().Format("MM/yyyy"))
+                        .ColSpan(3);
+                    items.Add()
+                        .Field(p => p.PaymentDetails.CardHolderName)
+                        .Label(label => label.Text("Card Holder Name:"))
+                        .ColSpan(3);
+                })
+            )
+        .Buttons(b =>
+        {
+            b.Previous();
+            b.Done();
+        });
+        })
+    )
+</div>
+
+<style>
+    .payment-type input {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .justify-payment {
+        display:flex;
+        justify-content: space-between;
+    }
+
+    .card {
+        cursor: pointer;
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: inline-block;
+        width: 135px;
+        height: 70px;
+        border: 1px solid;
+        filter: brightness(1.8) grayscale(1) opacity(.7);
+        margin: 2px;
+    }
+
+    .card:hover {
+        filter: brightness(1.2) grayscale(.5) opacity(.9);
+    }
+
+    .card:focus {
+        box-shadow: 0 0 0 2px #d5d5d5;
+	    outline: none;
+    }
+
+    .visa {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196578.png);
+    }
+
+    .mastercard {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196561.png);
+    }
+
+    .paypal {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196565.png);
+    }
+
+    .payment-type input:active + .card {
+        opacity: .9;
+    }
+
+    .payment-type input:checked + .card {
+        filter: none;
+    }
+</style>
+
+<script>
+    function onDone(e) {
+        e.originalEvent.preventDefault();
+        kendo.alert("Thank you for registering! Registration details would be sent to your email.");
+    }    
+
+    function paymentEditor(container, item) {
+            container.append($(
+                '<div class="payment-type">' +
+                    '<ul class="k-radio-list k-list-horizontal justify-payment">' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="visa" name="' + item.field + '" value="Visa" class="k-radio k-radio-md" required />' +
+                            '<label for="visa" class="card visa" tabindex="0"></label>' +
+                        '</li>' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="mastercard" name="' + item.field + '" value="MasterCard" class="k-radio k-radio-md" required />' +
+                            '<label for="mastercard" class="card mastercard" tabindex="0"></label>' +
+                        '</li>' +
+                        '<li class="k-radio-item">' +
+                            '<input type="radio" id="paypal" name="' + item.field + '" value="PayPal" class="k-radio k-radio-md" required />' +
+                            '<label for="paypal" class="card paypal" tabindex="0">' +
+                        '</li>' +
+                    '</ul>' +
+                '</div>' +
+                '<span class="k-invalid-msg" data-for="' + item.field + '"></span>'
+            ));
+    }
+</script>

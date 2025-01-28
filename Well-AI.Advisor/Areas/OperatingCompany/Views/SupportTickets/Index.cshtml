@@ -1,0 +1,302 @@
+﻿@{
+    ViewData["Title"] = "Support";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.TicketHistory
+
+<section class="content-header">
+    <style>
+        .k-i-filter-clear {
+            color: #007bff !important;
+        }
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .linkstyle {
+            text-decoration: underline !important;
+        }
+        .mytickets {
+            width: 130px;
+            height: 112px;
+            border: 5px solid #fff;
+            border-radius: 10px;
+            display: inline-block;
+            cursor: pointer;
+            text-align: center;
+            vertical-align: top;
+            background-color: #007BFF;
+            margin-top: -10px;
+        }
+        .submitticket {
+            width: 105px;
+            height: 105px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            text-align: center;
+            vertical-align: top;
+            background-color: #007BFF;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+        #tickets {
+            width: 100%;
+            margin-top: 40px !important;
+        }
+        .ticketbottons {
+            text-align: center;
+        }
+        .submitticket span, .mytickets span {
+            display: block;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 13px;
+       }
+        .submitticket i, .mytickets i {
+            font-size: 35px;
+            font-weight: 100;
+            margin-top: 20px;
+            color: #fff;
+        }
+        .ticketcounts .k-edit-label {
+            display: inline-block;
+            float: inherit !important;
+        }
+        .linkstyle {
+            text-decoration: underline !important;
+        }
+        .k-edit-label > label {
+            width: 50px;
+            height: 40px;
+            display: inline;
+            text-align: center;
+            padding-top: 8px;
+        }
+        .k-edit-label > span {
+            background-color: #fff;
+            border-radius: 10px;
+            color: #000;
+            width: 30px;
+            display: inline-block;
+            text-align: center;
+        }
+        .blockstyle {
+            height: 75px;
+            width: auto;
+            min-width: 130px;
+            display: inline-block;
+            margin: 10px 5px 0 5px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+            justify-content: space-between;
+        }
+        .support-totalval {
+            color: #007bff;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 20px !important;
+        }
+        .inner > label {
+            color: #000;
+            display: block;
+            text-align: left;
+        }
+        .inner {
+            color: #000;
+            font-size: 14px;
+        }
+        .small-box {
+            box-shadow: none;
+        }
+        .right {
+            position: absolute;
+            right: 0px;
+            width: 300px;
+            padding-right: 15px;
+        }
+        .Support-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+        .toptitle {
+            color: #fff;
+        }
+        .Support-toptitle {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .ticket-header {
+            display: inline-block;
+            width: 62%;
+            position: absolute;
+            margin-top: 10px;
+        }
+        .card-title {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .Ticket-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+        #ticket {
+            margin-top: 75px;
+        }
+    </style>
+    <script>
+        function submitnew() {
+            window.location.href = "/SupportTickets/NewTicket";
+        }
+    </script>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row toptitle col-12">
+        <h4 class="Support-toptitle">At a Glance</h4>
+        <span class="Support-topdescription">Click on any of key metrics to open the related screen</span>
+    </div>
+    <div class="ticketcounts">
+        <div class="blockstyle" id="newticket" style="margin-left:0px !important">
+            <div class="small-box box-shad">
+                <div class="inner">@Html.LabelFor(model => model.New)</div>
+            </div>
+            <span id="New" class="support-totalval linkstyle">@Model.New</span>
+        </div>
+        <div class="blockstyle" id="OpenTickets" style="margin-left:0px !important">
+            <div class="small-box box-shad">
+                <div class="inner">@Html.LabelFor(model => model.Open)</div>
+            </div>
+            <span id="Open" class="support-totalval linkstyle">@Model.Open</span>
+        </div>
+        <div class="blockstyle" id="ClosedTickets" style="margin-left:0px !important">
+            <div class="small-box box-shad">
+                <div class="inner">@Html.LabelFor(model => model.Closed)</div>
+            </div>
+            <span id="Closed" class="support-totalval linkstyle">@Model.Closed</span>
+        </div>
+        <div class="k-edit-label right pull-right" style="margin-left:0px !important">
+            <div class="submitticket" onclick="submitnew();"><i class="fa fa-edit"></i><span>New ticket</span></div>
+        </div>
+    </div>
+    <div>
+        <div class="ticket-header">
+            <h3 class="card-title">Active Support Tickets</h3>
+            <span class="Support-topdescription">Click on any individual support ticket id, to view support ticket details.</span>
+        </div>
+    </div>
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.TicketHistoryItem>()
+    .Name("ticket")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Events(e => e.Change("Grid_OnRowSelect"))
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.TicketId).Width(125).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.Subject).Width(400).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.CreateDate).Title("Created").Width(200).Format("{0: MM/dd/yyyy}").Width(125).Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false)));
+        columns.ForeignKey(p => p.StatusID, (System.Collections.IEnumerable)ViewData["hdstatus"], "StatusID", "Name").Title("Status").Width(150);
+        columns.Bound(p => p.LastActivity).Title("Last Activity").Format("{0: MM/dd/yyyy}").Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false)));
+    })
+     .Pageable(p =>
+                  p.Info(true)
+                  .Numeric(false)
+                  .PreviousNext(false)
+                    )
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Sortable()
+    .Selectable()
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Field(p => p.StatusID).Editable(true))
+    .PageSize(10)
+    .Read(read => read.Action("TicketHistory_Read", "SupportTickets"))
+    )
+    )
+</section>
+<script src="~/js/notification.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        CountsRefresh();
+    });
+    function CountsRefresh() {
+                $.ajax({
+            url: '/SupportTickets/Counts',
+            type: 'GET',
+            dataType: "json",
+            success: function (ResponseData) {
+                document.getElementById('New').innerHTML = ResponseData.New;
+                document.getElementById('Open').innerHTML = ResponseData.Open;
+                document.getElementById('Closed').innerHTML = ResponseData.Closed;
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#ticket").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    var selectedRow = null;
+    function Grid_OnRowSelect(e) {
+        var row = this.select();
+        if (row.length > 0) {
+            selectedRow = e.sender.select();
+            var item = e.sender.dataItem(selectedRow);
+            var id = item.TicketId;
+            window.location = '/SupportTickets/TicketDetail?id=' + id;
+        }
+    }
+    $(document).ready(function () {
+        gridObject = $("#ticket").data("kendoGrid");
+        var readURL = new Array();
+        readURL[0] = "/SupportTickets/TicketHistory_Read";
+        readURL[1] = "/SupportTickets/GetNewTickets?name=";
+        readURL[2] = "/SupportTickets/GetOpenTickets?name=";
+        readURL[3] = "/SupportTickets/GetClosedTickets?name=";
+        $('#newticket').click(function () {
+            gridObject.dataSource.transport.options.read.url = readURL[1] + "new";
+            gridObject.dataSource.read();
+        });
+        $('#OpenTickets').click(function () {
+            gridObject.dataSource.transport.options.read.url = readURL[2] + "open";
+            gridObject.dataSource.read();
+        });
+        $('#ClosedTickets').click(function () {
+            gridObject.dataSource.transport.options.read.url = readURL[3] + "closed";
+            gridObject.dataSource.read();
+        });
+    });
+</script>

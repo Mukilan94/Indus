@@ -1,0 +1,665 @@
+2020-05-26T00:01:03.9974949+05:30 0HM00R27EQT0F:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/Customer?customerId=531b1acb-272d-4baf-a5cc-8fda17396b6b   (ca22a1cb)
+2020-05-26T00:01:04.0302696+05:30 0HM00R27EQT0F:00000001 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:04.0716687+05:30 0HM00R27EQT0F:00000001 [INF] Executing action method "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" with arguments (["531b1acb-272d-4baf-a5cc-8fda17396b6b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:04.0931789+05:30 0HM00R27EQT0F:00000001 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:04.3584358+05:30 0HM00R27EQT0F:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__customerId_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[customerId], [x].[CreateAt], [x].[CreateBy], [x].[address], [x].[customerName], [x].[customerType], [x].[description], [x].[email], [x].[linkedin], [x].[organizationId], [x].[phone], [x].[thumbUrl], [x].[website]
+FROM [hdCustomer] AS [x]
+WHERE [x].[customerId] = @__customerId_0" (0723d8ff)
+2020-05-26T00:01:04.3929155+05:30 0HM00R27EQT0F:00000001 [WRN] Possible unintended use of method Equals(object) for arguments of different types in expression '"X.TenantId.Equals(Convert(__customerId_0, Object))"'. This comparison will always return 'false'. (05108f66)
+2020-05-26T00:01:04.6708190+05:30 0HM00R27EQT0F:00000001 [INF] Executed DbCommand ("247"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [X].[TenantId], [X].[UserId], [X].[address1], [X].[address2], [X].[city], [X].[country], [X].[name], [X].[phone], [X].[state], [X].[website], [X].[zip]
+FROM [CorporateProfile] AS [X]
+WHERE 0 = 1" (0723d8ff)
+2020-05-26T00:01:04.9311488+05:30 0HM00R27EQT0F:00000001 [INF] Executed DbCommand ("251"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:01:05.2542689+05:30 0HM00R27EQT0F:00000001 [INF] Executed DbCommand ("314"ms) [Parameters=["@__applicationUserId_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationOwnerId] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:01:05.4203312+05:30 0HM00R27EQT0F:00000001 [INF] Executing ViewResult, running view at path "/Views/Ticket/Customer.cshtml". (9707eebe)
+2020-05-26T00:01:05.7132802+05:30 0HM00R27EQT0F:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:01:05.7304204+05:30 0HM00R27EQT0F:00000001 [INF] Executed action "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" in 1680.7922ms (afa2e885)
+2020-05-26T00:01:05.7847577+05:30 0HM00R27EQT0F:00000001 [INF] Request finished in 1740.1315ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:01:05.8167558+05:30 0HM00R27EQT0G:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/AdminLTE.min.css   (ca22a1cb)
+2020-05-26T00:01:05.9028506+05:30 0HM00R27EQT0F:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/css/bootstrap.css   (ca22a1cb)
+2020-05-26T00:01:05.9725340+05:30 0HM00R27EQT0F:00000002 [INF] The file "/lib/bootstrap/dist/css/bootstrap.css" was not modified (f1f8d725)
+2020-05-26T00:01:06.0058122+05:30 0HM00R27EQT0G:00000001 [INF] The file "/adminlte/css/AdminLTE.min.css" was not modified (f1f8d725)
+2020-05-26T00:01:06.0718629+05:30 0HM00R27EQT0F:00000002 [INF] Request finished in 159.3324ms 304 text/css (791a596a)
+2020-05-26T00:01:06.0844305+05:30 0HM00R27EQT0G:00000001 [INF] Request finished in 253.8182ms 304 text/css (791a596a)
+2020-05-26T00:01:06.1716061+05:30 0HM00R27EQT0F:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Ticket/Customer/531b1acb-272d-4baf-a5cc-8fda17396b6b?_=1590431466091   (ca22a1cb)
+2020-05-26T00:01:06.1843440+05:30 0HM00R27EQT0F:00000003 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:06.1956647+05:30 0HM00R27EQT0F:00000003 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:01:06.2175780+05:30 0HM00R27EQT0F:00000003 [INF] Executing action method "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["531b1acb-272d-4baf-a5cc-8fda17396b6b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:06.2475798+05:30 0HM00R27EQT0F:00000003 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:06.5450357+05:30 0HM00R27EQT0F:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ToString_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[TenantId] = @__ToString_0
+ORDER BY [x].[issueID] DESC" (0723d8ff)
+2020-05-26T00:01:06.8196192+05:30 0HM00R27EQT0F:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:01:07.1128621+05:30 0HM00R27EQT0F:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [s].[Id], [s].[AccessFailedCount], [s].[ConcurrencyStamp], [s].[Email], [s].[EmailConfirmed], [s].[FullName], [s].[IsCustomer], [s].[IsSuperAdmin], [s].[IsSupportAgent], [s].[IsSupportEngineer], [s].[LockoutEnabled], [s].[LockoutEnd], [s].[NormalizedEmail], [s].[NormalizedUserName], [s].[PasswordHash], [s].[PhoneNumber], [s].[PhoneNumberConfirmed], [s].[ProfilePictureUrl], [s].[SecurityStamp], [s].[TwoFactorEnabled], [s].[UserName], [s].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [s]" (0723d8ff)
+2020-05-26T00:01:07.1696894+05:30 0HM00R27EQT0F:00000003 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[<>f__AnonymousType5`4[System.String,System.String,System.String,System.Int32]] }". (7bb75e80)
+2020-05-26T00:01:07.1805569+05:30 0HM00R27EQT0F:00000003 [INF] Executed action "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" in 987.0197ms (afa2e885)
+2020-05-26T00:01:07.2092957+05:30 0HM00R27EQT0F:00000003 [INF] Request finished in 1019.3852ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:01:10.7835772+05:30 0HM00R27EQT0G:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Customer?org=7ee8eb68-c637-47a3-ddcc-08d8000bda3f   (ca22a1cb)
+2020-05-26T00:01:10.8328705+05:30 0HM00R27EQT0G:00000002 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:10.8607341+05:30 0HM00R27EQT0G:00000002 [INF] Executing action method "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:10.8701011+05:30 0HM00R27EQT0G:00000002 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:11.1262988+05:30 0HM00R27EQT0G:00000002 [INF] Executed DbCommand ("248"ms) [Parameters=["@__org_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationId] = @__org_0" (0723d8ff)
+2020-05-26T00:01:11.1361447+05:30 0HM00R27EQT0G:00000002 [INF] Executing ViewResult, running view at path "/Views/Customer/Index.cshtml". (9707eebe)
+2020-05-26T00:01:11.4143266+05:30 0HM00R27EQT0G:00000002 [INF] Executed DbCommand ("248"ms) [Parameters=["@__get_Item_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [e].[Id], [e].[AccessFailedCount], [e].[ConcurrencyStamp], [e].[Email], [e].[EmailConfirmed], [e].[FullName], [e].[IsCustomer], [e].[IsSuperAdmin], [e].[IsSupportAgent], [e].[IsSupportEngineer], [e].[LockoutEnabled], [e].[LockoutEnd], [e].[NormalizedEmail], [e].[NormalizedUserName], [e].[PasswordHash], [e].[PhoneNumber], [e].[PhoneNumberConfirmed], [e].[ProfilePictureUrl], [e].[SecurityStamp], [e].[TwoFactorEnabled], [e].[UserName], [e].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [e]
+WHERE [e].[Id] = @__get_Item_0" (0723d8ff)
+2020-05-26T00:01:11.7497619+05:30 0HM00R27EQT0G:00000002 [INF] Executed DbCommand ("306"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:01:11.7594025+05:30 0HM00R27EQT0G:00000002 [INF] Executed action "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" in 918.2014ms (afa2e885)
+2020-05-26T00:01:11.7725532+05:30 0HM00R27EQT0G:00000002 [INF] Request finished in 1010.4462ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:01:11.8521230+05:30 0HM00R27EQT0F:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Customer/7ee8eb68-c637-47a3-ddcc-08d8000bda3f?_=1590431471805   (ca22a1cb)
+2020-05-26T00:01:11.8593150+05:30 0HM00R27EQT0F:00000004 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:11.8717733+05:30 0HM00R27EQT0F:00000004 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:01:11.8810318+05:30 0HM00R27EQT0F:00000004 [INF] Executing action method "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:11.8901449+05:30 0HM00R27EQT0F:00000004 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:12.1671141+05:30 0HM00R27EQT0F:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [p].[name], [p].[address1], [p].[address2], [p].[city], [p].[state], [p].[zip], [p].[TenantId] AS [customerId]
+FROM [CorporateProfile] AS [p]" (0723d8ff)
+2020-05-26T00:01:12.1754448+05:30 0HM00R27EQT0F:00000004 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[Well_AI.Helpdesk.Models.ManageViewModels.CorporateProfile] }". (7bb75e80)
+2020-05-26T00:01:12.2027495+05:30 0HM00R27EQT0F:00000004 [INF] Executed action "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" in 315.467ms (afa2e885)
+2020-05-26T00:01:12.2321865+05:30 0HM00R27EQT0F:00000004 [INF] Request finished in 357.3241ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:01:48.3866389+05:30 0HM00R27EQT0G:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/Customer?customerId=696da25d-92c6-4823-b9e4-612819c38e8b   (ca22a1cb)
+2020-05-26T00:01:48.3980896+05:30 0HM00R27EQT0G:00000003 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:48.4095362+05:30 0HM00R27EQT0G:00000003 [INF] Executing action method "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:48.4374346+05:30 0HM00R27EQT0G:00000003 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:48.6931306+05:30 0HM00R27EQT0G:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=["@__customerId_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[customerId], [x].[CreateAt], [x].[CreateBy], [x].[address], [x].[customerName], [x].[customerType], [x].[description], [x].[email], [x].[linkedin], [x].[organizationId], [x].[phone], [x].[thumbUrl], [x].[website]
+FROM [hdCustomer] AS [x]
+WHERE [x].[customerId] = @__customerId_0" (0723d8ff)
+2020-05-26T00:01:48.9709799+05:30 0HM00R27EQT0G:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [X].[TenantId], [X].[UserId], [X].[address1], [X].[address2], [X].[city], [X].[country], [X].[name], [X].[phone], [X].[state], [X].[website], [X].[zip]
+FROM [CorporateProfile] AS [X]
+WHERE 0 = 1" (0723d8ff)
+2020-05-26T00:01:49.2666102+05:30 0HM00R27EQT0G:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:01:49.5264612+05:30 0HM00R27EQT0G:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationOwnerId] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:01:49.5540396+05:30 0HM00R27EQT0G:00000003 [INF] Executing ViewResult, running view at path "/Views/Ticket/Customer.cshtml". (9707eebe)
+2020-05-26T00:01:49.8306220+05:30 0HM00R27EQT0G:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:01:49.8400652+05:30 0HM00R27EQT0G:00000003 [INF] Executed action "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" in 1432.9425ms (afa2e885)
+2020-05-26T00:01:49.8486251+05:30 0HM00R27EQT0G:00000003 [INF] Request finished in 1463.6777ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:01:49.9804368+05:30 0HM00R27EQT0F:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Ticket/Customer/696da25d-92c6-4823-b9e4-612819c38e8b?_=1590431509875   (ca22a1cb)
+2020-05-26T00:01:50.0222738+05:30 0HM00R27EQT0F:00000005 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:50.0769953+05:30 0HM00R27EQT0F:00000005 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:01:50.0933775+05:30 0HM00R27EQT0F:00000005 [INF] Executing action method "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:50.1275024+05:30 0HM00R27EQT0F:00000005 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:50.4149554+05:30 0HM00R27EQT0F:00000005 [INF] Executed DbCommand ("249"ms) [Parameters=["@__ToString_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[TenantId] = @__ToString_0
+ORDER BY [x].[issueID] DESC" (0723d8ff)
+2020-05-26T00:01:50.7383095+05:30 0HM00R27EQT0F:00000005 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:01:51.0134661+05:30 0HM00R27EQT0F:00000005 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [s].[Id], [s].[AccessFailedCount], [s].[ConcurrencyStamp], [s].[Email], [s].[EmailConfirmed], [s].[FullName], [s].[IsCustomer], [s].[IsSuperAdmin], [s].[IsSupportAgent], [s].[IsSupportEngineer], [s].[LockoutEnabled], [s].[LockoutEnd], [s].[NormalizedEmail], [s].[NormalizedUserName], [s].[PasswordHash], [s].[PhoneNumber], [s].[PhoneNumberConfirmed], [s].[ProfilePictureUrl], [s].[SecurityStamp], [s].[TwoFactorEnabled], [s].[UserName], [s].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [s]" (0723d8ff)
+2020-05-26T00:01:51.0644165+05:30 0HM00R27EQT0F:00000005 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[<>f__AnonymousType5`4[System.String,System.String,System.String,System.Int32]] }". (7bb75e80)
+2020-05-26T00:01:51.0739747+05:30 0HM00R27EQT0F:00000005 [INF] Executed action "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" in 1043.2385ms (afa2e885)
+2020-05-26T00:01:51.1011223+05:30 0HM00R27EQT0F:00000005 [INF] Request finished in 1103.7854ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:01:53.2950005+05:30 0HM00R27EQT0G:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/ViewTicket/69   (ca22a1cb)
+2020-05-26T00:01:53.3228777+05:30 0HM00R27EQT0G:00000004 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:01:53.3511497+05:30 0HM00R27EQT0G:00000004 [INF] Executing action method "src.Controllers.TicketController.ViewTicket (Well-AI.Advisor.Helpdesk)" with arguments (["00000000-0000-0000-0000-000000000000", "69"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:01:53.3635716+05:30 0HM00R27EQT0G:00000004 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:01:53.6244477+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__id_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[issueID] = @__id_0" (0723d8ff)
+2020-05-26T00:01:53.9496259+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("314"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:01:54.2118290+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ticket_TenantId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[TenantId], [x].[UserId], [x].[address1], [x].[address2], [x].[city], [x].[country], [x].[name], [x].[phone], [x].[state], [x].[website], [x].[zip]
+FROM [CorporateProfile] AS [x]
+WHERE [x].[TenantId] = @__ticket_TenantId_0" (0723d8ff)
+2020-05-26T00:01:54.4987294+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__cust_UserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[AdditionalNotes], [x].[Address], [x].[City], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FirstName], [x].[JobTitle], [x].[LastName], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[MiddleName], [x].[Mobile], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[Primary], [x].[SecurityStamp], [x].[State], [x].[TenantId], [x].[TwoFactorEnabled], [x].[UserName], [x].[Zip]
+FROM [AspNetUsers] AS [x]
+WHERE [x].[Id] = @__cust_UserId_0" (0723d8ff)
+2020-05-26T00:01:54.7649693+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__id_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[CommentID], [x].[Body], [x].[BounceReason], [x].[BouncedRecipients], [x].[CommentDate], [x].[EmailHeaders], [x].[ForTechsOnly], [x].[IsSystem], [x].[IssueID], [x].[Recipients], [x].[UserID]
+FROM [hdComments] AS [x]
+WHERE [x].[IssueID] = @__id_0" (0723d8ff)
+2020-05-26T00:01:55.0352576+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ticket_TenantId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[TenantId], [x].[UserId], [x].[address1], [x].[address2], [x].[city], [x].[country], [x].[name], [x].[phone], [x].[state], [x].[website], [x].[zip]
+FROM [CorporateProfile] AS [x]
+WHERE [x].[TenantId] = @__ticket_TenantId_0" (0723d8ff)
+2020-05-26T00:01:55.2960909+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("249"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[issueID], [h].[AssignedToUserID], [h].[CategoryID], [h].[DueDate], [h].[InstanceID], [h].[IssueDate], [h].[LastUpdated], [h].[Origin], [h].[Priority], [h].[ResolvedDate], [h].[StartDate], [h].[StatusID], [h].[TenantId], [h].[TimeSpentInSeconds], [h].[TimesReopened], [h].[UpdatedByPerformer], [h].[UpdatedByUser], [h].[UpdatedForTechView], [h].[UserID], [h].[body], [h].[subject]
+FROM [hdIssues] AS [h]" (0723d8ff)
+2020-05-26T00:01:55.5786206+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:01:55.8577927+05:30 0HM00R27EQT0G:00000004 [INF] Executed DbCommand ("266"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [a].[Id], [a].[AccessFailedCount], [a].[AdditionalNotes], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[JobTitle], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[MiddleName], [a].[Mobile], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[Primary], [a].[SecurityStamp], [a].[State], [a].[TenantId], [a].[TwoFactorEnabled], [a].[UserName], [a].[Zip]
+FROM [AspNetUsers] AS [a]" (0723d8ff)
+2020-05-26T00:01:56.1234180+05:30 0HM00R27EQT0G:00000004 [INF] Executing ViewResult, running view at path "/Views/Ticket/ViewTicket.cshtml". (9707eebe)
+2020-05-26T00:01:56.1777977+05:30 0HM00R27EQT0G:00000004 [INF] Executed action "src.Controllers.TicketController.ViewTicket (Well-AI.Advisor.Helpdesk)" in 2826.3944ms (afa2e885)
+2020-05-26T00:01:56.1850125+05:30 0HM00R27EQT0G:00000004 [INF] Request finished in 2912.686ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:02:18.5083341+05:30 0HM00R27EQT0F:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/toastr.js.map   (ca22a1cb)
+2020-05-26T00:02:18.5167443+05:30 0HM00R27EQT0F:00000006 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:02:18.5281967+05:30 0HM00R27EQT0F:00000006 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:02:18.5383439+05:30 0HM00R27EQT0F:00000006 [INF] Executing action method "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" with arguments (null) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:02:18.5670397+05:30 0HM00R27EQT0F:00000006 [INF] Executing ViewResult, running view at path "/Views/Error/PageNotFound.cshtml". (9707eebe)
+2020-05-26T00:02:18.5775269+05:30 0HM00R27EQT0F:00000006 [INF] Executed action "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" in 38.8784ms (afa2e885)
+2020-05-26T00:02:18.5892864+05:30 0HM00R27EQT0F:00000006 [INF] Request finished in 91.5092ms 404 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:04:11.7045047+05:30 0HM00R27EQT0H:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/Customer?customerId=696da25d-92c6-4823-b9e4-612819c38e8b   (ca22a1cb)
+2020-05-26T00:04:11.7156552+05:30 0HM00R27EQT0H:00000001 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:11.7223383+05:30 0HM00R27EQT0H:00000001 [INF] Executing action method "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:04:11.7494190+05:30 0HM00R27EQT0H:00000001 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:04:12.0101514+05:30 0HM00R27EQT0H:00000001 [INF] Executed DbCommand ("251"ms) [Parameters=["@__customerId_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[customerId], [x].[CreateAt], [x].[CreateBy], [x].[address], [x].[customerName], [x].[customerType], [x].[description], [x].[email], [x].[linkedin], [x].[organizationId], [x].[phone], [x].[thumbUrl], [x].[website]
+FROM [hdCustomer] AS [x]
+WHERE [x].[customerId] = @__customerId_0" (0723d8ff)
+2020-05-26T00:04:12.2701163+05:30 0HM00R27EQT0H:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [X].[TenantId], [X].[UserId], [X].[address1], [X].[address2], [X].[city], [X].[country], [X].[name], [X].[phone], [X].[state], [X].[website], [X].[zip]
+FROM [CorporateProfile] AS [X]
+WHERE 0 = 1" (0723d8ff)
+2020-05-26T00:04:12.5476796+05:30 0HM00R27EQT0H:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:04:12.8030872+05:30 0HM00R27EQT0H:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationOwnerId] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:04:12.8320057+05:30 0HM00R27EQT0H:00000001 [INF] Executing ViewResult, running view at path "/Views/Ticket/Customer.cshtml". (9707eebe)
+2020-05-26T00:04:13.0888717+05:30 0HM00R27EQT0H:00000001 [INF] Executed DbCommand ("247"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:04:13.1051528+05:30 0HM00R27EQT0H:00000001 [INF] Executed action "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" in 1375.0497ms (afa2e885)
+2020-05-26T00:04:13.1564380+05:30 0HM00R27EQT0H:00000001 [INF] Request finished in 1417.0818ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:04:13.2849182+05:30 0HM00R27EQT0I:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/AdminLTE.min.css   (ca22a1cb)
+2020-05-26T00:04:13.3386979+05:30 0HM00R27EQT0H:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/css/bootstrap.css   (ca22a1cb)
+2020-05-26T00:04:13.3643598+05:30 0HM00R27EQT0I:00000001 [INF] The file "/adminlte/css/AdminLTE.min.css" was not modified (f1f8d725)
+2020-05-26T00:04:13.3929775+05:30 0HM00R27EQT0H:00000002 [INF] The file "/lib/bootstrap/dist/css/bootstrap.css" was not modified (f1f8d725)
+2020-05-26T00:04:13.4205113+05:30 0HM00R27EQT0I:00000001 [INF] Request finished in 217.8057ms 304 text/css (791a596a)
+2020-05-26T00:04:13.4490742+05:30 0HM00R27EQT0H:00000002 [INF] Request finished in 234.8406ms 304 text/css (791a596a)
+2020-05-26T00:04:13.5417409+05:30 0HM00R27EQT0I:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Ticket/Customer/696da25d-92c6-4823-b9e4-612819c38e8b?_=1590431653441   (ca22a1cb)
+2020-05-26T00:04:13.5628721+05:30 0HM00R27EQT0I:00000002 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:13.5758859+05:30 0HM00R27EQT0I:00000002 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:04:13.6353868+05:30 0HM00R27EQT0I:00000002 [INF] Executing action method "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:04:13.6654053+05:30 0HM00R27EQT0H:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/favicon.ico   (ca22a1cb)
+2020-05-26T00:04:13.7085251+05:30 0HM00R27EQT0H:00000003 [INF] Sending file. Request path: '"/favicon.ico"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\favicon.ico"' (27b0a520)
+2020-05-26T00:04:13.7492238+05:30 0HM00R27EQT0I:00000002 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:04:13.7551039+05:30 0HM00R27EQT0H:00000003 [INF] Request finished in 139.6806ms 200 image/x-icon (791a596a)
+2020-05-26T00:04:14.0164855+05:30 0HM00R27EQT0I:00000002 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ToString_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[TenantId] = @__ToString_0
+ORDER BY [x].[issueID] DESC" (0723d8ff)
+2020-05-26T00:04:14.2823709+05:30 0HM00R27EQT0I:00000002 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:04:14.5414548+05:30 0HM00R27EQT0I:00000002 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [s].[Id], [s].[AccessFailedCount], [s].[ConcurrencyStamp], [s].[Email], [s].[EmailConfirmed], [s].[FullName], [s].[IsCustomer], [s].[IsSuperAdmin], [s].[IsSupportAgent], [s].[IsSupportEngineer], [s].[LockoutEnabled], [s].[LockoutEnd], [s].[NormalizedEmail], [s].[NormalizedUserName], [s].[PasswordHash], [s].[PhoneNumber], [s].[PhoneNumberConfirmed], [s].[ProfilePictureUrl], [s].[SecurityStamp], [s].[TwoFactorEnabled], [s].[UserName], [s].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [s]" (0723d8ff)
+2020-05-26T00:04:14.5679577+05:30 0HM00R27EQT0I:00000002 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[<>f__AnonymousType5`4[System.String,System.String,System.String,System.Int32]] }". (7bb75e80)
+2020-05-26T00:04:14.5947949+05:30 0HM00R27EQT0I:00000002 [INF] Executed action "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" in 1004.6897ms (afa2e885)
+2020-05-26T00:04:14.6020642+05:30 0HM00R27EQT0I:00000002 [INF] Request finished in 1083.2352ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:04:27.2223474+05:30 0HM00R27EQT0H:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/Customer?customerId=696da25d-92c6-4823-b9e4-612819c38e8b   (ca22a1cb)
+2020-05-26T00:04:27.2366449+05:30 0HM00R27EQT0H:00000004 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:27.2473665+05:30 0HM00R27EQT0H:00000004 [INF] Executing action method "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:04:27.2742553+05:30 0HM00R27EQT0H:00000004 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:04:27.5539002+05:30 0HM00R27EQT0H:00000004 [INF] Executed DbCommand ("252"ms) [Parameters=["@__customerId_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[customerId], [x].[CreateAt], [x].[CreateBy], [x].[address], [x].[customerName], [x].[customerType], [x].[description], [x].[email], [x].[linkedin], [x].[organizationId], [x].[phone], [x].[thumbUrl], [x].[website]
+FROM [hdCustomer] AS [x]
+WHERE [x].[customerId] = @__customerId_0" (0723d8ff)
+2020-05-26T00:04:27.8305281+05:30 0HM00R27EQT0H:00000004 [INF] Executed DbCommand ("247"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [X].[TenantId], [X].[UserId], [X].[address1], [X].[address2], [X].[city], [X].[country], [X].[name], [X].[phone], [X].[state], [X].[website], [X].[zip]
+FROM [CorporateProfile] AS [X]
+WHERE 0 = 1" (0723d8ff)
+2020-05-26T00:04:28.1332948+05:30 0HM00R27EQT0H:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:04:28.3910546+05:30 0HM00R27EQT0H:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationOwnerId] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:04:28.4001782+05:30 0HM00R27EQT0H:00000004 [INF] Executing ViewResult, running view at path "/Views/Ticket/Customer.cshtml". (9707eebe)
+2020-05-26T00:04:28.6576655+05:30 0HM00R27EQT0H:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:04:28.6697988+05:30 0HM00R27EQT0H:00000004 [INF] Executed action "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" in 1422.636ms (afa2e885)
+2020-05-26T00:04:28.7121503+05:30 0HM00R27EQT0H:00000004 [INF] Request finished in 1455.4511ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:04:28.7489898+05:30 0HM00R27EQT0J:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/font-awesome/css/font-awesome.min.css   (ca22a1cb)
+2020-05-26T00:04:28.9156644+05:30 0HM00R27EQT0I:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/css/bootstrap.css   (ca22a1cb)
+2020-05-26T00:04:28.9826247+05:30 0HM00R27EQT0K:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/sweetalert/sweetalert.css   (ca22a1cb)
+2020-05-26T00:04:29.0103353+05:30 0HM00R27EQT0L:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/DataTables/datatables.min.css   (ca22a1cb)
+2020-05-26T00:04:29.0714422+05:30 0HM00R27EQT0M:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/toastr/toastr.min.css   (ca22a1cb)
+2020-05-26T00:04:29.0821046+05:30 0HM00R27EQT0J:00000001 [INF] Sending file. Request path: '"/lib/font-awesome/css/font-awesome.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\font-awesome\css\font-awesome.min.css"' (27b0a520)
+2020-05-26T00:04:29.1339266+05:30 0HM00R27EQT0L:00000001 [INF] Sending file. Request path: '"/lib/DataTables/datatables.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\DataTables\datatables.min.css"' (27b0a520)
+2020-05-26T00:04:29.1396266+05:30 0HM00R27EQT0H:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-ui-1.12.1/jquery-ui.min.css   (ca22a1cb)
+2020-05-26T00:04:29.2186948+05:30 0HM00R27EQT0J:00000001 [INF] Request finished in 375.4649ms 200 text/css (791a596a)
+2020-05-26T00:04:29.2392083+05:30 0HM00R27EQT0I:00000003 [INF] Sending file. Request path: '"/lib/bootstrap/dist/css/bootstrap.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\css\bootstrap.css"' (27b0a520)
+2020-05-26T00:04:29.2490799+05:30 0HM00R27EQT0K:00000001 [INF] Sending file. Request path: '"/lib/sweetalert/sweetalert.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\sweetalert\sweetalert.css"' (27b0a520)
+2020-05-26T00:04:29.3532951+05:30 0HM00R27EQT0M:00000001 [INF] Sending file. Request path: '"/lib/toastr/toastr.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\toastr\toastr.min.css"' (27b0a520)
+2020-05-26T00:04:29.3566135+05:30 0HM00R27EQT0K:00000001 [INF] Request finished in 536.8606ms 200 text/css (791a596a)
+2020-05-26T00:04:29.4136833+05:30 0HM00R27EQT0H:00000005 [INF] Sending file. Request path: '"/lib/jquery-ui-1.12.1/jquery-ui.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-ui-1.12.1\jquery-ui.min.css"' (27b0a520)
+2020-05-26T00:04:29.4160547+05:30 0HM00R27EQT0L:00000001 [INF] Request finished in 469.0735ms 200 text/css (791a596a)
+2020-05-26T00:04:29.4351045+05:30 0HM00R27EQT0I:00000003 [INF] Request finished in 624.8638ms 200 text/css (791a596a)
+2020-05-26T00:04:29.4556012+05:30 0HM00R27EQT0J:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda-themeless.min.css   (ca22a1cb)
+2020-05-26T00:04:29.4784645+05:30 0HM00R27EQT0M:00000001 [INF] Request finished in 608.7685ms 200 text/css (791a596a)
+2020-05-26T00:04:29.6094844+05:30 0HM00R27EQT0K:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/AdminLTE.min.css   (ca22a1cb)
+2020-05-26T00:04:29.6488130+05:30 0HM00R27EQT0H:00000005 [INF] Request finished in 588.834ms 200 text/css (791a596a)
+2020-05-26T00:04:29.6741248+05:30 0HM00R27EQT0L:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/Ionicons/css/ionicons.min.css   (ca22a1cb)
+2020-05-26T00:04:29.6820755+05:30 0HM00R27EQT0J:00000002 [INF] Sending file. Request path: '"/lib/ladda/ladda-themeless.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda-themeless.min.css"' (27b0a520)
+2020-05-26T00:04:29.7564711+05:30 0HM00R27EQT0M:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery/dist/jquery.js   (ca22a1cb)
+2020-05-26T00:04:29.7886847+05:30 0HM00R27EQT0I:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/skins/_all-skins.min.css   (ca22a1cb)
+2020-05-26T00:04:29.8831651+05:30 0HM00R27EQT0K:00000002 [INF] Sending file. Request path: '"/adminlte/css/AdminLTE.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\css\AdminLTE.min.css"' (27b0a520)
+2020-05-26T00:04:29.8980023+05:30 0HM00R27EQT0M:00000002 [INF] Sending file. Request path: '"/lib/jquery/dist/jquery.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery\dist\jquery.js"' (27b0a520)
+2020-05-26T00:04:29.9256394+05:30 0HM00R27EQT0L:00000002 [INF] Sending file. Request path: '"/lib/Ionicons/css/ionicons.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\Ionicons\css\ionicons.min.css"' (27b0a520)
+2020-05-26T00:04:29.9676781+05:30 0HM00R27EQT0J:00000002 [INF] Request finished in 383.2878ms 200 text/css (791a596a)
+2020-05-26T00:04:30.0642586+05:30 0HM00R27EQT0I:00000004 [INF] Sending file. Request path: '"/adminlte/css/skins/_all-skins.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\css\skins\_all-skins.min.css"' (27b0a520)
+2020-05-26T00:04:30.0887641+05:30 0HM00R27EQT0K:00000002 [INF] Request finished in 452.9202ms 200 text/css (791a596a)
+2020-05-26T00:04:30.1778694+05:30 0HM00R27EQT0H:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/js/bootstrap.js   (ca22a1cb)
+2020-05-26T00:04:30.2374767+05:30 0HM00R27EQT0M:00000002 [INF] Request finished in 428.0191ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.2483635+05:30 0HM00R27EQT0L:00000002 [INF] Request finished in 477.1112ms 200 text/css (791a596a)
+2020-05-26T00:04:30.3039798+05:30 0HM00R27EQT0J:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/js/site.js?v=upMd9TBQolNeOPbQM9n6ihaWmqX2tc7UmNDDKfIbNZw   (ca22a1cb)
+2020-05-26T00:04:30.4082113+05:30 0HM00R27EQT0I:00000004 [INF] Request finished in 680.1677ms 200 text/css (791a596a)
+2020-05-26T00:04:30.4220247+05:30 0HM00R27EQT0K:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-ui-1.12.1/jquery-ui.min.js   (ca22a1cb)
+2020-05-26T00:04:30.4351433+05:30 0HM00R27EQT0H:00000006 [INF] Sending file. Request path: '"/lib/bootstrap/dist/js/bootstrap.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\js\bootstrap.js"' (27b0a520)
+2020-05-26T00:04:30.4584586+05:30 0HM00R27EQT0M:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/DataTables/datatables.min.js   (ca22a1cb)
+2020-05-26T00:04:30.4897213+05:30 0HM00R27EQT0J:00000003 [INF] Sending file. Request path: '"/js/site.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\js\site.js"' (27b0a520)
+2020-05-26T00:04:30.4958783+05:30 0HM00R27EQT0L:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/marioizquierdo-jquery.serializeJSON/jquery.serializejson.min.js   (ca22a1cb)
+2020-05-26T00:04:30.5847124+05:30 0HM00R27EQT0I:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/toastr/toastr.min.js   (ca22a1cb)
+2020-05-26T00:04:30.6170662+05:30 0HM00R27EQT0J:00000003 [INF] Request finished in 500.7397ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.6377671+05:30 0HM00R27EQT0K:00000003 [INF] Sending file. Request path: '"/lib/jquery-ui-1.12.1/jquery-ui.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-ui-1.12.1\jquery-ui.min.js"' (27b0a520)
+2020-05-26T00:04:30.6679974+05:30 0HM00R27EQT0H:00000006 [INF] Request finished in 677.9913ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.6758508+05:30 0HM00R27EQT0M:00000003 [INF] Sending file. Request path: '"/lib/DataTables/datatables.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\DataTables\datatables.min.js"' (27b0a520)
+2020-05-26T00:04:30.7372127+05:30 0HM00R27EQT0L:00000003 [INF] Sending file. Request path: '"/lib/marioizquierdo-jquery.serializeJSON/jquery.serializejson.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\marioizquierdo-jquery.serializeJSON\jquery.serializejson.min.js"' (27b0a520)
+2020-05-26T00:04:30.8139928+05:30 0HM00R27EQT0I:00000005 [INF] Sending file. Request path: '"/lib/toastr/toastr.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\toastr\toastr.min.js"' (27b0a520)
+2020-05-26T00:04:30.8847719+05:30 0HM00R27EQT0K:00000003 [INF] Request finished in 484.8082ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.9179911+05:30 0HM00R27EQT0M:00000003 [INF] Request finished in 383.1793ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.9307412+05:30 0HM00R27EQT0J:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/images/artboard1copy3.png   (ca22a1cb)
+2020-05-26T00:04:30.9595294+05:30 0HM00R27EQT0L:00000003 [INF] Request finished in 416.2215ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.9675091+05:30 0HM00R27EQT0I:00000005 [INF] Request finished in 399.095ms 200 application/javascript (791a596a)
+2020-05-26T00:04:30.9959521+05:30 0HM00R27EQT0H:00000007 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0   (ca22a1cb)
+2020-05-26T00:04:31.0573634+05:30 0HM00R27EQT0K:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/images/empty-profile.png   (ca22a1cb)
+2020-05-26T00:04:31.1061895+05:30 0HM00R27EQT0J:00000004 [INF] Sending file. Request path: '"/images/artboard1copy3.png"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\images\artboard1copy3.png"' (27b0a520)
+2020-05-26T00:04:31.1589416+05:30 0HM00R27EQT0M:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/sweetalert/sweetalert.min.js   (ca22a1cb)
+2020-05-26T00:04:31.1844131+05:30 0HM00R27EQT0L:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-validation/dist/jquery.validate.js   (ca22a1cb)
+2020-05-26T00:04:31.1907728+05:30 0HM00R27EQT0H:00000007 [INF] Sending file. Request path: '"/lib/font-awesome/fonts/fontawesome-webfont.woff2"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\font-awesome\fonts\fontawesome-webfont.woff2"' (27b0a520)
+2020-05-26T00:04:31.2014669+05:30 0HM00R27EQT0I:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js   (ca22a1cb)
+2020-05-26T00:04:31.2526953+05:30 0HM00R27EQT0K:00000004 [INF] Sending file. Request path: '"/images/empty-profile.png"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\images\empty-profile.png"' (27b0a520)
+2020-05-26T00:04:31.2972267+05:30 0HM00R27EQT0J:00000004 [INF] Request finished in 439.8594ms 200 image/png (791a596a)
+2020-05-26T00:04:31.3465485+05:30 0HM00R27EQT0M:00000004 [INF] Sending file. Request path: '"/lib/sweetalert/sweetalert.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\sweetalert\sweetalert.min.js"' (27b0a520)
+2020-05-26T00:04:31.4054532+05:30 0HM00R27EQT0L:00000004 [INF] Sending file. Request path: '"/lib/jquery-validation/dist/jquery.validate.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-validation\dist\jquery.validate.js"' (27b0a520)
+2020-05-26T00:04:31.4187594+05:30 0HM00R27EQT0I:00000006 [INF] Sending file. Request path: '"/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js"' (27b0a520)
+2020-05-26T00:04:31.4632008+05:30 0HM00R27EQT0K:00000004 [INF] Request finished in 384.6302ms 200 image/png (791a596a)
+2020-05-26T00:04:31.4678617+05:30 0HM00R27EQT0H:00000007 [INF] Request finished in 440.5176ms 200 font/woff2 (791a596a)
+2020-05-26T00:04:31.4771597+05:30 0HM00R27EQT0M:00000004 [INF] Request finished in 430.2437ms 200 application/javascript (791a596a)
+2020-05-26T00:04:31.5539030+05:30 0HM00R27EQT0J:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/js/views/ticket/customer.js   (ca22a1cb)
+2020-05-26T00:04:31.5731049+05:30 0HM00R27EQT0I:00000006 [INF] Request finished in 399.4896ms 200 application/javascript (791a596a)
+2020-05-26T00:04:31.6168543+05:30 0HM00R27EQT0L:00000004 [INF] Request finished in 410.9897ms 200 application/javascript (791a596a)
+2020-05-26T00:04:31.7318791+05:30 0HM00R27EQT0J:00000005 [INF] Sending file. Request path: '"/js/views/ticket/customer.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\js\views\ticket\customer.js"' (27b0a520)
+2020-05-26T00:04:31.7487142+05:30 0HM00R27EQT0M:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda.jquery.min.js   (ca22a1cb)
+2020-05-26T00:04:31.7735488+05:30 0HM00R27EQT0K:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda.min.js   (ca22a1cb)
+2020-05-26T00:04:31.7925329+05:30 0HM00R27EQT0L:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-slimscroll/jquery.slimscroll.min.js   (ca22a1cb)
+2020-05-26T00:04:31.8538486+05:30 0HM00R27EQT0I:00000007 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/fastclick/lib/fastclick.js   (ca22a1cb)
+2020-05-26T00:04:31.8714909+05:30 0HM00R27EQT0H:00000008 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/spin.min.js   (ca22a1cb)
+2020-05-26T00:04:31.9491072+05:30 0HM00R27EQT0M:00000005 [INF] Sending file. Request path: '"/lib/ladda/ladda.jquery.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda.jquery.min.js"' (27b0a520)
+2020-05-26T00:04:32.0092395+05:30 0HM00R27EQT0J:00000005 [INF] Request finished in 350.2982ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.0235417+05:30 0HM00R27EQT0K:00000005 [INF] Sending file. Request path: '"/lib/ladda/ladda.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda.min.js"' (27b0a520)
+2020-05-26T00:04:32.0496378+05:30 0HM00R27EQT0H:00000008 [INF] Sending file. Request path: '"/lib/ladda/spin.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\spin.min.js"' (27b0a520)
+2020-05-26T00:04:32.0532888+05:30 0HM00R27EQT0L:00000005 [INF] Sending file. Request path: '"/lib/jquery-slimscroll/jquery.slimscroll.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-slimscroll\jquery.slimscroll.min.js"' (27b0a520)
+2020-05-26T00:04:32.0593765+05:30 0HM00R27EQT0I:00000007 [INF] Sending file. Request path: '"/lib/fastclick/lib/fastclick.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\fastclick\lib\fastclick.js"' (27b0a520)
+2020-05-26T00:04:32.1612200+05:30 0HM00R27EQT0L:00000005 [INF] Request finished in 437.099ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.1860064+05:30 0HM00R27EQT0K:00000005 [INF] Request finished in 501.0969ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.1967081+05:30 0HM00R27EQT0I:00000007 [INF] Request finished in 528.4358ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.1979360+05:30 0HM00R27EQT0M:00000005 [INF] Request finished in 453.4049ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.2278291+05:30 0HM00R27EQT0J:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/js/adminlte.min.js   (ca22a1cb)
+2020-05-26T00:04:32.2403770+05:30 0HM00R27EQT0J:00000006 [INF] Sending file. Request path: '"/adminlte/js/adminlte.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\js\adminlte.min.js"' (27b0a520)
+2020-05-26T00:04:32.2701601+05:30 0HM00R27EQT0H:00000008 [INF] Request finished in 572.6154ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.3753698+05:30 0HM00R27EQT0K:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Ticket/Customer/696da25d-92c6-4823-b9e4-612819c38e8b?_=1590431670097   (ca22a1cb)
+2020-05-26T00:04:32.4057234+05:30 0HM00R27EQT0J:00000006 [INF] Request finished in 136.3995ms 200 application/javascript (791a596a)
+2020-05-26T00:04:32.4439344+05:30 0HM00R27EQT0K:00000006 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:32.5120185+05:30 0HM00R27EQT0M:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2   (ca22a1cb)
+2020-05-26T00:04:32.6112632+05:30 0HM00R27EQT0M:00000006 [INF] Sending file. Request path: '"/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff2"' (27b0a520)
+2020-05-26T00:04:32.6194750+05:30 0HM00R27EQT0K:00000006 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:04:32.7123001+05:30 0HM00R27EQT0M:00000006 [INF] Request finished in 323.68ms 200 font/woff2 (791a596a)
+2020-05-26T00:04:32.7773247+05:30 0HM00R27EQT0K:00000006 [INF] Executing action method "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:04:32.7992842+05:30 0HM00R27EQT0K:00000006 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:04:32.8057167+05:30 0HM00R27EQT0H:00000009 [INF] Request starting HTTP/1.1 GET http://localhost:60500/favicon.ico   (ca22a1cb)
+2020-05-26T00:04:32.8183005+05:30 0HM00R27EQT0H:00000009 [INF] Sending file. Request path: '"/favicon.ico"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\favicon.ico"' (27b0a520)
+2020-05-26T00:04:32.8592198+05:30 0HM00R27EQT0H:00000009 [INF] Request finished in 163.9271ms 200 image/x-icon (791a596a)
+2020-05-26T00:04:33.0674618+05:30 0HM00R27EQT0K:00000006 [INF] Executed DbCommand ("252"ms) [Parameters=["@__ToString_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[TenantId] = @__ToString_0
+ORDER BY [x].[issueID] DESC" (0723d8ff)
+2020-05-26T00:04:33.3430696+05:30 0HM00R27EQT0K:00000006 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:04:33.6130721+05:30 0HM00R27EQT0K:00000006 [INF] Executed DbCommand ("262"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [s].[Id], [s].[AccessFailedCount], [s].[ConcurrencyStamp], [s].[Email], [s].[EmailConfirmed], [s].[FullName], [s].[IsCustomer], [s].[IsSuperAdmin], [s].[IsSupportAgent], [s].[IsSupportEngineer], [s].[LockoutEnabled], [s].[LockoutEnd], [s].[NormalizedEmail], [s].[NormalizedUserName], [s].[PasswordHash], [s].[PhoneNumber], [s].[PhoneNumberConfirmed], [s].[ProfilePictureUrl], [s].[SecurityStamp], [s].[TwoFactorEnabled], [s].[UserName], [s].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [s]" (0723d8ff)
+2020-05-26T00:04:33.6402195+05:30 0HM00R27EQT0K:00000006 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[<>f__AnonymousType5`4[System.String,System.String,System.String,System.Int32]] }". (7bb75e80)
+2020-05-26T00:04:33.6479828+05:30 0HM00R27EQT0K:00000006 [INF] Executed action "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" in 1193.2044ms (afa2e885)
+2020-05-26T00:04:33.6754306+05:30 0HM00R27EQT0K:00000006 [INF] Request finished in 1352.0852ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:04:39.6950352+05:30 0HM00R27EQT0L:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/skins/_all-skins.min.css   (ca22a1cb)
+2020-05-26T00:04:39.7366485+05:30 0HM00R27EQT0L:00000006 [INF] The file "/adminlte/css/skins/_all-skins.min.css" was not modified (f1f8d725)
+2020-05-26T00:04:39.7735672+05:30 0HM00R27EQT0I:00000008 [INF] Request starting HTTP/1.1 GET http://localhost:60500/toastr.js.map   (ca22a1cb)
+2020-05-26T00:04:39.8451573+05:30 0HM00R27EQT0L:00000006 [INF] Request finished in 53.9335ms 304 text/css (791a596a)
+2020-05-26T00:04:39.8705637+05:30 0HM00R27EQT0I:00000008 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:39.9221034+05:30 0HM00R27EQT0I:00000008 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:04:39.9302418+05:30 0HM00R27EQT0I:00000008 [INF] Executing action method "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" with arguments (null) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:04:39.9762054+05:30 0HM00R27EQT0I:00000008 [INF] Executing ViewResult, running view at path "/Views/Error/PageNotFound.cshtml". (9707eebe)
+2020-05-26T00:04:40.0205965+05:30 0HM00R27EQT0I:00000008 [INF] Executed action "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" in 53.9177ms (afa2e885)
+2020-05-26T00:04:40.0291308+05:30 0HM00R27EQT0I:00000008 [INF] Request finished in 293.9194ms 404 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:05:03.4677615+05:30 0HM00R27EQT0J:00000007 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Customer?org=7ee8eb68-c637-47a3-ddcc-08d8000bda3f   (ca22a1cb)
+2020-05-26T00:05:03.4844938+05:30 0HM00R27EQT0J:00000007 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:03.4919732+05:30 0HM00R27EQT0J:00000007 [INF] Executing action method "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:03.5427980+05:30 0HM00R27EQT0J:00000007 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:05:03.8197576+05:30 0HM00R27EQT0J:00000007 [INF] Executed DbCommand ("248"ms) [Parameters=["@__org_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationId] = @__org_0" (0723d8ff)
+2020-05-26T00:05:03.8255297+05:30 0HM00R27EQT0J:00000007 [INF] Executing ViewResult, running view at path "/Views/Customer/Index.cshtml". (9707eebe)
+2020-05-26T00:05:04.0847676+05:30 0HM00R27EQT0J:00000007 [INF] Executed DbCommand ("248"ms) [Parameters=["@__get_Item_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [e].[Id], [e].[AccessFailedCount], [e].[ConcurrencyStamp], [e].[Email], [e].[EmailConfirmed], [e].[FullName], [e].[IsCustomer], [e].[IsSuperAdmin], [e].[IsSupportAgent], [e].[IsSupportEngineer], [e].[LockoutEnabled], [e].[LockoutEnd], [e].[NormalizedEmail], [e].[NormalizedUserName], [e].[PasswordHash], [e].[PhoneNumber], [e].[PhoneNumberConfirmed], [e].[ProfilePictureUrl], [e].[SecurityStamp], [e].[TwoFactorEnabled], [e].[UserName], [e].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [e]
+WHERE [e].[Id] = @__get_Item_0" (0723d8ff)
+2020-05-26T00:05:04.3688246+05:30 0HM00R27EQT0J:00000007 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:05:04.3843003+05:30 0HM00R27EQT0J:00000007 [INF] Executed action "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" in 884.8866ms (afa2e885)
+2020-05-26T00:05:04.4269629+05:30 0HM00R27EQT0J:00000007 [INF] Request finished in 927.5377ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:05:04.4773811+05:30 0HM00R27EQT0M:00000007 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/skins/_all-skins.min.css   (ca22a1cb)
+2020-05-26T00:05:04.4915101+05:30 0HM00R27EQT0M:00000007 [INF] The file "/adminlte/css/skins/_all-skins.min.css" was not modified (f1f8d725)
+2020-05-26T00:05:04.5059041+05:30 0HM00R27EQT0M:00000007 [INF] Request finished in 88.533ms 304 text/css (791a596a)
+2020-05-26T00:05:04.7054931+05:30 0HM00R27EQT0H:0000000A [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Customer/7ee8eb68-c637-47a3-ddcc-08d8000bda3f?_=1590431704584   (ca22a1cb)
+2020-05-26T00:05:04.7504059+05:30 0HM00R27EQT0H:0000000A [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:04.7911764+05:30 0HM00R27EQT0H:0000000A [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:05:04.8027726+05:30 0HM00R27EQT0K:00000007 [INF] Request starting HTTP/1.1 GET http://localhost:60500/toastr.js.map   (ca22a1cb)
+2020-05-26T00:05:04.8348917+05:30 0HM00R27EQT0K:00000007 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:04.9055017+05:30 0HM00R27EQT0H:0000000A [INF] Executing action method "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:04.9330916+05:30 0HM00R27EQT0K:00000007 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:05.0511261+05:30 0HM00R27EQT0H:0000000A [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:05:05.0526569+05:30 0HM00R27EQT0K:00000007 [INF] Executing action method "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" with arguments (null) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:05.1007465+05:30 0HM00R27EQT0K:00000007 [INF] Executing ViewResult, running view at path "/Views/Error/PageNotFound.cshtml". (9707eebe)
+2020-05-26T00:05:05.1276464+05:30 0HM00R27EQT0K:00000007 [INF] Executed action "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" in 167.8095ms (afa2e885)
+2020-05-26T00:05:05.1380576+05:30 0HM00R27EQT0K:00000007 [INF] Request finished in 414.954ms 404 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:05:05.3533208+05:30 0HM00R27EQT0H:0000000A [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [p].[name], [p].[address1], [p].[address2], [p].[city], [p].[state], [p].[zip], [p].[TenantId] AS [customerId]
+FROM [CorporateProfile] AS [p]" (0723d8ff)
+2020-05-26T00:05:05.3794735+05:30 0HM00R27EQT0H:0000000A [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[Well_AI.Helpdesk.Models.ManageViewModels.CorporateProfile] }". (7bb75e80)
+2020-05-26T00:05:05.4077267+05:30 0HM00R27EQT0H:0000000A [INF] Executed action "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" in 629.1554ms (afa2e885)
+2020-05-26T00:05:05.4369389+05:30 0HM00R27EQT0H:0000000A [INF] Request finished in 718.325ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:05:49.2086619+05:30 0HM00R27EQT0J:00000008 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Customer?org=7ee8eb68-c637-47a3-ddcc-08d8000bda3f   (ca22a1cb)
+2020-05-26T00:05:49.2212554+05:30 0HM00R27EQT0J:00000008 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:49.2309284+05:30 0HM00R27EQT0J:00000008 [INF] Executing action method "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:49.2587258+05:30 0HM00R27EQT0J:00000008 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:05:49.5211160+05:30 0HM00R27EQT0J:00000008 [INF] Executed DbCommand ("248"ms) [Parameters=["@__org_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationId] = @__org_0" (0723d8ff)
+2020-05-26T00:05:49.5294572+05:30 0HM00R27EQT0J:00000008 [INF] Executing ViewResult, running view at path "/Views/Customer/Index.cshtml". (9707eebe)
+2020-05-26T00:05:49.7879332+05:30 0HM00R27EQT0J:00000008 [INF] Executed DbCommand ("248"ms) [Parameters=["@__get_Item_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [e].[Id], [e].[AccessFailedCount], [e].[ConcurrencyStamp], [e].[Email], [e].[EmailConfirmed], [e].[FullName], [e].[IsCustomer], [e].[IsSuperAdmin], [e].[IsSupportAgent], [e].[IsSupportEngineer], [e].[LockoutEnabled], [e].[LockoutEnd], [e].[NormalizedEmail], [e].[NormalizedUserName], [e].[PasswordHash], [e].[PhoneNumber], [e].[PhoneNumberConfirmed], [e].[ProfilePictureUrl], [e].[SecurityStamp], [e].[TwoFactorEnabled], [e].[UserName], [e].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [e]
+WHERE [e].[Id] = @__get_Item_0" (0723d8ff)
+2020-05-26T00:05:50.0459404+05:30 0HM00R27EQT0J:00000008 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:05:50.2152606+05:30 0HM00R27EQT0J:00000008 [INF] Executed action "src.Controllers.CustomerController.Index (Well-AI.Advisor.Helpdesk)" in 984.7175ms (afa2e885)
+2020-05-26T00:05:50.2410658+05:30 0HM00R27EQT0J:00000008 [INF] Request finished in 1020.2114ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:05:50.3791092+05:30 0HM00R27EQT0J:00000009 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/css/bootstrap.css   (ca22a1cb)
+2020-05-26T00:05:50.4045465+05:30 0HM00R27EQT0M:00000008 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/font-awesome/css/font-awesome.min.css   (ca22a1cb)
+2020-05-26T00:05:50.4490946+05:30 0HM00R27EQT0N:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/toastr/toastr.min.css   (ca22a1cb)
+2020-05-26T00:05:50.5009845+05:30 0HM00R27EQT0K:00000008 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-ui-1.12.1/jquery-ui.min.css   (ca22a1cb)
+2020-05-26T00:05:50.5110325+05:30 0HM00R27EQT0H:0000000B [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/sweetalert/sweetalert.css   (ca22a1cb)
+2020-05-26T00:05:50.5189493+05:30 0HM00R27EQT0J:00000009 [INF] Sending file. Request path: '"/lib/bootstrap/dist/css/bootstrap.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\css\bootstrap.css"' (27b0a520)
+2020-05-26T00:05:50.5214530+05:30 0HM00R27EQT0M:00000008 [INF] Sending file. Request path: '"/lib/font-awesome/css/font-awesome.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\font-awesome\css\font-awesome.min.css"' (27b0a520)
+2020-05-26T00:05:50.5339962+05:30 0HM00R27EQT0O:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/DataTables/datatables.min.css   (ca22a1cb)
+2020-05-26T00:05:50.7079578+05:30 0HM00R27EQT0M:00000008 [INF] Request finished in 252.13ms 200 text/css (791a596a)
+2020-05-26T00:05:50.7305232+05:30 0HM00R27EQT0H:0000000B [INF] Sending file. Request path: '"/lib/sweetalert/sweetalert.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\sweetalert\sweetalert.css"' (27b0a520)
+2020-05-26T00:05:50.7390154+05:30 0HM00R27EQT0N:00000001 [INF] Sending file. Request path: '"/lib/toastr/toastr.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\toastr\toastr.min.css"' (27b0a520)
+2020-05-26T00:05:50.7490005+05:30 0HM00R27EQT0J:00000009 [INF] Request finished in 318.6921ms 200 text/css (791a596a)
+2020-05-26T00:05:50.7530453+05:30 0HM00R27EQT0O:00000001 [INF] Sending file. Request path: '"/lib/DataTables/datatables.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\DataTables\datatables.min.css"' (27b0a520)
+2020-05-26T00:05:50.7746512+05:30 0HM00R27EQT0K:00000008 [INF] Sending file. Request path: '"/lib/jquery-ui-1.12.1/jquery-ui.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-ui-1.12.1\jquery-ui.min.css"' (27b0a520)
+2020-05-26T00:05:50.8344309+05:30 0HM00R27EQT0N:00000001 [INF] Request finished in 483.6378ms 200 text/css (791a596a)
+2020-05-26T00:05:50.9050445+05:30 0HM00R27EQT0O:00000001 [INF] Request finished in 463.4236ms 200 text/css (791a596a)
+2020-05-26T00:05:50.9319106+05:30 0HM00R27EQT0K:00000008 [INF] Request finished in 537.872ms 200 text/css (791a596a)
+2020-05-26T00:05:50.9466201+05:30 0HM00R27EQT0J:0000000A [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/Ionicons/css/ionicons.min.css   (ca22a1cb)
+2020-05-26T00:05:50.9618345+05:30 0HM00R27EQT0H:0000000B [INF] Request finished in 483.4552ms 200 text/css (791a596a)
+2020-05-26T00:05:51.0196080+05:30 0HM00R27EQT0M:00000009 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda-themeless.min.css   (ca22a1cb)
+2020-05-26T00:05:51.0503161+05:30 0HM00R27EQT0O:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/skins/_all-skins.min.css   (ca22a1cb)
+2020-05-26T00:05:51.0649513+05:30 0HM00R27EQT0K:00000009 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/js/bootstrap.js   (ca22a1cb)
+2020-05-26T00:05:51.0729755+05:30 0HM00R27EQT0J:0000000A [INF] Sending file. Request path: '"/lib/Ionicons/css/ionicons.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\Ionicons\css\ionicons.min.css"' (27b0a520)
+2020-05-26T00:05:51.1280673+05:30 0HM00R27EQT0N:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery/dist/jquery.js   (ca22a1cb)
+2020-05-26T00:05:51.1841932+05:30 0HM00R27EQT0J:0000000A [INF] Request finished in 267.3851ms 200 text/css (791a596a)
+2020-05-26T00:05:51.2027695+05:30 0HM00R27EQT0H:0000000C [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/AdminLTE.min.css   (ca22a1cb)
+2020-05-26T00:05:51.2157230+05:30 0HM00R27EQT0O:00000002 [INF] Sending file. Request path: '"/adminlte/css/skins/_all-skins.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\css\skins\_all-skins.min.css"' (27b0a520)
+2020-05-26T00:05:51.2753177+05:30 0HM00R27EQT0M:00000009 [INF] Sending file. Request path: '"/lib/ladda/ladda-themeless.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda-themeless.min.css"' (27b0a520)
+2020-05-26T00:05:51.3298623+05:30 0HM00R27EQT0K:00000009 [INF] Sending file. Request path: '"/lib/bootstrap/dist/js/bootstrap.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\js\bootstrap.js"' (27b0a520)
+2020-05-26T00:05:51.3989098+05:30 0HM00R27EQT0N:00000002 [INF] Sending file. Request path: '"/lib/jquery/dist/jquery.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery\dist\jquery.js"' (27b0a520)
+2020-05-26T00:05:51.4175258+05:30 0HM00R27EQT0J:0000000B [INF] Request starting HTTP/1.1 GET http://localhost:60500/js/site.js?v=upMd9TBQolNeOPbQM9n6ihaWmqX2tc7UmNDDKfIbNZw   (ca22a1cb)
+2020-05-26T00:05:51.4601931+05:30 0HM00R27EQT0H:0000000C [INF] Sending file. Request path: '"/adminlte/css/AdminLTE.min.css"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\css\AdminLTE.min.css"' (27b0a520)
+2020-05-26T00:05:51.4865171+05:30 0HM00R27EQT0O:00000002 [INF] Request finished in 313.3697ms 200 text/css (791a596a)
+2020-05-26T00:05:51.5493718+05:30 0HM00R27EQT0M:00000009 [INF] Request finished in 516.5194ms 200 text/css (791a596a)
+2020-05-26T00:05:51.6213442+05:30 0HM00R27EQT0J:0000000B [INF] Sending file. Request path: '"/js/site.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\js\site.js"' (27b0a520)
+2020-05-26T00:05:51.6389195+05:30 0HM00R27EQT0K:00000009 [INF] Request finished in 347.295ms 200 application/javascript (791a596a)
+2020-05-26T00:05:51.6774444+05:30 0HM00R27EQT0N:00000002 [INF] Request finished in 563.8339ms 200 application/javascript (791a596a)
+2020-05-26T00:05:51.7045154+05:30 0HM00R27EQT0H:0000000C [INF] Request finished in 530.1235ms 200 text/css (791a596a)
+2020-05-26T00:05:51.7249418+05:30 0HM00R27EQT0O:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-ui-1.12.1/jquery-ui.min.js   (ca22a1cb)
+2020-05-26T00:05:51.7706285+05:30 0HM00R27EQT0J:0000000B [INF] Request finished in 400.8583ms 200 application/javascript (791a596a)
+2020-05-26T00:05:51.7861275+05:30 0HM00R27EQT0M:0000000A [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/marioizquierdo-jquery.serializeJSON/jquery.serializejson.min.js   (ca22a1cb)
+2020-05-26T00:05:51.9309467+05:30 0HM00R27EQT0O:00000003 [INF] Sending file. Request path: '"/lib/jquery-ui-1.12.1/jquery-ui.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-ui-1.12.1\jquery-ui.min.js"' (27b0a520)
+2020-05-26T00:05:51.9419233+05:30 0HM00R27EQT0K:0000000A [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/DataTables/datatables.min.js   (ca22a1cb)
+2020-05-26T00:05:51.9713349+05:30 0HM00R27EQT0J:0000000C [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0   (ca22a1cb)
+2020-05-26T00:05:51.9915175+05:30 0HM00R27EQT0H:0000000D [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/sweetalert/sweetalert.min.js   (ca22a1cb)
+2020-05-26T00:05:52.0080747+05:30 0HM00R27EQT0N:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/toastr/toastr.min.js   (ca22a1cb)
+2020-05-26T00:05:52.0157634+05:30 0HM00R27EQT0M:0000000A [INF] Sending file. Request path: '"/lib/marioizquierdo-jquery.serializeJSON/jquery.serializejson.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\marioizquierdo-jquery.serializeJSON\jquery.serializejson.min.js"' (27b0a520)
+2020-05-26T00:05:52.0810928+05:30 0HM00R27EQT0J:0000000C [INF] Sending file. Request path: '"/lib/font-awesome/fonts/fontawesome-webfont.woff2"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\font-awesome\fonts\fontawesome-webfont.woff2"' (27b0a520)
+2020-05-26T00:05:52.1928044+05:30 0HM00R27EQT0K:0000000A [INF] Sending file. Request path: '"/lib/DataTables/datatables.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\DataTables\datatables.min.js"' (27b0a520)
+2020-05-26T00:05:52.2105272+05:30 0HM00R27EQT0M:0000000A [INF] Request finished in 452.2005ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.2244302+05:30 0HM00R27EQT0H:0000000D [INF] Sending file. Request path: '"/lib/sweetalert/sweetalert.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\sweetalert\sweetalert.min.js"' (27b0a520)
+2020-05-26T00:05:52.2572467+05:30 0HM00R27EQT0O:00000003 [INF] Request finished in 511.0098ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.2716467+05:30 0HM00R27EQT0N:00000003 [INF] Sending file. Request path: '"/lib/toastr/toastr.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\toastr\toastr.min.js"' (27b0a520)
+2020-05-26T00:05:52.3091222+05:30 0HM00R27EQT0K:0000000A [INF] Request finished in 517.9953ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.3140902+05:30 0HM00R27EQT0J:0000000C [INF] Request finished in 320.8696ms 200 font/woff2 (791a596a)
+2020-05-26T00:05:52.3476935+05:30 0HM00R27EQT0H:0000000D [INF] Request finished in 470.3734ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.3885128+05:30 0HM00R27EQT0O:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/images/empty-profile.png   (ca22a1cb)
+2020-05-26T00:05:52.3961227+05:30 0HM00R27EQT0M:0000000B [INF] Request starting HTTP/1.1 GET http://localhost:60500/images/artboard1copy3.png   (ca22a1cb)
+2020-05-26T00:05:52.4360461+05:30 0HM00R27EQT0N:00000003 [INF] Request finished in 552.9831ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.5714347+05:30 0HM00R27EQT0K:0000000B [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js   (ca22a1cb)
+2020-05-26T00:05:52.5864952+05:30 0HM00R27EQT0H:0000000E [INF] Request starting HTTP/1.1 GET http://localhost:60500/js/views/customer/index.js   (ca22a1cb)
+2020-05-26T00:05:52.6322010+05:30 0HM00R27EQT0J:0000000D [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-validation/dist/jquery.validate.js   (ca22a1cb)
+2020-05-26T00:05:52.6485471+05:30 0HM00R27EQT0O:00000004 [INF] Sending file. Request path: '"/images/empty-profile.png"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\images\empty-profile.png"' (27b0a520)
+2020-05-26T00:05:52.6543258+05:30 0HM00R27EQT0M:0000000B [INF] Sending file. Request path: '"/images/artboard1copy3.png"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\images\artboard1copy3.png"' (27b0a520)
+2020-05-26T00:05:52.7244759+05:30 0HM00R27EQT0H:0000000E [INF] Sending file. Request path: '"/js/views/customer/index.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\js\views\customer\index.js"' (27b0a520)
+2020-05-26T00:05:52.7835174+05:30 0HM00R27EQT0K:0000000B [INF] Sending file. Request path: '"/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js"' (27b0a520)
+2020-05-26T00:05:52.8266537+05:30 0HM00R27EQT0N:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/spin.min.js   (ca22a1cb)
+2020-05-26T00:05:52.8459553+05:30 0HM00R27EQT0M:0000000B [INF] Request finished in 395.4015ms 200 image/png (791a596a)
+2020-05-26T00:05:52.8540644+05:30 0HM00R27EQT0O:00000004 [INF] Request finished in 404.3605ms 200 image/png (791a596a)
+2020-05-26T00:05:52.8802036+05:30 0HM00R27EQT0K:0000000B [INF] Request finished in 442.5503ms 200 application/javascript (791a596a)
+2020-05-26T00:05:52.9491462+05:30 0HM00R27EQT0J:0000000D [INF] Sending file. Request path: '"/lib/jquery-validation/dist/jquery.validate.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-validation\dist\jquery.validate.js"' (27b0a520)
+2020-05-26T00:05:53.0168261+05:30 0HM00R27EQT0H:0000000E [INF] Request finished in 382.1595ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.0818554+05:30 0HM00R27EQT0M:0000000C [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda.jquery.min.js   (ca22a1cb)
+2020-05-26T00:05:53.0916742+05:30 0HM00R27EQT0O:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/ladda/ladda.min.js   (ca22a1cb)
+2020-05-26T00:05:53.1489183+05:30 0HM00R27EQT0N:00000004 [INF] Sending file. Request path: '"/lib/ladda/spin.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\spin.min.js"' (27b0a520)
+2020-05-26T00:05:53.1902218+05:30 0HM00R27EQT0K:0000000C [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/fastclick/lib/fastclick.js   (ca22a1cb)
+2020-05-26T00:05:53.2063200+05:30 0HM00R27EQT0J:0000000D [INF] Request finished in 596.4611ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.2348072+05:30 0HM00R27EQT0H:0000000F [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/jquery-slimscroll/jquery.slimscroll.min.js   (ca22a1cb)
+2020-05-26T00:05:53.2536714+05:30 0HM00R27EQT0M:0000000C [INF] Sending file. Request path: '"/lib/ladda/ladda.jquery.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda.jquery.min.js"' (27b0a520)
+2020-05-26T00:05:53.2567768+05:30 0HM00R27EQT0O:00000005 [INF] Sending file. Request path: '"/lib/ladda/ladda.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\ladda\ladda.min.js"' (27b0a520)
+2020-05-26T00:05:53.2928688+05:30 0HM00R27EQT0N:00000004 [INF] Request finished in 640.8132ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.3475312+05:30 0HM00R27EQT0K:0000000C [INF] Sending file. Request path: '"/lib/fastclick/lib/fastclick.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\fastclick\lib\fastclick.js"' (27b0a520)
+2020-05-26T00:05:53.3729627+05:30 0HM00R27EQT0H:0000000F [INF] Sending file. Request path: '"/lib/jquery-slimscroll/jquery.slimscroll.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\jquery-slimscroll\jquery.slimscroll.min.js"' (27b0a520)
+2020-05-26T00:05:53.3938694+05:30 0HM00R27EQT0O:00000005 [INF] Request finished in 397.4824ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.3997644+05:30 0HM00R27EQT0M:0000000C [INF] Request finished in 301.5336ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.4273894+05:30 0HM00R27EQT0J:0000000E [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/js/adminlte.min.js   (ca22a1cb)
+2020-05-26T00:05:53.4646146+05:30 0HM00R27EQT0H:0000000F [INF] Request finished in 277.9373ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.5160455+05:30 0HM00R27EQT0K:0000000C [INF] Request finished in 305.7851ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.5241250+05:30 0HM00R27EQT0J:0000000E [INF] Sending file. Request path: '"/adminlte/js/adminlte.min.js"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\adminlte\js\adminlte.min.js"' (27b0a520)
+2020-05-26T00:05:53.5353158+05:30 0HM00R27EQT0J:0000000E [INF] Request finished in 265.0268ms 200 application/javascript (791a596a)
+2020-05-26T00:05:53.5740254+05:30 0HM00R27EQT0N:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2   (ca22a1cb)
+2020-05-26T00:05:53.6189846+05:30 0HM00R27EQT0N:00000005 [INF] Sending file. Request path: '"/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff2"' (27b0a520)
+2020-05-26T00:05:53.6342835+05:30 0HM00R27EQT0M:0000000D [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Customer/7ee8eb68-c637-47a3-ddcc-08d8000bda3f?_=1590431751519   (ca22a1cb)
+2020-05-26T00:05:53.7195277+05:30 0HM00R27EQT0N:00000005 [INF] Request finished in 64.8797ms 200 font/woff2 (791a596a)
+2020-05-26T00:05:53.8006115+05:30 0HM00R27EQT0M:0000000D [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:53.8303833+05:30 0HM00R27EQT0O:00000006 [INF] Request starting HTTP/1.1 GET http://localhost:60500/favicon.ico   (ca22a1cb)
+2020-05-26T00:05:53.9213137+05:30 0HM00R27EQT0O:00000006 [INF] Sending file. Request path: '"/favicon.ico"'. Physical path: '"D:\Well-AI\Development\Well-AI.Advisor.Helpdesk\wwwroot\favicon.ico"' (27b0a520)
+2020-05-26T00:05:53.9254157+05:30 0HM00R27EQT0M:0000000D [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:05:54.0394354+05:30 0HM00R27EQT0M:0000000D [INF] Executing action method "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["7ee8eb68-c637-47a3-ddcc-08d8000bda3f"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:54.0410782+05:30 0HM00R27EQT0O:00000006 [INF] Request finished in 234.1891ms 200 image/x-icon (791a596a)
+2020-05-26T00:05:54.0699084+05:30 0HM00R27EQT0M:0000000D [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:05:54.3253841+05:30 0HM00R27EQT0M:0000000D [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [p].[name], [p].[address1], [p].[address2], [p].[city], [p].[state], [p].[zip], [p].[TenantId] AS [customerId]
+FROM [CorporateProfile] AS [p]" (0723d8ff)
+2020-05-26T00:05:54.3325957+05:30 0HM00R27EQT0M:0000000D [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[Well_AI.Helpdesk.Models.ManageViewModels.CorporateProfile] }". (7bb75e80)
+2020-05-26T00:05:54.3400726+05:30 0HM00R27EQT0M:0000000D [INF] Executed action "src.Controllers.Api.CustomerController.GetCustomer (Well-AI.Advisor.Helpdesk)" in 529.9784ms (afa2e885)
+2020-05-26T00:05:54.3471043+05:30 0HM00R27EQT0M:0000000D [INF] Request finished in 766.9111ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:05:59.4785221+05:30 0HM00R27EQT0K:0000000D [INF] Request starting HTTP/1.1 GET http://localhost:60500/toastr.js.map   (ca22a1cb)
+2020-05-26T00:05:59.4924194+05:30 0HM00R27EQT0K:0000000D [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:59.5008634+05:30 0HM00R27EQT0K:0000000D [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:05:59.5087132+05:30 0HM00R27EQT0K:0000000D [INF] Executing action method "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" with arguments (null) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:05:59.5199328+05:30 0HM00R27EQT0K:0000000D [INF] Executing ViewResult, running view at path "/Views/Error/PageNotFound.cshtml". (9707eebe)
+2020-05-26T00:05:59.5279294+05:30 0HM00R27EQT0K:0000000D [INF] Executed action "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" in 19.3997ms (afa2e885)
+2020-05-26T00:05:59.5441689+05:30 0HM00R27EQT0K:0000000D [INF] Request finished in 70.262ms 404 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:07:18.2887420+05:30 0HM00R27EQT0P:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/Customer?customerId=696da25d-92c6-4823-b9e4-612819c38e8b   (ca22a1cb)
+2020-05-26T00:07:18.3180346+05:30 0HM00R27EQT0P:00000001 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:07:18.3658037+05:30 0HM00R27EQT0P:00000001 [INF] Executing action method "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:07:18.4120818+05:30 0HM00R27EQT0P:00000001 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:07:18.6987411+05:30 0HM00R27EQT0P:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__customerId_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[customerId], [x].[CreateAt], [x].[CreateBy], [x].[address], [x].[customerName], [x].[customerType], [x].[description], [x].[email], [x].[linkedin], [x].[organizationId], [x].[phone], [x].[thumbUrl], [x].[website]
+FROM [hdCustomer] AS [x]
+WHERE [x].[customerId] = @__customerId_0" (0723d8ff)
+2020-05-26T00:07:18.9571983+05:30 0HM00R27EQT0P:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [X].[TenantId], [X].[UserId], [X].[address1], [X].[address2], [X].[city], [X].[country], [X].[name], [X].[phone], [X].[state], [X].[website], [X].[zip]
+FROM [CorporateProfile] AS [X]
+WHERE 0 = 1" (0723d8ff)
+2020-05-26T00:07:19.2224931+05:30 0HM00R27EQT0P:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:07:19.4998190+05:30 0HM00R27EQT0P:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=["@__applicationUserId_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]
+WHERE [x].[organizationOwnerId] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:07:19.5262056+05:30 0HM00R27EQT0P:00000001 [INF] Executing ViewResult, running view at path "/Views/Ticket/Customer.cshtml". (9707eebe)
+2020-05-26T00:07:19.8232922+05:30 0HM00R27EQT0P:00000001 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[organizationId], [x].[CreateAt], [x].[CreateBy], [x].[description], [x].[organizationName], [x].[organizationOwnerId], [x].[thumbUrl]
+FROM [Organization] AS [x]" (0723d8ff)
+2020-05-26T00:07:19.8349511+05:30 0HM00R27EQT0P:00000001 [INF] Executed action "src.Controllers.TicketController.Customer (Well-AI.Advisor.Helpdesk)" in 1506.4698ms (afa2e885)
+2020-05-26T00:07:19.8497332+05:30 0HM00R27EQT0P:00000001 [INF] Request finished in 1559.3812ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:07:19.9062074+05:30 0HM00R27EQT0P:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:60500/adminlte/css/skins/_all-skins.min.css   (ca22a1cb)
+2020-05-26T00:07:19.9342256+05:30 0HM00R27EQT0P:00000002 [INF] The file "/adminlte/css/skins/_all-skins.min.css" was not modified (f1f8d725)
+2020-05-26T00:07:19.9575517+05:30 0HM00R27EQT0P:00000002 [INF] Request finished in 79.5443ms 304 text/css (791a596a)
+2020-05-26T00:07:20.1168059+05:30 0HM00R27EQT0P:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:60500/api/Ticket/Customer/696da25d-92c6-4823-b9e4-612819c38e8b?_=1590431839955   (ca22a1cb)
+2020-05-26T00:07:20.1288934+05:30 0HM00R27EQT0P:00000003 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:07:20.1369574+05:30 0HM00R27EQT0P:00000003 [INF] Authorization was successful for user: "ramesh.d@techunity.com". (d7eb274a)
+2020-05-26T00:07:20.1451109+05:30 0HM00R27EQT0P:00000003 [INF] Executing action method "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" with arguments (["696da25d-92c6-4823-b9e4-612819c38e8b"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:07:20.1870791+05:30 0HM00R27EQT0P:00000003 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:07:20.4868735+05:30 0HM00R27EQT0P:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ToString_0='?' (Size = 4000)"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[TenantId] = @__ToString_0
+ORDER BY [x].[issueID] DESC" (0723d8ff)
+2020-05-26T00:07:20.7434587+05:30 0HM00R27EQT0P:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:07:20.9991197+05:30 0HM00R27EQT0P:00000003 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [s].[Id], [s].[AccessFailedCount], [s].[ConcurrencyStamp], [s].[Email], [s].[EmailConfirmed], [s].[FullName], [s].[IsCustomer], [s].[IsSuperAdmin], [s].[IsSupportAgent], [s].[IsSupportEngineer], [s].[LockoutEnabled], [s].[LockoutEnd], [s].[NormalizedEmail], [s].[NormalizedUserName], [s].[PasswordHash], [s].[PhoneNumber], [s].[PhoneNumberConfirmed], [s].[ProfilePictureUrl], [s].[SecurityStamp], [s].[TwoFactorEnabled], [s].[UserName], [s].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [s]" (0723d8ff)
+2020-05-26T00:07:21.0460739+05:30 0HM00R27EQT0P:00000003 [INF] Executing JsonResult, writing value "{ data = System.Collections.Generic.List`1[<>f__AnonymousType5`4[System.String,System.String,System.String,System.Int32]] }". (7bb75e80)
+2020-05-26T00:07:21.0545871+05:30 0HM00R27EQT0P:00000003 [INF] Executed action "src.Controllers.Api.TicketController.GetTicketCustomer (Well-AI.Advisor.Helpdesk)" in 917.1271ms (afa2e885)
+2020-05-26T00:07:21.0625221+05:30 0HM00R27EQT0P:00000003 [INF] Request finished in 951.9851ms 200 application/json; charset=utf-8 (791a596a)
+2020-05-26T00:07:23.8079496+05:30 0HM00R27EQT0P:00000004 [INF] Request starting HTTP/1.1 GET http://localhost:60500/Ticket/ViewTicket/69   (ca22a1cb)
+2020-05-26T00:07:23.8592962+05:30 0HM00R27EQT0P:00000004 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:07:23.8867569+05:30 0HM00R27EQT0P:00000004 [INF] Executing action method "src.Controllers.TicketController.ViewTicket (Well-AI.Advisor.Helpdesk)" with arguments (["00000000-0000-0000-0000-000000000000", "69"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:07:23.9139740+05:30 0HM00R27EQT0P:00000004 [INF] Entity Framework Core "2.0.2-rtm-10011" initialized '"ApplicationDbContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer"' with options: "None" (9958f5bb)
+2020-05-26T00:07:24.1971494+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__id_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[issueID], [x].[AssignedToUserID], [x].[CategoryID], [x].[DueDate], [x].[InstanceID], [x].[IssueDate], [x].[LastUpdated], [x].[Origin], [x].[Priority], [x].[ResolvedDate], [x].[StartDate], [x].[StatusID], [x].[TenantId], [x].[TimeSpentInSeconds], [x].[TimesReopened], [x].[UpdatedByPerformer], [x].[UpdatedByUser], [x].[UpdatedForTechView], [x].[UserID], [x].[body], [x].[subject]
+FROM [hdIssues] AS [x]
+WHERE [x].[issueID] = @__id_0" (0723d8ff)
+2020-05-26T00:07:24.4547048+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("250"ms) [Parameters=["@__applicationUserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FullName], [x].[IsCustomer], [x].[IsSuperAdmin], [x].[IsSupportAgent], [x].[IsSupportEngineer], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[ProfilePictureUrl], [x].[SecurityStamp], [x].[TwoFactorEnabled], [x].[UserName], [x].[WallpaperPictureUrl]
+FROM [StaffUsers] AS [x]
+WHERE [x].[Id] = @__applicationUserId_0" (0723d8ff)
+2020-05-26T00:07:24.7497911+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__ticket_TenantId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[TenantId], [x].[UserId], [x].[address1], [x].[address2], [x].[city], [x].[country], [x].[name], [x].[phone], [x].[state], [x].[website], [x].[zip]
+FROM [CorporateProfile] AS [x]
+WHERE [x].[TenantId] = @__ticket_TenantId_0" (0723d8ff)
+2020-05-26T00:07:25.0069402+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__cust_UserId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[Id], [x].[AccessFailedCount], [x].[AdditionalNotes], [x].[Address], [x].[City], [x].[ConcurrencyStamp], [x].[Email], [x].[EmailConfirmed], [x].[FirstName], [x].[JobTitle], [x].[LastName], [x].[LockoutEnabled], [x].[LockoutEnd], [x].[MiddleName], [x].[Mobile], [x].[NormalizedEmail], [x].[NormalizedUserName], [x].[PasswordHash], [x].[PhoneNumber], [x].[PhoneNumberConfirmed], [x].[Primary], [x].[SecurityStamp], [x].[State], [x].[TenantId], [x].[TwoFactorEnabled], [x].[UserName], [x].[Zip]
+FROM [AspNetUsers] AS [x]
+WHERE [x].[Id] = @__cust_UserId_0" (0723d8ff)
+2020-05-26T00:07:25.2830085+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=["@__id_0='?'"], CommandType='Text', CommandTimeout='30']"
+""SELECT [x].[CommentID], [x].[Body], [x].[BounceReason], [x].[BouncedRecipients], [x].[CommentDate], [x].[EmailHeaders], [x].[ForTechsOnly], [x].[IsSystem], [x].[IssueID], [x].[Recipients], [x].[UserID]
+FROM [hdComments] AS [x]
+WHERE [x].[IssueID] = @__id_0" (0723d8ff)
+2020-05-26T00:07:25.5420372+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("251"ms) [Parameters=["@__ticket_TenantId_0='?' (Size = 450)"], CommandType='Text', CommandTimeout='30']"
+""SELECT TOP(1) [x].[TenantId], [x].[UserId], [x].[address1], [x].[address2], [x].[city], [x].[country], [x].[name], [x].[phone], [x].[state], [x].[website], [x].[zip]
+FROM [CorporateProfile] AS [x]
+WHERE [x].[TenantId] = @__ticket_TenantId_0" (0723d8ff)
+2020-05-26T00:07:25.8236426+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("251"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[issueID], [h].[AssignedToUserID], [h].[CategoryID], [h].[DueDate], [h].[InstanceID], [h].[IssueDate], [h].[LastUpdated], [h].[Origin], [h].[Priority], [h].[ResolvedDate], [h].[StartDate], [h].[StatusID], [h].[TenantId], [h].[TimeSpentInSeconds], [h].[TimesReopened], [h].[UpdatedByPerformer], [h].[UpdatedByUser], [h].[UpdatedForTechView], [h].[UserID], [h].[body], [h].[subject]
+FROM [hdIssues] AS [h]" (0723d8ff)
+2020-05-26T00:07:26.1002606+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("247"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [h].[StatusID], [h].[AccessType], [h].[ButtonCaption], [h].[InstanceID], [h].[StopTimeSpent], [h].[Name]
+FROM [hdStatus] AS [h]" (0723d8ff)
+2020-05-26T00:07:26.3964263+05:30 0HM00R27EQT0P:00000004 [INF] Executed DbCommand ("248"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [a].[Id], [a].[AccessFailedCount], [a].[AdditionalNotes], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[JobTitle], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[MiddleName], [a].[Mobile], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[Primary], [a].[SecurityStamp], [a].[State], [a].[TenantId], [a].[TwoFactorEnabled], [a].[UserName], [a].[Zip]
+FROM [AspNetUsers] AS [a]" (0723d8ff)
+2020-05-26T00:07:26.4448785+05:30 0HM00R27EQT0P:00000004 [INF] Executing ViewResult, running view at path "/Views/Ticket/ViewTicket.cshtml". (9707eebe)
+2020-05-26T00:07:26.4575298+05:30 0HM00R27EQT0P:00000004 [INF] Executed action "src.Controllers.TicketController.ViewTicket (Well-AI.Advisor.Helpdesk)" in 2591.4658ms (afa2e885)
+2020-05-26T00:07:26.4652824+05:30 0HM00R27EQT0P:00000004 [INF] Request finished in 2663.1591ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T00:07:31.6024794+05:30 0HM00R27EQT0P:00000005 [INF] Request starting HTTP/1.1 GET http://localhost:60500/toastr.js.map   (ca22a1cb)
+2020-05-26T00:07:31.6093002+05:30 0HM00R27EQT0P:00000005 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:07:31.6149001+05:30 0HM00R27EQT0P:00000005 [INF] AuthenticationScheme: "Identity.Application" was successfully authenticated. (1805f3b3)
+2020-05-26T00:07:31.6216949+05:30 0HM00R27EQT0P:00000005 [INF] Executing action method "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" with arguments (null) - ModelState is Valid (ba7f4ac2)
+2020-05-26T00:07:31.6337421+05:30 0HM00R27EQT0P:00000005 [INF] Executing ViewResult, running view at path "/Views/Error/PageNotFound.cshtml". (9707eebe)
+2020-05-26T00:07:31.6483633+05:30 0HM00R27EQT0P:00000005 [INF] Executed action "src.Controllers.ErrorController.PageNotFound (Well-AI.Advisor.Helpdesk)" in 19.0066ms (afa2e885)
+2020-05-26T00:07:31.6565878+05:30 0HM00R27EQT0P:00000005 [INF] Request finished in 62.9236ms 404 text/html; charset=utf-8 (791a596a)
+2020-05-26T03:11:16.5981921-04:00 0HM018FTL38UG:00000001 [INF] Request starting HTTP/1.1 DEBUG http://localhost:52790/  0 (ca22a1cb)
+2020-05-26T03:11:16.5981925-04:00 0HM018FTL38UF:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:52790/   (ca22a1cb)
+2020-05-26T03:11:16.7147868-04:00 0HM018FTL38UG:00000001 [INF] Request finished in 177.7071ms 200  (791a596a)
+2020-05-26T03:11:17.0991587-04:00 0HM018FTL38UF:00000001 [INF] Authorization failed for user: null. (a4ab1676)
+2020-05-26T03:11:17.1086867-04:00 0HM018FTL38UF:00000001 [INF] Authorization failed for the request at filter '"Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter"'. (8b6446cb)
+2020-05-26T03:11:17.1205585-04:00 0HM018FTL38UF:00000001 [INF] Executing ChallengeResult with authentication schemes ([]). (f3dca807)
+2020-05-26T03:11:17.1443049-04:00 0HM018FTL38UF:00000001 [INF] AuthenticationScheme: "Identity.Application" was challenged. (d45f1f38)
+2020-05-26T03:11:17.1607295-04:00 0HM018FTL38UF:00000001 [INF] Executed action "src.Controllers.ConfigController.Index (Well-AI.Advisor.Helpdesk)" in 81.141ms (afa2e885)
+2020-05-26T03:11:17.1832994-04:00 0HM018FTL38UF:00000001 [INF] Request finished in 652.2998ms 302  (791a596a)
+2020-05-26T03:11:17.1935343-04:00 0HM018FTL38UG:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:52790/Account/Login?ReturnUrl=%2F   (ca22a1cb)
+2020-05-26T03:11:17.5883367-04:00 0HM018FTL38UG:00000002 [INF] Executing action method "src.Controllers.AccountController.Login (Well-AI.Advisor.Helpdesk)" with arguments (["/"]) - ModelState is Valid (ba7f4ac2)
+2020-05-26T03:11:17.6399479-04:00 0HM018FTL38UG:00000002 [INF] AuthenticationScheme: "Identity.External" signed out. (d3f50c8d)
+2020-05-26T03:11:23.2715215-04:00 0HM018FTL38UG:00000002 [INF] Executing ViewResult, running view at path "/Views/Account/Login.cshtml". (9707eebe)
+2020-05-26T03:11:34.0253610-04:00 0HM018FTL38UG:00000002 [INF] Executed action "src.Controllers.AccountController.Login (Well-AI.Advisor.Helpdesk)" in 16785.8119ms (afa2e885)
+2020-05-26T03:11:34.0720683-04:00 0HM018FTL38UG:00000002 [INF] Request finished in 16878.5833ms 200 text/html; charset=utf-8 (791a596a)
+2020-05-26T03:11:34.0845340-04:00 0HM018FTL38UF:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:52790/lib/bootstrap/dist/css/bootstrap.min.css   (ca22a1cb)
+2020-05-26T03:11:34.1112627-04:00 0HM018FTL38UF:00000002 [INF] The file "/lib/bootstrap/dist/css/bootstrap.min.css" was not modified (f1f8d725)
+2020-05-26T03:11:34.1225814-04:00 0HM018FTL38UF:00000002 [INF] Request finished in 38.0569ms 304 text/css (791a596a)
+2020-05-26T03:11:34.1331079-04:00 0HM018FTL38UG:00000003 [INF] Request starting HTTP/1.1 GET http://localhost:52790/adminlte/css/AdminLTE.min.css   (ca22a1cb)
+2020-05-26T03:11:34.1416071-04:00 0HM018FTL38UG:00000003 [INF] The file "/adminlte/css/AdminLTE.min.css" was not modified (f1f8d725)
+2020-05-26T03:11:34.1497148-04:00 0HM018FTL38UG:00000003 [INF] Request finished in 19.0732ms 304 text/css (791a596a)

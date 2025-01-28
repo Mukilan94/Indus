@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WellAI.Advisor.Model.Identity;
+@using WellAI.Advisor.DLL.Data;
+@using Microsoft.AspNetCore.Http;
+@inject SignInManager<WellIdentityUser> SignInManager
+@inject UserManager<WellIdentityUser> UserManager
+@{ 
+    string profileImageName = HttpContextAccessor.HttpContext.Session.GetString("ProfileImageName");
+
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="dropdown user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <img src="@profileImageName" class="user-image" alt="User Image">
+            <span class="hidden-xs">@await Component.InvokeAsync("ProfilePanel")!</span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="user-header">
+                <img src="@profileImageName" class="img-circle" alt="User Image">
+                <p>
+                    @await Component.InvokeAsync("ProfilePanel")
+                </p>
+            </li>
+
+            <li class="user-footer">
+                <div class="pull-left">
+                    @{ if (WellAIAppContext.Current.Session.GetString("AccountType1") == "0" || WellAIAppContext.Current.Session.GetString("AccountType1") == "3")//Account type 0 is Operating type, 3 is Advisor Operator with Dispatch
+                        {
+                            <form asp-area="OperatingCompany" asp-controller="EditProfile" asp-action="Index" asp-route-returnUrl="@Url.Action("Index", "EditProfile", new { area = "" })" method="get" id="editProfileForm" class="form-inline">
+                                <button type="submit" class="btn btn-link navbar-btn navbar-link">Edit Profile</button>
+                            </form>
+                        }
+                    }
+                </div>
+            @*<li class="user-footer">*@
+                <div class="pull-left">
+                    @{ if (WellAIAppContext.Current.Session.GetString("AccountType1") == "1" || WellAIAppContext.Current.Session.GetString("AccountType1") == "2" || WellAIAppContext.Current.Session.GetString("AccountType1") == "4")//Account type 1 is service type, 2 Dispatch Only, 4 Advisor Provider (service) with Dispatch
+                        {
+                            <form asp-area="ServiceCompany" asp-controller="ServiceEditProfile" asp-action="Index" asp-route-returnUrl="@Url.Action("Index", "ServiceEditProfile", new { area = "" })" method="get" id="editProfileForm" class="form-inline">
+                                <button type="submit" class="btn btn-link navbar-btn navbar-link">Edit Profile</button>
+                            </form>
+                        }
+                    }
+                </div>
+                <div class="pull-right">
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("`", "Home", new { area = "" })" method="post" id="logoutForm" class="form-inline">
+                        <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </li>
+}
+

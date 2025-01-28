@@ -1,0 +1,417 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.OperatingDashboardModel
+<section class="content-header">
+</section>
+<script>
+     function depthChartDataBound(e) {
+        displayLoading("#chartdepth", false);
+    }
+    function timeChartDataBound(e) {
+        displayLoading("#charttime", false);
+    }
+     function operatorTimeChange() {
+        var chart = $("#charttime").data("kendoChart");
+        chart.dataSource.read();
+    }
+    function onTimeChartRead(e) {
+        displayLoading("#charttime", true);
+        var ddlOperatorValue = $("#filtertime").val();
+        return {
+            operId: ddlOperatorValue
+        };
+    }
+    function onSeriesClick(e) {
+        var wellid = e.dataItem.WellId;
+        sessionStorage.setItem("WellIdValue", wellid);
+        window.location = '/InDepthRigData?wellId=' + e.dataItem.WellId;
+    }
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+</script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        $("#TotalRigs").click(function () {
+            window.location = "/rigs";
+        });
+    });
+    function CountsRefresh() {
+        $.ajax({
+            url: '/OperatingDashboard/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+            }
+        });
+    }
+    function lastMontAwardedBids() {
+        @{TempData["IsLastMonthFirstDate"] = true; }
+            window.location.href ="/projectauctions"
+    }
+    function thisMontAwardedBids() {
+        sessionStorage.setItem("OpenBids", "");
+        sessionStorage.setItem("AwardedBids","Completed");
+            window.location.href = "/projectauctions"
+    }
+    function openBidsVal() {
+        sessionStorage.setItem("AwardedBids", "");
+        sessionStorage.setItem("OpenBids", "Active");
+            window.location.href = "/projectauctions"
+    }
+    function upcomingServices() {
+       window.location.href = "/providerDirectory?pending=1&expire=1"
+    }
+    function recommendations() {
+        window.location.href = "/ProviderDirectory?pending=1&expire=0"
+    }
+    function openFieldTickets() {
+        window.location.href = "/SupportTickets"
+    }
+    function operatorChange() {
+        var chart = $("#chartdepth").data("kendoChart");
+        chart.dataSource.read();
+    }
+    function onChartRead(e) {
+        displayLoading("#chartdepth", true);
+        var ddlOperatorValue = $("#filterdepth").val();
+        return {
+            operId: ddlOperatorValue
+        };
+    }
+
+
+</script>
+<!-- Main content -->
+<section class="content" style="padding-left: 0px !important;">
+    <div class="container-fluid dashboard col-12">
+        <!-- Small boxes (Stat box) -->
+        <div class="row toptitle col-12">
+            <h4 class="dashboard-toptitle">At a Glance</h4>
+            <span class="dashboard-topdescription">Click on any of key metrics to open the related screen</span>
+        </div>
+        <div class="row topblocks col-12" style="margin-left:-3px">
+            <div class="blockstyle" id="TotalRigs">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Active rigs</span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="RigsCount" style="color:#007bff !important;" href="/rigs">@Model.Rigs</a></span>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle" onclick="lastMontAwardedBids()">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">
+                            Financial Total of  Completed Bids
+                        </span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="AwaredBidsValue">@Model.AwardedBidsVal</a> </span>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle" onclick="thisMontAwardedBids()">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Completed Bids</span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="completedBidsValue">@Model.AwardedBids</a></span>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle" onclick="openBidsVal()">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Active Bids </span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="OpenBidsValue">@Model.OpenBidsCount</a></span>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle" onclick="upcomingServices()">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Provider Compliance Alerts</span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="CompliaceAlert">@Model.ComplianceAlertCount</a></span>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle" onclick="recommendations()">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner" style=" padding-left: 5px !important;">
+                        <span class="dashboard-total">
+                            New Provider Recommendations
+                        </span>
+                    </div>
+                </div>
+                <span class="dashboard-totalval"><a id="Recomendation">@Model.Recommendations</a></span>
+            </div>
+            <!-- ./col -->
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div class="row col-12">
+            <!-- Left col -->
+            <section class="col-lg-6 connectedSortable" style="margin-left:-17px !important;">
+                <!-- Custom tabs (Charts with tabs)-->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="chart-header">
+                            <h3 class="card-title">ACTIVE WELLS</h3>
+                            <h4 class="dashboard-toptitle">Depth Chart</h4>
+                            <span class="dashboard-topdescription">Click on a well's data to view it's activity.</span>
+                        </div>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="demo-section k-content wide">
+                            @(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.OperatingRig>()
+                                .Name("chartdepth")
+                                .Title("")
+                                .Legend(legend => legend.Visible(false))
+                                .HtmlAttributes(new { style = "min-height:420px" })
+                                .ChartArea(chartArea => chartArea
+                                    .Background("transparent")
+                                )
+                                .Series(series => {
+                                    series.Column(model => model.Value)
+                                    .ColorField("Color")
+                                    .Overlay(o => o.Gradient(ChartSeriesGradient.None));
+                                })
+                                .CategoryAxis(axis => axis
+                                    .Name("series-axis")
+                                    .Line(line => line.Visible(false))
+                                )
+                                .CategoryAxis(axis => axis
+                                    .Name("label-axis")
+                                     .Labels(labels => labels.Rotation(-90))
+                                    .Categories(model => model.WellName)
+                                      .MajorGridLines(lines => lines.Visible(false))
+                                )
+                                .ValueAxis(axis => axis
+                                    .Numeric().Labels(labels => labels.Visible(true))
+                                    .Min(0)
+                                    .Max(32000)
+                                    .MajorUnit(1500)
+                                    .MinorUnit(500)
+                                    .Reverse(true)
+                                .Line(line => line.Visible(false))
+                                .MajorGridLines(lines => lines.Visible(true))
+                                )
+                                .DataSource(datasource => datasource
+                                         .Read(read => read.Action("GetDepthChartAction", "OperatingDashboard").Data("onChartRead")))
+                                .Tooltip(tooltip => tooltip
+                                    .Visible(true)
+                                    .Template("#= dataItem.Category #")
+                                )
+                                .Events(e =>
+                                {
+                                    e.DataBound("depthChartDataBound");
+                                    e.SeriesClick("onSeriesClick");
+                                })
+                            )
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </section>
+            <!-- /.Left col -->
+            <!-- right col (We are only adding the ID to make the widgets sortable)-->
+            <section class="col-lg-6 connectedSortable">
+                <!-- Map card -->
+                <div class="card bg-gradient-primary">
+                    <div class="card-header border-0">
+                        <div class="chart-header">
+                            <h3 class="card-title">ACTIVE WELLS</h3>
+                            <h4 class="dashboard-toptitle">Time Chart</h4>
+                            <span class="dashboard-topdescription">Click on a well's data to view it's activity.</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="demo-section k-content wide">
+                            @(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.OperatingRig>()
+                            .Name("charttime")
+                            .Title("")
+                            .HtmlAttributes(new { style = "min-height:420px" })
+                            .Legend(legend => legend
+                                .Visible(false)
+                            )
+                            .ChartArea(chartArea => chartArea
+                                .Background("transparent")
+                            )
+                            .Series(series => {
+                                series.Bar(model => model.Value2).ColorField("Color").Highlight(x=>x.Visible(false))
+                                .Overlay(o => o.Gradient(ChartSeriesGradient.None));
+                            })
+                            .CategoryAxis(axis => axis
+                                    .Name("label-axis")
+                                     .Labels(labels => labels.Rotation(0))
+                                    .Categories(model => model.WellName)
+                                      .MajorGridLines(lines => lines.Visible(false))
+                                )
+                            .ValueAxis(axis => axis
+                                .Date()
+                                .Min(0).Max(31).MajorUnit(1)
+                                .Line(line => line.Visible(false))
+                                .MajorGridLines(lines => lines.Visible(true))
+                            )
+                            .DataSource(datasource => datasource
+                                         .Read(read => read.Action("GetTimeChartAction", "OperatingDashboard").Data("onTimeChartRead")))
+                            .Tooltip(tooltip => tooltip
+                                    .Visible(true)
+                                    .Template("#= dataItem.Category #")
+                                )
+                            .Events(e =>
+                            {
+                                e.DataBound("timeChartDataBound");
+                                e.SeriesClick("onSeriesClick");
+                            })
+                        )
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+            </section>
+            <!-- right col -->
+        </div>
+        <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+</section>
+<style>
+    .blockstyle {
+        height: 75px;
+        width: auto;
+        min-width: 130px;
+        display: inline-block;
+        margin: 10px 5px 0 5px;
+        background-color: #fff;
+        border: 4px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+        justify-content: space-between;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    text {
+        font-family: Roboto !important;
+        font-weight: 600 !important;
+    }
+
+    .card {
+        background-color: #151d32 !important;
+        color: white;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-totalval {
+        color: #007bff;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 20px !important;
+        font-family: Roboto;
+    }
+
+    .topblocks {
+        margin-left: -22px !important;
+    }
+
+    .toptitle {
+        color: #fff;
+    }
+
+    .dashboard-toptitle {
+        font-family: Roboto;
+        margin-bottom: 0px;
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+    .card-title {
+        font-family: Roboto;
+        font-weight: normal;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-decoration: underline;
+        text-underline-position: under !important;
+    }
+
+    .dashboard-topdescription {
+        color: #f1f2f8;
+        font-weight: 300;
+        letter-spacing: .75px;
+        font-size: 10pX;
+        width: 100%;
+    }
+
+    .demo-section {
+        border: 4px solid #007AFC;
+        border-radius: 5px;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .card-header {
+        padding-left: 0px;
+        position: relative;
+        height: 100px;
+    }
+
+    .chart-header {
+        display: inline-block;
+        width: 62%;
+        position: absolute;
+    }
+
+    .operatorfilter {
+        display: inline-block;
+        position: absolute;
+        right: 0;
+    }
+
+        .operatorfilter .k-dropdown {
+            display: block;
+        }
+
+            .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                background-color: #fff;
+                color: #000;
+            }
+
+    .k-dropdown {
+        border: 2px solid blue;
+    }
+
+    @@media (max-width: 570px) {
+        .card-header {
+            height: auto !important;
+        }
+
+        .chart-header, .operatorfilter {
+            position: inherit !important;
+            display: block !important;
+            width: auto !important;
+        }
+    }
+</style>

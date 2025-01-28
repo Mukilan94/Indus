@@ -1,0 +1,49 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.OperatingCompany.Models.PadModel 
+@{
+    ViewData["Title"] = "Edit Pad";
+}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Pad_Name, "Pad")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Pad_Name, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Pad_Name)
+            </div>
+        </div>
+    </div>
+    <div class="row" style="display:none;">
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Latitude, "Latitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Latitude, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Latitude)
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Longitude, "Longitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Longitude, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Longitude)
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-textbox {
+        width:250px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+</style>

@@ -1,0 +1,13 @@
+﻿.form-group label {
+    display: inline-block;
+    margin-bottom: .5rem;
+    color: #fff !important;
+}
+
+.col-md-4 span {
+    color: #fff !important;
+}
+
+.col-md-5 span {
+    color: #fff !important;
+}

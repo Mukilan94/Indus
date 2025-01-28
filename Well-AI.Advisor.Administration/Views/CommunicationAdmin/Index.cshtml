@@ -1,0 +1,426 @@
+﻿@using System.Security.Claims;
+@{
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;
+}
+@{
+    
+    ViewData["Title"] = "Communication";
+}
+
+@model WellAI.Advisor.Model.Administration.CommunicationAdminViewModel
+
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content ">
+    <div class="leftpart">
+        @(Html.Kendo().TabStrip()
+		.Name("tabstripleft")
+        .Events(events=>events
+        .Select("onSelect"))
+		.Items(tabstrip =>
+		{
+		tabstrip.Add().Text("<span >Conversations</span>")
+					  .Encoded(false)
+				.Content(@<text>
+                                    <div id="chatRooms"></div>
+                        </text>);
+             tabstrip.Add().Text("<b style='float:left;margin-left:60px;'>Contacts</b> <Button class='primary' onclick='openAddContacts();'><i class='fa fa-plus'></i></Button>")
+                     .Encoded(false)
+                     .Selected(true)
+
+                     .Content(@<text><div id="clientContacts"> @{ await Html.RenderPartialAsync("_AddContacts", Model.CommunicationModel);} </div>
+                    </text>);
+})
+        )
+    </div>
+    <div class="centerpart">
+        @(Html.Kendo().Chat()
+            .Name("chat")
+            .Toolbar(toolbar =>
+            {
+                toolbar.Toggleable(true);
+                toolbar.Buttons(buttons =>
+                {
+                   
+                });
+            })
+            .Events(e =>
+            {
+                e.Post("onPost");
+            })
+        )
+    </div>
+    <div class="rightpart">
+        @(Html.Kendo().TabStrip()
+            .Name("tabstrip")
+            .Items(tabstrip =>
+                {
+                    tabstrip.Add().Text("<span>Profile</span>")
+                            .Encoded(false)
+                            .Selected(true)
+                            .Content(@<text>
+                                        <div class="card card-primary card-outline">
+                                            <div class="card-body box-profile">
+                                                <div class="text-center">
+                                                    <img class="profile-user-img img-fluid img-circle"
+                                                         src="/img/nophotouser1.png"
+                                                         alt="User profile picture" id="userProfileImg">
+                                                </div>
+                                                <h3 id="profileUsername" class="profile-username text-center"></h3>
+                                                <p class="profileCompany text-muted text-center"></p>
+                                                <p id="profileEmail" class="text-muted text-center"></p>
+                                                <p id="profilePhone" class="text-muted text-center"></p>
+                                                <input type="hidden" id="profileUserId" />
+                                                <input type="hidden" id="profileId" class="text-muted text-center" />
+                                                <div id="call-status">
+                                                </div>
+                                                @*<button class="k-button k-button-icontext k-grid-cancel hangup-button" onclick="hangUp()">Hang up</button>*@
+                                                <p style="text-align:center;">
+                                                    <i class="fa fa-phone" onclick="customerCall();"></i>
+                                                    <i class="fa fa-video-camera" onclick="showVideo();"></i>
+                                                    
+                                                </p>
+                                            </div>
+                                            <!-- /.card-body -->
+                                        </div>
+                            </text>);
+ tabstrip.Add().Text("<span>Services</span>")
+             .Encoded(false)
+             .Content(@<text>
+                                                        <ul class="k-list">
+                                                            <li class="k-item" role="option" aria-selected="false">
+                                                                <span class="k-state-default">
+                                                                    <img class="serviceimg profile-user-img" src="~/img/logohumb.png">
+                                                                </span>
+                                                                <div class="k-state-default">
+                                                                    <div class="chatuser profileCompany"></div>
+                                                                    <div class="chatjobtitle" id="companyWebsite"></div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        <div id="companyServices"></div>
+            </text>);
+})
+        )
+    </div>
+</section>
+ 
+@(Html.Kendo().Window().Name("AddContacts")
+    .Title("Add Contacts")
+    .Content(@<text>
+            <div class="buttons">
+                @Html.Kendo().Button().Name("Primary").Content("Submit").HtmlAttributes(new { @class = "k-button k-primary", type = "submit", onclick = "saveClientContact();" })
+                @Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeClientContact();" })
+            </div>
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.Common.ClientContactModel>()
+                   .Name("users")
+                   .HtmlAttributes(new { @class = "ra-section" })
+                   .Columns(columns =>
+                   {
+                       columns.Select().Width(50);
+                       columns.Bound(p => p.UserId).Hidden();
+                       columns.Bound(p => p.TenantId).Hidden();
+                       columns.Bound(p => p.ContactId).Hidden();
+                       columns.Bound(p => p.UserName);
+                       columns.Bound(p => p.CompanyName);
+                       columns.Bound(p => p.Email);
+                       columns.Bound(p => p.Phone);
+                   })
+                   .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                   .PersistSelection()
+                   .Sortable()
+                   .ToolBar(toolbar =>
+                   {
+                       toolbar.Search();
+                   })
+                   .Events(ev => ev.Change("onChange"))
+                   .DataSource(dataSource => dataSource
+                           .Ajax()
+                           .PageSize(10)
+                           .Batch(false)
+                           .Model(model => model.Id(p => p.UserName))
+                           .Model(model => model.Id(p => p.Email))
+                           .Read(read => read.Action("Contacts_Read", "Communication"))
+                   )
+            )
+    </text>
+)
+.Visible(false)
+.Actions(actions => actions
+.Close()
+)
+.Events(e =>
+{
+ e.Close("onCloseClientContact");
+})
+.Modal(true)
+.Draggable(true).Width(1000)
+)
+<style>
+    
+    .k-window {
+        border-radius: 5px !important;
+        top: 25px !important;
+    }
+
+    .k-button.k-flat,
+    .k-button.k-bare {
+        
+        font-weight: bold;
+    }
+
+        .k-button.k-flat
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+    .primary {
+        width: 40px;
+        background-color: black;
+        margin-left: 40px;
+    }
+
+    .fa-plus {
+        font-size: 15px;
+        color: white;
+    }
+
+    .buttons {
+        margin-bottom: 10px;
+    }
+
+    #chathistory td {
+        text-align: center;
+    }
+
+    .k-tabstrip-items .k-link {
+        display: inline-block;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #tabstripleft {
+        height: 583px !important;
+    }
+
+    #tabstrip-2, #tabstripleft-1 {
+        padding: 0;
+    }
+
+        #tabstrip-2 .k-list {
+            padding-bottom: 0px;
+        }
+
+            #tabstrip-2 .k-list .k-item, #tabstripleft-1 .k-list .k-item {
+                padding-left: 10px;
+            }
+
+    .chathisttitle {
+        color: #ffffff;
+    }
+
+    .leftpart {
+        display: inline-block;
+        width: 28%;
+        vertical-align: top;
+        height: 87vh;
+    }
+
+        .leftpart .k-tabstrip-wrapper, .rightpart .k-tabstrip-wrapper {
+            height: 100%;
+        }
+
+    .centerpart {
+        display: inline-block;
+        width: 50%;
+        height: 87vh;
+    }
+
+    .rightpart {
+        display: inline-block;
+        width: 21%;
+        vertical-align: top;
+        height: 87vh;
+    }
+
+    .k-chat {
+        max-width: inherit;
+        margin: inherit;
+        height: 87vh;
+    }
+
+    .k-card > img.k-card-image {
+        height: 134px;
+        display: block;
+    }
+
+    .quoteCard span {
+        display: block;
+        float: right;
+    }
+
+    .k-list {
+        padding-left: 0px;
+    }
+
+        .k-list .k-item {
+            padding-left: 0px;
+        }
+
+            .k-list .k-item .k-state-default {
+                padding-right: 10px;
+            }
+
+    .k-item .k-state-default > h4 {
+        margin-bottom: 0px;
+    }
+
+    .leftpart .profile-user-img {
+        max-width: 70px;
+        max-height: 70px;
+        border-radius: 50px;
+        border-width: 0px;
+    }
+
+    .chatuser {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .chatjobtitle {
+        font-size: 14px;
+    }
+
+    .k-list .k-item:hover {
+        color: #fff !important;
+        background-color: #007BFF !important;
+    }
+
+    .k-tabstrip-items .k-item {
+        color: #000;
+        background-color: #fff;
+    }
+
+        .k-tabstrip-items .k-item.k-state-active {
+            color: #3999FF;
+            border-bottom: 5px solid #007BFF !important;
+            border-left: 0px !important;
+            border-right: 0px !important;
+        }
+
+        .k-tabstrip-items .k-item.k-state-hover {
+            border-left: 0px !important;
+            border-right: 0px !important;
+        }
+
+    #tabstripleft-2 {
+        padding: 0px;
+    }
+
+    .k-tabstrip-top > .k-tabstrip-items .k-item {
+        width: 50%;
+    }
+
+    #tabstrip-1 .card {
+        border-width: 0px;
+    }
+
+    .rightpart .profile-user-img {
+        max-width: 105px;
+        max-height: 105px;
+        border-radius: 50px;
+        border-width: 0px;
+    }
+
+    .rightpart .card-body {
+        padding: 0px;
+    }
+
+    .rightpart .fa-phone {
+        color: #3639A4;
+        height: 25px;
+        margin-top: 10px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+
+    .rightpart .fa-video-camera {
+        color: #007BFF;
+        height: 25px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+
+    .rightpart .fa-users {
+        color: #F4AF00;
+        height: 25px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+
+    .profile-username {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .k-pager-wrap.k-pager-sm .k-pager-numbers {
+        border-color: #007BFF;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .videoleftpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+
+    .videorightpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    div#details-container div#local-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+
+    div#details-container div#remote-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+
+    .k-pager-wrap.k-pager-sm .k-pager-numbers {
+        border-color: #007BFF;
+    }
+
+    .k-chat .k-message-time {
+        opacity: 1 !important;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: opacity .2s ease-in-out;
+    }
+</style>
+

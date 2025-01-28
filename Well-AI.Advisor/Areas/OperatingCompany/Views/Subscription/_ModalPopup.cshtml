@@ -1,0 +1,21 @@
+﻿<div class="col-sm-11" style="text-align:center">
+<p>Please add payment details. </p>
+	<p><a href="#" class="btn btn-primary" id="btnSubmit" onclick="redirectToPayment();">Ok</a></p>
+</div>
+<style>
+	.ddl-custom {
+		border-color: #ccc;
+		height: 2.0em;
+		border-radius: 2px;
+	}
+	.error-msg {
+		color: #ff0000;
+		font-size: 12px;
+		display: none;
+	}
+</style>
+<script>
+	function redirectToPayment() {
+			window.location.href = '@Html.Raw(Url.Action("Index", "PaymentMethodsSRV"))' +'?modal=true';
+	};
+</script>

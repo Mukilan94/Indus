@@ -1,0 +1,53 @@
+﻿@using System.Security.Claims;
+@{
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;
+}
+@{
+    ViewData["Title"] = "Communication";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.CommunicationViewModel
+
+<section class="content-header">
+</section>
+<script src="https://www.promisejs.org/polyfills/promise-6.1.0.js"></script>
+
+<!-- Load DialogFlow Client API -->
+<script src="https://cdn.rawgit.com/dialogflow/dialogflow-javascript-client/50e82e62/target/ApiAi.min.js"></script>
+<script id="customer-item-template" type="text/x-kendo-template">
+    <span class="k-state-default" style="background-image: url(@Url.Content("/img/nophotouser.png"));"></span>
+    <span class="k-state-default"><h3>#: data.ContactName #</h3><p>#: data.CompanyName #</p></span>
+</script>
+<script src="~/js/chatCustomer.js"></script>
+<script>
+    $(document).ready(function () {
+        GetTwilioUserChannelsCustomer("seradmin@techunity.com");
+    });
+     async function GetTwilioUserChannelsCustomer(profileEmail) {
+       var loginUser = 'shurik85@gmail.com';
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+        var bChannelExists = false;
+       console.log("profileEmail : " + profileEmail);
+       console.log("loginUser : " + loginUser);
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+
+         //window.chatCustomer = $("#chatCustomer").data("kendoChat");
+
+        $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+
+            //const comclient = new Client(data.token);
+            //let comclient = await Twilio.Conversations.Client.create(data.token);
+            console.log('comclient' + comclient.connectionState);
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                chatClient = client;
+                console.log('client.connectionState'+client.connectionState);
+            }).catch(e => { console.error('Got an error:', e.code, e.message); });
+        });
+    }
+</script>

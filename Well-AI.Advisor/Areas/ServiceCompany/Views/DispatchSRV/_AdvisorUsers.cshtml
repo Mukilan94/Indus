@@ -1,0 +1,99 @@
+﻿
+<div class="auction-bottom">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.UserViewSRVModel>
+        ()
+        .Name("UsersGrid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.UserID).Hidden().Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            columns.Bound(p => p.UserName).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            columns.Bound(p => p.JobTitle).Title("Job Title").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+            columns.Bound(p => p.Email).Title("Email").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+            columns.Bound(p => p.PhoneNumber).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+
+        })
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+
+         //.Scrollable(scrollable => scrollable.Virtual(true))
+         .Scrollable(scrollable => scrollable.Endless(true))
+        .Sortable()
+        .Selectable()
+        .DataSource(dataSource => dataSource
+        .Ajax()
+
+        .Sort(sort =>
+        {
+            sort.Add("UserName").Ascending();
+        })
+        .Read(read => read.Action("AdvisorUsers_Read", "DispatchSRV"))
+        .Model(model => model.Id(p => p.UserID))
+        ))
+</div>
+<!--//.Events(e => e.Change("OnChange")))-->
+<div class="k-edit-buttons k-state-default">
+    <button id="btnSaveDispatchUser" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-save"></span>Dispatch User</button>
+    <button id="btnCloseDispatch" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+<style type="text/css">
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var window = $("#DispatchAssignUserWindow").data("kendoWindow");
+        window.center().open();
+        $('#DispatchAssignUserWindow').css("padding", "11px");
+    });
+
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    $(".k-grid-cancel").click(function () {
+        var window = $("#DispatchAssignUserWindow").data("kendoWindow");
+        window.close();
+    });
+
+    $(".k-grid-update").click(function () {
+
+        var sourcegrid = $('#UsersGrid').data('kendoGrid');
+        
+        const SelectedItems = sourcegrid.select();
+        
+        if (SelectedItems.length > 0) {
+            sourcegrid.select().each(function () {
+                var dataItem = sourcegrid.dataItem($(this));               
+                var userId = dataItem.UserID;
+
+                $.ajax({
+                    url: "/DispatchSRV/AddDispatchUser?UserId=" + userId,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json; chartset=uft-8",
+                    async: false,
+                    success: function (response) {
+
+                        var window = $("#DispatchAssignUserWindow").data("kendoWindow");
+                        window.close();
+
+                        LoadAssignDispatch(userId);
+                    },
+                    error: function (xhr, status, error) {
+                        planalert(xhr.responseText, "Error");
+                    }
+                });
+            });
+
+          
+        }
+        else {
+            planalert("Please select a user", "Information");
+        }
+    });
+</script>

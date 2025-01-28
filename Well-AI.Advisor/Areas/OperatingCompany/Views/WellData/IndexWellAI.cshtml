@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title0"] = "Well Register";
+    ViewData["Title"] = "Well Data";
+}
+@model IEnumerable<WellAI.Advisor.Model.OperatingCompany.Models.AIWellDataModel>
+<!-- Main content -->
+<section class="content">
+    @*columns.Bound(p => p.Updated).Format("{0: hh:mm:ss}");*@
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.AIWellDataModel>()
+        .Name("welldatamanager")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.wellName).Title("Well").Width(50);
+            columns.Bound(p => p.depth).Title("Depth").Width(30);
+            columns.Bound(p => p.day).Title("Day").Width(30);
+            columns.Bound(p => p.time).Title("Time").Width(20);
+            columns.Bound(p => p.leadTime).Title("Lead").Width(20);
+            columns.Bound(p => p.taskName).Title("Task").Width(30);
+            columns.Bound(p => p.scheduleDate).Title("Schd. Date").Format("{0: MM/dd/yyyy hh:mm:ss}").Width(30);
+            columns.Bound(p => p.startTime).Title("Start Date").Format("{0: MM/dd/yyyy hh:mm:ss}").Width(30);
+            columns.Bound(p => p.actionDate).Title("Action Date").Format("{0: MM/dd/yyyy hh:mm:ss}").Width(30);
+            columns.Bound(p => p.duration).Title("Duration").Width(30);
+            columns.Bound(p => p.adt).Title("ADT").Format("{0: MM/dd/yyyy hh:mm:ss}").Width(30);
+        })
+        .Pageable()
+        .Resizable(r => r.Columns(true))
+        .Sortable(s => s.Enabled(true))
+        .Scrollable(s => s.Enabled(false))
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Menu))
+        .DataSource(dataSource => dataSource
+                .Custom()
+                .Type("odata")
+                .PageSize(5)
+        ).BindTo(Model)
+    )
+</section>
+<link href="~/css/common.css" rel="stylesheet" />
+<style>
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+</style>

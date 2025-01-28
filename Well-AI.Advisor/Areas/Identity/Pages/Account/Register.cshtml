@@ -1,0 +1,255 @@
+﻿@page
+@model RegisterModel
+@using Kendo.Mvc.Extensions;
+@using Kendo.Mvc.UI;
+@{
+    ViewData["Title"] = "Register";
+
+    Dictionary<string, string> accountType = new Dictionary<string, string>();
+    accountType.Add("Rig Operator", "Operator");
+    accountType.Add("Service Provider", "Vendor");
+    accountType.Add("Dispatch", "Dispatch");
+}
+
+<div class="row login-row">
+    <div class="col-md-4 login-logo"></div>
+    <div class="col-md-4" style="padding-top:5%;">
+        <section>
+            <div style="padding-left:10%; text-align:center">
+                <h3>Complete the form below to create a new Well-AI for your Organization</h3>
+            </div>
+            <hr />
+            <div style="padding-left:10%;">
+
+                @if (ViewData.ModelState.ContainsKey("Company"))
+                {
+                    <em>You must have a confirmed email to log in. Click to resend the Account Confirmation Email @Html.ActionLink("resend", "SendEmailConfirmationMail", "Account")</em>
+                }
+
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group row">
+                        <div class="col-sm-5"></div>
+                        <input value="Rig Operator" asp-for="Input.AccountType" type="hidden" />
+                       
+                        <div class="col-sm-7">
+                            <select name="AccountType1" id="ddlAccountType1" onchange="changeValueAccountType1()" class="form-control">
+                                <option value="Rig Operator">Operator</option>
+                                <option value="Service Provider">Vendor</option>
+                                <option value="Dispatch">Dispatch</option>
+                            </select>
+                        </div>
+                       
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Name"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Name" class="form-control" />
+                            <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Title"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Title" class="form-control" />
+                            <span asp-validation-for="Input.Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Company"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Company" class="form-control" />
+                            <span asp-validation-for="Input.Company" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Phone"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Phone" class="form-control" />
+                            <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Email"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Email" class="form-control" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.ConfirmEmail"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.ConfirmEmail" class="form-control" />
+                            <span asp-validation-for="Input.ConfirmEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.Password"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.Password" class="form-control" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="Input.ConfirmPassword"></label>
+                        </div>
+                        <div class="col-sm-7">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-7">
+                            @*Beta Old*@
+                            @*<div class="g-recaptcha" data-sitekey="6LeinmgUAAAAAP6oEeKdyxAJ3Aw7Nbw8NKJUBwmb"></div>*@
+                            @*Beta New*@
+                            <div class="g-recaptcha" data-sitekey="6Lf3N-kdAAAAAHYxqrFoIJ9Cev_9_2010gMhoCMX"></div>
+
+                            @*Test Environment*@
+                            @*<div class="g-recaptcha" data-sitekey="6LepOYodAAAAALat_4WnIX7kJkjbCnTY8Znpl8Hj"></div>*@
+
+                            @*Staging Environment*@
+                            @*<div class="g-recaptcha" data-sitekey="6Le5UnQeAAAAAEMzJtZkmGlCbRPVVn9cjII4Fzgn"></div>*@
+
+                            <label id="lblMessage"></label>
+                        </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-7" style="text-align:center">
+                                    @Html.CheckBoxFor(Model => Model.Input.Agreement, new { required = "required" })
+                                    <label>I Agree to the <a href="javascript:void(0);" onclick="TermAndCondition()">Terms of Service.</a></label><br />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-7" style="text-align:center">
+                                    <button type="submit" class="btn btn-primary" style="background-color:#007bff">Register with Well-AI</button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        @(Html.Kendo().Window().Name("TermAndCondition")
+            .Title("Terms of Service")
+            .Visible(false)
+            .Content(@<text><div id="wndContent">
+
+                <p>AGREEMENT TO TERMS</p>
+
+        <p>These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&ldquo;you&rdquo;) and [business entity name] (&ldquo;we,&rdquo; &ldquo;us&rdquo; or &ldquo;our&rdquo;), concerning your access to and use of the [website name.com] website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the &ldquo;Site&rdquo;).</p>
+
+        <p>You agree that by accessing the Site, you have read, understood, and agree to be bound by all of these Terms and Conditions. If you do not agree with all of these Terms and Conditions, then you are expressly prohibited from using the Site and you must discontinue use immediately.</p>
+
+        <p>Supplemental terms and conditions or documents that may be posted on the Site from time to time are hereby expressly incorporated herein by reference. We reserve the right, in our sole discretion, to make changes or modifications to these Terms and Conditions at any time and for any reason.</p>
+
+        <p>We will alert you about any changes by updating the &ldquo;Last updated&rdquo; date of these Terms and Conditions, and you waive any right to receive specific notice of each such change.</p>
+
+        <p> It is your responsibility to periodically review these Terms and Conditions to stay informed of updates. You will be subject to, and will be deemed to have been made aware of and to have accepted, the changes in any revised Terms and Conditions by your continued use of the Site after the date such revised Terms and Conditions are posted. </p>
+
+         <div class="k-edit-buttons k-state-default">
+
+        <button type="button" role="button" onclick="windowClose()" class="k-button k-button-icontext k-grid-cancel k-primary" href="#"><span class="k-icon k-i-cancel"></span>Close</button>
+        </div>
+                </div></text>)
+            .Actions(actions => actions
+                .Close()
+            )
+            .Draggable(true)
+            .Width(800)
+            .Height(500)
+        )
+
+        @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+        }
+        <link href="~/css/common.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="~/js/common.js"></script>
+        <script src="~/js/register.js"></script>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="~/css/ionicons.min.css" />
+        <link rel="stylesheet" href="~/css/AdminLTE.css">
+        <link rel="stylesheet" href="~/css/telerik.css" />
+        <link rel="stylesheet" href="~/css/brand.css">
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/scripts/jszip.min.js"></script>
+        <script src="~/lib/scripts/kendo.all.min.js"></script>
+        <script src="~/lib/scripts/kendo.aspnetmvc.min.js"></script>
+        <script src="~/lib/scripts/kendo.timezones.min.js"></script>
+        <style>
+            .navbar-custom-menu {
+                display: none;
+            }
+        </style>
+        <style>
+            .k-widget.k-window{
+                top:250px !important;
+            }
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+
+            .k-dropdown .k-dropdown-wrap .k-input {
+                background-color: #fff;
+                color: #000 !important;
+            }
+
+            .k-dropdown {
+                width: 100% !important;
+            }
+
+                .k-dropdown .k-dropdown-wrap .k-select {
+                    color: #000;
+                    background-color: #fff;
+                }
+
+            #inputstate, #inputcategory {
+                height: 0px;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+
+            });
+            function TermAndCondition() {
+                var window = $("#TermAndCondition").data("kendoWindow");
+                window.open();
+                window.center();
+            }
+            function windowClose() {
+                $("#TermAndCondition").data("kendoWindow").close();
+            }
+            function WindowUpdate() {
+
+
+                $("#TermAndCondition").data("kendoWindow").close();
+            }
+        </script>

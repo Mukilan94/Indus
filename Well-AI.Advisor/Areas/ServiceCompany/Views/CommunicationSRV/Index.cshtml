@@ -1,0 +1,1011 @@
+﻿@using System.Security.Claims;
+@{
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;
+}
+@{
+        ViewData["Title"] = "Communication";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.CommunicationSRVViewModel
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="leftpart">
+        @(Html.Kendo().TabStrip()
+			.Name("tabstripleft")
+			 .Events(events => events
+	.Select("onSelect"))
+			.Items(tabstrip =>
+			{
+			tabstrip.Add().Text("<span>Conversations</span>")
+					.Encoded(false)
+					.Content(@<text>
+                    <div id="chatRooms"></div>
+                        </text>);
+                            tabstrip.Add().Text("<b style='float:left;margin-left:60px;'>Contacts</b> <Button class='primary' onclick='openAddContacts();'><i class='fa fa-plus'></i></Button>")
+                            .Encoded(false)
+                            .Selected(true)
+                            .Content(@<text><div id="clientContacts"> @{ await Html.RenderPartialAsync("_AddContacts", Model.CommunicationModel);} </div>
+                            </text>);
+                        })
+        )
+    </div>
+    <div class="centerpart">
+        @(Html.Kendo().Chat()
+                    .Name("chatCustomer")
+                    .Toolbar(toolbar =>
+                    {
+                        toolbar.Toggleable(true);
+                        toolbar.Buttons(buttons =>
+                        {
+                            });
+                    })
+                    .Events(e =>
+                    {
+                        e.Post("onPostCustomer");
+                    })
+        )
+    </div>
+    <div class="rightpart">
+        @(Html.Kendo().TabStrip()
+                .Name("tabstrip")
+                .Items(tabstrip =>
+                    {
+                        tabstrip.Add().Text("<span>Profile</span>")
+                                .Encoded(false)
+                                .Selected(true)
+                                .Content(@<text>
+                                            <div class="card card-primary card-outline">
+                                                <div class="card-body box-profile">
+                                                    <div class="text-center">
+                                                        <img class="profile-user-img img-fluid img-circle" id="userProfileImg"
+                                                             src="/img/nophotouser1.png"
+                                                             alt="User profile picture">
+                                                    </div>
+                                                    <h3 id="profileUsername" class="profile-username text-center"></h3>
+                                                    <p class="profileCompany text-muted text-center"></p>
+                                                    <p class="text-center"><a id="profileEmail" class="text-center"  data-rel="external" data-role="listview-link" href="mailto:comments@yahoo.com"></a></p>
+                                                    <p id="profilePhone" class="text-muted text-center"></p>
+                                                    <input type="hidden" id="profileUserId" />
+                                                    @*<div id="call-status">
+                                                    </div>*@
+
+                                                    <p style="text-align:center;">
+                                                        <i class="fa fa-phone" onclick="customerCallAtCompany();"></i>
+                                                        <i class="fa fa-video-camera" onclick="showVideoCustomer();"></i>
+                                                        </p>
+                                                     @*<div class="text-center" style="padding-top:10px;">
+                                                        <button class="k-button k-button-icontext k-grid-cancel hangup-button" id="btnHangUp">Hang up</button>
+                                                </div>*@
+                                                    <hr />
+                                                    <h3>UPCOMING SERVICES</h3>
+                                                    <div id="UpComingServices" style="Height:45vh;overflow-y:auto;position:relative"></div>
+                                                </div>
+
+                                                <!-- /.card-body -->
+                                            </div>
+                                </text>);
+                                        tabstrip.Add().Text("<span>Services</span>")
+                                        .Encoded(false)
+                                        .Content(@<text>
+                                     <ul class="k-list">
+                                        <li class="k-item" role="option" aria-selected="false">
+                                            <span class="k-state-default">
+                                                <img class="serviceimg profile-user-img" src="~/img/logohumb.png">
+                                            </span>
+                                            <div class="k-state-default">
+                                                <div class="chatuser profileCompany"></div>
+                                                <div class="chatjobtitle" id="companyWebsite"></div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div id="companyServices"></div>
+</text>);
+})
+        )
+    </div>
+</section>
+@(Html.Kendo().Window().Name("VideoDetailsServiceCompany")
+    .Title("Video Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+        {
+            e.Close("onClose");
+        })
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+@(Html.Kendo().Window().Name("AnswerCallServiceCompany")
+    .Title("Answer Call")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+    {
+        e.Close("onAnswerClose");
+    })
+    .Modal(true)
+    .Draggable(true).Width(300)
+)
+@(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+    .Events(ev => ev.Close("onCallWindowClose"))
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+@(Html.Kendo().Window().Name("AddContacts")
+    .Title("Add Contacts")
+    .Content(@<text>
+            <div class="buttons">
+                @Html.Kendo().Button().Name("Primary").Content("Submit").HtmlAttributes(new { @class = "k-button k-primary", type = "submit", onclick = "saveClientContact();" })
+                @Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeClientContact();" })
+            </div>
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.Common.ClientContactModel>()
+               .Name("users")
+               .HtmlAttributes(new { @class = "ra-section" })
+               .Columns(columns =>
+               {
+                   columns.Select().Width(50);
+                   columns.Bound(p => p.UserId).Hidden();
+                   columns.Bound(p => p.TenantId).Hidden();
+                   columns.Bound(p => p.ContactId).Hidden();
+                   columns.Bound(p => p.UserName);
+                   columns.Bound(p => p.CompanyName);
+                   columns.Bound(p => p.Email).Width(250);
+                   columns.Bound(p => p.Phone).Width(150);
+               })
+               .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+               .Scrollable(scrollable => scrollable.Virtual(true))
+               .PersistSelection()
+               .Sortable()
+               .ToolBar(toolbar =>
+               {
+                   toolbar.Search();
+               })
+               .Events(ev => ev.Change("onChange"))
+               .DataSource(dataSource => dataSource
+                       .Ajax()
+                       .PageSize(10)
+                       .Batch(false)
+                       .Model(model => model.Id(p => p.UserName))
+                       .Model(model => model.Id(p => p.Email))
+                       .Read(read => read.Action("Contacts_Read", "CommunicationSRV"))
+               )
+            )
+    </text>
+)
+.Visible(false)
+.Actions(actions => actions
+.Close()
+)
+.Events(e =>
+{
+e.Close("onCloseClientContact");
+})
+.Modal(true)
+.Draggable(true).Width(1000)
+)
+<style>
+    .k-window {
+        border-radius: 5px !important;
+        top: 25px !important;
+    }
+    .k-button.k-flat,
+    .k-button.k-bare {
+        font-weight: bold !important;
+    }
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 13px !important;
+    }
+    .primary {
+        width: 40px;
+        background-color: black;
+        margin-left: 40px;
+    }
+    .fa-plus {
+        font-size: 15px;
+        color: white;
+    }
+    .buttons {
+        margin-bottom: 10px;
+    }
+    #chathistory td {
+        text-align: center;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    .k-tabstrip-items .k-link {
+        display: inline-block;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    #tabstripleft {
+        height: 583px !important;
+    }
+    #tabstrip-2, #tabstripleft-1 {
+        padding: 0;
+    }
+       #tabstrip-2 .k-list {
+            padding-bottom: 0px;
+        }
+
+            #tabstrip-2 .k-list .k-item, #tabstripleft-1 .k-list .k-item {
+                padding-left: 10px;
+            }
+
+    .chathisttitle {
+        color: #ffffff;
+    }
+    .leftpart {
+        display: inline-block;
+        width: 28%;
+        vertical-align: top;
+        height: 87vh;
+    }
+        .leftpart .k-tabstrip-wrapper, .rightpart .k-tabstrip-wrapper {
+            height: 100%;
+        }
+    .centerpart {
+        display: inline-block;
+        width: 50%;
+        height: 87vh;
+    }
+    .rightpart {
+        display: inline-block;
+        width: 21%;
+        vertical-align: top;
+        height: 87vh;
+    }
+    .k-chat {
+        max-width: inherit;
+        margin: inherit;
+        height: 87vh;
+   }
+    .k-card > img.k-card-image {
+        height: 134px;
+        display: block;
+    }
+    .quoteCard span {
+        display: block;
+        float: right;
+    }
+    .k-list {
+        padding-left: 0px;
+    }
+        .k-list .k-item {
+            padding-left: 0px;
+        }
+            .k-list .k-item .k-state-default {
+                padding-right: 10px;
+            }
+    .k-item .k-state-default > h4 {
+        margin-bottom: 0px;
+    }
+    .leftpart .profile-user-img {
+        max-width: 70px;
+        max-height: 70px;
+        border-radius: 50px;
+        border-width: 0px;
+    }
+    .chatuser {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .chatjobtitle {
+        font-size: 14px;
+    }
+    .k-list .k-item:hover {
+        color: #fff !important;
+        background-color: #007BFF !important;
+    }
+    .k-tabstrip-items .k-item {
+        color: #000;
+        background-color: #fff;
+    }
+        .k-tabstrip-items .k-item.k-state-active {
+            color: #3999FF;
+            border-bottom: 5px solid #007BFF !important;
+            border-left: 0px !important;
+            border-right: 0px !important;
+        }
+       .k-tabstrip-items .k-item.k-state-hover {
+            border-left: 0px !important;
+            border-right: 0px !important;
+        }
+    #tabstripleft-2 {
+        padding: 0px;
+    }
+    .k-tabstrip-top > .k-tabstrip-items .k-item {
+        width: 50%;
+    }
+    #tabstrip-1 .card {
+        border-width: 0px;
+    }
+    .rightpart .profile-user-img {
+        max-width: 105px;
+        max-height: 105px;
+        border-radius: 50px;
+        border-width: 0px;
+    }
+    .rightpart .card-body {
+        padding: 0px;
+    }
+   .rightpart .fa-phone {
+        color: #3639A4;
+        height: 25px;
+        margin-top: 10px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+    .rightpart .fa-video-camera {
+        color: #007BFF;
+        height: 25px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+    .rightpart .fa-users {
+        color: #F4AF00;
+        height: 25px;
+        font-size: 20px;
+        width: 25px;
+        cursor: pointer;
+    }
+    .profile-username {
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .k-pager-wrap.k-pager-sm .k-pager-numbers {
+        border-color: #007BFF;
+    }
+    .videoleftpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+
+    .videorightpart {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+    }
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+    div#details-container div#local-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+    div#details-container div#remote-media video {
+        max-width: 100%;
+        max-height: 100%;
+        border: none;
+    }
+    .k-pager-wrap.k-pager-sm .k-pager-numbers {
+        border-color: #007BFF;
+    }
+    .k-chat .k-message-time {
+        opacity: 1 !important;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: opacity .2s ease-in-out;
+    }
+</style>
+<script type="text/javascript">
+   $(document).ready(function () {
+   });
+</script>
+<style>
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+    .k-pager-numbers {
+        display: contents !important;
+    }
+</style>
+<!-- Load Promise Polyfill. Required by the DialogFlow Client API.-->
+<script src="https://www.promisejs.org/polyfills/promise-6.1.0.js"></script>
+<!-- Load DialogFlow Client API -->
+<script src="https://cdn.rawgit.com/dialogflow/dialogflow-javascript-client/50e82e62/target/ApiAi.min.js"></script>
+<script id="customer-item-template" type="text/x-kendo-template">
+    <span class="k-state-default" style="background-image: url(@Url.Content("/img/nophotouser.png"));"></span>
+    <span class="k-state-default"><h3>#: data.ContactName #</h3><p>#: data.CompanyName #</p></span>
+</script>
+<script src="~/js/chatCustomer.js"></script>
+<script src="~/js/phonecall.js"></script>
+<script type="text/x-kendo-template" id="templateVideoCustomer">
+    <div id="details-container">
+        <div class="videoleftpart">
+            <div id="remote-media"></div>
+        </div>
+        <div class="videorightpart">
+            <div id="local-media"></div>
+        </div>
+        <div class="text-center">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowClose();"><span class="k-icon k-i-cancel"></span>End Call</button>
+        </div>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="templateAudioCustomerAnswerCall">
+    <div id="details-container">
+        <audio id="answerAudioServiceCompany" controls autoplay hidden>
+            <source src="https://api.twilio.com/cowbell.mp3" type="audio/mpeg">
+        </audio>
+        <p>Incoming Call from: #= UserName !=null ? UserName : '' #</p>
+        <div class="videoleftpart">
+            <button type="button" class="btn btn-success" onclick="answerCallPopup();"><i class="fa fa-video-camera"></i>Accept</button>
+        </div>
+        <div class="videorightpart">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowCloseAnswer();"><span class="k-icon k-i-cancel"></span>Reject</button>
+        </div>
+    </div>
+</script>
+<script>
+    var videoRoom = 'WellAI';
+    var answerCallUser = '';
+    var selectedClientContact = [];
+    var isAnswerCall = false;
+    var selectedProfile = "";
+    var chatClient;
+    var userChannelCustomer;
+    var loginUserId;
+   var currentChatUserId;
+    $(document).ready(function () {
+        isAnswerCall = false;
+        console.log('ReceiveVideoNotification at Communication Service');
+         chatHub.on('ReceiveVideoNotification', function (sender, receiver, roomName) {
+             if (sender === '@senderUser' && roomName === 'Close') {
+                 windowClose();
+            }
+        });
+    });
+    var videoTemplate = kendo.template($("#templateVideoCustomer").html());
+    var answerCallTemplate = kendo.template($("#templateAudioCustomerAnswerCall").html());
+    function showVideoCustomer() {
+        var userName = $('#profileUsername').text();
+        var receiver = $('#profileEmail').text();
+        var contactUserID = $('#profileUserId').val();
+        var url = '@Url.Action("GenerateRoomName", "Token")';
+        $.getJSON(url, function (data) {
+            videoRoom = data;
+            chatHub.invoke("SendVideoNotification", '@senderUser', receiver, videoRoom);
+
+            //Phase II Changes - 03/11/2021
+	        var callMessage = 'Video Call From ' + '@senderUser';
+            SaveCommunicationNotification(contactUserID, callMessage, 'Video Call');
+
+            openVideoPouupCustomer(userName);
+        });
+    }
+    function answerCall(userName) {
+        var title = "Incoming Call";
+        var dataItem = {
+            UserName: userName
+        };
+        var wnd = $("#AnswerCallServiceCompany").data("kendoWindow");
+        wnd.title(title);
+        wnd.content(answerCallTemplate(dataItem));
+        wnd.center().open();
+    }
+    function answerCallPopup() {
+        isAnswerCall = true;
+        $("#answerAudioServiceCompany")[0].pause();
+        openVideoPouupCustomer(answerCallUser);
+        var wnd = $("#AnswerCallServiceCompany").data("kendoWindow");
+        wnd.close();
+    }
+    function openVideoPouupCustomer(userName) {
+        joinRoom(videoRoom);
+        var title = "Calling: " + userName;
+        var dataItem = "";
+        var wnd = $("#VideoDetailsServiceCompany").data("kendoWindow");
+       wnd.title(title);
+        wnd.content(videoTemplate(dataItem));
+        wnd.center().open();
+    }
+    function onClose(e) {
+        
+        console.log('Service Company Communication Index onClose');
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+    }
+    function windowClose() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        //communication
+        chatHub.invoke("SendVideoNotification", senderUser, receiverUser, 'Close');
+        var wnd = $("#VideoDetailsServiceCompany").data("kendoWindow");
+        wnd.close();
+
+         //Phase II Changes
+        setTimeout(function () {
+            if (wnd != undefined) {
+                wnd.close();
+            }            
+        }, 1000);
+
+    }
+    function windowAutoClose() {
+        if (!isAnswerCall) {
+            windowCloseAnswer();
+        }
+    }
+    function windowCloseAnswer() {
+        //tempcomment
+        leaveRoomIfJoined();
+        //closeWindowsIfOpen();
+        var wnd = $("#AnswerCallServiceCompany").data("kendoWindow");
+        $("#answerAudioServiceCompany")[0].pause();
+        wnd.close();
+    }
+    function updateProfile(profileUsername, profileCompany, profileEmail, profilePhone, companyWebsite, companyLogo, userLogo, tenantId,clientContactId, clientUserId) {
+        var emptyUserlogopath = "/img/nophotouser1.png";
+        var emptyCompanyProfilelogopath = "/img/logohumb.png";
+        $('#profileUsername').text(profileUsername);
+        $('.profileCompany').text(profileCompany);
+        $('#profileEmail').text(profileEmail);
+        var emailUrl = "mailto:" + profileEmail;
+        $('#profileEmail').attr('href', emailUrl);
+        $('#profilePhone').text(profilePhone);
+        $('#profileUserId').val(clientUserId);
+        $('#companyWebsite').text(companyWebsite);
+        if (companyLogo != "") {
+            $(".serviceimg").attr("src", companyLogo);
+        }
+        else {
+            $(".serviceimg").attr("src", emptyCompanyProfilelogopath);
+        }
+        $('#profileId').text(tenantId);
+        if (userLogo != "") {
+            $('#' + clientContactId).attr("src", userLogo);
+            $("#userProfileImg").attr("src", userLogo);
+        }
+        else {
+            $('#' + clientContactId).attr("src", emptyUserlogopath);
+            $("#userProfileImg").attr("src", emptyUserlogopath);
+        }
+        //Update status on database that all messages are render
+        UpdateStatusDisconnected();
+        selectedProfile = profileEmail;
+        window.chatCustomer = $("#chatCustomer").data("kendoChat");
+        chatCustomer.view.element[0].childNodes[0].innerHTML = "";
+        //GetTwilioUserChannels(profileEmail);
+        $.get("/CommunicationSRV/CompanyServices", { tenantId: tenantId }, function (data) {
+            $('#ServicesUlList').empty();// = "";
+            $('#companyServices').html(data);
+        });
+        $.get("/CommunicationSRV/UpComingServices", { tenantId: tenantId }, function (upcomingservicedata) {
+            console.log('upcomingservicedata '+upcomingservicedata);
+            $('#UpComingServicesUlList').empty();// = "";
+            $('#UpComingServices').html(upcomingservicedata);
+        });
+        CreateOrJoinChatChannelCustomer(selectedProfile);
+    }
+    function GetTwilioUserChannelCustomer(profileUsername, profileCompany, profileEmail, profilePhone, companyWebsite) {
+        $('#profileUsername').text(profileUsername);
+        $('.profileCompany').text(profileCompany);
+        $('#profileEmail').text(profileEmail);
+        $('#profilePhone').text(profilePhone);
+        $('#companyWebsite').text(companyWebsite);
+        selectedProfile = profileEmail;
+        //Karthik
+        GetTwilioUserChannelsCustomer(profileEmail);
+    }
+    function showCallWindow(phone) {
+        console.log("Calling : " + phone);
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/Communication/ManageCall/', { phone: phone }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                    //Phase II Changes - Alert
+                    communicationalert("Error parsing server response", "Alert");
+                }
+            }
+        });
+    }
+
+     //Phase II Changes - Alert
+   function communicationalert(content,alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function customerCallAtCompany() {
+        var phoneNumber = $('#profilePhone').text();
+        console.log("Calling : " + phoneNumber);
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/Communication/ManageCall/', { phone: phoneNumber }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                    //Phase II Changes - Alert
+                    communicationalert("Error parsing server response", "Alert");
+                }
+            }
+        });
+        //callCustomer(phoneNumber);
+    }
+    function openAddContacts() {
+        var wnd = $("#AddContacts").data("kendoWindow");
+        wnd.center().open();
+        $("input:text").val("");
+        $('#users').data('kendoGrid').clearSelection();
+
+        setTimeout(function () {
+            $('#users').data('kendoGrid').dataSource.read().then(function () {
+                $('#users').data('kendoGrid').reload();
+            });
+        },500);
+   }
+   //Create new User Channel
+    function CreateOrJoinChatChannelCustomer(receiver) {
+        var profileEmail = receiver;//$('#profileEmail').text();
+        GetTwilioUserChannelsCustomer(profileEmail);
+    }
+    function onChange(e) {
+        var selectedRows = this.select();
+        selectedClientContact = [];
+        for (var i = 0; i < selectedRows.length; i++) {
+            var dataItem = this.dataItem(selectedRows[i]);
+            var ClientContact =
+            {
+                UserId: dataItem.UserId,
+                TenantId: dataItem.TenantId,
+                ContactId: dataItem.ContactId
+            };
+            selectedClientContact.push(ClientContact);
+        }
+    }
+    function GetUserTocken(profileEmail) {
+        var UserName = senderUser;
+        window.chat = $("#chat").data("kendoChat");
+        $.post("/Token/GenerateUserChatToken", { UserName }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client');
+                chatClient = client;
+                chatClient.getSubscribedConversations().then(createOrJoinGeneralChannel);
+                // Alert the user they have been assigned a random loginUserId
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+    }
+    //profileEmail is toUser
+    function GetTwilioUserChannelsCustomer(profileEmail) {
+        var loginUser = '@senderUser';
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+        var bChannelExists = false;
+       console.log("profileEmail : " + profileEmail);
+       console.log("loginUser : " + loginUser);
+       //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+       window.chat = $("#chat").data("kendoChat");
+       $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client');
+                chatClient = client;
+                // Alert the user they have been assigned a random loginUserId
+                //Join the new invitations from other users
+                //debugger;
+                //chatClient.on('channelInvited', function (channel) {
+                //    //debugger;
+                //    console.log('Invited to channel ' + channel.friendlyName);
+                //    // Join the channel that you were invited to
+                //    channel.join();
+                //    JoinUserChannelCustomer(channel, profileEmail);
+                //});
+                chatClient.getSubscribedConversations().then(function (paginator) {
+                    //debugger;
+                    //alert('Subscrition count');
+                    console.log('Chat Client subscibed conversations');
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+                        console.log('Channel: ' + channel.friendlyName);
+                        //check for touser (profileEmail) and fromuser (UserName)
+                        //if (channel.friendlyName == profileEmail) {
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+                            JoinUserChannelCustomer(channel, profileEmail);
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+                            JoinUserChannelCustomer(channel, profileEmail);
+                            break;
+                        }
+                    }
+                    if (bChannelExists.toString() == 'false') {
+                        var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "CommunicationSRV",
+                                        new { fromUser = "sender", toUser = "receiver" }))'
+                            .replace("sender", loginUser)
+                            .replace("receiver", profileEmail)
+                        $.ajax({
+                            url: posturl,
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+                                //var result = parse.JSON(data);
+                                //debugger;
+                                //console.log(' channel result ' + result.channelid);
+                                //console.log(' channel result ' + result.channelid == undefined || result.channelid == '');
+                                
+                                    //setTimeout(function () {
+                                       
+                                    //}, 20000);
+
+                                if (data == undefined || data == '') {
+                                    //debugger;
+                                    //alert(' channel ' + result);
+                                    CreateUserChannelCustomer('c_' + loginUser + '_' + profileEmail, profileEmail);
+                                }
+                            }
+                        });
+                    }
+                });
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+           });
+        });
+    }
+        //Karthik
+    function LeaveTwilioChatRoomCustomer(profileEmail, userId) {
+        var loginUser = '@senderUser';
+        var leaveChannelSuccess = false;
+        console.log("profileEmail @@ LeaveChatRoom: " + profileEmail);
+        console.log("loginUser @@ LeaveChatRoom : " + loginUser);
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+        $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client @@Twilio');
+                chatClient = client;
+                chatClient.getSubscribedConversations().then(function (paginator) {
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+                        console.log('Channel: ' + channel.friendlyName);
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+                            JoinUserChannelCustomer(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+                            JoinUserChannelCustomer(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+                            break;
+                        }
+                    }
+                });
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+       return leaveChannelSuccess;
+    }
+    function leaveUserFromChannel(sid, receiver) {
+         var posturl = '@Html.Raw(Url.Action("UpdateLeaveUserChannelStatus", "CommunicationSRV",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    console.log('Status updated');
+                }
+            },
+            error: function (request, error) {
+                console.log('leaveUserFromChannel ' + error);
+            },
+        });
+    }
+    function saveClientContact() {
+        var posturl = '@Url.Action("SaveClientContact", "CommunicationSRV")';
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            data: JSON.stringify(selectedClientContact),
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    var grid = $("#users").data("kendoGrid");
+                    grid.dataSource.read();
+                    $('#clientContacts').html('');
+                    $('#clientContacts').html(data);
+                    selectedClientContact = [];
+                    closeClientContact();
+                }
+                else {
+                    //alert("Please Select Contact");
+                    communicationalert("Please Select Contact", "Alert");
+                }
+            }
+        });
+    }
+    function onCloseClientContact(e) {
+    }
+    function closeClientContact() {
+        var wnd = $("#AddContacts").data("kendoWindow");
+        wnd.close();
+        $("input:text").val("");
+        $("#users").data("kendoGrid").dataSource.filter({});
+    }
+    function clientContactDelete(clientContactId) {
+        var posturl = '@Url.Action("UpdateClientContact", "CommunicationSRV", new { clientContactId = "ID" })'.replace("ID",parseInt(clientContactId));
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    $('#clientContacts').html('');
+                    $('#clientContacts').html(data);
+                }
+            }
+        });
+    }
+    function saveChannelInTwilioUserMapping(receiver,sid, userIdentity, uniqueName) {
+         var posturl = '@Html.Raw(Url.Action("AddUserChannelInTwilioMappings", "CommunicationSRV",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID", userIdentity= "userid", channelUniqueName = "channelname" }))'
+                       .replace("sender", loginUserId)
+                       .replace("receiver", receiver)
+                       .replace("channelSID", sid)
+                       .replace("userid", userIdentity)
+                       .replace("channelname", uniqueName);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+            }
+        });
+    }
+    //Phase II Changes
+    //Message Type - Chat/Video Call
+    function SaveCommunicationNotification(receiver, msg, msgType) {
+        var posturl = 'CommunicationSRV/SaveMessageNotification?toUser=' + receiver + "&message=" + msg + "&type=1" + "&messageType=" + msgType;
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+    function UpdateStatusDisconnected() {
+        var posturl = '@Html.Raw(Url.Action("UpdateStatusNotification", "CommunicationSRV"))';
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+    function inviteUsertoChannelCustomer(sid, receiver) {
+         var posturl = '@Html.Raw(Url.Action("UpdateUserChannelInvitationStatus", "CommunicationSRV",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+    function getUserChannelId(fromuser, touser) {
+        var channelId = "";
+         var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "CommunicationSRV",
+                       new { fromUser = "sender", toUser = "receiver" }))'
+                         .replace("sender", fromuser)
+                         .replace("receiver", touser)
+        $.ajax({
+            url: posturl,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    channelId = data;
+                }
+            }
+        });
+        return channelId;
+    }
+    function onSelect(e) {
+        var posturl = '@Html.Raw(Url.Action("RefreshChatList", "CommunicationSRV"))';
+        if ($(e.item).find("> .k-link").text()=='Conversations') {
+			    $.ajax({
+            url: posturl,
+            type: "GET",
+            success: function(data) {
+				$('#chatRooms').html(data);
+            }
+        });
+    }
+		}
+</script>

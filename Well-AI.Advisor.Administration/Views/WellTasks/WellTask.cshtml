@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "WellTask";
+}
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid-AssignTask, .k-grid-AssignTask:hover {
+            background-color: #ffff
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .row {
+            padding-top: 3px;
+        }
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+    </style>
+</section>
+<section class="content">
+    <div class="row">
+        <div id="PageHeading" class="col-md-6"><strong>Well Service</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.WellTypeModel>()
+            .Name("WellTaskGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.WellTypeName);
+                columns.Bound(p => p.WellTypeId).Hidden();
+                columns.Command(command =>
+                {
+                    
+                    command.Custom("Assign Task").Click("AssignTask");
+                }).Title("Action").Width(110);
+            })
+            .Selectable()
+            .ToolBar(toolbar => toolbar.Create().Text("Add Well Type"))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditWellType").Window(w => w.Title("Edit Well Type").Width(650)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(15)
+                .Read(read => read.Action("WellType_Read", "WellTasks"))
+                .Model(model => model.Id(p => p.WellTypeId))
+                .Create(update => update.Action("WellType_Create", "WellTasks"))
+                .Update(update => update.Action("WellType_Update", "WellTasks"))
+                .Events(events => events.Error("error"))
+            ).Events(e =>
+                {
+                    e.Edit("gridEdit");
+                    e.DataBound("DataBound");
+                }))
+    </div>
+</section>
+
+<script>
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Well Type");
+            $('.k-grid-update').text("Save"); $("#IsActive").prop('checked', true).trigger("change");
+
+        }
+    }
+
+    function DataBound(e) {
+        var grid = this;
+
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#WellTaskGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function AssignTask(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href= "/welltasks/AssignedTask?id=" + dataItem.WellTypeId;
+    }
+
+
+</script>
+

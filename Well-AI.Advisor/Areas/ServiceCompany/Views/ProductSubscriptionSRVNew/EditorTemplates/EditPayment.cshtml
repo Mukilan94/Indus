@@ -1,0 +1,475 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.DLL.Entity.PaymentMethod
+@{
+    ViewData["Title"] = "Edit Payment Method";
+    var monthsdata = (List<SelectListItem>)ViewData["MonthsData"];
+    var yearsdata = (List<SelectListItem>)ViewData["YearsData"];
+    var statedata = (List<SelectListItem>)ViewData["States"];
+    var countrydata = (List<SelectListItem>)ViewData["Countries"];
+    var paytypedata = (List<SelectListItem>)ViewData["PayTypes"];
+    var creditCardata = (List<SelectListItem>)ViewData["CreditCardTypes"];
+}
+<script src="~/js/Update.js"></script>
+
+<script type="text/javascript" language="javascript">
+    //$(document).ready(function () {
+    //    var valmonth = $("#ExpireMonth").val();
+    //    $("#ddlExpireMonth").data("kendoDropDownList").value(valmonth);
+    //    var valyear = $("#ExpireYear").val();
+    //    $("#ddlExpireYear").data("kendoDropDownList").value(valyear);
+    //    var valstate = $("#State").val();
+    //    $("#ddlState").data("kendoDropDownList").value(valstate);
+    //    var valpaytype = $("#PayType").val();
+    //    $("#ddlPayType").data("kendoDropDownList").value(valpaytype);
+    //    if (valpaytype !== "") {
+    //        paytypeChange();
+    //    }
+    //    var valcountry = $("#Country").val();
+    //    $("#ddlCountry").data("kendoDropDownList").value(valcountry);
+
+    //    var agrreval = $("#Agreement").val();
+    //    if (agrreval == "true") {
+    //        $(".k-grid-update").removeClass("disablelink");
+    //        $("#switchgree").data("kendoSwitch").toggle();
+    //        $(".switchwrap .k-switch-label-on").show();
+    //        $(".switchwrap .k-switch-label-off").hide();
+    //    }
+    //    else {
+    //        $(".k-grid-update").addClass("disablelink");
+    //        $(".switchwrap .k-switch-label-on").hide();
+    //        $(".switchwrap .k-switch-label-off").show();
+    //    }
+    //});
+
+
+
+</script>
+<div class="k-edit-form-container" id="wrapper">
+    <div class="row2">
+        <div class="col-sm-12">
+            <div id="content">
+                <div class="div-visible" style="margin-left: -15px;">
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.PayType, "Payment Type")
+                    </div>
+                    <div class="k-edit-field edt" style="margin-left: 5px;">
+                        <div style="height:0px;">
+                            @Html.Kendo().MaskedTextBoxFor(model => model.PayType)
+                        </div>
+                        @(Html.Kendo().DropDownList()
+                            .Name("ddlPayType")
+                            .DataValueField("Value")
+                            .DataTextField("Text")
+                            .Events(e => e.Change("paytypeChange"))
+                            .BindTo(paytypedata)
+                            .HtmlAttributes(new { required = "required", validationmessage = "Select Payment type", @style = "width: 111%" })
+
+						)
+                    </div>
+                </div>
+                <div class="div-invisible bankAccount">
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.AccountName, "Account Holder Name")
+                    </div>
+                    <div class="k-edit-field edt">
+                        @Html.TextBoxFor(model => model.AccountName, new { @id = "AcHolderName", @Class = "k-textbox"@*, required = "required", validationmessage = "Enter The  Account Name"*@ })
+                        @Html.ValidationMessageFor(model => model.AccountName)
+                    </div>
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.AccountNumber, "Account Number")
+                    </div>
+                    <div class="k-edit-field edt">
+                        @Html.TextBoxFor(model => model.AccountNumber, new { @id = "AcNum", @Class = "k-textbox", required = "required", validationmessage = "Enter The Acccount Number" })
+                        @Html.ValidationMessageFor(model => model.AccountNumber)
+                    </div>
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.RoutingNumber, "Routing Number")
+                    </div>
+                    <div class="k-edit-field edt">
+                        @Html.TextBoxFor(model => model.RoutingNumber, new { @id = "RoutingNum", @Class = "k-textbox", required = "required", validationmessage = "Enter The  Routing Number" })
+                        @Html.ValidationMessageFor(model => model.RoutingNumber)
+                    </div>
+                </div>
+                <div class=" div-invisible check">
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.CheckNumber, "Check Number")
+                    </div>
+                    <div class="k-edit-field edt">
+                        @Html.TextBoxFor(model => model.CheckNumber, new { @id = "checkNum", @Class = "k-textbox", required = "required", validationmessage = "Enter The Check Number" })
+                        @Html.ValidationMessageFor(model => model.CheckNumber)
+                    </div>
+                    <div class="k-edit-label lbl">
+                        @Html.LabelFor(model => model.RoutingNumber, "Routing Number")
+                    </div>
+                    <div class="k-edit-field edt">
+                        @Html.TextBoxFor(model => model.RoutingNumber, new { @id = "RoutingNum1", @Class = "k-textbox", required = "required", validationmessage = "Enter Routing Number" })
+                        @Html.ValidationMessageFor(model => model.RoutingNumber)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="div-invisible creditcard">
+
+            <div class="card-body">
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+
+                    <div class="row">
+                        <div class="col-md-6" style="margin-top:-13px">
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.Holder, "Name on card")
+                            </div>
+                            <div class="k-edit-field edt">
+                                @Html.TextBoxFor(model => model.Holder, new { @id = "NameOnCard", @Class = "k-textbox", required = "required"@*, validationmessage = "Enter The Name"*@ })
+                                @Html.ValidationMessageFor(model => model.Holder)
+                            </div>
+                            <div class="div-invisible creditcardType">
+                                <div class="k-edit-label lbl">
+                                    @Html.LabelFor(model => model.CardType, "Card Type")
+                                </div>
+                                <div class="k-edit-field edt">
+                                    <div style="height:0px;">
+                                        @Html.Kendo().MaskedTextBoxFor(model => model.CardType)
+                                    </div>
+
+                                    @(Html.Kendo().DropDownList()
+                                                        .Name("ddlCardType")
+                                                        .DataValueField("Value")
+                                                        .DataTextField("Text")
+
+                                                        .Events(e => e.Change("CardChange"))
+                                                         .BindTo(creditCardata)
+                                                          .HtmlAttributes(new { required = "required", validationmessage = "Select Card type" })
+                                                    )
+                            
+
+                                </div>
+                            </div>
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.Number, "Card number")
+                            </div>
+                            <div class="k-edit-field edt">
+                                @Html.TextBoxFor(model => model.Number, new { @id = "CardNum", @Class = "k-textbox", required = "required", validationmessage = "Enter The Card Number" })
+                                @Html.ValidationMessageFor(model => model.Number)
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="margin-top:-60px">
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.Nickname, "Nickname")
+                            </div>
+                            <div class="k-edit-field edt">
+                                @Html.TextBoxFor(model => model.Nickname, new { @id = "NickName", @Class = "k-textbox" })
+                                @Html.ValidationMessageFor(model => model.Nickname)
+                            </div>
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.ExpireMonth, "Expires on (mon)")
+                            </div>
+                            <div class="k-edit-field edt" >
+                                <div style="height:0px;">
+                                    @Html.Kendo().MaskedTextBoxFor(model => model.ExpireMonth)
+                                </div>
+                                @(Html.Kendo().DropDownList()
+								.Name("ddlExpireMonth")
+								.DataValueField("Value")
+								.DataTextField("Text")
+								.Events(e => e.Change("monthChange"))
+								.BindTo(monthsdata)
+								.HtmlAttributes(new { required = "required", validationmessage = "Select The Month" })
+                            )
+                            </div>
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.ExpireYear, "Expires on (year)")
+                            </div>
+                            <div class="k-edit-field edt">
+                                <div style="height:0px;">
+                                    @Html.Kendo().MaskedTextBoxFor(model => model.ExpireYear)
+                                </div>
+                                @(Html.Kendo().DropDownList()
+								.Name("ddlExpireYear")
+								.DataValueField("Value")
+								.DataTextField("Text")
+								.Events(e => e.Change("yearChange"))
+								.BindTo(yearsdata)
+								.HtmlAttributes(new { required = "required", validationmessage = "Select The Year" })
+                            )
+                            </div>
+
+                            <div class="k-edit-label lbl">
+                                @Html.LabelFor(model => model.CVV, "CVV")
+                            </div>
+                            <div class="k-edit-field edt">
+                                @Html.PasswordFor(model => model.CVV, new { @Class = "k-textbox", style = "width:30%" })
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Card Billing Information
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <div class="row2">
+                                <div class="col-md-6">
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.FirstName, "First Name")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.FirstName, new { @id = "FirstName", @Class = "k-textbox", required = "required"@*, validationmessage = "Enter The User's First Name"*@ })
+                                        @Html.ValidationMessageFor(model => model.FirstName)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.MiddleInitial, "Middle Initial")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.MiddleInitial, new { @Class = "k-textbox" })
+                                        @Html.ValidationMessageFor(model => model.MiddleInitial)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.LastName, "Last Name")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.LastName, new { @id = "LastName", @Class = "k-textbox", required = "required"@*, validationmessage = "Enter The User's Last Name"*@ })
+                                        @Html.ValidationMessageFor(model => model.LastName)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.Address1, "Address One")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.Address1, new { @id = "Address1", @Class = "k-textbox", required = "required", validationmessage = "Enter The User's Address" })
+                                        @Html.ValidationMessageFor(model => model.Address1)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.Address2, "Address Two")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.Address2, new { @id = "Address2", @Class = "k-textbox" })
+                                        @Html.ValidationMessageFor(model => model.Address2)
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.City, "City")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.City, new { @Class = "k-textbox" })
+                                        @Html.ValidationMessageFor(model => model.City)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.State, "State")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        <div style="height:0px;">
+                                            @Html.Kendo().MaskedTextBoxFor(model => model.State)
+                                        </div>
+                                        @(Html.Kendo().DropDownList()
+                                                        .Name("ddlState")
+                                                        .DataValueField("Value")
+                                                        .DataTextField("Text")
+                                                        .Events(e => e.Change("stateChange"))
+                                                        .BindTo(statedata)
+                                                        .HtmlAttributes(new { required = "required", validationmessage = "Select The State" })
+                                                    )
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.Zip, "Zip")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.TextBoxFor(model => model.Zip, new { @id = "ZipCode", @Class = "k-textbox", required = "required", validationmessage = "Enter The Zip Code" })
+                                        @Html.ValidationMessageFor(model => model.Zip)
+                                    </div>
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.Country, "Country")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        <div style="height:0px;">
+                                            @Html.Kendo().MaskedTextBoxFor(model => model.Country)
+                                        </div>
+                                        @(Html.Kendo().DropDownList()
+                                                        .Name("ddlCountry")
+                                                        .DataValueField("Value")
+                                                        .DataTextField("Text")
+                                                        .Events(e => e.Change("countryChange"))
+                                                        .BindTo(countrydata)
+                                                       .HtmlAttributes(new { required = "required", validationmessage = "Select The Country" })
+
+                                                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="doclink">
+                @Html.ActionLink("View method of payment storage terms & conditions", "Terms", "PaymentMethods", null, new { @target = "_blank" })
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="switchwrap">
+                <div>
+                    @Html.Kendo().MaskedTextBoxFor(model => model.Agreement)
+                </div>
+                @(Html.Kendo().Switch()
+                          .Name("switchgree").Enabled(true)
+                          .Messages(c => c.Checked("YES").Unchecked("NO"))
+                          .Events(ev => ev.Change("agreeChange"))
+                )
+                @Html.ValidationMessageFor(model => model.Agreement)
+            </div>
+            <div class="switchlbl">
+                I agree to the method of payment storage terms and conditions and would like the above method of payment stored for use in online invoicing.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-edit-label lbl custom-default">
+                @Html.LabelFor(model => model.Default)
+                @Html.CheckBoxFor(model => model.Default)
+                @Html.ValidationMessageFor(model => model.Default)
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+    .disablelink {
+        pointer-events: none;
+        background-color: #a29e9e !important;
+        border-color: #a29e9e !important;
+    }
+
+    .k-numerictextbox, #State, #Country, #PayType, #Agreement {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .k-dropdown .k-dropdown-wrap {
+        background-color: #fff;
+        color: #000;
+        border-color: #80808054;
+    }
+
+    #accordion {
+        display: inline-block;
+        width: 800px;
+    }
+
+    .card-body label {
+        white-space: nowrap;
+    }
+
+    .card-header {
+        background-color: #007BFF;
+    }
+
+        .card-header .btn-link {
+            color: #fff;
+        }
+
+    #content .lbl {
+        width: 14% !important;
+        margin-right: 20px;
+        text-align: left;
+    }
+
+    #content .edt {
+        width: 28% !important;
+        float: left !important;
+    }
+
+    .k-edit-form-container {
+        width: 100%;
+    }
+
+    .switchwrap .k-tooltip-validation {
+        display: none !important;
+    }
+
+    .switchwrap {
+        display: inline-block;
+        width: 10%;
+    }
+
+    .switchlbl {
+        display: inline-block;
+        margin-top: 20px;
+        width: 85%
+    }
+
+    .k-switch-off .k-switch-container {
+        background-color: #c1c2c3 !important;
+    }
+
+    .switchwrap .k-switch {
+        margin-bottom: 20px;
+    }
+
+    .doclink {
+        margin-top: 10px;
+    }
+
+        .doclink a, .doclink a:hover {
+            color: #000;
+        }
+
+    .custom-default {
+        vertical-align: top;
+        text-align: left
+    }
+
+        .custom-default input[type=checkbox] {
+            vertical-align: middle;
+            margin-left: 5px
+        }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .div-visible {
+        display: block;
+    }
+
+    .div-invisible {
+        display: none;
+    }
+
+    .row2 {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+       /* margin-right: -15px;*/
+        /* margin-left: -15px; */
+        margin-top: 15px;
+    }
+
+</style>

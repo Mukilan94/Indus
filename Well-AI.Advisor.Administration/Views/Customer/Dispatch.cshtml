@@ -1,0 +1,178 @@
+﻿<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+        #NewCustomer {
+            font-size: 12px !important;
+            background-color: #007bff !important;
+        }
+        li.k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: transparent !important;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            border: none;
+        }
+
+        .k-grid-Details .k-button {
+            width: 30px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #CustomerDetails {
+            font-size: 16px;
+            margin: 15px;
+        }
+
+        #ProviderProfile {
+            margin-top: 5px;
+        }
+    </style>
+</section>
+<section class="content">
+    <div class="row">
+        <div id="CustomerDetails" class="col-md-6"><strong>@ViewBag.Customer</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.CustomerProfileModel>
+    ()
+    .Name("ProviderProfile")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.TenantId).Title("Account ID").Filterable(false).Width(350);
+        columns.Bound(p => p.Name).Title("Company").Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.ContactName).Width(200).Title("Contact").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.City).Width(120).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.State).Width(120).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.Website).Width(200).Filterable(false);
+        columns.Bound(p => p.Phone).Width(125).Filterable(false);
+        columns.Bound(p => p.Address1).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Hidden(true);
+
+        columns.Bound(p => p.Country).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Hidden(true);
+        columns.Bound(p => p.Zip).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Hidden(true);
+
+    }).Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+     .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+    .ToolBar(t => t.Custom().Text("Create New Customer").HtmlAttributes(new { id = "NewCustomer"}))
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Sortable()
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Read(read => read.Action("CustomerByAccountType_Read", "Customer",new { accountType=ViewBag.AccountType }))
+    .Model(model => model.Id(p => p.TenantId))
+    .PageSize(15)
+    .Batch(false)
+    .ServerOperation(true)
+    ).EnableCustomBinding(true).Events(e =>
+    {
+        e.Edit("gridEdit");
+        e.DataBound("DataBound");
+        e.Change("Grid_OnRowSelect");
+    })
+    )
+    </div>
+</section>
+
+<script>
+
+    $(document).ready(function () {
+        $("#NewCustomer").click(function () {
+            window.open("https://well-ai-advisor-beta.azurewebsites.net/Registration");
+
+            //window.open("https://well-ai-advisor-beta.azurewebsites.net/Identity/Account/Register?returnUrl=%2F");  
+            //window.open("https://wellai-advisor-test.azurewebsites.net/Identity/Account/Register?returnUrl=%2F");
+          //  window.open("https://wellai-advisor.azurewebsites.net/Identity/Account/Register?returnUrl=%2F");
+        });
+    });
+
+    $(function () {
+
+        setInterval(function () {
+            $('#ProviderProfile').data('kendoGrid').dataSource.read().then(function () {
+                $('#ProviderProfile').data('kendoGrid').refresh();
+            });
+        },60000);
+    });
+
+    var selectedRow = null;
+    function Grid_OnRowSelect(e) {
+        var row = this.select();
+        if (row.length > 0) {
+            selectedRow = e.sender.select();
+            var item = e.sender.dataItem(selectedRow);
+            var id = item.TenantId;
+            window.location = '/Customer/customerDetail?id=' + id;
+            sessionStorage.setItem("Url", "/Customer/customerDetail?id=" + id);
+            sessionStorage.setItem( "TenantId",id);
+        }
+    }
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Well Type");
+            $('.k-grid-update').text("Save"); $("#IsActive").prop('checked', true).trigger("change");
+
+        }
+    }
+    function DataBound(e) {
+        var grid = this;
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+    }
+
+    function customerDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = "/Customer/customerDetail?id=" + dataItem.TenantId;
+    }
+</script>

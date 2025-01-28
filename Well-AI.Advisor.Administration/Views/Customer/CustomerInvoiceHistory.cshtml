@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null;
+}
+
+<style type="text/css">
+    .k-grid-content {
+        height: auto !important;
+    }
+
+</style>
+
+<section>
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory>()
+        .Name("billhistory")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Invoice).Title("Invoice#").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))); 
+            columns.Bound(p => p.Name).Title("Product").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))); 
+            columns.Bound(p => p.BillDate).Title("Bill Date").Format("{0: MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))); 
+            columns.Bound(p => p.Amount).Title("Amount").Format("{0:c}").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))); 
+            columns.Bound(p => p.PayMethod).Title("Payment Method").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        })
+        .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+         .Selectable()
+         .Scrollable(scrollable => scrollable.Virtual(true))
+        .Sortable(s => s.Enabled(true))
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Model(model => model.Id(p => p.ID))
+                .Read(read => read.Action("BillingHistory_Read", "Customer",new { tenantId = ViewBag.TenantId }))
+        )
+    )
+</section>
+<script>
+
+   
+
+</script>

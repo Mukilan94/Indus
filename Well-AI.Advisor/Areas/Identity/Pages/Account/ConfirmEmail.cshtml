@@ -1,0 +1,75 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+@Html.AntiForgeryToken()
+<div class="row login-row">
+    <div class="col-md-4 login-logo"></div>
+    <div class="col-md-6" style="padding-top:6.5%;">
+        <div class="blockstyle">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <section>
+                        <div class="col-md-12" style="text-align:center;">
+                            <input asp-for="Input.UserId" type="hidden" readonly="readonly" />
+                                <span class="dashboard-total" style="text-align:center">
+                                    Please wait few minutes while we are configuring your workspace<br />
+                                    This Process may take up to 3 minutes.
+                                </span>
+                                <br />
+                                <img class="loadingimg" src="~/img/Loading.gif" style="display:none; margin-left: auto;margin-right: auto;">
+                                <partial name="_StatusMessage" model="Model.StatusMessage" />
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+<link href="~/css/common.css" rel="stylesheet" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: '/Identity/Account/ConfirmEmail?userId=@Model.Input.UserId',
+            contentType: "application/json; charset=utf-8",
+            beforeSend: function (xhr) {
+                $(".loadingimg").show();
+
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            dataType: "json",
+            success: function (result) {
+                window.location = result;
+            },
+        });
+    });
+</script>
+<style>
+    .blockstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-total {
+        width: 80px;
+    }
+</style>

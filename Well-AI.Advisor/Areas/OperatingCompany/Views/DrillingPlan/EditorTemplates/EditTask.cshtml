@@ -1,0 +1,367 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.OperatingCompany.Models.PlannedTasksModel
+@{
+    ViewData["Title"] = "Edit Task";
+}
+@using Kendo.Mvc.UI
+@{
+    //var stagesList = (List<WellAI.Advisor.Model.OperatingCompany.Models.Stagelist>)ViewData["stagesForTasks"];
+    //var categories = (List<WellAI.Advisor.Model.OperatingCompany.Models.Categorylist>)ViewData["categories"];
+    var employees = (List<WellAI.Advisor.Model.OperatingCompany.Models.Employeelist>)ViewData["employeeList"];
+}
+<script src="~/js/OperatingCompany/ServiceTasks.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var value = $("#ServiceDurationDays").val();
+        if (value == "") {
+            $("#ServiceDurationDays").val("00");
+        }
+    });
+</script>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "1", new
+                {
+                   id = "IsSpecialServices",
+                   onclick = "SelectedSpecialService(1)"
+                })
+
+                @Html.Label("Task", "Task")
+
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "2", new
+                   {
+                       onclick = "SelectedSpecialService(2)"
+                   })
+
+                @Html.Label("Service", "Service")
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "3", new
+                   {
+                       onclick = "SelectedSpecialService(3)"
+                   })
+                @Html.Label("SpecialService", "Special Service")
+
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "4", new
+                   {
+                       onclick = "SelectedSpecialService(4)"
+                   })
+                @Html.Label("Supply", "Supply")
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">Name</div>
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.TaskName, new { id = "name", style = "width:100%" })
+            @Html.ValidationMessageFor(model => model.TaskName)
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">@Html.LabelFor(m => m.Day)</div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.Day, new { id = "Day", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6" style="padding: 0px;">@Html.LabelFor(m => m.ScheduleTime)</div>
+                <div class="col-md-6" style="padding: 0px;">
+                    <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                        @Html.Kendo().MaskedTextBoxFor(model => model.ScheduleTime)
+                    </div>
+                    @(Html.Kendo().TimePickerFor(m => m.ScheduleTimePicker)
+                         .Format("HH:mm")
+                         .Value("00:00")
+                         //.Name("ScheduleTimePicker")
+                         .Events(e => e.Change("SchedulerTime"))
+                         .HtmlAttributes(new { style = "width: 100%", title = "timepicker" })
+                         )
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">@Html.LabelFor(m => m.Depth)</div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.Depth, new { id = "depth", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => m.ServiceDurationDays, "Duration")</div>
+                <div class="col-md-9">
+                    <div class="col-md-4" style="float:left;padding: 0px !important;">
+
+                        @Html.TextBoxFor(m => m.ServiceDurationDays, new { type = "number", style = "width:100%;flot:left;", min = 0 })
+                        @Html.LabelFor(m => m.ServiceDurationDays, "Days")
+
+                    </div>
+                    <div class="col-md-4" style="float:left;padding: 0px !important;">
+
+                        @(Html.Kendo().MultiColumnComboBoxFor(m => m.ServiceDurationHours)
+                          //.Name("ServiceHours")
+                          .DataTextField("Text")
+                          .DataValueField("Value")
+                          .Filter(FilterType.StartsWith)
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetServiceHours", "ChecklistTemplate");//.Data("FilterCategory");
+                              });//.ServerFiltering(true);
+                          })
+                          .Events(e => e.DataBound("ServiceHoursDataBound"))
+                          .HtmlAttributes(new {style= "width:100%;float:left;" /*, data_value_primitive = "true"*/ })
+                       )
+                        @Html.LabelFor(m => m.ServiceDurationDays, "Hours")
+
+                    </div>
+                    <div class="col-md-4" style="float:left;padding: 0px !important;">
+
+
+                        @(Html.Kendo().MultiColumnComboBoxFor(m => m.ServiceDurationMinutes)
+                          //.Name("ServiceMinutes")
+                          .DataTextField("Text")
+                          .DataValueField("Value")
+                          .Value("00")
+                          .Filter(FilterType.StartsWith)
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetServiceMinutes", "ChecklistTemplate");//.Data("FilterCategory");
+                              });//.ServerFiltering(true);
+                          })
+                          .Events(e => e.DataBound("ServiceMinutesDataBound"))
+                          .HtmlAttributes(new {style= "width:100%;flot:left;" /*, data_value_primitive = "true"*/ })
+                       )
+                        @Html.LabelFor(m => m.ServiceDurationDays, "Minutes")
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">@Html.LabelFor(m => m.LeadTime)</div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.LeadTime, new { id = "LeadTime", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.LabelFor(m => m.StageType, "Stage", new { style = "width:100%" })
+
+                </div>
+                <div class="col-md-8">
+                    <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                        @Html.Kendo().MaskedTextBoxFor(m => m.StageTypeName).HtmlAttributes(new { id = "StageTypeName", visibility = "hidden" })
+                    </div>
+                    @(Html.Kendo().MultiColumnComboBoxFor(Model => Model.StageType)
+                    //.Name("StageType")
+                    .DataTextField("Stage_Type")
+                    .DataValueField("Stage_id")
+                    .Placeholder("Select Stage")
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                           read.Action("GetServiceStage", "ChecklistTemplate");//.Data("ServiceFillter");
+                        }).ServerFiltering(true);
+                    })
+                    .HtmlAttributes(new { style="width:100%"})
+                )
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.ServiceCategoryId, "Category")
+                </div>
+
+                <div class="col-md-8">
+                    <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                        @Html.Kendo().MaskedTextBoxFor(m => m.ServiceCategoryId)
+                    </div>
+                    @(Html.Kendo().MultiColumnComboBox()
+                          .Name("ServiceCategoryName")
+                          .DataTextField("Name")
+                          .DataValueField("ServiceCategoryId")
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetCategoriesList", "ChecklistTemplate");
+                              }).ServerFiltering(true);
+                          })
+                          .Events(e =>
+                          {
+                              e.Change("OnServiceCategoryChange").DataBound("OnServiceCategoryDataBound");
+                          })
+                          .HtmlAttributes(new {style="width:100%" })
+                        )
+
+                </div>
+                <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                    @Html.Kendo().MaskedTextBoxFor(m => m.CategoryName).HtmlAttributes(new { id = "CategoryName", visibility = "hidden" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.LabelFor(model => model.PlanStart, "Plan Start")
+                </div>
+                <div class="col-md-8">
+                    @(Html.Kendo().DateTimePickerFor(model => model.PlanStart)
+                        .Format("MM/dd/yyyy HH:mm")
+                        .TimeFormat("HH:mm")
+                        .HtmlAttributes(new {style="width:100%" })
+                    )
+                    @Html.ValidationMessageFor(model => model.PlanStart)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-6">
+            <div class="row">
+
+                <div class="col-md-4">
+                    @Html.LabelFor(m => m.EmployeeName, "Employee")
+                </div>
+                <div class="col-md-8">
+                    @(Html.Kendo().DropDownListFor(model => model.EmployeeId)
+                          .DataTextField("EmployeeName")
+                          .DataValueField("EmployeeId")
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetEmployeeList", "ActiveDrillPlan");//.Data("FilterCategory");
+                              });
+                          }).Events(e =>
+                          {
+                              e.Change("OnEmployeeChange").DataBound("OnEmployeeDataBound");
+                          })
+                         .HtmlAttributes(new { style = "width:100%" })
+                        )
+                    <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                        @Html.Kendo().MaskedTextBoxFor(m => m.EmployeeName).HtmlAttributes(new { id = "EmployeeNameField", visibility = "hidden" })
+                        @Html.Kendo().MaskedTextBoxFor(m => m.EmployeeId).HtmlAttributes(new { id = "EmployeeIdField", visibility = "hidden" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            @Html.HiddenFor(m => m.SeletedDependency)
+            @Html.LabelFor(m => m.SeletedDependency, "Dependency")
+            <select id="Dependency"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-12">
+            @Html.LabelFor(x => x.Description)
+            @Html.TextAreaFor(model => model.Description, new { style = "width:100%" })
+        </div>
+    </div>
+    <div class="row">
+        @*<div class="col-md-1" style="margin-top:2px;">Active</div>
+        <div class="col-md-1">
+            @(Html.Kendo().CheckBoxFor(m=>m.IsActive))
+        </div>*@
+        <div class="col-md-2" style="margin-top:2px;">Is Biddable</div>
+        <div class="col-md-1">
+            @(Html.Kendo().CheckBoxFor(m=>m.IsBiddable))
+        </div>
+        <div class="col-md-3" style="margin-top:2px;">
+            @Html.LabelFor(m => m.IsBenchMark, "Is Bench Mark")
+        </div>
+        <div class="col-md-1" style="padding-left:0px;">
+            @(Html.Kendo().CheckBoxFor(m=>m.IsBenchMark).Checked(false).HtmlAttributes(new { id = "BenchMark", onchange = "onBenchMarkChange();" }))
+        </div>
+        <div class="col-md-2" style="margin-top:2px;">
+            @Html.LabelFor(m => m.IsBenchMark, "Is Pre-Spud")
+        </div>
+        <div class="col-md-1" style="padding-left:0px;">
+            @(Html.Kendo().CheckBoxFor(m=>m.IsPreSpud).Checked(false).HtmlAttributes(new {id= "PreSpud", onchange = "onPreSpudChange();" }))
+        </div>
+        <div @*class="k-edit-field"*@ style="visibility:hidden">
+            @Html.TextBoxFor(model => model.IsSpecialServices)
+        </div>
+    </div>
+</div>
+
+<div class="row" id="ExportMaster">
+    <div class="col-md-3">Export to Master</div>
+    <div class="col-md-1" style="padding-left:0px;">
+        @(Html.Kendo().CheckBoxFor(m=>m.ExportToMaster))
+    </div>
+</div>
+
+<div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+    @Html.Kendo().MaskedTextBoxFor(m => m.OperationDays).HtmlAttributes(new { id = "OperationDays", visibility = "hidden" })
+    @Html.Kendo().MaskedTextBoxFor(m => m.OperationHours).HtmlAttributes(new { id = "OperationHours", visibility = "hidden" })
+    @Html.Kendo().MaskedTextBoxFor(m => m.AccumulatedDays).HtmlAttributes(new { id = "AccumulatedDays", visibility = "hidden" })
+</div>
+
+<style>
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-textbox {
+        width: 250px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .row {
+        margin-top: 5px !important;
+    }
+
+    .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+        color: black !important;
+        background-color: white !important;
+    }
+</style>

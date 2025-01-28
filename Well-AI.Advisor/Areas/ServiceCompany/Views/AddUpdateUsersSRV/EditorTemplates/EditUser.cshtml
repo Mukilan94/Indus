@@ -1,0 +1,491 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.ServiceCompany.Models.UserViewSRVModel
+@{
+    ViewData["Title"] = "Edit User";
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+}
+@*<div class="k-edit-form-container" id="wrapper">
+    <div class="row"><div class="col-md-12 errors"></div></div>
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.FirstName, "First Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.FirstName, new { @Class = "k-textbox", required = "required", validationmessage = "The First Name field is required" })
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.MiddleName, "Middle Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.MiddleName, new { @Class = "k-textbox" })
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.LastName, "Last Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.LastName, new { @Class = "k-textbox", required = "required", validationmessage = "The Last Name field is required" })
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+        </div>
+    </div>
+    <div class="row1">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.JobTitle, "Job Title")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.JobTitle, new { @Class = "k-textbox", required = "required", validationmessage = "The Job Title field is required" })
+                @Html.ValidationMessageFor(model => model.JobTitle)
+            </div>
+        </div>
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Address)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Address, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Address)
+            </div>
+        </div>
+    </div>
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.City)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.City, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.City)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label middle">
+                @Html.LabelFor(model => model.State)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.State, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.State)
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Zip)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Zip, new { @Class = "k-textbox", @id = "txtzip" })
+                @Html.ValidationMessageFor(model => model.Zip)
+            </div>
+        </div>
+    </div>
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.PhoneNumber, "Phone")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @Class = "k-textbox", @id = "txtphone", required = "required", validationmessage = "The Phone Number field is required" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label middle">
+                @Html.LabelFor(model => model.Mobile)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Mobile, new { @Class = "k-textbox", @id = "txtmobile" })
+                @Html.ValidationMessageFor(model => model.Mobile)
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.IsPrimary, "Primary Contact")
+            </div>
+            <div class="k-edit-field">
+                @Html.CheckBoxFor(model => model.IsPrimary)
+                @Html.ValidationMessageFor(model => model.IsPrimary)
+            </div>
+        </div>
+    </div>
+    <div class="row1">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Email)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Email, new { @Class = "k-textbox", required = "required" })
+                @Html.ValidationMessageFor(model => model.Email)
+            </div>
+        </div>
+    </div>
+    <div class="row2">
+        <div class="rowcol1">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.SelectedRoles, "Roles")
+            </div>
+            <div class="k-edit-field">
+                <div class="roleswrap">
+                    @Html.TextBoxFor(model => model.SelectedRoles)
+                </div>
+                @(Html.Kendo().MultiSelect()
+                          .Name("userroles")
+                          .AutoClose(false)
+                          .Placeholder("Select roles...")
+                          .DataTextField("Name")
+                          .DataValueField("Id")
+                          .BindTo(roles)
+                    .Events(e => e.Change("multiChangeRoles").DataBound("setSelectedRoles"))
+                    )
+            </div>
+        </div>
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.AdditionalNotes, "Notes")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextAreaFor(model => model.AdditionalNotes, new { @Class = "k-textbox", @Style = "height:100px;" })
+                @Html.ValidationMessageFor(model => model.AdditionalNotes)
+            </div>
+        </div>
+    </div>
+</div>*@
+<div class="k-edit-form-container" id="wrapper">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 form-field">
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.FirstName, "First Name")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.FirstName, new { @Class = "k-textbox", required = "required", validationmessage = "The First Name field is required" })
+                    @Html.ValidationMessageFor(model => model.FirstName)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.LastName, "Last Name")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.LastName, new { @Class = "k-textbox", required = "required", validationmessage = "The Last Name field is required" })
+                    @Html.ValidationMessageFor(model => model.LastName)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Address)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.Address, new { @Class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.Address)
+                </div>
+
+                <div class="k-edit-label middle">
+                    @Html.LabelFor(model => model.State)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.State, new { @Class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.State)
+                </div>
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.PhoneNumber, "Phone")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.PhoneNumber, new { @Class = "k-textbox", @id = "txtphone", required = "required", validationmessage = "The Phone Number field is required" })
+                    @Html.ValidationMessageFor(model => model.PhoneNumber)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.IsPrimary, "Primary Contact")
+                </div>
+                <div class="k-edit-field">
+                    @Html.CheckBoxFor(model => model.IsPrimary)
+                    @Html.ValidationMessageFor(model => model.IsPrimary)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.SelectedRoles, "Roles")
+                </div>
+                <div class="k-edit-field">
+                    <div class="roleswrap">
+                        @Html.TextBoxFor(model => model.SelectedRoles)
+                    </div>
+                    @(Html.Kendo().MultiSelect()
+                        .Name("userroles")
+                        .AutoClose(false)
+                        .Placeholder("Select roles...")
+                        .DataTextField("Name")
+                        .DataValueField("Id")
+                        .BindTo(roles)
+                        .Events(e => e.Change("multiChangeRoles").DataBound("setSelectedRoles"))
+                        )
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 form-field">
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.MiddleName, "Middle Name")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.MiddleName, new { @Class = "k-textbox" })
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.JobTitle, "Job Title")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.JobTitle, new { @Class = "k-textbox", required = "required", validationmessage = "The Job Title field is required" })
+                    @Html.ValidationMessageFor(model => model.JobTitle)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.City)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.City, new { @Class = "k-textbox" })
+                    @Html.ValidationMessageFor(model => model.City)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Zip)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.Zip, new { @Class = "k-textbox", @id = "txtzip" })
+                    @Html.ValidationMessageFor(model => model.Zip)
+                </div>
+
+                <div class="k-edit-label middle">
+                    @Html.LabelFor(model => model.Mobile)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.Mobile, new { @Class = "k-textbox", @id = "txtmobile" })
+                    @Html.ValidationMessageFor(model => model.Mobile)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Email)
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.Email, new { @Class = "k-textbox", required = "required" })
+                    @Html.ValidationMessageFor(model => model.Email)
+                </div>
+
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.AdditionalNotes, "Notes")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextAreaFor(model => model.AdditionalNotes, new { @Class = "k-textbox", @Style = "height:100px;" })
+                    @Html.ValidationMessageFor(model => model.AdditionalNotes)
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+    <style>
+        .k-multiselect {
+            width: 300px !important;
+            height: 100px;
+            overflow: auto;
+            /* margin-left: -10px;*/
+        }
+
+        .k-datepicker .k-picker-wrap .k-select {
+            border: 0px;
+            background-color: #fff;
+            color: #000;
+        }
+
+        #SelectedRoles {
+            height: 0px;
+            visibility: hidden;
+            width: 0px !important;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .row1 {
+            display: inline-block;
+            width: 100%;
+        }
+
+        .row3 .rowcol3, .row3 .rowcol33 {
+            float: right;
+            width: 30%;
+            display: inline-block;
+        }
+
+        .row3 .rowcol1 .k-edit-label, .row2 .rowcol1 .k-edit-label {
+            text-align: left;
+        }
+
+        .row3 .rowcol, .row3 .rowcol1, .row3 .rowcol2 {
+            display: inline-block;
+            width: 34%;
+        }
+
+        .row1 .rowcol .k-edit-label {
+            width: 8%;
+        }
+
+        .row1 .rowcol {
+            width: 100%;
+        }
+
+        .row3 .rowcol33 {
+            width: 32%;
+        }
+
+            .row3 .rowcol33 .k-edit-label {
+                width: 20%;
+            }
+
+            .row3 .rowcol33 .k-edit-field {
+                width: 70%;
+            }
+
+        .row1 .rowcol .k-edit-label > label {
+            float: left;
+        }
+
+        .row1 .rowcol .k-edit-field {
+            width: 89%;
+        }
+
+        .row3 .rowcol2 .k-edit-label {
+            line-height: 20px;
+            margin-bottom: 7px;
+            text-align: right;
+        }
+
+        .row2 .rowcol, .row2 .rowcol1 {
+            display: inline-block;
+            width: 49%;
+        }
+
+            .row2 .rowcol .k-edit-field {
+                margin-right: -10px;
+            }
+
+        .row3 .rowcol {
+            display: inline-block;
+            width: 30%;
+            margin-right: 20px;
+        }
+
+            .row3 .rowcol .k-edit-label {
+                text-align: left;
+            }
+
+        .row2 .rowcol1 .k-edit-label {
+            width: 10%;
+        }
+
+        .row2 .rowcol1 .k-edit-field {
+            width: 77%;
+        }
+
+        .row3 .rowcol2 .middle {
+            margin-bottom: 20px !important;
+        }
+
+     /*   #MiddleName {
+            margin-bottom: 7px;
+        }
+
+        #Email, #JobTitle, #Address {
+            margin-left: -5px;
+        }*/
+
+        .roleswrap {
+            height: 0px;
+        }
+
+        .k-grid-cancel {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff
+        }
+
+        #IsPrimary {
+            vertical-align: bottom;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#txtphone").keydown(function (event) {
+                if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                    event.preventDefault();
+                }
+                if (event.keyCode == 46 || event.keyCode == 8) {
+                }
+                else {
+                    if (event.keyCode < 95) {
+                        if (event.keyCode < 48 || event.keyCode > 57) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                            event.preventDefault();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#txtmobile").keydown(function (event) {
+                if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                    event.preventDefault();
+                }
+                if (event.keyCode == 46 || event.keyCode == 8) {
+                }
+                else {
+                    if (event.keyCode < 95) {
+                        if (event.keyCode < 48 || event.keyCode > 57) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                            event.preventDefault();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#txtzip").keydown(function (event) {
+                if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                    event.preventDefault();
+                }
+                if (event.keyCode == 46 || event.keyCode == 8) {
+                }
+                else {
+                    if (event.keyCode < 95) {
+                        if (event.keyCode < 48 || event.keyCode > 57) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                            event.preventDefault();
+                        }
+                    }
+                }
+            });
+        });
+    </script>

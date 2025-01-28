@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewData["Title"] = "Pads";
+    Layout = null;
+}
+
+<section class="content-header">
+    <style>
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-i-close {
+            padding-left: 5px;
+        }
+
+        .fa-trash {
+            display: block !important;
+            color: black !important;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+        .k-i-close {
+            display: none !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section>
+    @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.Pad_register>
+    ()
+    .Name("paddatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Pad_id).Hidden();
+        columns.Bound(p => p.Pad_Name).Title("Pad").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.Latitude).Title("Latitude").Hidden();
+        columns.Bound(p => p.Longitude).Title("Longitude").Hidden();
+        columns.Command(command => { 
+            command.Destroy().Text("<i class='fa fa-trash' style='font-size:20px;'></i>");
+        }).Width(100).Title("Action");
+    })
+    .Sortable()
+    .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar => toolbar.Create().Text("Add New Pad"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditPad").Window(w => w.Title("Edit Pad Details").Width(500)).ConfirmDelete("Do you want to REMOVE the PAD ?").DisplayDeleteConfirmation("Do you want to REMOVE the PAD ?"))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.Pad_id))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("PadData_Create", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Read(read => read.Action("GetPadMasterRead", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Update(update => update.Action("PadData_Update", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Destroy(update => update.Action("PadData_Destroy", "Customer", new { tenantId = ViewBag.TenantId }))
+   )
+    .Events(e =>
+    {
+        e.Edit("RenamePadWindow").DataBound("OnDataBound").Save("OnPadGridSave");
+    })
+    )
+</section>

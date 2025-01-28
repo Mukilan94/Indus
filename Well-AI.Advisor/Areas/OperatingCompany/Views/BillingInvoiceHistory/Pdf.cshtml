@@ -1,0 +1,481 @@
+﻿@{
+    ViewData["Title"] = "Billing History";
+    string SubscriptionType = HttpContextAccessor.HttpContext.Session.GetString("subscriptiontype");
+    //if (SubscriptionType != "AdvisorDispatch")
+    //{
+    //    Layout = "~/Views/Shared/_Layout.cshtml";
+    //}
+    //else
+    //{
+    //Layout = "~/Views/Shared/_LayoutAdvisorDispatch.cshtml";
+    //}
+
+    Layout = "~/Views/Shared/_LayoutSubscription.cshtml";
+}
+
+
+@*@model WellAI.Advisor.Model.ServiceCompany.Models.BillingInvoiceHistorySRVNewModel*@
+@model WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@*<!DOCTYPE html>
+    <html class="no-js" lang="en">*@
+
+
+@using Microsoft.AspNetCore.Http;
+@{
+
+    WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory BillingHistoryInvoices = ViewBag.BillingHistoryInvoices;
+    WellAI.Advisor.DLL.Entity.PaymentMethod PaymentDetails = ViewBag._PaymentDetails;
+    List<WellAI.Advisor.DLL.Entity.ProductSubscriptionModel> subscriptions = ViewBag.CustomerSubscriptions;
+    WellAI.Advisor.Model.OperatingCompany.Models.CorporateProfile CustomerDetails = ViewBag.CustomerDetails;
+
+}
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Laralink">
+<!-- Site Title -->
+<title>Internet Bill Invoice</title>
+<link rel="stylesheet" href="~/assets/css/style.css">
+@*<link href="~/assets/css/style.css" rel="stylesheet" />*@
+
+@*<script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jspdf.min.js"></script>
+    <script src="assets/js/html2canvas.min.js"></script>
+    <script src="assets/js/main.js"></script>*@
+
+@*<section class="content-header">*@
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+<style>
+
+    #bhbody {
+        background: rgb(204,204,204);
+    }
+page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+page[size="A4"] {
+  width: 21cm;
+  height: 29.7cm;
+}
+    page[size="A4"][layout="portrait"] {
+        width: 29.7cm;
+        height: 21cm;
+    }
+page[size="A3"] {
+  width: 29.7cm;
+  height: 42cm;
+}
+    page[size="A3"][layout="portrait"] {
+        width: 42cm;
+        height: 29.7cm;
+    }
+page[size="A5"] {
+  width: 14.8cm;
+  height: 21cm;
+}
+    page[size="A5"][layout="portrait"] {
+        width: 21cm;
+        height: 14.8cm;
+    }
+
+
+  
+
+</style>
+
+<script type="text/javascript" language="javascript">
+    //  debugger;
+    $(document).ready(function () {
+
+        var doc = new jsPDF();
+        var specialElementHandlers = {
+            '.tm_container': function (element, renderer) {
+                return true;
+            }
+        };
+
+        $('#tm_download_btn').click(function () {
+            debugger;
+            //doc.fromHTML($('.tm_container').html(), 15, 15, {
+            //    'width': 170,
+            //    'elementHandlers': specialElementHandlers
+            //});
+
+            var HTML_Width = $(".tm_container").width();
+            var HTML_Height = $(".tm_container").height();
+    var top_left_margin = 15;
+    var PDF_Width = HTML_Height + (top_left_margin * 2);
+    var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+    var canvas_image_width = HTML_Width;
+    var canvas_image_height = HTML_Height;
+
+    var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+            html2canvas($(".tm_container")[0]).then(function (canvas) {
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+       var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+              //  var pdf = new jsPDF('p', 'pt', [HTML_Width, HTML_Height]);
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        for (var i = 1; i <= totalPDFPages; i++) { 
+            pdf.addPage(PDF_Width, PDF_Height);
+            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+           
+
+        }
+        pdf.save("BillingHistory.pdf");
+             //   $(".tm_container").hide();
+    });
+
+
+        //    doc.save('BillingHistory.pdf');
+        });
+
+
+        var string = $("#lblCardNumbermask").text();
+        var new_string = string.replace(/\b[\dX][-. \dX]+(\d{4})\b/g, function (match, capture) {
+            return Array(match.length - 4).join("X") + capture;
+        });
+
+        $("#lblCardNumbermask").text(new_string);
+
+
+
+    });
+</script>
+
+<page size="A4">
+    <body id="bhbody">
+
+        <div class="tm_container">
+            <div class="tm_invoice_wrap">
+                <div class="tm_invoice tm_style1" id="tm_download_section">
+                    <div class="tm_invoice_in">
+                        <div class="tm_invoice_head tm_align_center tm_mb20">
+                            <div class="tm_invoice_left">
+                                Billing Date: <b class="tm_primary_color">
+                                    @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MM-yyyy"))
+                                </b> <br>
+                                @*Invoice No: <b class="tm_primary_color">@BillingHistoryInvoices.Invoice</b> <br>*@
+                                Transaction ID: <b class="tm_primary_color">@BillingHistoryInvoices.TransactionID</b> <br>
+                                @*Subscription ID: <b class="tm_primary_color">@BillingHistoryInvoices.Invoice</b>*@
+                            </div>
+                            <div class="tm_invoice_right tm_text_right">
+                                <div class="tm_logo tm_size1">
+                                    @*<img style="background-color: #c5c9c6 " src="~/img/well_ai_web_logo_yes.png" alt="Logo">*@
+                                    <img src="https://well-ai.com/wp-content/uploads/2022/05/02112020_WELLAI_LOGOPKG-Recovered-14-300x61.png" alt="Logo">
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr class="tm_mb20">
+                        <div class="tm_invoice_head tm_mb10">
+                            <div class="tm_invoice_left">
+                                <p class="tm_mb2"><b class="tm_primary_color">Invoice To:</b></p>
+                                <p>
+                                    @*@PaymentDetails.FirstName @PaymentDetails.LastName <br>
+                                        @PaymentDetails.Address1, @PaymentDetails.City  <br>@PaymentDetails.State, @PaymentDetails.Country, @PaymentDetails.Zip <br>
+                                        lowell@gmail.com*@
+
+                                    @CustomerDetails.Name. <br>
+                                    @CustomerDetails.BillingAddress1, @CustomerDetails.BillingCity <br> @CustomerDetails.BillingState, @CustomerDetails.BillingZip <br>
+                                    @CustomerDetails.BillingEmail<br>
+                                    @CustomerDetails.BillingPhone<br>
+                                    @CustomerDetails.Website
+
+                                </p>
+                            </div>
+                            @*<div class="tm_invoice_right tm_text_right">
+                                    <p class="tm_mb2"><b class="tm_primary_color tm_f16 tm_text_uppercase">Invoma Ltd</b></p>
+                                    <p>
+                                        86-90 Paul Street, London<br>
+                                        England EC2A 4NE <br>
+                                        demo@gmail.com <br>
+                                        +99 764 25 763
+                                    </p>
+                                </div>*@
+                        </div>
+
+
+                        @*<div class="tm_invoice_head tm_mb10">
+                                <div class="tm_invoice_left">
+                                    <p class="tm_mb2"><b class="tm_primary_color">Invoice To:</b></p>
+                                    <p>
+                                        Lowell H. Dominguez <br>
+                                        84 Spilman Street, London <br>United Kingdom <br>
+                                        lowell@gmail.com
+                                    </p>
+                                </div>
+                                <div class="tm_invoice_right tm_text_right">
+                                    <p class="tm_mb2"><b class="tm_primary_color tm_f16 tm_text_uppercase">Invoma Ltd</b></p>
+                                    <p>
+                                        86-90 Paul Street, London<br>
+                                        England EC2A 4NE <br>
+                                        demo@gmail.com <br>
+                                        +99 764 25 763
+                                    </p>
+                                </div>
+                            </div>*@
+
+                        <div class="tm_table tm_style1">
+                            <div class="tm_table_responsive">
+                                <table class="tm_border_top">
+                                    <thead>
+                                        <tr>
+                                            <th class="tm_width_5 tm_semi_bold tm_primary_color tm_gray_bg">Subscription Package</th>
+                                            <th class="tm_width_5 tm_semi_bold tm_primary_color tm_gray_bg">Period Date</th>
+                                            <th class="tm_width_5 tm_semi_bold tm_primary_color tm_gray_bg">Qty</th>
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color tm_gray_bg tm_text_right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var count = 0;
+                                            foreach (var item in subscriptions)
+                                            {
+
+                                                @if (@item.SubscriptionType == 0)
+                                                {
+                                                    <tr>
+                                                        <td class="tm_width_5">Advisor Operator	</td>
+                                                        <td class="tm_width_5">
+                                                            @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy"))
+                                                            <span class="tm_ternary_color">To</span>  @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))
+                                                        </td>
+                                                        <td class="tm_width_5">@item.SubscriptionCount</td>
+                                                        @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                                        <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                                    </tr>
+                                                }
+
+                                                else @if (@item.SubscriptionType == 1)
+                                           {
+                                            <tr>
+                                                <td class="tm_width_5">Advisor Provider</td>
+                                                <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                                <td class="tm_width_5">@item.SubscriptionCount</td>
+                                                @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                                <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                            </tr>
+                                        }
+                                        else @if (@item.SubscriptionType == 2)
+                                       {
+                                        <tr>
+                                            <td class="tm_width_5">Dispatch</td>
+                                            <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                            <td class="tm_width_5">@item.SubscriptionDispatchCount</td>
+                                            @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                            <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                        </tr>
+                                    }
+
+                                    else @if (@item.SubscriptionType == 3)
+                                   {
+                                       if (count == 0)
+                                       {
+                                        <tr>
+                                            <td class="tm_width_5">Dispatch</td>
+                                            <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                            <td class="tm_width_5">@item.SubscriptionDispatchCount</td>
+                                            @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                            <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                        </tr>
+                                        count = 1;
+                                    }
+                                    else if (count == 1)
+                                    {
+                                        <tr>
+                                            <td class="tm_width_5">Advisor Operator</td>
+                                            <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                            <td class="tm_width_5">@item.SubscriptionCount</td>
+                                            @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                            <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                        </tr>
+                                        count = 2;
+                                    }
+
+                                }
+
+                                else @if (@item.SubscriptionType == 4)
+                               {
+                                   if (count == 0)
+                                   {
+                                    <tr>
+                                        <td class="tm_width_5">Dispatch</td>
+                                        <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                        <td class="tm_width_5">@item.SubscriptionDispatchCount</td>
+                                        @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                        <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                    </tr>
+                                    count = 1;
+                                }
+                                else if (count == 1)
+                                {
+                                    <tr>
+                                        <td class="tm_width_5">Advisor Provider</td>
+                                        <td class="tm_width_5">   @(((DateTime)@BillingHistoryInvoices.BillDate).ToString("dd-MMM-yyyy")) <span class="tm_ternary_color">To</span> @(((DateTime)@BillingHistoryInvoices.BillDate).AddDays(30).ToString("dd-MMM-yyyy"))</td>
+
+                                        <td class="tm_width_5">@item.SubscriptionCount</td>
+                                        @*<td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>*@
+                                        <td class="tm_width_2 tm_text_right">$@item.PackageAmount</td>
+                                    </tr>
+                                    count = 2;
+                                }
+
+                            }
+
+
+
+
+
+                            }
+
+                                        }
+                                        @*<tr>
+                                                <td class="tm_width_5">IP TV</td>
+                                                <td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>
+                                                <td class="tm_width_2 tm_text_right">$50</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tm_width_5">Equpment rental</td>
+                                                <td class="tm_width_5">01 Jun 2022 <span class="tm_ternary_color">To</span> 31 Jun 2022</td>
+                                                <td class="tm_width_2 tm_text_right">$100</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tm_width_5">Govement fee & taxes</td>
+                                                <td class="tm_width_5">30% of rental</td>
+                                                <td class="tm_width_2 tm_text_right">$30</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tm_width_5" colspan="2">Monthly services</td>
+                                                <td class="tm_width_2 tm_text_right">$10</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tm_width_5" colspan="2">Others</td>
+                                                <td class="tm_width_2 tm_text_right">$10</td>
+                                            </tr>*@
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tm_invoice_footer tm_border_top tm_mb15 tm_m0_md">
+                                <div class="tm_left_footer tm_padd_left_15_md">
+                                    @*<p class="tm_mb2"><b class="tm_primary_color">Paid By:</b></p>
+                                        <p class="tm_m0">Credit Card - 236***********928<br>Lowell H. Dominguez <br>Amount: $250</p>*@
+                                    <p class="tm_mb2"><b class="tm_primary_color">Paid By:</b></p>
+
+                                    @if (@BillingHistoryInvoices.PayMethod == "1")
+                                    {
+                                        <p class="tm_m0">
+                                            Credit Card -<label class="text-small" id="lblCardNumbermask">@PaymentDetails.Number</label><br>@PaymentDetails.FirstName @PaymentDetails.LastName.<br>Amount: $@(((Decimal)@BillingHistoryInvoices.Amount))
+
+                                        </p>
+                                    }
+                                    else @if (@BillingHistoryInvoices.PayMethod == "2")
+                               {
+                                <p class="tm_m0">
+                                    Debit Card - <label class="text-small" id="lblCardNumbermask">@PaymentDetails.Number</label><br>@PaymentDetails.FirstName @PaymentDetails.LastName.<br>Amount: $@(((Decimal)@BillingHistoryInvoices.Amount))
+
+                                </p>
+                            }
+                            else @if (@BillingHistoryInvoices.PayMethod == "3")
+                           {
+                            <p class="tm_m0">
+                                ACH - <label class="text-small" id="lblCardNumbermask">@PaymentDetails.Number</label><br>@PaymentDetails.FirstName @PaymentDetails.LastName.<br>Amount: $@(((Decimal)@BillingHistoryInvoices.Amount))
+
+                            </p>
+                        }
+
+                        </div>
+                        <div class="tm_right_footer">
+                            <table class="tm_mb15 tm_m0_md">
+                                <tbody>
+                                    @*<tr>
+                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Subtoal</td>
+                                            <td class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_bold">$250</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">Discount <span class="tm_ternary_color">(0%)</span></td>
+                                            <td class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">$0</td>
+                                        </tr>*@
+                                    <tr class="tm_border_top tm_border_bottom">
+                                        <td class="tm_width_3 tm_border_top_0 tm_bold tm_f16 tm_primary_color">Grand Total	</td>
+                                        <td class="tm_width_3 tm_border_top_0 tm_bold tm_f16 tm_primary_color tm_text_right">$@Convert.ToDouble((((Double)@BillingHistoryInvoices.Amount))) </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tm_invoice_footer tm_type1">
+                        <div class="tm_left_footer"></div>
+                        <div class="tm_right_footer">
+                            <div class="tm_sign tm_text_center">
+                                @*<img src="assets/img/sign.svg" alt="">
+                                    <p class="tm_m0 tm_f16 tm_primary_color">Signstuze V. Hoskin</p>
+                                    <p class="tm_m0 tm_ternary_color">Accounts Manager</p>*@
+
+                                @*<img src="assets/img/sign.svg" alt="">*@
+                                <p class="tm_m0 tm_f16 tm_primary_color">Signstuze</p>
+                                <p class="tm_m0 tm_ternary_color">Accounts Manager</p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="tm_note tm_text_center">
+                        <p class="tm_m0 tm_primary_color">Thank you for using our service. Contact the helpline (109283) for any problem.</p>
+                    </div>*@
+
+                <div class="tm_note tm_text_center">
+                    <p class="tm_m0 tm_primary_color">Thank you for using our service.</p>
+                </div>
+
+                <!-- .tm_note -->
+            </div>
+        </div>
+        <div class="tm_invoice_btns tm_hide_print">
+            <a href="javascript:window.print()" class="tm_invoice_btn tm_color1">
+                <span class="tm_btn_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 368h24a40.12 40.12 0 0040-40V168a40.12 40.12 0 00-40-40H104a40.12 40.12 0 00-40 40v160a40.12 40.12 0 0040 40h24" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" /><rect x="128" y="240" width="256" height="208" rx="24.32" ry="24.32" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" /><path d="M384 128v-24a40.12 40.12 0 00-40-40H168a40.12 40.12 0 00-40 40v24" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" /><circle cx="392" cy="184" r="24" fill='currentColor' /></svg>
+                </span>
+                <span class="tm_btn_text">Print</span>
+            </a>
+            <button id="tm_download_btn" class="tm_invoice_btn tm_color2">
+                <span class="tm_btn_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M320 336h76c55 0 100-21.21 100-75.6s-53-73.47-96-75.6C391.11 99.74 329 48 256 48c-69 0-113.44 45.79-128 91.2-60 5.7-112 35.88-112 98.4S70 336 136 336h56M192 400.1l64 63.9 64-63.9M256 224v224.03" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" /></svg>
+                </span>
+                <span class="tm_btn_text">Download</span>
+            </button>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/jspdf.min.js"></script>
+<script src="~/assets/js/html2canvas.min.js"></script>
+<script src="~/assets/js/main.js"></script>
+</body>
+</page>
+
+@*</section>*@
+@*<body>
+
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jspdf.min.js"></script>
+        <script src="assets/js/html2canvas.min.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>*@
+
+@*</html>*@

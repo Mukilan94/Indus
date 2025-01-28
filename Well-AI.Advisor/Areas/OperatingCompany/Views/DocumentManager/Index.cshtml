@@ -1,0 +1,429 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadsModel
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<section class="content-header">
+    <style>
+
+        .k-button.k-primary:hover {
+           background-color: #007bff !important;
+        }
+
+        #PdfFile {
+            width: auto !important;
+        }
+        #uploads-1 {
+            border-radius: 5px !important;
+        }
+        .fa-file-pdf-o {
+            padding-right: 15px !important;
+            padding-left: 0px !important;
+        }
+        .k-tabstrip-left > .k-tabstrip-items .k-item.k-state-hover,
+        .k-tabstrip-left > .k-tabstrip-items .k-item.k-state-active {
+            border-radius: 5px !important;
+        }
+
+        .k-filemanager {
+            border-radius: 5px !important;
+        }
+
+        .k-filemanager-listview .k-listview-item {
+            padding: 16px 16px;
+            width: 120px;
+            height: 120px;
+            text-align: center;
+            display: inline-block;
+            border-radius: 10px !important;
+        }
+
+        .k-widget k-window k-dialog {
+            width: 555px;
+        }
+
+        .k-filemanager-toolbar, .k-filemanager .k-splitbar {
+            background-color: #007BFF;
+            border-radius: 4px !important;
+        }
+
+        .k-button, .k-switch-container {
+            background-color: #fff;
+            color: #000 !important;
+        }
+
+        .k-upload .k-dropzone {
+            background-color: #fff;
+        }
+
+        .k-upload-button:hover, .k-dialog-button-layout-stretched .k-button:hover, .k-button:hover {
+            background-color: #fff;
+        }
+
+        .k-button.k-state-active {
+            color: #fff !important;
+        }
+
+        .k-filemanager-content .k-breadcrumb {
+            display: none;
+        }
+
+        .k-dialog-buttongroup .k-button.k-primary {
+            color: #fff !important;
+        }
+
+        .k-filemanager-content-container {
+            height: 100% !important;
+        }
+
+        #filemanager {
+            min-height: 100%;
+        }
+
+        #wndContent {
+            width: 520px;
+        }
+
+        .k-filemanager-upload-dialog {
+            width: 554px !important;
+        }
+
+       
+        .k-filemanager-details-toggle {
+            display: none;
+        }
+
+        .k-filemanager-view {
+            height: 100% !important;
+        }
+
+        .uploadview, .docview {
+            margin-bottom: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+        .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav
+        {
+            color:white !important;
+        }
+    </style>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="docview">
+        @(Html.Kendo().FileManager().Name("filemanager")
+                .Draggable(false)
+                .DataSource(ds =>
+                {
+                    ds.Read(operation => operation
+                    .Type(HttpVerbs.Post)
+                    .Action("Read", "DocumentManager")
+                );
+                    ds.Destroy(operation => operation
+                        .Type(HttpVerbs.Post)
+                        .Action("Destroy", "DocumentManager")
+                    );
+                    ds.Create(operation => operation
+                        .Type(HttpVerbs.Post)
+                        .Action("Create", "DocumentManager")
+                    );
+                    ds.Update(operation => operation
+                        .Type(HttpVerbs.Post)
+                        .Action("Update", "DocumentManager")
+                    );
+                })
+            .UploadUrl("Upload", "DocumentManager")
+            .ContextMenu(context => context.Items(items =>
+            {
+                items.Add("download").Command("DownloadCommand").Text("Download").SpriteCssClass("k-icon k-i-download");
+                items.Add("delete");
+                items.Add("PdfViewer").Command("PdfViewerCommand").Text("Preview").SpriteCssClass("fa fa-file-pdf-o");
+
+            }))
+            .Toolbar(tb => tb.Items(items =>
+            {
+                items.Add("newfolder").Template("<a role='button' class='k-button k-button-icontext' onclick='callnewfolderwin();'>New folder</a>");
+                items.Add("upload");
+                items.Add("changeView");
+                items.Add("spacer");
+                items.Add("sortField");
+                items.Add("details");
+                items.Add("search");
+            }))
+
+        )
+    </div>
+    <div class="uploadview">
+        @(Html.Kendo().TabStrip()
+        .Name("uploads")
+        .TabPosition(TabStripTabPosition.Left)
+        .Animation(animation =>
+        {
+        animation.Open(config =>
+        {
+            config.Fade(FadeDirection.In);
+        });
+    })
+        .SelectedIndex(Model.sid)
+        .Items(i =>
+        {
+        i.Add().Text("Drill Programs").LoadContentFrom("DrillPrograms", "DocumentManager");
+        i.Add().Text("Mud Programs").LoadContentFrom("MudPrograms", "DocumentManager");
+        i.Add().Text("Cement Programs").LoadContentFrom("CementPrograms", "DocumentManager");
+        i.Add().Text("Drill Permits").LoadContentFrom("DrillPermits", "DocumentManager");
+        i.Add().Text("MSAs").LoadContentFrom("Msas", "DocumentManager");
+    })
+        .Events(x => x.Select("tabSelect").Show("tabShow"))
+        )
+    </div>
+</section>
+@(Html.Kendo().Window().Name("WellNewFolderWindow")
+    .Width(555)
+    .Title("Create folder")
+    .Content(@<text><div id="wndContent">Loading....</div></text>)
+.Visible(false)
+.Actions(actions => actions.Close())
+.Modal(true)
+.Draggable(true)
+)
+
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)
+
+
+<script type="text/javascript">
+       //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewPdfInPdfViewer(MsaId,TenId,FileName) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(FileName);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/DocumentManager/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },               
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+    function onCancelClick() {
+        window.location.href = "/documentmanager/";
+    }
+    $(document).ready(function () {
+        var filemanager = $("#filemanager").getKendoFileManager();
+        filemanager.executeCommand({ command: "TogglePaneCommand", options: { type: "preview" } });
+        filemanager.toolbar.fileManagerDetailsToggle.switchInstance.toggle();
+        var filemanagerNS = kendo.ui.filemanager;
+        filemanagerNS.commands.DownloadCommand = filemanagerNS.FileManagerCommand.extend({
+            exec: function () {
+                var that = this,
+                    filemanager = that.filemanager, // get the kendo.ui.FileManager instance
+                    options = that.options, // get the options passed through the tool
+                    target = options.target // options.target is available only when command is executed from the context menu
+                selectedFiles = filemanager.getSelected(); // get the selected files
+                window.location = '/DocumentManager/Download?path=' + selectedFiles[0].path;
+            }
+        });
+
+        //phase ii changes
+        filemanagerNS.commands.PdfViewerCommand = filemanagerNS.FileManagerCommand.extend({
+            exec: function () {
+                var that = this,
+                    filemanager = that.filemanager, // get the kendo.ui.FileManager instance
+                    options = that.options, // get the options passed through the tool
+                    target = options.target // options.target is available only when command is executed from the context menu
+                selectedFiles = filemanager.getSelected(); // get the selected files
+                if (selectedFiles[0].extension == ".pdf") {
+                    var wnd = $("#PdfFileViewer").data("kendoWindow");
+                    wnd.title(selectedFiles[0].name);
+                    wnd.center().open();
+                    $("#PdfFile").empty();
+                    $("#PdfFile").kendoPDFViewer({
+                        dplProcessing: {
+                            read: {
+                                url: "/DocumentManagerSRV/GetPdfFileForDocumentContext?Filepath=" + selectedFiles[0].path + "&FileName=" + selectedFiles[0].name,
+                            },
+                        },
+                        toolbar: {
+                            items: [
+                                "pager", "spacer"
+                            ]
+                        }
+                    });
+                }
+            }
+        });
+
+
+        //Phase II Changes - File Exists Validation against Azure
+        filemanager.upload.bind("upload", function (fe) {
+
+            var files = fe.files;
+
+            var selectedObjects = filemanager.getSelected();
+
+            if (selectedObjects != undefined && selectedObjects.length == 1 && selectedObjects[0].isDirectory) {
+                selectedPath = selectedObjects[0].path;
+            }
+
+            if (selectedObjects != undefined) {
+                if (selectedObjects.length > 0) {
+                    if (selectedObjects != undefined && selectedObjects.length == 1 && selectedObjects[0].isDirectory) {
+                        selectedPath = selectedObjects[0].path;
+                    }
+                    var fileSystemArray = selectedObjects[0].path.split("/");
+                    console.log(' selectedObjects[0].isDirectory ' + selectedObjects[0].isDirectory);
+                    console.log(' fileSystemArray.length ' + fileSystemArray.length);
+                    console.log(' selectedObjects[0].path ' + selectedObjects[0].path);
+                    console.log('fileSystemArray[parseInt(fileSystemArray.length)-1]' + fileSystemArray[parseInt(fileSystemArray.length) - 1]);
+                    if (selectedObjects[0].isDirectory == false) {
+                        selectedDir = selectedObjects[0].path.replace("/" + fileSystemArray[parseInt(fileSystemArray.length) - 1], "");
+                    }
+                    else {
+                        selectedDir = selectedObjects[0].path;
+                    }
+                }
+            }
+            else {
+                kendo.alert("Select a folder to upload files");
+                fe.preventDefault();
+                return false;
+            }
+
+            var fileSystemArray = selectedObjects[0].path.split("/");
+            console.log(' selectedObjects[0].isDirectory ' + selectedObjects[0].isDirectory);
+            console.log(' fileSystemArray.length ' + fileSystemArray.length);
+            console.log(' selectedObjects[0].path ' + selectedObjects[0].path);
+            console.log('fileSystemArray[parseInt(fileSystemArray.length)-1]' + fileSystemArray[parseInt(fileSystemArray.length) - 1]);
+            if (selectedObjects[0].isDirectory == false) {
+                selectedDir = selectedObjects[0].path.replace("/" + fileSystemArray[parseInt(fileSystemArray.length) - 1], "");
+            }
+            else {
+                selectedDir = selectedObjects[0].path;
+            }
+            console.log('selectedDir ' + selectedDir);
+            //
+            $.each(files, function () {
+                console.log(' uploaded folder path ' + selectedDir);
+                var filename = this.name;
+                var filePath = selectedDir + '/' + this.name;
+
+                    $.ajax({
+                        url: "DocumentManager/IsFileExistsInCloud?filePath=" + filePath,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        async:false,
+                        success: function (result) {
+                            if (result!=null) {
+                                console.log('File Exist Success ' + JSON.parse(result));
+                                if (JSON.parse(result) == true) {
+                                    kendo.alert("The file already exist:" + filename + ". Please rename your files or delete the duplicate from the server before re-uploading.");
+                                    fe.preventDefault();
+                                    return false;                                      
+                                }
+                                else {
+                                    return true;
+                                }
+                            }
+                            else {
+                                fe.preventDefault();
+                                return false;
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            fe.preventDefault();
+                            return false;  
+                            kendo.alert("FileExist Validation Error :" + xhr.responseText);
+                        }
+                    });
+            });
+        })
+        
+    });
+
+    function callnewfolderwin() {
+        $("#wndContent").empty();
+        $("#wndContent").text("Loading....");
+        var wnd = $("#WellNewFolderWindow").data("kendoWindow");
+        wnd.content();
+        var documentWindow = $(window);
+        wnd.setOptions({
+            position: {
+                top: documentWindow.scrollTop() + Math.max(0, (documentWindow.height()) / 5),
+                left: documentWindow.scrollLeft() + Math.max(0, (documentWindow.width()) / 5)
+            }
+        });
+        var filemanager = $("#filemanager").getKendoFileManager();
+        var path = filemanager.path();
+        var selectedObjects = filemanager.getSelected();
+        var selectedPath = "";
+        if (selectedObjects != undefined && selectedObjects.length == 1 && selectedObjects[0].isDirectory) {
+            selectedPath = selectedObjects[0].path;
+        }
+        wnd.open();
+        var encodedPath = encodeURIComponent(path);
+        var encodedSelectedPath = encodeURIComponent(selectedPath);
+        $('#wndContent').load('/DocumentManager/NewFolderContent?path=' + encodedPath + "&selected=" + encodedSelectedPath, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            } else {
+            }
+        });
+    }
+    function wellChange(e) {
+        var ddlWellValue = $("#ddlWellsp").data("kendoDropDownList").value();
+        $("#WellIdDrill").val(ddlWellValue);
+        $("#WellIdDrill").trigger("change");
+    }
+    function wellChangeCement(e) {
+        var ddlWellValue = $("#ddlWellsc").data("kendoDropDownList").value();
+        $("#WellIdCement").val(ddlWellValue);
+        $("#WellIdCement").trigger("change");
+    }
+    function wellChangePermits(e) {
+        var ddlWellValue = $("#ddlWellsdp").data("kendoDropDownList").value();
+        $("#WellIdPermits").val(ddlWellValue);
+        $("#WellIdPermits").trigger("change");
+    }
+    function wellChangeMud(e) {
+        var ddlWellValue = $("#ddlWellsm").data("kendoDropDownList").value();
+        $("#WellIdMud").val(ddlWellValue);
+        $("#WellIdMud").trigger("change");
+    }
+    function vendorChange(e) {
+        var ddlVendorValue = $("#ddlVendors").data("kendoDropDownList").value();
+        $("#VendorId").val(ddlVendorValue);
+        $("#VendorId").trigger("change");
+    }
+    function tabSelect(e) {
+        kendo.ui.progress(e.sender.element, true);
+    }
+    function tabShow(e) {
+        kendo.ui.progress(e.sender.element, false);
+    }
+</script>

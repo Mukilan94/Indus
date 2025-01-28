@@ -1,0 +1,21 @@
+
+You can test it on swagger
+http://localhost:52564/swagger/index.html
+
+
+Getting Songs List
+
+with song search
+api/Music/GetSongList/4/10/0?searchKey=s
+without song search
+api/Music/GetSongList/4/10/0
+
+
+Getting Album detail
+api/Music/GetAlbumDetail/4
+
+Getting Singer List
+/api/Music/GetSingerDetail/4
+
+
+http://localhost:49895/Identity/Account/Subscription?userId=677a2f17-fa42-4f6e-9328-ac1fe034bcc8

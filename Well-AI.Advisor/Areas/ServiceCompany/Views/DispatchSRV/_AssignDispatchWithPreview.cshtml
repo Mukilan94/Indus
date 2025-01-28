@@ -1,0 +1,1177 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.DispatchViewModel
+<!--<head>
+    <script src="~/js/DispatchRoute.js"></script>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">-->
+@*<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.css" rel="stylesheet">*@
+<!--</head>-->
+
+
+
+<script src="~/js/DispatchPreview.js"></script>
+
+<style>
+    .demo-section label {
+        /*margin-bottom: 5px;*/
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    #employees {
+        width: 270px;
+    }
+
+    #example .demo-section {
+        max-width: none;
+        /*width: 600px;*/
+    }
+
+    #example .k-listbox {
+        width: 236px;
+        height: 350px;
+    }
+
+        #example .k-listbox:first-of-type {
+            width: 270px;
+            margin-right: 1px;
+        }
+</style>
+
+
+<section class="content-header">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #Dispatch {
+            height: 10%;
+        }
+
+        #outerWrapper {
+            overflow: hidden;
+        }
+
+        .k-numerictextbox {
+            width: 17.4em;
+        }
+
+        .map_box_container {
+            /* position: relative;*/
+            height: 10% !important;
+            width: 100% !important;
+        }
+
+        /*#map {
+            position: absolute;
+            top: 160px;
+            bottom: 0;
+            width: 53%;*/
+        /*transition: all 0.3s;*/
+        /*display: inline-block;
+            overflow: hidden;*/
+        /*height: fit-content;*/
+        /*}*/
+        /*  #mappreview {
+            position: absolute;
+            top: 160px;
+            bottom: 0;
+            width: 53%;
+            transition: all 0.3s;
+            display: inline-block;
+            overflow: hidden;
+            height: fit-content;
+        }*/
+
+        .mapboxgl-canvas {
+            /* top: 50px;*/
+            /* width: 516.391px; height: 600px;*/
+        }
+
+        .button {
+            color: #fff;
+            background-color: #555;
+            padding: 1em;
+            margin: 1em;
+            position: absolute;
+            right: 1em;
+            top: 1em;
+            border-radius: 0.5em;
+            border-bottom: 2px #222 solid;
+            cursor: pointer;
+        }
+
+        #resizeMap {
+            top: 5em;
+        }
+
+        .mapboxgl-ctrl-top-right {
+            /* top: 50px;*/
+        }
+
+        /* .map_box_container {
+            position: absolute;
+            height: 100% !important;
+            width: 100% !important;
+        }*/
+
+        .marker_preview {
+            /* background-image: url('/img/mapbox-icon.png');
+            background-size: cover;
+            width: 20px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;*/
+            background-image: url('/img/oil-rig.png');           
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+        .markerstart_preview_new {
+            background-image: url('/img/start_pinplaceholder.png');
+            /*background-image: url('/img/mapicon-start.png');*/
+            background-size: cover;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .markerstart_preview {
+            /* background-image: url('/img/PLANT.png');
+            background-size: cover;
+            width: 45px;
+            height: 45px;
+            border-radius: 00%;
+            cursor: pointer;*/
+            background-image: url('/img/start_pinplaceholder.png');
+            background-size: cover;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            color: black;
+        }
+
+        .mapboxgl-map {
+            position: absolute;
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .k-edit-label {
+            margin-left: 15px !important;
+            margin-top: 5px !important;
+        }
+
+        .operatorfilter {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+
+            .operatorfilter .k-dropdown {
+                display: block;
+            }
+
+                .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                    background-color: #fff;
+                    color: #000;
+                }
+
+        .k-dropdown {
+            border: 2px solid blue !important;
+        }
+
+        @@media (max-width: 570px) {
+            .card-header {
+                height: auto !important;
+            }
+
+            .chart-header, .operatorfilter {
+                position: inherit !important;
+                display: block !important;
+                width: auto !important;
+            }
+        }
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .customEdit {
+            margin-left: 10px;
+        }
+
+        #Dispatch {
+            height: 100%;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        .rightpart {
+            /* display: inline-block;*/
+            min-height: 100% !important;
+            margin-left: 5px;
+            top: 0px;
+        }
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+            display: block !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+            width: unset !important;
+            height: calc(1*(2px + 0.75rem + 1.5em));
+            box-sizing: border-box;
+            border-color: inherit;
+            margin: 0 0.375rem;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+            margin: 0;
+            border-width: 0;
+            width: unset !important;
+            height: unset !important;
+        }
+
+        .k-pager-numbers {
+            display: contents !important;
+        }
+
+        div.k-loading-mask {
+            z-index: 3;
+        }
+
+        .chathisttitle {
+            color: #ffffff;
+        }
+
+        .leftpart {
+            width: 38%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .rightpart {
+            width: 61%;
+            display: inline-block;
+        }
+
+        .leftpartPreview {
+            width: 80%;
+            display: inline-block;
+            vertical-align: top;
+            /* margin-left: 150px;*/
+        }
+
+        .rightpartPreview {
+            width: 46%;
+            display: inline-block;
+            /* margin-right: 50px; */
+            /*margin-left: 150px;*/
+        }
+
+
+        .content {
+        }
+
+        .k-pager-numbers {
+            padding-top: 11px;
+        }
+
+        .km-widget {
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-pos-left {
+            right: 0;
+            left: unset;
+        }
+
+        .k-pos-top {
+            top: unset;
+            bottom: 10px;
+        }
+
+        .k-window div.k-window-content {
+            overflow: auto;
+        }
+
+
+        .k-grid tbody tr:not(.k-grouping-row) {
+            cursor: move;
+        }
+
+        label.customMap {
+            cursor: pointer;
+        }
+
+        .truckcolor_preview {
+            /*color: indianred;
+            top: -30px;
+            font-size: 3em;*/
+            color: indianred;
+            top: -30px;
+            font-size: 3em;
+            background-image: url('/img/truck.png');
+            /*background-image: url('/img/LOGISTIC.png');*/
+            background-size: cover;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</section>
+<div class="row" style="height: 611px;">
+    <div class="leftpartpreview" style="width:50%">
+        <div class="row">
+            <div class="col-md-6">
+                <div style="display:inline-block">
+                    @Html.Label("Search By")
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="display:inline-block">
+
+                    <div class="radiogroup" style="display:inline-block">
+                        <label><input type="radio" name="radio1" value="Name" checked onclick="onSearchOptionClick()"> Well Name</label>
+                        <label><input type="radio" name="radio1" value="Rig" onclick="onSearchOptionClick()"> Rig Name</label>
+                        <label><input type="radio" name="radio1" value="API" onclick="onSearchOptionClick()"> API</label>
+                        <label><input type="radio" name="radio1" value="Address" onclick="onSearchOptionClick()"> Address</label>
+                        <label><input type="radio" name="radio1" value="GPS" onclick="onSearchOptionClick()"> GPS</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="margin-left:-15px">
+            <div class="col-md-12" id="DestinationLookup" style="display:block">
+                <div class="DestinationLookup">
+                    <div class="col-md-12">
+                        @Html.Label("Destination Lookup")
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="k-edit-field" id="divApiSearch" style="display:block">
+                                @(Html.Kendo().AutoComplete()
+                         .Name("numAPI")
+                              .DataTextField("api_number")
+                              .Filter("contains")
+                              .MinLength(5)
+                              .HtmlAttributes(new { style = "width:100%; text-transform:uppercase !important;" })
+                              .DataSource(source => {
+                                  source
+                                      .Read(read =>
+                                      {
+                                          read.Action("GetWellDetailsByApiNumber", "WellData")
+                                          .Data("onFilter");
+                                      })
+                                      .ServerFiltering(true);
+                              })
+                              .FooterTemplate("Total #: instance.dataSource.total() # items found")
+                              .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                              .Height(400)
+                              .Template("#= api_number # |  #= name # ")
+                                .Events(e =>
+                                {
+                                    e.Select("onApiNumSelect").Change("onApiNumChange");
+                                }).Placeholder("Search will begin when input 5 letters")
+                            )
+                            </div>
+                            <div class="k-edit-field" id="divRigSearch" style="display:none">
+                                @(Html.Kendo().AutoComplete()
+                         .Name("rigNameSearch")
+                              .DataTextField("rig")
+                              .Filter("contains")
+                              .MinLength(3)
+                              .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                              .DataSource(source => {
+                                  source
+                                      .Read(read =>
+                                      {
+                                          read.Action("GetRigDetailsByName", "DispatchSRV")
+                                          .Data("onRigFilter");
+                                      })
+                                      .ServerFiltering(false);
+                              })
+                              .FooterTemplate("Total #: instance.dataSource.total() # items found")
+                              .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                              .Height(400)
+                              .Template("#= rig # ")
+                                .Events(e =>
+                                {
+                                    e.Select("onRigNameSelect").Change("onRigNameChange");
+                                }).Placeholder("Search will begin when input 3 letters")
+                            )
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="k-edit-field">
+
+                                @Html.Kendo().TextBox().Name("customer").Placeholder("Customer").HtmlAttributes(new { @maxlength = "100" })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="k-edit-field">
+
+                                @Html.Kendo().TextBox().Name("wellName").Placeholder("Well Name").HtmlAttributes(new { @maxlength = "100" })
+
+                                @Html.Hidden("wellId")
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="k-edit-field ">
+                                @Html.Kendo().TextBox().Name("rigName").Placeholder("Rig Name").HtmlAttributes(new { @maxlength = "100" })
+                                @Html.Hidden("rigId")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="k-edit-field">
+                                @Html.Kendo().TextBox().Name("api").Placeholder("API").HtmlAttributes(new { @maxlength = "10" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-left:-15px">
+            <div class="col-md-12" id="DestinationAddress" style="display:none">
+                <form id="basicUsage" method="post">
+                    <div class="DestinationAddress">
+                        <div class="col-md-12">
+                            @Html.Label("Destination Address")
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="k-edit-field">
+                                    @Html.Kendo().TextBox().Name("locationname").Placeholder("Location Name").HtmlAttributes(new { @maxlength = "100", required = "required", validationmessage = "LocationName is required" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="AddressBlock" style="display:block">
+                                <div class="k-edit-field ">
+
+                                    @Html.Kendo().TextBox().Name("address").Placeholder("Address").HtmlAttributes(new { @maxlength = "100", required = "required", validationmessage = "Address is required" })
+                                    <span class="k-invalid-msg" data-for="address"></span>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4" id="CityBlock" style="display:block">
+                                <div class="k-edit-field">
+                                    @Html.Kendo().TextBox().Name("city").Placeholder("City").HtmlAttributes(new { @maxlength = "50", required = "required", validationmessage = "City is required" })
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="StateBlock" style="display:block">
+                                <div class="k-edit-field ">
+                                    @Html.Kendo().TextBox().Name("state").Placeholder("State").HtmlAttributes(new { @maxlength = "50", required = "required", validationmessage = "State is required" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4" id="ZipBlock" style="display:block">
+                                <div class="k-edit-field">
+                                    @Html.Kendo().TextBox().Name("zip").Placeholder("Zip").HtmlAttributes(new { @maxlength = "5", required = "required", validationmessage = "Zip is required" })
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3" id="LatitudeBlock" style="display:block">
+                                <div class="k-edit-field">
+                                    @Html.Kendo().TextBox().Name("latitude").Placeholder("Latitude").HtmlAttributes(new { required = "required", validationmessage = "Latitude is required" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-3" id="LongitudeBlock" style="display:block">
+                                <div class="k-edit-field">
+
+                                    @Html.Kendo().TextBox().Name("longitude").Placeholder("Longitude").HtmlAttributes(new { required = "required", validationmessage = "Longitude is required" })
+                                </div>
+                            </div>
+                        </div>
+                        <div id="message">
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Label("Dispatch Instructions / Notes") &nbsp;
+                <button id="btnaddpreview" class="k-button k-button-icontext k-primary btn btn-primary" style="float: right; height: 30px" onclick="Addpreview()"><span class="k-icon k-i-add"></span>Add</button>
+
+                <label style="float: right;"> &nbsp;  &nbsp;</label>
+                @*<label style="margin-left: 28%; margin-top: -20px">Schedule Arrival</label>*@
+                &nbsp;   &nbsp; @(Html.Kendo().DateTimePicker()
+                                .Name("ScheduledArrival")
+                                .Min(DateTime.Today)
+                                //.Value(DateTime.Today)
+                    .HtmlAttributes(new { style="float: right; width:220px;  " })
+                                ) &nbsp;
+                <label style="float: right;"> &nbsp; Schedule Arrival &nbsp;</label>
+
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:5px">
+            <div class="col-md-12">
+                <div class="col-md-12 spancols">
+
+                    @Html.TextArea("instructions", "", new { @class = "k-textbox", style = "width: 100%; height: 80px;  text-transform:uppercase !important;", maxlength = "500" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row rowtop">
+            <div class="col-md-12">
+                <div id="example" role="application">
+                    <div class="demo-section wide">
+
+
+                        @(Html.Kendo().ListBox()
+        .Name("DispatchList")
+        .Toolbar(toolbar => {
+
+            toolbar.Tools(tools => tools
+               .MoveUp()
+                  .MoveDown()
+                  .Remove()
+
+
+              );
+
+
+        })
+
+        .ConnectWith("selected")
+          .Draggable(true)
+          .DropSources("selected")
+            .DropSources("DispatchList")
+            .Events(ev => ev
+              // .Add("function(e){onAdd(e, true)}")
+               .Remove("function(e){onRemove(e, false)}")
+                // .Change("function(e){onChange(e, false)}")
+                // .DragStart("function(e){onDragStart(e, false)}")
+                // .Drag("function(e){onDrag(e, false)}")
+                //  .Drop("function(e){onDrop(e, false)}")
+                //
+                // .DragEnd("function(e){onDragEnd(e, false)}")
+                // .DataBound("function(e){onDataBound(e, false)}")
+                .Reorder("function(e){onReorder(e, false)}")
+               )
+
+
+
+
+        .DataTextField("rigwellandlocation")
+
+        .DataValueField("dispatchid")
+        .HtmlAttributes(new {style="width:100%;height:330px;"})
+
+
+        .DataSource(source => {
+            source.Custom()
+            .ServerFiltering(true)
+            .Type("aspnetmvc-ajax")
+
+            .Transport(transport => {
+                transport.Read("GetDispatchList_Preview", "DispatchSRV", new { userId = @ViewBag.UserId });
+            })
+
+
+            .Schema(schema => {
+                schema.Data("Data").Total("Total");
+            });
+        })
+
+  )
+
+
+
+
+
+                        <label id="lbluserid" style="display:none">@ViewBag.UserId</label>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row rowtop">
+            <div class="col-md-12">
+                <div style="float:right">
+                    <button id="btnSaveDispatchUser" class="k-button k-button-icontext k-primary k-grid-update" onclick="SaveDispatchUser()"><span class="k-icon k-i-save"></span>Assign Dispatch</button>
+                    @*<button id="btnSaveDispatchUser" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-save"></span>Assign Dispatch</button>*@
+
+                    <button id="btnCloseDispatch" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="rightpartPreview">
+
+
+        <div class="col-md-4 float-right ml-0 mapicons" style="display:none; z-index: 99; position: relative; top: 1rem;right:68px">
+            <button class="btn float-right" id="btnTruck" onclick="LoadAllUserPaths()"><i class="fa fa-truck fa-2x"></i></button>
+            <button class="btn float-right" id="btnLocation" onclick="LoadUserLocation()"><i class="fa fa-map-marker fa-2x"></i></button>
+            <button class="btn float-right" id="btnDispatchNotes" onclick="LoadDispatchNotes()"><i class="fa fa-file fa-2x"></i></button>
+        </div>
+        @*<section class="map_box_container">*@
+        <!--MAP-->
+        <div id='mappreview' style="height: 650px;width: 650px;"></div>
+    </div>
+</div>
+
+<!--//.Events(e => e.Change("OnChange")))-->
+<script>
+    var form = $("#basicUsage"),
+        messageDiv = $("#message"),
+        validator = null;
+
+    $(function () {
+
+        if (form) {
+            //need to attach the form to kendo validator and get reference
+            validator = form.kendoValidator().data("kendoValidator");
+        }
+    });
+
+    $(form).submit(validateMyForm);
+
+    function validateMyForm(e) {
+
+        e.preventDefault();
+
+        if (validator) {
+
+            var resultOfValidation = validator.validate();
+
+            if (!resultOfValidation) {
+                messageDiv.html("Please fill up the fields properly");
+            } else {
+                messageDiv.html("");
+            }
+        }
+    }
+
+</script>
+
+
+
+
+<style type="text/css">
+
+    .k-mappreview {
+        height: 100vh;
+    }
+
+    .rowtop {
+        margin-top: 10px;
+    }
+
+    .row {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: 0;
+    }
+
+
+    .rightpartPreview {
+        width: 46%;
+        display: inline-block;
+        margin-right: 0;
+        margin-left: 20px;
+    }
+
+    .textarea {
+        height: 100px;
+        /*resize:none;*/
+    }
+
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+
+    .k-edit-field {
+        width: 100%;
+    }
+
+    .spancols {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .k-textbox, .k-input.k-textbox, .k-textarea {
+        width: unset;
+        resize: none;
+    }
+
+    .upper {
+        text-transform: uppercase !important;
+    }
+
+    /*    .k-window div.k-window-content {
+        overflow: hidden;
+    }*/
+
+    .k-textbox > input {
+        text-transform: uppercase;
+    }
+
+
+    .k-icon .k-i-x {
+        background-color: red;
+    }
+</style>
+
+
+
+
+
+<script>
+
+
+    // debugger;
+    //public - pk.eyJ1Ijoia2FydGhpa3RoYW5nYXZlbCIsImEiOiJjbDFkZHk5MjYwZ21lM2NwMm9tcTVueGMyIn0.jufh1E3v_JpXizuN7Rfudg
+    //Well AI - pk.eyJ1Ijoid2VsbC1haSIsImEiOiJjbDFxZ25yMnIwN3c3M2JzNml1dWdpMmR0In0.l-lDzOnU03tFScjiMkRObg
+    //  mapboxgl.accessToken = 'pk.eyJ1Ijoid2VsbC1haSIsImEiOiJjbDFxZ25yMnIwN3c3M2JzNml1dWdpMmR0In0.l-lDzOnU03tFScjiMkRObg';
+    //     $("#mappreview").empty();
+    //  $("#mappreview").refresh();
+
+    //if (mappreview != undefined) {
+
+    //}
+
+    var mappreview = new mapboxgl.Map({
+        container: 'mappreview',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-102.36896137371849, 31.846556737999546],
+        zoom: 4,
+        pixelRatio: window.devicePixelRatio || 1
+    });
+
+    //mappreview.remove();
+
+
+    $.when(mappreview.on('load', () => {
+        //   debugger;
+        if (!map.getSource('routepreviewsrc')) {
+            mappreview.addSource('routepreviewsrc', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [
+                        ]
+                    }
+                }
+            });
+        }
+
+        if (!mappreview.getLayer('routepreview')) {
+            mappreview.addLayer({
+                'id': 'routepreview',
+                'type': 'line',
+                'source': 'routepreviewsrc',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#3da118',
+                    'line-width': 8
+                }
+            });
+        }
+
+
+        mappreview.addControl(new mapboxgl.NavigationControl());
+
+        mappreview.resize();
+
+    })
+    ).then(function (data, textStatus, jqXHR) {
+        //LoadAllUserDestinations();
+        //$.when(loadroutes()).done(function (x) {
+
+        //    setTimeout(function () {
+        //        $(".mapboxgl-map").height(parseInt($("#Dispatch").height()));
+        //    }, 4000);
+        //});
+    });
+
+
+    mappreview.on('idle', function () {
+        mappreview.resize()
+
+    })
+
+
+    if (mappreview != undefined) {
+
+    }
+
+
+
+</script>
+
+
+
+<style>
+
+    .markernew {
+        background-image: url('/img/mapbox-marker-icon-20px-yellow.png');
+        background-size: cover;
+        width: 20px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+
+    .pop-up {
+        color: #F3F3DD;
+        /* background-color: #91785D;*/
+        /*  border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        min-width: 100px;
+    }
+
+    .pop-up-op {
+        color: #F3F3DD;
+        /*background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        min-width: 50px;
+        text-align: left;
+    }
+
+    .pop-up-op2 {
+        color: #F3F3DD;
+        /*background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        min-width: 50px;
+        text-align: left;
+    }
+
+    .pop-head {
+        color: #F3F3DD;
+        background-color: #ab3a0e;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+    }
+
+    .pop-head2 {
+        color: white;
+        background-color: #15ad07;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 30px;
+    }
+
+    .pop-head3 {
+        color: #171711;
+        background-color: #c9c608;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 30px;
+    }
+
+
+    .pop-bootom {
+        /* background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-bootom1 {
+        /* background-color: #91785D;*/
+        /*   border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        /*  min-height: 50px;*/
+        /*  min-width: 450px;*/
+        /*min-height: 50px;*/
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-bootomnew {
+        /* background-color: #91785D;*/
+        /*   border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        /*  min-height: 50px;*/
+        min-width: 450px;
+        min-height: 50px;
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-head-font {
+        font-weight: 200;
+        font-size: small;
+        /* font-weight: bold;*/
+    }
+
+    .pop-bootom1 {
+        font-size: small;
+    }
+
+
+    /* .pop-up mapboxgl-popup mapboxgl-popup-anchor-bottom{
+        height:500px;
+    }*/
+</style>
+
+@*<style>
+
+        .markernew {
+            background-image: url('/img/mapbox-marker-icon-20px-yellow.png');
+            background-size: cover;
+            width: 20px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+
+        .pop-up {
+            color: #F3F3DD;
+            background-color: #91785D;
+            /*  border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            min-width: 450px;
+        }
+
+        .pop-up-op {
+            color: #F3F3DD;
+            /*background-color: #91785D;*/
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /*  box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            min-width: 450px;
+            text-align: left;
+        }
+
+        .pop-up-op2 {
+            color: #F3F3DD;
+            /*background-color: #91785D;*/
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /*  box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            min-width: 450px;
+            text-align: left;
+        }
+
+        .pop-head {
+            color: #F3F3DD;
+            background-color: #ab3a0e;
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            min-height: 50px;
+        }
+
+        .pop-head2 {
+            color: white;
+            background-color: #15ad07;
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            min-height: 50px;
+        }
+
+        .pop-head3 {
+            color: #171711;
+            background-color: #c9c608;
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            min-height: 50px;
+        }
+
+
+        .pop-bootom {
+            /* background-color: #91785D;*/
+            /* border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /*  box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            min-height: 50px;
+            text-align: left;
+            font-size: medium;
+        }
+
+        .pop-bootom1 {
+            /* background-color: #91785D;*/
+            /*   border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            /*  min-height: 50px;*/
+            min-width: 450px;
+            min-height: 50px;
+            text-align: left;
+            font-size: medium;
+        }
+
+        .pop-bootomnew {
+            /* background-color: #91785D;*/
+            /*   border-color: #91785D;*/
+            /* max-width: 50px;*/
+            /* box-shadow: 3px 3px 2px #8B5D33;*/
+            /* font-family: 'Oswald';*/
+            /*  min-width: 350px;*/
+            /*  min-height: 50px;*/
+            min-width: 450px;
+            min-height: 50px;
+            text-align: left;
+            font-size: medium;
+        }
+
+        .pop-head-font {
+            font-weight: 200;
+            font-size: large;
+            /* font-weight: bold;*/
+        }
+    </style>*@

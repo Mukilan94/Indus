@@ -1,0 +1,146 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title0"] = "";
+    ViewData["Title"] = "Settings";
+    string AccountType = WellAI.Advisor.DLL.Data.WellAIAppContext.Current.Session.GetString("AccountType");
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.GearViewModel
+
+<section class="content-header">
+    <style>
+        .blockstyle {
+            height: 130px;
+            width: 130px;
+            padding: 0px;
+            display: inline-block;
+            margin: 10px 10px 0 10px;
+            background-color: #fff;
+            border: 5px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+        }
+        .blockstyle .fa{
+            font-size:45px;
+        }
+        .box-shad {
+            box-shadow: none;
+        }
+        .blocktext {
+            color: #007AFC;
+            position: absolute;
+            bottom: 10px;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        .topblocks {
+            margin-left: -10px;
+        }
+        .blockimg{
+            text-align:center !important;
+            margin-top:20px;
+        }
+    </style>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid dashboard">
+        <div class="row topblocks">
+            <a style="display:@Model.Corporateprofile" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4"? "corporateprofileSRV" : "corporateprofile")'>
+                <div class="blockstyle">
+                    <div class="blockimg">
+                        <i class="fa fa-id-card-o"></i>
+                    </div>
+                    <span class="blocktext" style="margin-left:5px;">Corporate Profile</span>
+                </div>
+            </a>
+            <a style="display:@Model.PaymentMethods" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "PaymentMethodsSRV" : "PaymentMethods")'>
+                <div class="blockstyle">
+                    <div class="blockimg">
+                        <i class="fa fa-credit-card"></i>
+                    </div>
+                    <span class="blocktext" style="margin-left:5px;">Payment Methods</span>
+                </div>
+            </a>
+            @*   <a style="display:@Model.Productsubscription" href='@Url.Action("Index", AccountType == "1" ? "productsubscriptionSRV" : "productsubscription")'>
+            <div class="blockstyle">
+                <div class="blockimg"><i class="fa fa-user-plus"></i></div>
+                <span class="blocktext">Product Subscription</span>
+            </div>
+        </a>*@
+
+
+            <a style="display:@Model.Productsubscription" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "ProductSubscriptionSRVNew" : "ProductSubscription")'>
+                <div class="blockstyle">
+                    <div class="blockimg"><i class="fa fa-user-plus"></i></div>
+                    <span class="blocktext">Product Subscription</span>
+                </div>
+            </a>
+
+            @*            <a style="display:@Model.BillingInvoiceHistory" href='@Url.Action("Index", AccountType == "1" ? "BillingInvoiceHistorySRV" : "BillingInvoiceHistory")'>
+            <div class="blockstyle">
+                <div class="blockimg"><i class="fa fa-check-square-o"></i></div>
+                <span class="blocktext" style="margin-left:15px;">Billing History</span>
+            </div>
+        </a>*@
+
+            <a style="display:@Model.BillingInvoiceHistory" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "BillingInvoiceHistorySRVNew" : "BillingInvoiceHistorySRVNew")'>
+                <div class="blockstyle">
+                    <div class="blockimg"><i class="fa fa-check-square-o"></i></div>
+                    <span class="blocktext" style="margin-left:15px;">Billing History</span>
+                </div>
+            </a>
+
+            @*<a  href='@Url.Action("Index", AccountType == "1" ? "ARBSubscription" : "ARBSubscription")'>
+            <div class="blockstyle">
+                <div class="blockimg"><i class="fa fa-check-square-o"></i></div>
+                <span class="blocktext" style="margin-left:15px;">Create New ARB Subscription</span>
+            </div>
+        </a>*@
+
+            <a style="display:@Model.Addupdateusers" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "addupdateusersSRV" : "addupdateusers")'>
+                <div class="blockstyle">
+                    <div class="blockimg"><i class="fa fa-users"></i></div>
+                    <span class="blocktext" style="margin-left:5px;">Add/Update Users</span>
+                </div>
+            </a>
+            @*<a style="display:@Model.ManagePermissions" href='@Url.Action("Index", AccountType == "1" ? "ManagePermissionsSRV" : "ManagePermissions")'>
+            <div class="blockstyle">
+                <div class="blockimg"><i class="fa fa-user-times"></i></div>
+                <span class="blocktext">Manage Permissions</span>
+            </div>
+        </a>
+        <a style="display:@Model.ManageRoles" href='@Url.Action("Index", AccountType == "1" ? "ManageRolesSRV" : "ManageRoles")'>
+            <div class="blockstyle">
+                <div class="blockimg"><i class="fa fa-newspaper-o"></i></div>
+                <span class="blocktext" style="margin-left:15px;">Manage Roles</span>
+            </div>
+        </a>*@
+            <a style="display:@Model.ManageAPI" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "ApiConfigurationSrv" : "ApiConfiguration")'>
+                <div class="blockstyle">
+                    <div class="blockimg"><i class="fa fa-cogs"></i></div>
+                    <span class="blocktext" style="margin-left:40%;">API</span>
+                </div>
+            </a>
+
+            <!--DWOP-->
+            @if (AccountType == "0" || AccountType == "3")
+            {
+                <a style="display:@Model.ChecklistTemplate" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" ? "ChecklistTemplate" : "ChecklistTemplate")'>
+                    <div class="blockstyle">
+                        <div class="blockimg"><i class="fa fa-list"></i></div>
+                        <span class="blocktext" style="margin-left:10%;">Checklist Template</span>
+                    </div>
+                </a>
+            }
+            <a style="display:@Model.ManageNotifications" href='@Url.Action("Index", AccountType == "1" || AccountType == "2" || AccountType == "4" ? "NotificationSRV" : "Notification")'>
+                <div class="blockstyle">
+                    <div class="blockimg"><i class="fa fa-envelope"></i></div>
+                    <span class="blocktext" style="margin-left:20%;">Notifications</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>

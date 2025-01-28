@@ -1,0 +1,132 @@
+﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Well_AI.Advisor.API.Dtos;
+using Well_AI.Advisor.API.Models;
+
+namespace Well_AI.Advisor.API.Mapper
+{
+    public class RigMappings : Profile
+    {
+        public RigMappings()
+        {
+
+        CreateMap<RigRatingDrillDepth, RigRatingDrillDepthDto>().ReverseMap();
+        CreateMap<RigRatingWaterDepth, RigRatingWaterDepthDto>().ReverseMap();
+        CreateMap<RigAirGap, RigAirGapDto>().ReverseMap();
+        CreateMap<RigSizeConnectionBop, RigSizeConnectionBopDto>().ReverseMap();
+        CreateMap<RigPresBopRating, RigPresBopRatingDto>().ReverseMap();
+        CreateMap<RigSizeBopSys, RigSizeBopSysDto>().ReverseMap();
+        CreateMap<RigIdBoosterLine, RigIdBoosterLineDto>().ReverseMap();
+        CreateMap<RigLenBoosterLine, RigLenBoosterLineDto>().ReverseMap();
+        CreateMap<RigIdSurfLine, RigIdSurfLineDto>().ReverseMap();
+        CreateMap<RigOdBoosterLine, RigOdBoosterLineDto>().ReverseMap();
+        CreateMap<RigOdSurfLine, RigOdSurfLineDto>().ReverseMap();
+        CreateMap<RigLenSurfLine, RigLenSurfLineDto>().ReverseMap();
+        CreateMap<RigIdChkLine, RigIdChkLineDto>().ReverseMap();
+        CreateMap<RigId, RigIdDto>().ReverseMap();
+        CreateMap<RigLen, RigLenDto>().ReverseMap();
+        CreateMap<RigOdChkLine, RigOdChkLineDto>().ReverseMap();
+        CreateMap<RigLenChkLine, RigLenChkLineDto>().ReverseMap();
+        CreateMap<RigIdKillLine, RigIdKillLineDto>().ReverseMap();
+        CreateMap<RigOdKillLine, RigOdKillLineDto>().ReverseMap();
+        CreateMap<RigLenKillLine, RigLenKillLineDto>().ReverseMap();
+        CreateMap<RigIdPassThru, RigIdPassThruDto>().ReverseMap();
+        CreateMap<RigPresWork, RigPresWorkDto>().ReverseMap();
+        CreateMap<RigDiaCloseMn, RigDiaCloseMnDto>().ReverseMap();
+        CreateMap<RigBopComponent, RigBopComponentDto>().ReverseMap();
+        CreateMap<RigDiaDiverter, RigDiaDiverterDto>().ReverseMap();
+        CreateMap<RigPresWorkDiverter, RigPresWorkDiverterDto>().ReverseMap();
+        CreateMap<RigCapAccFluid, RigCapAccFluidDto>().ReverseMap();
+        CreateMap<RigPresAccPreCharge, RigPresAccPreChargeDto>().ReverseMap();
+        CreateMap<RigVolAccPreCharge, RigVolAccPreChargeDto>().ReverseMap();
+        CreateMap<RigPresAccOpRating, RigPresAccOpRatingDto>().ReverseMap();
+        CreateMap<RigPresChokeManifold, RigPresChokeManifoldDto>().ReverseMap();
+        CreateMap<RigBop, RigBopDto>().ReverseMap();
+        CreateMap<RigCapMx, RigCapMxDto>().ReverseMap();
+        CreateMap<RigPit, RigPitDto>().ReverseMap();
+        CreateMap<RigOdRod, RigOdRodDto>().ReverseMap();
+        CreateMap<RigIdLiner, RigIdLinerDto>().ReverseMap();
+        CreateMap<RigEff, RigEffDto>().ReverseMap();
+        CreateMap<RigLenStroke, RigLenStrokeDto>().ReverseMap();
+        CreateMap<RigPresMx, RigPresMxDto>().ReverseMap();
+        CreateMap<RigPowHydMx, RigPowHydMxDto>().ReverseMap();
+        CreateMap<RigSpmMx, RigSpmMxDto>().ReverseMap();
+        CreateMap<RigDisplacement, RigDisplacementDto>().ReverseMap();
+        CreateMap<RigPresDamp, RigPresDampDto>().ReverseMap();
+        CreateMap<RigVolDamp, RigVolDampDto>().ReverseMap();
+        CreateMap<RigPowMechMx, RigPowMechMxDto>().ReverseMap();
+        CreateMap<RigPump, RigPumpDto>().ReverseMap();
+        CreateMap<RigCapFlow, RigCapFlowDto>().ReverseMap();
+        CreateMap<RigSizeMeshMn, RigSizeMeshMnDto>().ReverseMap();
+        CreateMap<RigShaker, RigShakerDto>().ReverseMap();
+        CreateMap<RigCentrifuge, RigCentrifugeDto>().ReverseMap();
+        CreateMap<RigHydrocyclone, RigHydrocycloneDto>().ReverseMap();
+        CreateMap<RigHeight, RigHeightDto>().ReverseMap();
+        CreateMap<RigAreaSeparatorFlow, RigAreaSeparatorFlowDto>().ReverseMap();
+        CreateMap<RigHtMudSeal, RigHtMudSealDto>().ReverseMap();
+        CreateMap<RigIdInlet, RigIdInletDto>().ReverseMap();
+        CreateMap<RigIdVentLine, RigIdVentLineDto>().ReverseMap();
+        CreateMap<RigLenVentLine, RigLenVentLineDto>().ReverseMap();
+        CreateMap<RigCapGasSep, RigCapGasSepDto>().ReverseMap();
+        CreateMap<RigCapBlowdown, RigCapBlowdownDto>().ReverseMap();
+        CreateMap<RigPresRating, RigPresRatingDto>().ReverseMap();
+        CreateMap<RigTempRating, RigTempRatingDto>().ReverseMap();
+        CreateMap<RigDegasser, RigDegasserDto>().ReverseMap();
+        CreateMap<RigIdStandpipe, RigIdStandpipeDto>().ReverseMap();
+        CreateMap<RigLenStandpipe, RigLenStandpipeDto>().ReverseMap();
+        CreateMap<RigIdHose, RigIdHoseDto>().ReverseMap();
+        CreateMap<RigLenHose, RigLenHoseDto>().ReverseMap();
+        CreateMap<RigIdSwivel, RigIdSwivelDto>().ReverseMap();
+        CreateMap<RigLenSwivel, RigLenSwivelDto>().ReverseMap();
+        CreateMap<RigIdKelly, RigIdKellyDto>().ReverseMap();
+        CreateMap<RigLenKelly, RigLenKellyDto>().ReverseMap();
+        CreateMap<RigIdDischargeLine, RigIdDischargeLineDto>().ReverseMap();
+        CreateMap<RigLenDischargeLine, RigLenDischargeLineDto>().ReverseMap();
+        CreateMap<RigOdReel, RigOdReelDto>().ReverseMap();
+        CreateMap<RigOdCore, RigOdCoreDto>().ReverseMap();
+        CreateMap<RigWidReelWrap, RigWidReelWrapDto>().ReverseMap();
+        CreateMap<RigLenReel, RigLenReelDto>().ReverseMap();
+        CreateMap<RigHtInjStk, RigHtInjStkDto>().ReverseMap();
+        CreateMap<RigOdUmbilical, RigOdUmbilicalDto>().ReverseMap();
+        CreateMap<RigLenUmbilical, RigLenUmbilicalDto>().ReverseMap();
+        CreateMap<RigIdTopStk, RigIdTopStkDto>().ReverseMap();
+        CreateMap<RigHtTopStk, RigHtTopStkDto>().ReverseMap();
+        CreateMap<RigHtFlange, RigHtFlangeDto>().ReverseMap();
+        CreateMap<RigSurfaceEquipment, RigSurfaceEquipmentDto>().ReverseMap();
+        CreateMap<RigRatingDerrick, RigRatingDerrickDto>().ReverseMap();
+        CreateMap<RigHtDerrick, RigHtDerrickDto>().ReverseMap();
+        CreateMap<RigRatingHkld, RigRatingHkldDto>().ReverseMap();
+        CreateMap<RigCapWindDerrick, RigCapWindDerrickDto>().ReverseMap();
+        CreateMap<RigWtBlock, RigWtBlockDto>().ReverseMap();
+        CreateMap<RigRatingBlock, RigRatingBlockDto>().ReverseMap();
+        CreateMap<RigRatingHook, RigRatingHookDto>().ReverseMap();
+        CreateMap<RigSizeDrillLine, RigSizeDrillLineDto>().ReverseMap();
+        CreateMap<RigPowerDrawWorks, RigPowerDrawWorksDto>().ReverseMap();
+        CreateMap <RigRatingDrawWorks, RigRatingDrawWorksDto>().ReverseMap();
+        CreateMap<RigRatingSwivel, RigRatingSwivelDto>().ReverseMap();
+        CreateMap<RigRatingTqRotSys, RigRatingTqRotSysDto>().ReverseMap();
+        CreateMap<RigRotSizeOpening, RigRotSizeOpeningDto>().ReverseMap();
+        CreateMap<RigRatingRotSystem, RigRatingRotSystemDto>().ReverseMap();
+        CreateMap<RigCapBulkMud, RigCapBulkMudDto>().ReverseMap();
+        CreateMap<RigCapLiquidMud, RigCapLiquidMudDto>().ReverseMap();
+        CreateMap<RigCapDrillWater, RigCapDrillWaterDto>().ReverseMap();
+        CreateMap<RigCapPotableWater, RigCapPotableWaterDto>().ReverseMap();
+        CreateMap<RigCapFuel, RigCapFuelDto>().ReverseMap();
+        CreateMap<RigCapBulkCement, RigCapBulkCementDto>().ReverseMap();
+        CreateMap<RigVarDeckLdMx, RigVarDeckLdMxDto>().ReverseMap();
+        CreateMap<RigVdlStorm, RigVdlStormDto>().ReverseMap();
+        CreateMap<RigMotionCompensationMn, RigMotionCompensationMnDto>().ReverseMap();
+        CreateMap<RigMotionCompensationMx, RigMotionCompensationMxDto>().ReverseMap();
+        CreateMap<RigStrokeMotionCompensation, RigStrokeMotionCompensationDto>().ReverseMap();
+        CreateMap<RigRiserAngleLimit, RigRiserAngleLimitDto>().ReverseMap();
+        CreateMap<RigHeaveMx, RigHeaveMxDto>().ReverseMap();
+        CreateMap<RigDiaCloseMx, RigDiaCloseMxDto>().ReverseMap();
+        CreateMap<RigCommonData, RigCommonDataDto>().ReverseMap();
+        CreateMap<Rig, RigDto>().ReverseMap();
+
+        }        
+    }
+}

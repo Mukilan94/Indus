@@ -1,0 +1,68 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
+#outerWrapper {
+    overflow: hidden;
+}
+
+.k-numerictextbox {
+    width: 17.4em;
+}
+
+.map_box_container {
+    /* position: relative;*/
+    height: 10% !important;
+    width: 100% !important;
+}
+
+
+#resizeMap {
+    top: 5em;
+}
+
+.marker_preview {
+    background-image: url('/img/mapbox-icon.png');
+    background-size: cover;
+    width: 20px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.markerstart_preview {
+    background-image: url('/img/PLANT.png');
+    background-size: cover;
+    width: 45px;
+    height: 45px;
+    border-radius: 00%;
+    cursor: pointer;
+}
+
+.mapboxgl-popup {
+    max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    color: black;
+}
+
+.mapboxgl-map {
+    position: absolute;
+    border: 4px solid #007BFF;
+    border-radius: 10px;
+    width: 100%;
+}
+
+label.customMap {
+    cursor: pointer;
+}
+
+.truckcolor_preview {
+    color: indianred;
+}
+
+

@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Bidding";
+}
+@{
+    var culture = System.Globalization.CultureInfo.CurrentCulture.ToString();
+}
+<script src="https://kendo.cdn.telerik.com/2020.2.513/js/pako_deflate.min.js"></script>
+@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.BiddingModel>
+<style>
+    .k-grid {
+        font-family: "DejaVu Sans", "Arial", sans-serif;
+    }
+    .k-pdf-export .k-grid-toolbar,
+    .k-pdf-export .k-pager-wrap {
+        display: none;
+    }
+</style>
+<section class="content-header">
+    <style>
+        .k-scheduler-table th {
+            color: #000;
+        }
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+        .k-grid .k-grid-excel, .k-grid .k-grid-excel:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+        .k-grid .k-grid-pdf, .k-grid .k-grid-pdf:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+        .k-grid-View, .k-grid-Delete, .k-grid-View:hover, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+        .k-grid-edit, .k-grid-Delete, .k-grid-View {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+       .k-grid-toolbar {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</section>
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.BiddingModel>()
+                .Name("Bidding")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .ToolBar(toolbar =>
+                {
+                    toolbar.Excel();
+                    toolbar.Pdf();
+                })
+                .Pdf(pdf => pdf
+                    .AllPages()
+                    .PaperSize("A4")
+                    .Margin("2cm", "1cm", "1cm", "1cm")
+                    .Landscape()
+                    .RepeatHeaders()
+                    .Scale(0.75)
+                    .TemplateId("page-template")
+                )
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.Cat_name).Title("Category Name");
+                    columns.Bound(p => p.Item_name).Title("Item Name");
+                    columns.Bound(p => p.Item_amount).Title("Bidding Amount");
+                    columns.Bound(p => p.Item_date_open).Title("Bidding Open Date").Format("{0: MM/dd/yyyy}");
+                    columns.Bound(p => p.Item_date_close).Title("Bidding Close Date").Format("{0: MM/dd/yyyy}");
+                    columns.Bound(p => p.Item_date_bid).Title("Bidding Date").Format("{0: MM/dd/yyyy}");
+                    columns.Bound(p => p.Item_location).Title("Item location");
+                    columns.Bound(p => p.Item_seller).Title("Item Seller");
+                })
+                .Pageable()
+                .Sortable()
+               .Filterable()
+                .Reorderable(r => r.Columns(true))
+                .Resizable(r => r.Columns(true))
+                .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .ServerOperation(true)
+                ).BindTo(Model)
+            )
+</section>
+<script type="text/javascript">
+    //set the Kendo UI culture
+    kendo.culture("en-US");
+</script>
+<style>
+    /* Page Template for the exported PDF */
+    .page-template {
+        font-family: "DejaVu Sans", "Arial", "sans-serif";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+        .page-template .header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            border-bottom: 1px solid #888;
+            color: #888;
+        }
+        .page-template .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #888;
+            text-align: center;
+            color: #888;
+        }
+        .page-template .watermark {
+            font-weight: bold;
+            font-size: 400%;
+            text-align: center;
+            margin-top: 30%;
+            color: #aaaaaa;
+            opacity: 0.1;
+            transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+    /* Content styling */
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
+<script type="x/kendo-template" id="page-template">
+    <div class="page-template">
+        <div class="header">
+            <div style="float: right">Page #: pageNum # of #: totalPages #</div>
+            WELL AI
+        </div>
+        <div class="watermark">WELL-AI</div>
+        <div class="footer">
+            Page #: pageNum # of #: totalPages #
+        </div>
+    </div>
+</script>

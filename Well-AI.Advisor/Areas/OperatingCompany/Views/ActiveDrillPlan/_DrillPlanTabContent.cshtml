@@ -1,0 +1,779 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.DrillPlanWellViewModel
+@{
+    ViewData["Tittle"] = "Drill Plan";
+    //var StageList = (List<WellAI.Advisor.DLL.Entity.Stage>)ViewBag.Stage;
+    int currentRowIndex=0;
+}
+
+@*<script src="~/js/OperatingCompany/ActiveDrillPlan.js"></script>*@
+
+<style>
+    
+</style>
+<div class="row">
+    <div class="col-md-12">
+        @*<div class="col-12">
+               <div class="text-center">
+                   <h3 id="plantitle">Drilling Operation Time Forecast</h3>
+               </div>
+
+
+            </div>*@
+        @*<hr />*@
+        @Html.HiddenFor(m=>m.CurrentRowIndex)
+        <div class="row">
+            <div class="col-4">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.RigRealese, "Rig Release, Previous")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DateTimePickerFor(m => m.RigRealese)
+                           .Format("MM/dd/yyyy HH:mm")
+                           .TimeFormat("HH:mm")
+                            .Events(e =>
+                           {
+                               e.Change("OnRigReleaseDateChange");
+                           })
+                           .HtmlAttributes(new { style = "width: 100%", id = "RigRelease_" + Model.Wellid })
+                     )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.LastBOPTest, "Last BOP Test")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DatePickerFor(m => m.LastBOPTest)
+                             .Format("MM/dd/yyyy")
+                                     .Events(e =>
+                      {
+                          e.Change("OnLastBopTestDateChange");
+                      })
+                             .HtmlAttributes(new { style = "width: 100%", id = "LastBOPTest_" + Model.Wellid })
+                     )
+                </div>
+            </div>
+
+            <div class="col-2">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.PlannedTD, "Planned TD")
+                </div>
+                <div class="Textfield">
+                    @Html.TextBoxFor(m => m.PlannedTD, new { id = "PlannedTD_" + Model.Wellid, @onchange = "onPlannedTDTextChange();" })
+                </div>
+            </div>
+
+            <div class="col-3">
+                <button id="btnImportChanges_@Model.Wellid" onclick="ImportChanges('@Model.DrillPlanWellsId','@Model.TenantId','@Model.Wellid')" class="btn btn-primary pull-right">Import Changes</button>
+                <button id="RealTimeReport_@Model.Wellid" onclick="RealTimeReport('@Model.Wellid', '@Model.WellName')" class="btn btn-primary pull-right">Real Time Report</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.SPUDWell, "Spud Well")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DateTimePickerFor(m => m.SPUDWell)
+                          .Format("MM/dd/yyyy HH:mm")
+                          .TimeFormat("HH:mm")
+                           .Events(e =>
+                      {
+                          e.Change("OnSPUDWellDateChange");
+                      })
+                          .HtmlAttributes(new { style = "width: 100%", id = "SPUDWell_" + Model.Wellid })
+                     )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.NextBOPTest, "Next BOP Test")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DatePickerFor(m => m.NextBOPTest)
+                        .Format("MM/dd/yyyy")
+                         .Events(e =>
+                         {
+                             e.Change("OnNextBOPTestDateChange");
+                         })
+                        .HtmlAttributes(new { style = "width: 100%", id = "NextBOPTest_" + Model.Wellid, @readonly = "readonly" })
+                     )
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="Labelfield1">
+                    @Html.LabelFor(model => model.Rigname, "Rig")
+                </div>
+                <div class="Textfield1">
+                    @Html.HiddenFor(m => m.RigId)
+                    @Html.DisplayFor(m => m.Rigname)
+                </div>
+            </div>
+            <div class="col-3">
+                <button id="SaveDetails" onclick="SaveActiveDrillPlanDetails('@Model.Wellid','@Model.TenantId',false)" class="btn btn-primary pull-right btnSave">Save Details</button>
+                <button type="button" class="btn btn-primary pull-right" id="btnPrintPlan">Print Plan</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="display:contents;">
+                <div>
+                    <button id="ShowAllTasks;@Model.Wellid" @*onclick="StageFilter(null, '@Model.Wellid')"*@ class="btn btn-primary Stagebtn ActiveStagebtn">Show All Tasks</button>
+                </div>
+                <div id="divStage_@Model.Wellid">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.PlannedTasksModel>()
+                    .Name("PlanList_" + Model.Wellid)
+                    .HtmlAttributes(new { style = "width: 100%;margin:10px;" })
+                    .Columns(columns =>
+                    {
+                        columns.Select().Width(50).Locked(true).Hidden(true);
+                        columns.Bound(p => p.TaskOrder).Hidden(true);
+                        columns.Bound(p => p.ServiceCategoryId).Hidden(true);
+                        columns.Bound(p => p.TaskName).Width(200).Title("Operation Description").Filterable(ftb => ftb.Operators(op => op.ForString(s => s.Clear().Contains("Contains"))).Extra(false)).Locked(true).Lockable(false);
+                        columns.Bound(p => p.CategoryName).Width(250).Title("Category").Filterable(ftb => ftb.Multi(true).Search(true)).Locked(true);
+                        //columns.Bound(p => p.PlanStart).Format("{0:MM/dd/yyyy}").Width(150).Title("Plan Start").Hidden(false);
+                        columns.Group(group => group
+                          .Title("Plan Start")
+                          .Columns(info =>
+                          {
+                              info.Bound(c => c.PlanStart).Width(100).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                              info.Bound(c => c.PlanStart).Width(70).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                          }).HtmlAttributes(new { style = "text-align: center;" })
+                     );
+                        columns.Group(group => group
+                              .Title("Actual Start")
+                              .Columns(info =>
+                              {
+                                  info.Bound(c => c.ActualPlanStart).Width(100).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                                  info.Bound(c => c.ActualPlanStart).Width(70).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                              }).HtmlAttributes(new { style = "text-align: center;" })
+                         );
+                        columns.Group(group => group
+                               .Title("Operation Time")
+                               .Columns(info =>
+                               {
+                                   info.Bound(c => c.OperationHours).Width(70).Filterable(false).ClientTemplate("#=getDisplayHours(OperationHours)#");
+                                   info.Bound(c => c.OperationDays).Width(70).Title("Days").Filterable(false);
+                               }).HtmlAttributes(new { style = "text-align: center;" })
+                          );
+                        columns.Group(group => group
+                             .Title("Accum")
+                             .Columns(info =>
+                             {
+                                 info.Bound(c => c.AccumulatedDays).Width(70).Title("Days").Filterable(false);
+                             })
+                        );
+                        columns.Group(group => group
+                             .Title("Plan Finished Time")
+                             .Columns(info =>
+                             {
+                                 info.Bound(c => c.PlanFinishedDate).Width(100).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                                 info.Bound(c => c.PlanFinishedDate).Width(70).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                             })
+                        );
+                        columns.Group(group => group
+                            .Title("Actual Finished Time")
+                            .Columns(info =>
+                            {
+                                info.Bound(c => c.ActualPlanFinishedDate).Width(100).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                                info.Bound(c => c.ActualPlanFinishedDate).Width(90).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                            })
+                       );
+                        //columns.Bound(p => p.End).Title("Plan End").Hidden(true);
+                        //columns.ForeignKey(p => p.EmployeeId,
+                        //  (System.Collections.IEnumerable)ViewData["employeeList"], "EmployeeId", "EmployeeName").Title("employee").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                        columns.Bound(p => p.EmployeeName).Width(150).Title("Employee").Filterable(ftb => ftb.Multi(true).Search(true));
+                        columns.Bound(p => p.commands).Width(350).Title("Comments").Filterable(ftb => ftb.Operators(op => op.ForString(s => s.Clear().Contains("Contains"))).Extra(false));
+                        //columns.ForeignKey(p => p.Serviceoperator,
+                        //    (System.Collections.IEnumerable)ViewData["vendors"], "Vendor", "VendorName").Title("Service Operator").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                        columns.Bound(p => p.VendorName).Width(150).Title("Service Provider").Filterable(ftb => ftb.Multi(true).Search(true));
+                        columns.Bound(p => p.IsBiddable).Title("Actions").Filterable(false).ClientTemplate("#if (IsBiddable == true && (Serviceoperator == '' || Serviceoperator == null) && PhoneNumber != null && PhoneNumber != '' && ActualPlanFinishedDate==null) { #" +
+                        "   <a href='javaScript:void(0)' onclick='showCallWindow(\"#=PhoneNumber#\")' ><i class='fa fa-phone-square' data-toggle='tooltip' title='Call' style='font-size:16px;'></i></a> <a href='javaScript:void(0)' onclick='AddNewBid(\"#=TaskId#\",\"#=TaskName#\",\"#=ServiceCategoryId#\")'><i class='fa fa-gavel' data-toggle='tooltip' title='Bids' style='font-size:15px;'></i></a>" +
+                        "# } else if(IsBiddable == true && (Serviceoperator == '' || Serviceoperator == null) && ActualPlanFinishedDate==null){ #" +
+                        " <a href='javaScript:void(0)' onclick='AddNewBid(\"#=TaskId#\",\"#=TaskName#\",\"#=ServiceCategoryId#\")'><i class='fa fa-gavel' data-toggle='tooltip' title='Bids' style='font-size:15px;'></i></a>" +
+                        "# } else { #" +
+                        "#if (PhoneNumber != null && PhoneNumber != '' && TaskName != null && TaskName != '' && ActualPlanFinishedDate==null) { #" +
+                            "<a href='javaScript:void(0)' onclick='showCallWindow(\"#=PhoneNumber#\")' ><i class='fa fa-phone-square' data-toggle='tooltip' title='Call' style='font-size:16px;'></i></a>   <a href='javaScript:void(0)'  onclick='customerCallEvent(\"#=TaskName#\")' ><i class='fa fa-calendar-plus-o' data-toggle='tooltip' title='Calendar' style='font-size:15px;'></i></a>" +
+                            "# } else if (TaskName != null && TaskName != '' && ActualPlanFinishedDate==null){ #" +
+                            "       <a href='javaScript:void(0)'  onclick='customerCallEvent(\"#=TaskName#\")' ><i class='fa fa-calendar-plus-o' data-toggle='tooltip' title='Calendar' style='font-size:15px;'></i></a>" +
+                            "# } #" +
+                            "# } #"
+                            //"<a href='javaScript:void(0)' ><i class='fa fa-trash' style='font-size:17px;'></i></a>"
+                            ).Title("Action").Width(80);
+                        columns.Command(command =>
+                        {
+                            command.Custom("Delete").Text("<i class='fa fa-trash' data-toggle='tooltip' title='Delete' style='font-size:18px;color:black;'></i>").Click("customDelete");
+                            command.Custom("down").Text("<i class='fa fa-arrow-down' data-toggle='tooltip' title='Move Down' style='font-size:18px;color:black;'></i>").Click("moveDown");
+                            command.Custom("up").Text("<i class='fa fa-arrow-up' data-toggle='tooltip' title='Move Up' style='font-size:18px;color:black;'></i>").Click("moveUp");
+
+                        }).Title("Move up/down").Width(150);
+
+                    })
+                    .Sortable()
+                    .ToolBar(toolBar =>
+                    {
+                        toolBar.Custom().Text("Add Tasks").HtmlAttributes(new { id = "newtaks", onclick = "Addtasks('" + Model.Wellid + "')" });
+                    })
+                    //.Groupable(false)
+                    .Editable(editable => editable.Mode(GridEditMode.PopUp).CreateAt(GridInsertRowPosition.Bottom).TemplateName("EditTask").Window(w => w.Title("Edit Task Details").Width(800)))
+                     .ToolBar(toolbar => toolbar.Create().Text("New Task"))
+                     .Scrollable(scrollable => scrollable.Enabled(true))
+                     .Filterable()
+                     .Reorderable(r => r.Columns(true))
+                     .Resizable(r => r.Columns(true))
+                     .Selectable(selectable => selectable
+            .Mode(GridSelectionMode.Single))
+                    .PersistSelection()
+                    .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Model(model => model.Id(p => p.TaskId))
+                    .Read(read => read.Action("DrillingPlanDetail_Read", "ActiveDrillPlan", new { wellId = Model.Wellid, drillPlanId = Model.DrillPlanId }))
+                    .Create(update => update.Action("Task_Create", "ActiveDrillPlan"))
+                    .Update(update => update.Action("Task_Update", "ActiveDrillPlan"))
+                    ).Events(e =>
+                    {
+                        e.Edit("PlangridEdit");
+                        e.DataBound("PlanDataBound");
+                        e.Save("OnPlanSaveChanges");
+                        e.Cancel("PlanEditCancel");
+                        e.BeforeEdit("PlanBeforeEdit");
+                        //e.Change("OnPlanGridChange");
+                    })
+                      )
+        </div>
+
+
+        <div class="row" style="display:none;">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.PlannedTasksModel>()
+                        .Name("PlanList1_" + Model.Wellid)
+                        .HtmlAttributes(new { style = "width: 100%;margin:10px;" })
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.TaskName).Width(350).Title("Operation Description");
+                            columns.Bound(p => p.CategoryName).Width(250).Title("Category");
+                            columns.Group(group => group
+                                  .Title("Plan Start")
+                                  .Columns(info =>
+                                  {
+                                      info.Bound(c => c.PlanStart).Width(100).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                                      info.Bound(c => c.PlanStart).Width(70).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                                  }).HtmlAttributes(new { style = "text-align: center;" })
+                             );
+                            columns.Group(group => group
+                                  .Title("Actual Start")
+                                  .Columns(info =>
+                                  {
+                                      info.Bound(c => c.ActualPlanStart).Width(100).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                                      info.Bound(c => c.ActualPlanStart).Width(70).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                                  }).HtmlAttributes(new { style = "text-align: center;" })
+                             );
+                            columns.Group(group => group
+                                   .Title("Operation Time")
+                                   .Columns(info =>
+                                   {
+                                       info.Bound(c => c.OperationHours).Width(70).Title("Hours").Filterable(false).ClientTemplate("#=getDisplayHours(OperationHours)#");
+                                       info.Bound(c => c.OperationDays).Width(70).Title("Days").Filterable(false);
+                                   }).HtmlAttributes(new { style = "text-align: center;" })
+                              );
+                            columns.Group(group => group
+                                 .Title("Accum")
+                                 .Columns(info =>
+                                 {
+                                     info.Bound(c => c.OperationDays).Width(70).Title("Days").Filterable(false);
+                                 })
+                            );
+                            columns.Group(group => group
+                                 .Title("Plan Finished Time")
+                                 .Columns(info =>
+                                 {
+                                     info.Bound(c => c.PlanFinishedDate).Width(100).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                                     info.Bound(c => c.PlanFinishedDate).Width(70).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                                 })
+                            );
+                            columns.Group(group => group
+                                .Title("Actual Finished Time")
+                                .Columns(info =>
+                                {
+                                    info.Bound(c => c.ActualPlanFinishedDate).Width(100).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                                    info.Bound(c => c.ActualPlanFinishedDate).Width(90).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                                })
+                           );
+                            columns.Bound(p => p.EmployeeName).Width(150).Title("Employee").Filterable(true);
+                            columns.Bound(p => p.commands).Width(350).Title("Comments").Filterable(true);
+                            columns.Bound(p => p.VendorName).Width(150).Title("Service Operator").Filterable(true);
+                        })
+                        .DataSource(dataSource => dataSource
+                        .Ajax()
+                        )
+                      )
+        </div>
+
+    </div>
+</div>
+
+@(Html.Kendo().Window().Name("AddTaskListWindow")
+    .Title("Tasks")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+
+)
+
+
+<style type="text/css">
+    .highlightTR {
+        background-color: #99CCFF;
+    }
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+
+    .k-grid tbody tr {
+        cursor: move;
+    }
+
+    .k-tooltip {
+        color: #ffffff;
+        background-color: #007BFF !important;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #007BFF !important;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
+
+    .k-window-content {
+        overflow-x: hidden !important;
+        overflow-y: hidden;
+    }
+
+    .k-grid-content {
+        height: 400px !important;
+    }
+
+    .row {
+        padding-top: 5px;
+    }
+
+    .k-content {
+        overflow-x: hidden !important;
+    }
+
+    .k-grid tbody td:nth-child(2) {
+        white-space: nowrap !important;
+    }
+
+    .k-tooltip {
+        font-size: small !important;
+        text-align: center !important;
+        min-height: 50px !important;
+        height: auto !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $("#PlanList_" + '@Model.Wellid').kendoTooltip({
+            filter: "td:nth-child(2), th:nth-child(2)", //this filter selects the second column's cells and the second column header
+            position: "top",
+            width: 200,
+            height: 50,
+            content: function (e) {
+                // If the element is the header, return the text of the cell.
+                if (e.target.is("th")) {
+                    return e.target.text();
+                }
+                var dataItem = $("#PlanList_" + '@Model.Wellid').data("kendoGrid").dataItem(e.target.closest("tr"));
+                var content = dataItem.TaskName;
+                return content;
+            }
+        }).data("kendoTooltip");
+
+        var grid = $("#PlanList_" + '@Model.Wellid').data("kendoGrid");
+        var Gridid = "#PlanList_" + '@Model.Wellid';
+        //grid.table.kendoSortable({
+        //    filter: ">tbody >tr",
+        //    hint: $.noop,
+        //    cursor: "move",
+        //    placeholder: function (element) {
+        //        return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+        //    },
+        //    container: Gridid + " tbody",
+        //    change: function (e) {
+        //        var skip = grid.dataSource.skip(),
+        //            oldIndex = e.oldIndex,
+        //            newIndex = e.newIndex,
+        //            data = grid.dataSource.data(),
+        //            dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+        //        grid.dataSource.remove(dataItem);
+        //        grid.dataSource.insert(newIndex, dataItem);
+        //    }
+        //});
+                @*grid.table.kendoSortable({
+                    filter: ">tbody >tr",
+                    hint: $.noop,
+                    cursor: "move",
+                    autoScroll: true,
+                    placeholder: function (element) {
+                        return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+                    },
+                    container: Gridid + " tbody",
+                    change: function (e) {
+                        var benchMarkTasks = [];
+                        var prespudTasks = [];
+
+                        var skip = grid.dataSource.skip(),
+                            oldIndex = e.oldIndex,
+                            newIndex = e.newIndex,
+                            data = grid.dataSource.data(),
+                            dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+                            if (dataItem != undefined) {
+                                dataItem.IsRowModified = true;
+                        }
+
+
+                        $.each(grid.dataSource._data, function (index, value) {
+                            if (value.IsBenchMark === true) {
+                                benchMarkTasks.push({ Task: value, Index: index });
+                            } else if (value.IsPreSpud === true) {
+                                prespudTasks.push({ Task: value, Index: index })
+                            }
+                        });
+
+                        //var LastItem = grid.dataSource._data[newIndex];
+                        if (dataItem.IsPreSpud) {
+                            var Taskcount = parseInt(prespudTasks.length) - parseInt(1);
+                            if (prespudTasks[Taskcount].Index >= newIndex) {
+                                return true;
+                            }
+                            else {
+                                kendo.confirm("Are you sure you want to move this Task into Bench Mark ?")
+                                    .done(function () {
+                                        debugger;
+                                        dataItem.IsPreSpud = false;
+                                        grid.dataSource.remove(dataItem);
+                                        grid.dataSource.insert(newIndex, dataItem);
+
+                                    })
+                                    .fail(function () {
+                                        $("#PlanList_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                            $("#PlanList_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                        });
+                                    });
+                            }
+                        }
+                        else {
+                            for (var i = 0; benchMarkTasks.length > i; i++)
+                            {
+                                 if (benchMarkTasks[i].Index < newIndex) {
+                                        return true;
+                                    }
+                                    else {
+                                     kendo.confirm("Are you sure you want to move this Task into Pre-spud ?")
+                                            .done(function () {
+                                                dataItem.IsPreSpud = true;
+                                                dataItem.IsBenchMark = false;
+                                                grid.dataSource.remove(dataItem);
+                                                grid.dataSource.insert(newIndex, dataItem);
+                                            })
+                                            .fail(function () {
+                                                $("#PlanList_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                                    $("#PlanList_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                                });
+                                            });
+                                        break;
+                                    }
+                                //}
+                            }
+                        }
+                        grid.dataSource.remove(dataItem);
+                        grid.dataSource.insert(newIndex, dataItem);
+                    }
+                });*@
+
+        var oldIndex = 0;
+        var newIndex = 0;
+
+        //grid.lockedTable.({
+        //        //var grid = this;
+        //        var currentRowIndex = $(this).closest("tr").index(),
+        //        alert('currentRowIndex' + currentRowIndex),
+        //    $("#CurrentRowIndex").val(currentRowIndex);
+        //    $("#CurrentRowIndex").trigger("RowIndexChange");
+
+        //    //grid.tbody.find("tr[role='row']").each(function () {
+        //    //    var model = grid.dataItem(this);
+        //    //});
+        //});
+
+               grid.lockedTable.kendoSortable({
+                    filter: ">tbody >tr",
+                            hint: function (element) {
+                                var unlockedPortion = grid.table.find("tr[data-uid=" + element.data("uid") + "]").children();
+
+                                let table = $('<table style="width: 600px;" class="k-grid k-widget"></table>'),
+                                    hint;
+
+                                table.append(element.clone().append(unlockedPortion));
+                                table.css("opacity", 0.7);
+
+                                return table;
+                            },
+                    cursor: "move",
+                    //autoScroll: true,
+                    placeholder: function (element) {
+                        return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+                    },
+                    container: Gridid + " tbody",
+                   change: function (e) {
+                       //var currentRowIndex = $(this).closest("tr").index();
+                       //alert('currentRowIndex' + currentRowIndex);
+
+                       var benchMarkTasks = [];
+                        var prespudTasks = [];
+                        debugger;
+                        var skip = grid.dataSource.skip(),
+                            oldIndex = e.oldIndex,
+                            newIndex = e.newIndex,
+                                data = grid.dataSource.data(),
+                                dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+                            if (dataItem != undefined) {
+                                dataItem.IsRowModified = true;
+                             }
+
+
+                        $.each(grid.dataSource._data, function (index, value) {
+                            if (value.IsBenchMark === true) {
+                                benchMarkTasks.push({ Task: value, Index: index });
+                            } else if (value.IsPreSpud === true) {
+                                prespudTasks.push({ Task: value, Index: index })
+                            }
+                        });
+
+                        //var LastItem = grid.dataSource._data[newIndex];
+                        if (dataItem.IsPreSpud) {
+                            var Taskcount = parseInt(prespudTasks.length) - parseInt(1);
+                            if (prespudTasks[Taskcount].Index >= newIndex) {
+                                grid.dataSource.remove(dataItem);
+                                grid.dataSource.insert(newIndex, dataItem);
+                                //break;
+                                return true;
+                            }
+                            else {
+                                kendo.confirm("Are you sure you want to move this Task into Bench Mark ?")
+                                    .done(function () {
+                                        debugger;
+                                        dataItem.IsPreSpud = false;
+                                        grid.dataSource.remove(dataItem);
+                                        grid.dataSource.insert(newIndex, dataItem);
+
+                                    })
+                                    .fail(function () {
+                                        $("#PlanList_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                            $("#PlanList_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                        });
+                                    });
+                            }
+                        }
+                        else {
+                            debugger;
+                            for (var i = 0; benchMarkTasks.length > i; i++)
+                            {
+                                 if (benchMarkTasks[i].Index < newIndex) {
+                                     grid.dataSource.remove(dataItem);
+                                     grid.dataSource.insert(newIndex, dataItem);
+                                     return true;
+                                    }
+                                    else {
+                                     kendo.confirm("Are you sure you want to move this Task into Pre-spud ?")
+                                            .done(function () {
+                                                dataItem.IsPreSpud = true;
+                                                dataItem.IsBenchMark = false;
+                                                grid.dataSource.remove(dataItem);
+                                                grid.dataSource.insert(newIndex, dataItem);
+                                            })
+                                            .fail(function () {
+                                                $("#PlanList_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                                    $("#PlanList_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                                });
+                                            });
+                                        break;
+                                    }
+                                //}
+                            }
+
+                            if (benchMarkTasks.length == 0) {
+                                grid.dataSource.remove(dataItem);
+                                grid.dataSource.insert(newIndex, dataItem);
+                            }
+                        }
+                        //debugger;
+                        //grid.dataSource.remove(dataItem);
+                        //grid.dataSource.insert(newIndex, dataItem);
+                    }
+                });
+
+        //$(grid.element).kendoDraggable({
+        //    filter: "tbody>tr",
+        //    hint: function (e) {
+        //        //alert('kendoDraggable function call');
+        //        var item = $('<div class="k-grid k-widget" style="background-color: DarkOrange; color: black;"><table><tbody><tr>' + e.html() + '</tr></tbody></table></div>');
+        //        return item;
+        //    },
+        //    group: "gridGroup",
+        //});
+
+        //grid.table.kendoDraggable({
+        //    filter: "tbody > tr",
+        //    cursorOffset: {
+        //        top: 10,
+        //        left: 10
+        //    },
+        //    group: "gridGroup",
+        //    hint: function(e) {
+        //        return $('<div class="k-grid k-widget"><table><tbody><tr>' + e.html() + '</tr></tbody></table></div>');
+        //    }
+        //});
+
+
+        //$(grid.element)/*.find("tbody > tr")*/.kendoDropTarget({
+        //    group: "gridGroup",
+        //    drop: function (e) {
+        //        alert('kendoDropTarget function call 1');
+        //        console.log('e '+ e);
+
+        //        var dataSource = $(grid.dataSource);
+        //        //dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+        //        //var target = dataSource.get($(e.draggable.currentTarget).data("TaskId")),
+        //        //    dest = $(e.target);
+        //        if (dataSource == undefined) {
+        //            alert('Datasource not set');
+        //        }
+        //        else {
+        //            alert('Datasource set');
+        //        }
+        //        var target = dataSource.get($(e.draggable.currentTarget).data("TaskId")),
+        //            dest = $(e.target);
+
+        //        alert('kendoDropTarget function call 2');
+        //        if (dest.is("th")) {
+        //            return;
+        //        }
+        //        dest = dataSource.get(dest.parent().data("TaskId"));
+
+        //        alert('kendoDropTarget function call 3');
+        //        //not on same item
+
+        //        //if (target.get("TaskId") !== dest.get("TaskId")) {
+        //        //    //reorder the items
+        //        //    var tmp = target.get("TaskOrder");
+        //        //    target.set("TaskOrder", dest.get("TaskOrder"));
+        //        //    dest.set("TaskOrder", tmp);
+        //        //    dataSource.sort({ field: "TaskOrder", dir: "asc" });
+        //        //}
+        //    }
+        //});
+
+   //     grid.wrapper.kendoDropTarget({
+   //         drop: function (e) {
+   //             var dataItem = e.dataSource.getByUid(e.draggable.currentTarget.data("uid"));
+   //             //dataSource2.remove(dataItem);
+   //             e.dataSource.add(dataItem);
+   //         },
+   //         group: "gridGroup2",
+   //     });
+
+
+   });
+
+    $(document).ready(function () {
+                sessionStorage.setItem("wellId", '@Model.Wellid');
+                sessionStorage.setItem("tenantId", '@Model.TenantId');
+        $('#btnPrintPlan').click(function () {
+                    printPlan('@Model.Wellid', '@Model.WellName', '@Model.DrillPlanName', '@Model.Rigname');
+                });
+
+                setTimeout(function () {
+                    //OnLastBopTestDateChange();
+                },3000);
+            });
+
+
+            function AddNewBid(taskId, taskName, ServiceCategoryId) {
+                var popup = $("#newRequestsWindow").data('kendoWindow');
+                var ProposalValue = {
+            SRVTenantId: "",
+            JobName: taskName,
+            JobId: taskId,
+            ServiceCategoryId: ServiceCategoryId,
+            WellName: '@Model.WellName',
+            WellId: '@Model.Wellid'
+        }
+        popup.refresh({
+            url: "/ActiveDrillPlan/AddAuctionProposal?AuctionsProposal=" + jQuery.param(ProposalValue)
+    });
+        popup.open();
+        popup.center();
+
+
+        @*$('input[name="AddAuction.WellId"]').val('@Model.Wellid').trigger("change");
+        $('input[name="AddAuction.ServiceCategoryId"]').val(ServiceCategoryId).trigger("change");
+        $('input[name="AddAuction.JobId"]').val(taskId).trigger("change");
+        $('[name="lblWell"]').text('@Model.WellName').trigger("change");
+        $('[name="lblJob"]').text(taskName);*@
+    }
+
+    function customerCallEvent(taskName) {
+        var scheduler = $("#scheduler").data("kendoScheduler");
+        scheduler.addEvent({
+            title: taskName,
+       });
+    }
+
+    //var grid = $("#grid").data("kendoGrid");
+    @*var curgrid = $("#PlanList_" + '@Model.Wellid').data("kendoGrid");
+    $(curgrid.tbody).on("click", "td", function (e) {
+        var row = $(this).closest("tr");
+        var rowIdx = $("tr", curgrid.tbody).index(row);
+        var colIdx = $("td", row).index(this);
+        curIndx = rowIdx;
+        alert(curIndx);
+        $("#CurrentRowIndex").val(curIndx);
+        $("#CurrentRowIndex").trigger("RowIndexChange");
+        console.log("row:", rowIdx, "cell:", colIdx);
+    });
+
+    function RowIndexChange() {
+        console.log('CurrentRowIndex change');
+    }*@
+
+</script>

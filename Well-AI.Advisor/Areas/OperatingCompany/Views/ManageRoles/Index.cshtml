@@ -1,0 +1,195 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Manage Roles";
+}
+@model System.Data.DataTable
+
+<section class="content-header">
+</section>
+<section class="content">
+    @(Html.Kendo().Grid<dynamic>
+        ()
+        .Name("userroles")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete");}).Title("Action").Width(70);
+            foreach (System.Data.DataColumn column in Model.Columns)
+            {
+                var c = columns.Bound(column.ColumnName);
+                if (column.ColumnName == "Id")
+                {
+                    c.Hidden();
+                }
+                else if(column.ColumnName == "Title")
+                {
+                    c.Width(150).Locked(true).Lockable(false);
+                }
+                else
+                {
+                    c.Editable("returnFalse").ClientTemplate("#=getRolePermission(data,'"+column.ColumnName+"')#")
+                    .Width(100).HtmlAttributes(new { style = "text-align: center", title = "" + column.ColumnName + "" })
+                    .ClientHeaderTemplate("<span>" + column.ColumnName + "</span>");
+                }
+            }
+        })
+        .Sortable(s => s.Enabled(false))
+        .Pageable(p =>
+                         p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                        )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .ToolBar(toolbar => {
+            toolbar.Create().Text("Add new role");
+            toolbar.Save().Text("Save changes").HtmlAttributes(new { onclick = "SaveChanges()" });
+        })
+        .Editable(editable => editable.Mode(GridEditMode.InCell))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Batch(true)
+            .PageSize(10)
+             .Events(events => events.Error("error_handler"))
+            .ServerOperation(false)
+            .Model(model => model.Id("Id"))
+            .Create(update => update.Action("ManageRoles_Create", "ManageRoles").Data("additionalData"))
+            .Read(read => read.Action("ManageRoles_Read", "ManageRoles"))
+            .Update(update => update.Action("ManageRoles_Update", "ManageRoles").Data("additionalData"))
+        )
+    )
+    <style type="text/css">
+        .k-grid-save-changes, .k-grid-cancel-changes {
+            border-color: #007bff;
+            color: white;
+            background-color: #007bff;
+        }
+
+        .k-grid-save-changes:hover, .k-grid-cancel-changes:hover {
+            border-color: #0062cc;
+            color: white;
+            background-color: #0069d9;
+        }
+        .k-grid-add {
+            color: white !important;
+            background-color: black !important;
+        }
+            .k-grid-add:hover {
+                color: white !important;
+                /* background-color: black !important; */
+            }
+
+        .k-grid .k-button:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-Delete {
+            background-color: white !important;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-tooltip {
+            border-color: #f31700 !important;
+            color: #ffffff !important;
+            background-color: #f31700 !important;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $.extend(true, kendo.ui.validator, {
+                rules: { // custom rules
+                    productnamevalidation: function (input, params) {
+                        if (input.id = "Title" && input.val() == "") {
+                            input.attr("required", true);
+                            return false;
+                        }
+                        return true;
+                    }
+                },
+                messages: { //custom rules messages
+                    productnamevalidation: function (input) {
+                        input.attr("required", true);
+                        return false;
+                    }
+                }
+            });
+        });
+        function error_handler(e) {
+            if (e.errors) {
+                var message = "Errors:\n";
+                $.each(e.errors, function (key, value) {
+                    if ('errors' in value) {
+                        $.each(value.errors, function () {
+                            message += this + "\n";
+                        });
+                    }
+                });
+            }
+        }
+        $(document).ready(function () {
+            RefreshGrid();
+        });
+        function RefreshGrid() {            
+            
+        }
+        var isChange = false;
+        function refreshSummary() {
+            if (isChange) {
+                $("#userroles").data("kendoGrid").dataSource.read();
+                isChange = false;
+            }
+        }
+        function SaveChanges() {
+            setTimeout(function () {
+                $("#userroles").data("kendoGrid").dataSource.read();
+            },60000);
+        }
+        function returnFalse() {
+            return false;
+        }
+        function additionalData() {
+            isChange = true;
+            var grid = $("#userroles").data("kendoGrid");
+            return {
+                data: JSON.stringify(grid.dataSource.view())
+            };
+        }
+        function getRolePermission(data, permissionName) {
+            var checkedexpressions = data[permissionName] ? "checked='checked'" : "''";
+            return "<input class='chkbx' type='checkbox' " + checkedexpressions + " />";
+        }
+        function customDelete(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+            kendo.confirm("Are you sure want to delete this role?")
+                .done(function () {
+                    $.ajax({
+                        url: "ManageRoles/ManageRoles_Destroy?roleId=" + dataItem.Id,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            var grid = $("#userroles").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    });
+
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+
+        $(document).ready(function () {
+            $("#userroles .k-grid-content").on("change", "input.chkbx", function (e) {
+                var grid = $("#userroles").data("kendoGrid"),
+                    dataItem = grid.dataItem($(e.target).closest("tr"));
+                var td = $(e.target).closest("td");
+                var compName = td.attr("title");
+                $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+                dataItem[compName] = this.checked;
+                dataItem.dirty = true;
+            });
+        });
+    </script>
+</section>

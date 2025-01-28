@@ -1,0 +1,1337 @@
+﻿@{
+    ViewData["Title0"] = "";
+    ViewData["Title"] = "Activity Advisor";
+}
+
+@model WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigDataModel
+
+<section class="content-header">
+    <style>
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+            display: block !important;
+        }
+        .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+            width: unset !important;
+            height: calc(1*(2px + 0.75rem + 1.5em));
+            box-sizing: border-box;
+            border-color: inherit;
+            margin: 0 0.375rem;
+        }
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+            margin: 0;
+            border-width: 0;
+            width: unset !important;
+            height: unset !important;
+        }
+        .k-pager-numbers {
+            display: contents !important;
+        }
+        .provider-user span {
+            display: inline-block;
+            text-align: right;
+        }
+        .provider-user {
+            height: 95px;
+            display: block;
+            background-color: #fff;
+            border-radius: 5px;
+            border: 4px #007BFF solid !important;
+            margin-bottom: 10px;
+        }
+        .provider-userphoto {
+            width: 65px;
+            border-radius: 50px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .provider-usercard {
+            display: inline-block;
+        }
+        .user-contacts {
+            float: left;
+            margin-left: 10px;
+        }
+        .user-contacts, .user-call {
+            width: 50px;
+            border-right: 2px #f1f2f8 solid;
+            display: inline-block;
+            height: 91px;
+            padding-right: 25px;
+            padding-left: 10px;
+        }
+        .user-photoname {
+            display: inline-block;
+            color: #000;
+            float: left;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+        .user-call {
+            float: left;
+        }
+        .providers-pref, .providers-sec {
+            border: 4px solid #007BFF !important; 
+        }
+        .user-call .fa-circle {
+            color: #77BD27;
+            margin-top: 35px;
+            margin-left: 10px;
+        }
+        .user-contacts .fa-phone {
+            color: #3639A4;
+            height: 25px;
+            margin-top: 10px;
+        }
+        .fa-phone {
+            font-size: 24px !important;
+        }
+        .user-contacts .fa-video-camera {
+            color: #007BFF;
+            height: 25px;
+        }
+        .user-contacts .fa-users {
+            color: #F4AF00;
+            height: 25px;
+        }
+        .k-navigator, .k-zoom-control {
+            display: none;
+        }
+        .btnNotes, .btnNotes:hover, .btnActivity, .btnActivity:hover {
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+            .btnNotes .fa, .btnActivity .fa {
+                color: #007BFF;
+                padding-right: 5px;
+            }
+        .btnMSAGreen, .btnMSAGreen:hover {
+            background-color: #77BD27;
+            color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+       }
+        .btnMSARed, .btnMSARed:hover {
+            background-color: #FF6344;
+            color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+            .btnMSARed .fa, .btnMSAGreen .fa {
+                padding-left: 10px;
+            }
+        .k-i-marker-pin-target {
+            color: #FF6344 !important;
+        }
+        #locationmap {
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+        }
+        .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff;
+            color: #000;
+        }
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            border-color: #007bff !important;
+            color: #ffffff;
+        }
+        .wellslist {
+            float: right;
+        }
+        #chartdepth {
+            margin-top: 15px;
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+        }
+            #chartdepth > svg {
+                border-radius: 5px;
+                width: 100% !important;
+                margin-left: 0px;
+            }
+        .depthlabel, .contactlabel, .servlabel, .submprop, .curserv {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .contactdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+        #depthgrid {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            width: 100%;
+            min-width: 100%;
+        }
+        .operName {
+            display: inline-block;
+            vertical-align: sub;
+            width: 28%;
+            text-align: right !important;
+        }
+        .k-pager-numbers-wrap .k-pager-numbers {
+            margin-bottom: 0px !important;
+        }
+        .k-breadcrumb .k-breadcrumb-link {
+            pointer-events: none;
+        }
+        .k-edit-buttons {
+            border-style: none;
+        }
+        .fa-globe {
+            font-size: 24px !important;
+        }
+     
+    </style>
+
+    <style>
+        .wrapper {
+            height: 100%;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+    .k-window {
+        border-radius: 5px !important;
+    }
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-grid-Delete .k-grid-Delete:hover {
+        background-color: #fff !important;
+    }
+    .k-grid-Delete{
+        border: 1px solid #007BFF;
+        border-radius: 10px !important;
+    }
+    .buttons {
+        padding-bottom:20px;
+    }
+    .k-pager-numbers {
+        padding-top:17px;
+    }
+    .providers-counts {
+        color: #ffffff;
+        width: 60%;
+        display: inline-block;
+        margin-bottom: 50px;
+    }
+    .providers-counts .rowcounts{
+        height:100px;
+        margin-left:-20px;
+    }
+    .providers-counts{
+        float:left;
+    }
+    .providers-right{
+        color:#ffffff;
+        width:28%;
+        display:inline-block;
+        float:right;
+        margin-right:20px;
+        margin-top:10px;
+    }
+    .providers-bottom{
+        float:left;
+        width:100%;
+    }
+    .providers-pref{
+        margin-bottom:10px;
+    }
+    .providers-pref,.providers-sec{
+        background-color:#fff;
+        color:#000;
+        border:2px solid blue;
+        border-radius:10px;
+        height:100px;
+        margin-top:-10px;
+    }
+    .inner {
+        padding-top:10px;
+    }
+    .providers-counts .blockstyle {
+        height: 75px;
+        background-color: #fff;
+        color: #000;
+        border: 4px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 20px;
+        float: left;
+        width: auto;
+        justify-content: space-between;
+    }
+    .linkstyle{
+        text-decoration:underline !important;
+    }
+    .greenpecstatus{
+        color:limegreen;
+        margin-left:30%;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    .redpecstatus{
+        color:red;
+        margin-left:30%;
+    }
+    .yellowpecstatus{
+        color:orange;
+        margin-left:30%;
+    }
+    .rowtitle{
+        display:inline-block;
+        margin-bottom:10px;
+        margin-left:5px;
+    }
+    .providertitle{
+        font-size:19px;
+        text-decoration:underline;
+        font-weight:bold;
+    }
+    .providerdescription {
+        float: left;
+        color: lightgrey;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .providers-total {
+        color: #000;
+        font-size: 14px;
+    }
+    .providers-totalval {
+        color: #007bff;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 20px !important;
+    }
+    .provider1-img {
+        background-image: url( @Url.Content("/img/prov1.jpg") );
+        background-size:cover;
+        width: 59px;
+        height: 59px;
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+        margin-top: 15px;
+    }
+    .provider2-img {
+        background-image: url( @Url.Content("/img/prov2.jpg") );
+        background-size:cover;
+        width: 59px;
+        height: 59px;
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+        margin-top: 15px;
+    }
+    .provider-title-link{
+        float:left;
+        list-style:none;
+        margin-top:40px;
+        margin-left:10px;
+    }
+    .provider-title{
+        float:left;
+        list-style:none;
+        margin-top:10px;
+        margin-left:10px;
+    }
+    .provider-title span{
+        display:block;
+        font-weight:bold;
+    }
+    .provider-title i{
+        width:20px;
+    }
+    .provider-satus{
+        font-weight:600;
+        font-size:14px;
+    }
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+    .k-grid-Delete, .k-grid-Delete:hover, .k-grid-edit, .k-grid-edit:hover {
+        background-color: transparent !important;
+    }
+    .k-grid-Delete:focus, .k-grid-edit:focus{
+        box-shadow:none !important;
+    }
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+    .k-datepicker .k-picker-wrap .k-select {
+        border: 0px;
+        background-color: #fff;
+        color: #000;
+    }
+    #InsuranceStart .k-textbox .k-icon, #InsuranceExpire .k-textbox .k-icon {
+        color: #000;
+    }
+    /*.k-i-calendar {
+        margin-left: -10px !important;
+    }*/
+    .k-datepicker {
+        padding: 0;
+    }
+    .k-switch{
+        width:5em !important;
+    }
+    .fa-map-marker{
+        cursor:pointer;
+        font-size:24px !important;
+    }
+        .content {
+            margin: 15px !important;
+        }
+        .k-switch-off .k-switch-container {
+            background-color: #fff !important;
+        }
+        .k-switch-off .k-switch-handle,.k-switch-off:hover .k-switch-handle, .k-switch-off.k-state-hover .k-switch-handle {
+            background-color: #000 !important;
+        }
+        .predictlbl{
+            display:inline-block;
+            margin-right:5px;
+        }
+        .openchklistbtn{
+            margin-left:8px;
+        }
+        .k-i-marker-pin-target {
+            font-size: 40px !important;
+        }
+    </style>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="k-edit-label">
+                        @Html.LabelFor(m => m.DrillPlaName, "Drill Plan")
+                    </div>
+                    <div class="k-edit-field">
+                        @(Html.Kendo().DropDownList()
+                        .Name("DrillPlanId")
+                        .DataTextField("DrillPlanName")
+                        .DataValueField("DrillPlanId")
+                        .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetDrillplan", "InDepthRigData");
+                              }).ServerFiltering(true);
+                          })
+                         .HtmlAttributes(new { style = "width: 100%" })
+                        )
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="k-button k-button-icontext k-primary openchklistbtn" style="height: 30px;" onclick="openCheckList();">View Plan</button>
+                </div>
+                <div class="col-md-5">
+                    <div class="k-edit-label">
+                        @Html.LabelFor(m => m.DrillPlaName, "Wells")
+                    </div>
+                    <div class="k-edit-field">
+                        @*<input id="ddlWells" style="width: 100%;" />*@
+                        @(Html.Kendo().DropDownList()
+                        .Name("ddlWells")
+                        .DataTextField("wellName")
+                        .DataValueField("wellId")
+                        //.OptionLabel("Select Wells...")
+                        .DataSource(source =>
+                        {
+                            source.Read(read =>
+                            {
+                                read.Action("GetDrillplanWells", "InDepthRigData").Data("GetWellsByDrillplan");
+                            }).ServerFiltering(true);
+                        })
+                        .Events(e => e.Change("OnWellChange").DataBound("WellDataBound"))
+                         .HtmlAttributes(new { style = "width: 100%" })
+                         //.Enable(false)
+                         .AutoBind(false)
+                         .CascadeFrom("DrillPlanId")
+                        )
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-4 depthlabel">Depth Time Chart </div>
+                <div class="col-sm-5">
+                    @*<div class="predictlbl">Prediction</div>*@
+                    @*@(Html.Kendo().Switch().Name("switchPrediction").Events(e => e.Change("predictionChange"))
+                    )*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            @(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigData>()
+                        .Name("chartdepth")                        
+                    )
+        </div>
+        <div class="col-sm-6" @*style="margin-top:22px;"*@>
+            @*<div class="row">
+                <div class="col-sm-6">
+                    @if (ViewBag.PreferredProvider != null)
+                    {
+                       <div class="providers-pref">
+                            <div class="provider1-img"></div>
+                            <div class="provider-title">
+                                <span>@ViewBag.PreferredProvider.Name</span>
+                                <span class="provider-satus">Preferred Provider</span>
+                                <i class="fa fa-phone" style="color:#3639A4" onclick="showCallWindow(@ViewBag.PreferredProvider.Phone);"></i>
+                                <a onclick="showLocation('@ViewBag.PreferredProvider.City', '@ViewBag.PreferredProvider.Zip', '@ViewBag.PreferredProvider.Address1', '@ViewBag.PreferredProvider.Address2', '@ViewBag.PreferredProvider.State', '@ViewBag.PreferredProvider.Name');">
+                                    <i class="fa fa-map-marker" style="color:#FF6344"></i>
+                                </a>
+                                <a href="@ViewBag.PreferredProvider.Website" target="_blank"><i class="fa fa-globe" style="color:#2BDDCD"></i></a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="providers-sec">
+                            <div class="provider-title-link">
+                                <a href="/providerDirectory">Select Preferred Provider</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-sm-6">
+                    @if (ViewBag.SecondaryProvider != null)
+                    {
+                        <div class="providers-sec">
+                            <div class="provider2-img"></div>
+                            <div class="provider-title">
+                                <span>@ViewBag.SecondaryProvider.Name</span>
+                                <span class="provider-satus">Secondary Provider</span>
+                                <i class="fa fa-phone" onclick="showCallWindow(@ViewBag.SecondaryProvider.Phone);" style="color:#3639A4"></i>
+                                <a onclick="showLocation('@ViewBag.SecondaryProvider.City', '@ViewBag.SecondaryProvider.Zip', '@ViewBag.SecondaryProvider.Address1', '@ViewBag.SecondaryProvider.Address2', '@ViewBag.SecondaryProvider.State', '@ViewBag.SecondaryProvider.Name');">
+                                    <i class="fa fa-map-marker" style="color:#FF6344"></i>
+                                </a>
+                                <a href="@ViewBag.SecondaryProvider.Website" target="_blank"><i class="fa fa-globe" style="color:#2BDDCD"></i></a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="providers-sec">
+                            <div class="provider-title-link">
+                                <a href="/providerDirectory">Select Secondary Provider</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigDataGridModel>()
+                           .Name("depthgrid")
+                           .HtmlAttributes(new { @class = "ra-section" })
+                           .Columns(columns =>
+                           {
+                               columns.Bound(p => p.Name).Title("Upcoming Activities").Width(300);
+                               columns.Bound(p => p.StageType).Title("STAGE").Width(150);
+                               columns.Bound(p => p.Depth).Format("{0:n0}ft").Width(130);
+                               columns.Bound(p => p.Day).Width(50);
+                               columns.Bound(p => p.IsBiddable).Title("RFP").Filterable(false).ClientTemplate("#if (IsBiddable == true) { #" +
+                            "<a href='javaScript:void(0)' onclick='newRequest(\"#=TaskId#\",\"#=Name#\")'><i class='fa fa-gavel' style='font-size:15px;'></i></a>   <a href='javaScript:void(0)' onclick='customerCallEvent(\"#=Name#\");'><i class='fa fa-calendar-plus-o' style='font-size:15px;'></i></a>" +
+                            "# } else { #" +
+                            "<a href='javaScript:void(0)' onclick='customerCallEvent(\"#=Name#\");'><i class='fa fa-calendar-plus-o' style='font-size:15px;'></i></a>" +
+                                "# } #"
+                                ).Width(80);
+                           })
+                           .Sortable(s => s.Enabled(true))
+                           .Pageable(p =>
+                             p.Info(true) 
+                         .Numeric(false)
+                         .PreviousNext(false)
+                         )
+                         .Scrollable(scrollable => scrollable.Virtual(true))
+                           .Pageable(p => p.ButtonCount(4))
+                           .DataSource(dataSource => dataSource
+                                   .Ajax()
+                                   .PageSize(10)
+                                   .Sort(sort => sort.Add(model => model.Depth))
+                                   .Read(read => read.Action("GetGridData", "InDepthRigData").Data("onChartRead"))
+                           ))
+                </div>
+            </div>
+            <div class="row" @*style="position: absolute;bottom: 0;width:100%;"*@>
+                <div class="col-sm-6">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidViewModel>()
+                             .Name("depthSubmittedProposal")
+                             .HtmlAttributes(new { @class = "ra-section" })
+                             .Columns(columns =>
+                             {
+                                 columns.Bound(p => p.JobName).Filterable(false).ClientTemplate("<a href='javascript:void(0)' onclick='showApprovedDetails(\"#=BidID#\")' class='linkstyle'>#=JobName#</a>").Title("Approved Bids");
+                             })
+                             .Sortable(s => s.Enabled(true))
+                             .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                            .Scrollable(scrollable => scrollable.Virtual(true))
+                             .Pageable(p => p.ButtonCount(4))
+                             .DataSource(dataSource => dataSource
+                                     .Ajax()
+                                     .PageSize(5)
+                                     .Sort(sort => sort.Add(model => model.Subject))
+                                     .Read(read => read.Action("GetInDepthSubmittedProposal", "InDepthRigData").Data("onChartRead"))
+                             ))
+                </div>
+                <div class="col-sm-6">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>()
+                          .Name("depthProject")
+                          .HtmlAttributes(new { @class = "ra-section" })
+                          .Columns(columns =>
+                          {
+                              columns.Bound(p => p.JobName).ClientTemplate("<a href='" + @Url.Action("ProjectDetails", "UpcomingProjects", new { id = "#=ProjectId#" }) + "' class='linkstyle'>#=JobName#</a>").Filterable(false).Title("Current Activities");
+                          })
+                          .Sortable(s => s.Enabled(true))
+                         .Pageable(p =>
+                         p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                         )
+                         .Scrollable(scrollable => scrollable.Virtual(true))
+                          .Pageable(p => p.ButtonCount(4))
+                          .DataSource(dataSource => dataSource
+                                  .Ajax()
+                                  .PageSize(5)
+                                  .Sort(sort => sort.Add(model => model.Title))
+                                  .Read(read => read.Action("GetInDepthProjectData", "InDepthRigData").Data("onChartRead"))
+                          )
+                        )
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@(Html.Kendo().Window().Name("newRequestsWindow")
+    .Title("Add Proposal Request")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text>
+                @using (Html.BeginForm("AddNewRequestAuctionsProposal", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                    @Html.HiddenFor(model => model.AddAuction.ProposalId)
+                    @Html.HiddenFor(model => model.AddAuction.AuctionBidStatusId)
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AddAuction.WellId)
+                                    @Html.HiddenFor(model => model.AddAuction.WellId)
+                                    @Html.HiddenFor(model => model.AddAuction.JobId)
+                                </div>
+                                <div class="col-sm-8">
+                                    <label id="lblWell" name="lblWell"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AddAuction.JobId)
+                                </div>
+                                <div class="col-sm-8">
+                                    <label id="lblJob" name="lblJob"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AddAuction.ProjectDuration)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.AddAuction.ProjectDuration, new { @Class = "k-textbox", style = "width:50px;height:25px;" })
+                                    @Html.ValidationMessageFor(model => model.AddAuction.ProjectDuration)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-4" style="padding-top:6px;">
+                                    @Html.LabelFor(model => model.AddAuction.AuctionStart)
+                                </div>
+                                <div class="col-sm-8">
+                                    @(Html.Kendo().DatePickerFor(model => model.AddAuction.AuctionStart)
+                         .Value(DateTime.Today).Min(DateTime.Today)
+                             .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                           .Events(e => e.Change("startChange")))
+                                    @Html.ValidationMessageFor(model => model.AddAuction.AuctionStart)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="display:none;">
+                            <div class="row">
+                                <div class="col-sm-4" style="padding-top:6px;">
+                                    @Html.LabelFor(model => model.AddAuction.AuctionEnd)
+                                </div>
+                                <div class="col-sm-8">
+                                    @(Html.Kendo().DatePickerFor(model => model.AddAuction.AuctionEnd)
+                                       .Value(DateTime.Today).Min(DateTime.Today)
+                                      .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                                      .Events(e => e.Change("endChange")))
+                                    @Html.ValidationMessageFor(model => model.AddAuction.AuctionEnd)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="display:none;">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AddAuction.ProjectStartDate)
+                                </div>
+                                <div class="col-sm-8">
+                                    @(Html.Kendo().DatePickerFor(model => model.AddAuction.ProjectStartDate)
+                                 .Min(DateTime.Now).DateInput()
+                                 .ParseFormats(new string[] { "MM/dd/yyyy" }))
+                                    @Html.ValidationMessageFor(model => model.AddAuction.ProjectStartDate)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="display:none;">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AddAuction.Subject)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.AddAuction.Subject, new { @Class = "k-textbox", style = "width:100%" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    Assign To Provider
+                                    @(Html.Kendo().CheckBoxFor(model => model.AddAuction.IsPrivate).Checked(false).HtmlAttributes(new { onchange = "onChengeckb();" }))
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div id="srvTenantDivId" style="display:none">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        @Html.LabelFor(model => model.SRVTenantId)
+                                    </div>
+                                    <div class="col-sm-8">
+                                        @(Html.Kendo().DropDownListFor(model => model.SRVTenantId)
+                                     .DataValueField("TenantId")
+                                     .DataTextField("Name")
+                                     .DataSource(source =>
+                                     {
+                                         source.Read(read =>
+                                         {
+                                             read.Action("GetSRVTenantName", "projectauctions");
+                                         });
+                                     })
+                                        )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left:0px;margin-right:0px;display:none;">
+                        <div class="form-group" style="width:100%;">
+                            @Html.LabelFor(model => model.AddAuction.Summary)
+                            @Html.TextAreaFor(model => model.AddAuction.Summary, new { style = "height: 60px;width:100%" })
+                            @Html.ValidationMessageFor(model => model.AddAuction.Summary)
+                        </div>
+                    </div>
+                        <div class="row" style="margin-left:0px;margin-right:0px;">
+                            <div class="form-group">
+                                <label for="Description">@Html.LabelFor(model => model.AddAuction.Body, "Description")</label>
+                                @(Html.Kendo().EditorFor(model => model.AddAuction.Body)
+                        .Encoded(false)
+                        .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                        .HtmlAttributes(new { style = "height:200px", required = "required", id = "descripteditor" })
+                        .Tools(tools => tools.Clear().Bold()
+                        .Italic().Underline().FontName()
+                        .SubScript().SuperScript().InsertImage()))
+                            </div>
+                        </div>
+                        <div class="k-edit-buttons k-state-default">
+                            <button type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Update</button>
+                            <button type="button" role="button" onclick="windowClose()" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Cancel</button>
+                        </div>
+                                }
+    </text>)
+.Actions(actions => actions
+.Close()
+)
+.Draggable(true)
+.Width(1000)
+    )
+
+<div style="display:none" id="callEventScheduler">
+    <section class="content col-12">
+        @(Html.Kendo().Scheduler<WellAI.Advisor.Model.OperatingCompany.Models.ActivityViewModel>()
+    .Name("scheduler")
+    .Mobile(MobileMode.Auto)
+    .Date(DateTime.Now)
+    .Height(800)
+    .Events(e =>
+    {
+        e.Edit("scheduler_add");
+    })
+    .MinorTickCount(1)
+    .Views(views =>
+    {
+        views.DayView();
+        views.WeekView();
+        views.MonthView(month =>
+        {
+            month.Selected(true);
+            month.EventsPerDay(4);
+            month.AdaptiveSlotHeight(true);
+            month.EventSpacing(5);
+            month.EventHeight(60);
+        });
+        views.AgendaView();
+    })
+    .DataSource(dataSource => dataSource
+    .Model(m =>
+    {
+        m.Id(f => f.ProjectId);
+        m.Field(f => f.Title).DefaultValue("No title");
+        m.Field(f => f.ProjectStatus).DefaultValue(1);
+        m.Field(f => f.ProjectStatusName);
+        m.Field(f => f.Description).DefaultValue("No Description");
+        m.Field(f => f.Start);
+        m.Field(f => f.End);
+        m.Field(f => f.RecurrenceID);
+        m.Field(f => f.RecurrenceRule);
+        m.Field(f => f.RecurrenceException);
+        m.Field(f => f.IsAllDay);
+        m.Field(f => f.StartTimezone);
+        m.Field(f => f.EndTimezone);
+    })
+    .Create("Create", "ActivityView")
+    )
+            )
+    </section>
+</div>
+
+@(Html.Kendo().Window().Name("Details")
+    .Title("Bidder Details")
+    .Visible(false)
+    .Content(@<text><div id="wndContent">Loading....</div></text>)
+.Modal(true)
+.Draggable(true)
+.Width(1000)
+)
+
+@(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+    .Events(ev => ev.Close("onCallWindowClose"))
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+
+@(Html.Kendo().Window().Name("MapLocation")
+    .Title("Provider Location")
+    .Content(@<text>
+            @(Html.Kendo().Map()
+             .Name("locationmap")
+             .Zoom(15)
+             .Layers(layers =>
+             {
+                 layers.Add()
+                     .Type(MapLayerType.Tile)
+                     .UrlTemplate("http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png")
+                     .Subdomains("a", "b", "c")
+                     .Attribution("&copy; <a href='http://osm.org/copyright'>OpenStreetMap contributors</a>");
+             })
+            )
+    </text>
+)
+.Visible(false)
+.Actions(actions => actions.Close())
+.Modal(true)
+.Draggable(true).Width(1000)
+)
+
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+<script src="~/js/phonecall.js"></script>
+@section scripts{
+    <script type="text/javascript">
+        $(window).resize(function () {
+            $("#chartdepth").data("kendoChart").refresh();
+        });
+
+        function GetWellsByDrillplan() {
+            var DrillPlan = $("#DrillPlanId").data("kendoDropDownList").value();
+            return {
+                DrillPlanId: DrillPlan
+            };
+        }
+
+        function OnWellChange(e) {
+            var Wellid = this.dataItem().wellId;
+            var value = this.value();
+            Cookies.set('indepthrigdatagetwellbyrigsidcookies', value);
+            var griddepthProject = $("#depthProject").data("kendoGrid");
+            griddepthProject.dataSource.read();
+            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+            griddepthSubmittedProposal.dataSource.read();
+            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+            griddepthgrid.dataSource.read();
+            sessionStorage.clear();
+            loadDepthChart(Wellid);
+        }
+
+        function WellDataBound(e) {
+            var wid = $("#ddlWells").data("kendoDropDownList").value();
+            //alert('wid' + wid);
+            Cookies.set('indepthrigdatagetwellbyrigsidcookies', wid);           
+            var depthChart = $("#chartdepth").data("kendoChart");
+            depthChart.dataSource.read();
+            var griddepthProject = $("#depthProject").data("kendoGrid");
+            griddepthProject.dataSource.read();
+            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+            griddepthSubmittedProposal.dataSource.read();
+            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+            griddepthgrid.dataSource.read();
+            sessionStorage.clear();
+            if (wid !== "") {
+                loadDepthChart(wid);
+            }            
+        }
+
+        $(document).ready(function () {
+            var ddlRigsName = $("#filterwellslayout").data("kendoDropDownList").text();
+            $('#breadcrumb').append('<span>' + ddlRigsName + '</span>');
+            if (ddlRigsName !== "All Rigs") {
+                var rid = $("#filterwellslayout").data("kendoDropDownList").value();
+                ////bindWellOnRigChanges(rid);
+            } else {
+                //bindWellOnRigChanges("");
+            }
+            var predval = $("#Prediction").val();
+            if (predval != undefined && predval.toLowerCase() == "true") {
+                $("#switchPrediction").data("kendoSwitch").toggle();
+            }
+            var wellId = getUrlVars()["wellId"];
+            if (wellId != undefined) {
+                var dropdownlist = $("#ddlWells").data("kendoDropDownList");
+                dropdownlist.value(wellId);
+                dropdownlist.trigger("change");
+            }
+        });
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        //function bindWellOnRigChanges(rId) {
+        //    var ChartWellid = sessionStorage.getItem("WellIdValue");
+        //    if (sessionStorage.getItem("WellIdValue") != "" || sessionStorage.getItem("WellIdValue") != null) {
+        //        document.getElementById("ddlWells").value = ChartWellid;
+        //        Cookies.set('indepthrigdatagetwellbyrigsidcookies', ChartWellid);
+        //    }
+        //    $("#ddlWells").kendoDropDownList({
+        //        dataTextField: "WellName",
+        //        dataValueField: "WellId",
+        //        dataSource: {
+        //            transport: {
+        //                read: {
+        //                    url: "/InDepthRigData/GetWellByRigsId?Id=" + rId,
+        //                }
+        //            }
+        //        },
+        //        dataBound: function (e) {
+        //            var wid = $("#ddlWells").data("kendoDropDownList").value();
+        //            Cookies.set('indepthrigdatagetwellbyrigsidcookies', wid);
+        //            $.ajax({
+        //                url: "InDepthRigData/GetWellPrediction?wellId=" + wid,
+        //                dataType: 'json',
+        //                contentType: 'application/json; charset=utf-8',
+        //                success: function (data) {
+        //                    $("#switchPrediction").data("kendoSwitch").check(data);
+        //                }
+        //            });
+        //            var depthChart = $("#chartdepth").data("kendoChart");
+        //            depthChart.dataSource.read();
+        //            var griddepthProject = $("#depthProject").data("kendoGrid");
+        //            griddepthProject.dataSource.read();
+        //            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+        //            griddepthSubmittedProposal.dataSource.read();
+        //            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+        //            griddepthgrid.dataSource.read();
+        //            sessionStorage.clear();
+        //        },
+        //        change: function (e) {
+        //            var value = this.value();
+        //            Cookies.set('indepthrigdatagetwellbyrigsidcookies', value);
+        //            //Chart Depth from LoadChartDepth function 
+        //            var griddepthProject = $("#depthProject").data("kendoGrid");
+        //            griddepthProject.dataSource.read();
+        //            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+        //            griddepthSubmittedProposal.dataSource.read();
+        //            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+        //            griddepthgrid.dataSource.read();
+        //            var wid = $("#ddlWells").data("kendoDropDownList").value();
+        //            $.ajax({
+        //                url: "InDepthRigData/GetWellPrediction?wellId=" + wid,
+        //                dataType: 'json',
+        //                contentType: 'application/json; charset=utf-8',
+        //                success: function (data) {
+        //                    $("#switchPrediction").data("kendoSwitch").check(data);
+        //                }
+        //            });
+        //            loadDepthChart(value);
+        //            sessionStorage.clear();
+        //        }
+        //    });
+        //}
+        //LoadDepatchChart function
+
+        function loadDepthChart(wellId) {
+            var dayvalsataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "/InDepthRigData/GetChartAction_V1",
+                        dataType: "json",
+                        data: {
+                            wellId: wellId,
+                        }
+                    }
+                }
+            });
+
+            console.log("chart depth Data :" + dayvalsataSource);
+            $("#chartdepth").kendoChart({
+                title: {
+                    text: ""
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: "#fff",
+                    height: "550"
+                },
+                dataSource: dayvalsataSource,
+                seriesColors: ["#007BFF", "#43BCCD"],             
+                plotArea: {
+                    padding: {
+                        bottom: 10
+                    }
+                },
+                series: [{
+                    type: "scatterLine",
+                    name: "Depth",
+                    xField: "Day",
+                    yField: "Value",
+                    markers: {
+                        visible: true,
+                        size: 5
+                    },
+                }],
+                pannable: {
+                    key: "shift"
+                },
+                xAxis: {
+                    name: "DateAxis",
+                    min: 0,
+                    max: 31,
+                    majorUnit: 1,
+                    majorGridLines: false,
+                    minorGridLines: false,
+                    labels: {
+                        margin: {
+                            bottom: 10,
+                            right: 10
+                        }
+                    }
+                },
+                yAxes: [{
+                    name: "DepthAxis",
+                    min: 0,
+                    max: 32500,
+                    minorUnit: 750,
+                    majorUnit: 1500,
+                    reverse: true,
+                    axisCrossingValue: [32500],
+                    majorGridLines: false,
+                    minorGridLines: true,
+                }],
+                tooltip: {
+                    visible: true,
+                    template: "Day : #= dataItem.Day # / Depth : #= dataItem.Value #"
+                },
+                render: renderChart,
+            });
+        }     
+
+        function onChartRead(e) {
+            var cookwellid = getCookie("wellfilterlayout");
+            if (cookwellid == '00000000-0000-0000-0000-000000000000') {
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('wellId')) {
+                    cookwellid = params.get('wellId');
+                }
+            }
+            if (cookwellid == '00000000-0000-0000-0000-000000000000') {
+                var wellsList = $("#ddlWells").data("kendoDropDownList");
+                if (wellsList != undefined) {
+                    cookwellid = wellsList.value();
+                }
+            }
+            return {
+                wellId: cookwellid
+            };
+        }
+        function renderChart(e) {
+            var el = e.sender.element;
+            el.find("path[stroke='#007BFF']")
+                .attr("stroke-width", 7);
+            el.find("circle[stroke='#007BFF']")
+                .attr("stroke-width", 4).attr("r", 5);
+            //lines
+            var depthAxis = e.sender.getAxis("DepthAxis");
+            var depthSlot = depthAxis.slot(1);
+            $("circle[stroke='#007BFF']").each(function () {
+                var cx = $(this).attr("cx");
+                var cy = $(this).attr("cy");
+
+                var line = new kendo.drawing.Path({
+                    stroke: {
+                        color: "#FF0000",
+                        width: 0.5
+                    }
+                });
+                line.moveTo(depthSlot.origin.x, cy).lineTo([cx - 5, cy]);
+                e.sender.surface.draw(line);
+            });
+        }
+        function showLocation(city, zip, address1, address2, state, companyTitle) {
+           $.ajax({
+                url: "https://nominatim.openstreetmap.org/search?city=" + city + "&state=" + state + "&street=" + address1 + " "
+                    + address2 + "&postalcode=" + zip + "&format=geocodejson",
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    var locationLat = 0;
+                    var locationLng = 0;
+                    var locationLabel = "";
+                    for (var i = 0; i < data.features.length; i++) {
+                        var feature = data.features[i];
+                        var label = feature.properties.geocoding.label;
+                        if (label.city !== "" && label.zip !== "") {
+                            var coordinates = feature.geometry.coordinates;
+                            var locationLat = coordinates[1];
+                            var locationLng = coordinates[0];
+                            locationLabel = label;
+                            break;
+                        }
+                    }
+                    var map = $("#locationmap").data("kendoMap");
+                    map.zoom(15);
+                if (locationLat != 0 && locationLng != 0) {
+                    var markerLocation = new kendo.dataviz.map.Location(locationLat, locationLng);
+                    var cLocation = new kendo.dataviz.map.Location(locationLat, locationLng-0.02);
+                    map.center(cLocation);
+                    map.markers.clear();
+                    map.markers.add({
+                        location: markerLocation,
+                        shape: "pinTarget",
+                        tooltip: {
+                            content: locationLabel
+                        }
+                    });
+                }
+                    var wnd = $("#MapLocation").data("kendoWindow");
+                    wnd.title(companyTitle).center().open();
+                }
+            });
+        }
+        function newRequest(taskId, task) {
+            var popup = $("#newRequestsWindow").data('kendoWindow');
+            var well = $("#ddlWells").data("kendoDropDownList").text();
+           var wellId = $("#ddlWells").data("kendoDropDownList").value();
+            popup.open();
+            popup.center();
+            $('input[name="AddAuction.WellId"]').val(wellId).trigger("change");
+            $('input[name="AddAuction.JobId"]').val(taskId).trigger("change");
+            $('[name="lblWell"]').text(well).trigger("change");
+            $('[name="lblJob"]').text(task);
+        }
+        function scheduler_add(e) {
+            $('.k-window-title').text("Schedule Task");
+        }
+        function customerCallEvent(taskName) {
+            $("#scheduler").data("kendoScheduler").addEvent({
+                title: taskName,
+            });
+        }
+        function customerCall(phoneNumber) {
+            callCustomer(phoneNumber);
+        }
+        function onChengeckb() {
+            if ($("#AddAuction_IsPrivate").is(':checked')) {
+                $('#srvTenantDivId').show();
+                $("#SRVTenantId").prop('required', 'true');
+            } else {
+                $('#srvTenantDivId').hide();
+                $("#SRVTenantId").removeAttr('required');
+            }
+        }
+        function startChange() {
+            var end = $("#AuctionEnd").data("kendoDatePicker");
+            var projectStartDate = $("#ProjectStartDate").data("kendoDatePicker");
+            var startDate = this.value();
+            var endDate = end;
+            if (startDate) {
+                startDate = new Date(startDate);
+                startDate.setDate(startDate.getDate());
+                end.value(new Date(startDate));
+                end.min(startDate);
+                projectStartDate.value(new Date(startDate));
+                projectStartDate.min(startDate);
+            } else if (endDate) {
+                start.max(new Date(endDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+        }
+        function endChange() {
+            var start = $("#AuctionStart").data("kendoDatePicker");
+            var projectStartDate = $("#ProjectStartDate").data("kendoDatePicker");
+            var endDate = this.value();
+            var startDate = start;
+            if (endDate) {
+                endDate = new Date(endDate);
+                endDate.setDate(endDate.getDate());
+                start.max(endDate);
+            } else if (startDate) {
+                end.min(new Date(startDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+            projectStartDate.value(new Date(endDate));
+            projectStartDate.min(endDate);
+        }
+        function windowClose() {
+            $("#newRequestsWindow").data("kendoWindow").close();
+        }
+        function openCheckList() {
+            var DrillPlanId = $("#DrillPlanId").data("kendoDropDownList").value();
+            sessionStorage.setItem("DrillPlanId", DrillPlanId);
+            window.location.href = "/ActiveDrillPlan/Index";
+        }
+        function showApprovedDetails(Id) {
+            $("#wndContent").empty();
+            $("#wndContent").text("Loading....");
+            var wnd = $("#Details").data("kendoWindow");
+            wnd.content();
+            wnd.center().open();
+            var id = Id;
+            $('#wndContent').load('/ProjectAuctions/AuctionBidderDetailContent/', { id: id }, function (response, status, xhr) {
+                if (status == "error") {
+                    try {
+                        var msge = $.parseJSON(response);
+                    } catch (e) {
+                    }
+                } else {
+                    $('[name="Accept"]').hide();
+                    $('[name="Reject"]').hide();
+                }
+            });
+        }
+        function showCallWindow(phone) {
+            $("#wndCall").empty();
+            $("#wndCall").text("Calling....");
+            var wnd = $("#Call").data("kendoWindow");
+            wnd.content();
+            wnd.center().open();
+            $('#wndCall').load('/Communication/ManageCall/', { phone: phone }, function (response, status, xhr) {
+                if (status == "error") {
+                    try {
+                        var msge = $.parseJSON(response);
+                    } catch (e) {
+                    }
+                }
+            });
+        }
+        function downloadFile(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            var id = dataItem.AttachmentId;
+            window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+        }
+        function onCancelClick() {
+            $("#Details").data("kendoWindow").close();
+        }
+        function predictionChange(e) {
+            var wid = $("#ddlWells").data("kendoDropDownList").value();
+            $.ajax({
+                url: "InDepthRigData/UpdateWellPrediction?wellId=" + wid + "&prediction=" + (e.checked ? 1 : 0),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+}

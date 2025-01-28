@@ -1,0 +1,327 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title0"] = "";
+    ViewData["Title"] = "Notification";
+
+}
+
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #fff !important;
+            border: 0;
+        }
+
+        .k-grid-View, .k-grid-Delete, .k-grid-View:hover, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid-edit, .k-grid-Delete {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-grid-cancel {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff
+        }
+
+        .k-dropdown .k-dropdown-wrap .k-select {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-grid-Delete, .k-grid-Delete:hover {
+            border: none !important;
+        }
+
+        .align-Div {
+            /* position: relative;
+            float: right;*/
+            display: none;
+            /*margin-right:60px;*/
+            margin-left: 1550px;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    @*<div class="buttons">*@
+    @* @Html.Kendo().Button().Name("Primary").Content("Delete").HtmlAttributes(new { @class = "k-button k-primary align-Div", type = "submit", onclick = "deleteNotifications();" })*@
+    @*@Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeClientContact();" })*@
+    @*  </div>*@
+    <div>
+        @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.MessageQueue >()
+        .Name("notification")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Messagequeue_id).Hidden();
+                columns.Bound(p => p.CreatedDate).Title("Created Date").Width(150).ClientTemplate("#= kendo.toString(CreatedDate, \"dd/MM/yyyy\") #"); ;
+            columns.Bound(p => p.JobName).Title("Job Name").Width(200);
+            columns.Bound(p => p.TaskName).Title("Task Name");
+            columns.Select().Width(50);
+            columns.Command(command =>
+            {
+                command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete");
+            }).Title("Action").Width(110).ClientHeaderTemplate("<button class='k-button k-primary ' onclick ='deleteNotifications();' >Delete Selected</button>");
+        })
+        .Sortable(s => s.Enabled(true))
+        .Pageable(p =>
+        p.Info(true)
+        .Numeric(false)
+        .PreviousNext(false)
+        )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Sort(sort => sort.Add("CreatedDate").Descending()) 
+        .PageSize(20)
+        .Model(model => model.Id(p => p.Messagequeue_id))
+        .Read(read => read.Action("Notification_Read", "NotificationSRV"))
+        )
+        .Events(e =>
+        {
+            e.Change("onChange");
+        })
+        )
+    </div>
+</section>
+<script type="text/javascript">
+
+     var selectedNotificationContact = [];
+      var selectdStatus = false;
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+
+    function onChange(e) {
+        debugger;
+       selectdStatus = false;
+        var selectedRows = this.select();
+        selectedNotificationContact = [];
+        for (var i = 0; i < selectedRows.length; i++) {
+            selectdStatus = true;
+            var dataItem = this.dataItem(selectedRows[i]);
+            var Notification =
+            {
+                Messagequeue_id: dataItem.Messagequeue_id,
+
+            };
+            selectedNotificationContact.push(Notification);
+        }
+
+    }
+
+     function deleteNotifications() {
+        if (selectdStatus == true){
+          kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                selectdStatus = false;
+                var posturl = '@Url.Action("DeleteSelectedNotifications", "NotificationSRV")';
+                $.ajax({
+                    url: posturl,
+                    type: 'POST',
+                    data: JSON.stringify(selectedNotificationContact),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#notification").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+
+        }else
+        {
+            kendo.confirm("Please select any one notification.")
+            .done(function () {
+
+
+            })
+            .fail(function () {
+                return false;
+            });
+        }
+
+
+
+    }
+
+    function OnGridSave() {
+        setTimeout(function () {
+            $('#notification').data('kendoGrid').dataSource.read().then(function () {
+                $('#notification').data('kendoGrid').refresh();
+            });
+        }, 1500);
+    }
+
+    function RefreshGrid() {
+        var IntTime = 600000;
+        setInterval(function () {
+            $("#notification").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    function onDataBound() {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    $(document).ready(function () {
+        var url = window.location.href;
+        if (url.indexOf('modal=true') > 1) {
+            window.setTimeout(function () {
+                $('.k-grid-add').trigger("click");
+            }, 1000);
+        }
+    });
+    function RenameWindow1(e) {
+        if (e.model.isNew()) {
+            $.ajax({
+                url: "/CorporateProfile/GetCorporateProfile",
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (data) {
+                    console.log(data);
+                    $("#Address1").val(data.Address1);
+                    $("#Address2").val(data.Address2);
+                    $("#City").val(data.City);
+                    $("#ZipCode").val(data.Zip);
+                    var dropdownStatelist = $("#ddlState").data("kendoDropDownList");
+                    dropdownStatelist.text(data.State);
+                    dropdownStatelist.trigger("change");
+                    var dropdownCountrylist = $("#ddlCountry").data("kendoDropDownList");
+                    dropdownCountrylist.text(data.Country);
+                    dropdownCountrylist.trigger("change");
+                }
+            });
+            e.container.data("kendoWindow").title("New payment");
+        }
+    }
+    function showdelete(e) {
+        e.preventDefault();
+        alert('Are you sure to delete this notification?')
+    }
+
+    function onSelectPayType(e) {
+        paytypeChange(e);
+    }
+    function paytypeChange(e) {
+        var selectedVal = $("#ddlPayType").val();
+        if (selectedVal !== "") {
+            $("#PayType").data("kendoMaskedTextBox").value(selectedVal);
+            $("#PayType").data("kendoMaskedTextBox").trigger("change");
+            if (selectedVal == "1" || selectedVal == "2") {
+                $("input").removeAttr("required");
+                $("#NameOnCard").attr("required", "true"); $("#CardNum").attr("required", "true");
+                $("#NickName").attr("required", "true"); $("#ddlExpireMonth").attr("required", "true");
+                $("#ddlExpireYear").attr("required", "true"); $("#FirstName").attr("required", "true");
+                $("#LastName").attr("required", "true"); $("#Address1").attr("required", "true");
+                $("#ddlState").attr("required", "true"); $("#ZipCode").attr("required", "true");
+                $("#ddlCountry").attr("required", "true");
+                $('.creditcard').removeClass('div-invisible').addClass('div-visible');
+                $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-visible').addClass('div-invisible');
+                if (selectedVal == "1") {
+                    $('.creditcardType').removeClass('div-invisible').addClass('div-visible');
+                }
+                else {
+                    $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                }
+            }
+            if (selectedVal == "4") {
+                $("input").removeAttr("required");
+                $("#AcHolderName").attr("required", "true");
+                $("#AcNum").attr("required", "true");
+                $("#RoutingNum").attr("required", "true");
+                $('.bankAccount').removeClass('div-invisible').addClass('div-visible');
+                $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-visible').addClass('div-invisible');
+                $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+            }
+            if (selectedVal == "3") {
+                $("input").removeAttr("required");
+                $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-invisible').addClass('div-visible');
+                $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                $("#RoutingNum1").attr("required", "true");
+                $("#checkNum").attr("required", "true");
+            }
+        }
+    }
+    function agreeChange(e) {
+        if (e.checked) {
+            $(".k-grid-update").removeClass("disablelink");
+            $("#Agreement").data("kendoMaskedTextBox").value("true");
+            $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").show();
+            $(".switchwrap .k-switch-label-off").hide();
+        }
+        else {
+            $(".k-grid-update").addClass("disablelink");
+            $("#Agreement").data("kendoMaskedTextBox").value("false");
+            $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").hide();
+            $(".switchwrap .k-switch-label-off").show();
+        }
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                selectdStatus = false;
+                $.ajax({
+                    url: "NotificationSRV/Notification_Destroy?msgId=" + dataItem.Messagequeue_id,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#notification").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+</script>

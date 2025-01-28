@@ -1,0 +1,172 @@
+﻿
+<div class="auction-bottom">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.TaskModel>()
+            .Name("TasksGrid")
+            .Columns(columns =>
+            {
+                columns.Select().Width(50);
+                columns.Bound(p => p.Name).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Title("TASK NAME");
+                columns.Bound(p => p.Description).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.StageTypeName).Title("Stage").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                columns.Bound(p => p.CategoryName).Title("Category").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                columns.Bound(p => p.IsActive).Hidden().Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                //columns.Bound(p => p.Day).Width(75).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                //columns.Bound(p => p.ScheduleTime).Format("{0:h:mm tt}").Width(150).Filterable(false);
+                columns.Bound(p => p.ServiceDuration).Width(100).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.Depth).Width(100).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                //columns.Bound(p => p.LeadTime).Width(100).Filterable(false);
+            })
+            .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .Columns(columns => { columns.Select(); })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .Sort(sort =>
+                 {
+                     sort.Add("Name").Ascending();
+                 })
+                .Read(read => read.Action("Task_Read", "DrillingPlan", new { wellId = ViewBag.wellId, DrillPlanId = ViewBag.DrillPlanId }))
+                .Model(model => model.Id(p => p.TaskId))
+            ))
+</div>
+
+<div class="k-edit-buttons k-state-default">
+    <button id="AddTasks" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Add</button>
+    <button id="CloseTasks" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+
+<style type="text/css">
+    .k-dialog {
+       min-width: 290px;
+       width : auto;
+    }
+</style>
+
+<script type="text/javascript">
+
+    //$(document).ready(function () {
+    //    var WellTypeId = $("#WellTypeName").data("kendoDropDownList").value();
+    //});
+
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    $(".k-grid-cancel").click(function () {
+        var window = $("#AddTaskListWindow").data("kendoWindow");
+        window.close();
+    });
+
+    $(".k-grid-update").click(function () {
+        IsPlanDetailsChanged = true;
+        var sourcegrid = $('#TasksGrid').data('kendoGrid');
+        var Id = 'DrillPlan_' + '@ViewBag.wellId';
+        var destinationgrid = $('#' + Id).data('kendoGrid');
+        var TasksData = destinationgrid.dataSource.data();
+        let isExitingTask = [];
+        const selectedItems = sourcegrid.select();
+        if (selectedItems.length > 0) {
+            sourcegrid.select().each(function () {
+                var dataItem = sourcegrid.dataItem($(this));
+
+                var days = dataItem.ServiceDuration == null ? "00" : dataItem.ServiceDuration == "" ? "00" : dataItem.ServiceDuration.split(":")[0];
+                var hours = dataItem.ServiceDuration == null ? "00" : dataItem.ServiceDuration == "" ? "00" : dataItem.ServiceDuration.split(":")[1];
+                var minutes = dataItem.ServiceDuration == null ? "00" : dataItem.ServiceDuration == "" ? "00" : dataItem.ServiceDuration.split(":")[2];
+
+                var Hours = CalculateDays(days, hours, minutes);
+                var ScheduleTime;
+                if (dataItem.ScheduleTime) {
+                    var ScheduleTimehours = dataItem.ScheduleTime.Value.Hours;
+                    var ScheduleTimeminutes = dataItem.ScheduleTime.Value.Minutes
+                    ScheduleTime = ScheduleTimehours + ":" + ScheduleTimeminutes;
+                } else {
+                    ScheduleTime = "00:00";
+                }
+
+                var taskData = {
+                    TaskName: dataItem.Name,
+                    TaskId: dataItem.TaskId,
+                    IsBiddable: dataItem.IsBiddable,
+                    OperationDays: Math.round(Hours / 24, 2),
+                    OperationHours: Hours,
+                    AccumulatedDays: Math.round(Hours / 24, 2),
+                    EmployeeId: "",
+                    CategoryName: dataItem.CategoryName,
+                    ServiceCategoryId: dataItem.ServiceCategoryId,
+                    Depth: dataItem.Depth,
+                    Description: dataItem.Description,
+                    IsSpecialServices: parseInt(dataItem.IsSpecialServices),
+                    SeletedDependency: dataItem.SeletedDependency,
+                    ServiceDuration: dataItem.ServiceDuration,
+                    StageTypeName: dataItem.StageTypeName,
+                    StageType: dataItem.StageType,
+                    LeadTime: dataItem.LeadTime,
+                    Day: dataItem.Day,
+                    IsActive: dataItem.IsActive,
+                    ExportToMaster: dataItem.ExportToMaster,
+                    ServiceDurationDays: dataItem.ServiceDurationDays,
+                    ServiceDurationHours: dataItem.ServiceDurationHours,
+                    ServiceDurationMinutes: dataItem.ServiceDurationMinutes,
+                    PlanStart: null,
+                    DrillPlanDetailsId: "",
+                    FinishedDate: null,
+                    FinishedTime: "0001-01-01T00:00:00.000Z",//''null,
+                    Start: null,
+                    End: null,
+                    //EmployeeName: null,//"",
+                    commands: null,//"",
+                    Serviceoperator: null ? null : "",
+                    Vendor: null ? null : "",
+                    Category: "",
+                    stage: "",
+                    StageName: "",
+                    IsPlanTask: false,
+                    ScheduleTime: ScheduleTime == "" ? "00:00" : ScheduleTime,
+                    Dependency: "",
+                    //ScheduleTimePicker: ""
+                };
+
+                let TaskExits = false
+                for (var i = 0; i < TasksData.length; i++) {
+                    if (TasksData[i].TaskId == taskData.TaskId) {
+                        TaskExits = true;
+                        isExitingTask.push(taskData.TaskName);
+                    }
+                }
+
+                if (TaskExits !== true) {
+                    destinationgrid.dataSource.insert(taskData);
+                    IsPlanUpdate = true;
+                }
+
+            });
+
+            if (isExitingTask.length > 0 && isExitingTask.length <= 3) {
+                planalert("Tasks " + "<b>" + isExitingTask.join(", ") + "</b>" + " already added into list. ", "Information");
+            }
+            else if (isExitingTask.length > 3) {
+                planalert("<b>" + isExitingTask.length + "</b>" + " Tasks already added into list. ", "Information");
+            }
+
+            destinationgrid.refresh();
+            var window = $("#AddTaskListWindow").data("kendoWindow");
+            window.close();
+
+        } else {
+            planalert("Please select tasks.","Information");
+        }
+
+    });
+
+
+    function CalculateDays(days, hours, minutes) {     
+        var calDays = days != 00 ? days * 24 : 00;
+        var calMinutes = minutes != 00 ? ((minutes / 100) * 60) / 100 : 00;
+        var result = (parseInt(calDays) + parseInt(hours) + parseFloat(calMinutes));
+        return result;
+    }
+</script>

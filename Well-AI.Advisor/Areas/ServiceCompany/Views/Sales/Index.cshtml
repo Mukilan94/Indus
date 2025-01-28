@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Sales Order";
+}
+@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.SalesModel>
+
+    <section class="content-header">
+        <style>
+            .k-scheduler-table th {
+                color: #000;
+            }
+
+            .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+                color: #000 !important;
+                background-color: #fff !important;
+                border: 0;
+            }
+
+            .k-grid .k-grid-excel, .k-grid .k-grid-excel:hover {
+                color: #000 !important;
+                background-color: #fff !important;
+                border: 0;
+            }
+
+
+            .k-grid .k-grid-pdf, .k-grid .k-grid-pdf:hover {
+                color: #000 !important;
+                background-color: #fff !important;
+                border: 0;
+            }
+
+            .k-grid-View, .k-grid-Delete, .k-grid-View:hover, .k-grid-Delete:hover {
+                background-color: #fff;
+            }
+
+            .k-grid-edit, .k-grid-Delete, .k-grid-View {
+                border: 1px solid #007BFF;
+                border-radius: 10px;
+            }
+
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+
+            .k-grid-toolbar {
+                background-color: #fff;
+                color: #000;
+            }
+        </style>
+    </section>
+<!-- Main content -->
+<section class="content">
+
+
+
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.SalesModel>()
+        .Name("ServiceCompany")
+        .ToolBar(toolbar =>
+        {
+            toolbar.Create().Text("Create Sales Order");
+            toolbar.Excel();
+            toolbar.Pdf();
+        })
+        .Editable(editable => editable.Mode(GridEditMode.PopUp))
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Custname).Title("Customer Name");
+            columns.Bound(p => p.IsQualified).Title("Is Qualified");
+            columns.Bound(p => p.IsConverted).Title("Is Converted");
+            columns.Bound(p => p.Planneddateofdelivery).Title("Planned date of delivery");
+            columns.Bound(p => p.Status).Title("Status");
+            columns.Command(command => { command.Edit();}).Title("Action").Width(160);
+       
+        })
+        .Pageable()
+        .Sortable()
+        
+        .Filterable()
+        .Reorderable(r => r.Columns(true))
+        .Resizable(r => r.Columns(true))
+      
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(20)
+            .ServerOperation(true)
+            .Read(read => read.Action("Excel_Export_Read", "Custname"))
+         ).BindTo(Model)
+    )
+
+
+
+</section>

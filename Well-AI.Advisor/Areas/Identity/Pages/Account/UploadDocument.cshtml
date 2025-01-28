@@ -1,0 +1,60 @@
+﻿@page
+@model UploadDocumentModel
+@{
+    ViewData["Title"] = "Shared Document";
+}
+@using Kendo.Mvc.Extensions;
+@using Kendo.Mvc.UI;
+<div class="row login-row">
+    <div class="col-md-4 login-logo"></div>
+    <div class="col-md-4" style="padding-top:6.5%;">
+        <section>
+            <div>
+                <div style="padding-left:10%;">
+                    <h4>Supporting Documents.</h4>
+                </div>
+            </div>
+            <hr />
+            <div style="padding-left:10%; padding-bottom:5%;">
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="Input.UserId" />
+                  
+                    <div class="form-group">
+
+                        @(Html.Kendo().Upload()
+                        .Name("files")
+                        .HtmlAttributes(new { aria_label = "files" })
+                        )
+
+                       
+                    </div>
+                    @if (Model.Input.DocumentUploadStatus == true)
+                    {
+                        <a class="nav-link" href="/Identity/Account/Company?userId=@Model.Input.UserId">Back</a>
+                    }
+                    <button type="submit" class="btn btn-primary">Upload and Continue</button>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .k-upload .k-upload-files .k-file-name {
+        color: #261c15 !important;
+    }
+
+    .k-upload .k-upload-files .k-file-size {
+        color: #261c15 !important;
+    }
+    .k-upload .k-upload-files .k-file-group-wrapper .k-file-group, .k-upload .k-upload-files .k-file-invalid-group-wrapper .k-file-group, .k-upload .k-upload-files .k-multiple-files-group-wrapper .k-file-group, .k-upload .k-upload-files .k-multiple-files-invalid-group-wrapper .k-file-group
+    {
+        color: #261c15 !important;
+    }
+</style>
+<link href="~/css/common.css" rel="stylesheet" />

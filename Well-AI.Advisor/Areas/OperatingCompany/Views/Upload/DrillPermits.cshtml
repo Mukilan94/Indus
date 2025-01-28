@@ -1,0 +1,128 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadFileWellModelPermits
+@{
+    ViewData["Title"] = "Drill Permits";
+    Layout = null;
+    var wellsdata = (List<WellAI.Advisor.Model.OperatingCompany.Models.WellMasterDataViewModel>)ViewData["wells"];
+}
+<style>
+    .k-pager-numbers {
+        padding-top: 15px;
+    }
+    #Upload > span {
+        padding-right: 5px;
+    }
+    #uploaddocsdp {
+        margin-top: 10px;
+    }
+    .k-dropzone {
+        height: 38px !important;
+    }
+    #WellIdPermits{
+        height:0px;
+        visibility:hidden;
+        width:0px !important;
+        border:0;
+        padding:0;
+        margin:0;
+    }
+    .field-validation-error{
+        color:red;
+    }
+    .k-upload .k-dropzone{
+        background-color:#fff;
+    }
+    .linkstyle{
+        margin-left:40%;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+            $("form").kendoValidator();
+    });
+    function onClick() {
+        $("#filesdp").kendoUpload();
+        var fileNotSelected = false;
+        var validator = $("#myForm").kendoValidator({
+            rules: {
+                upload: function (input) {
+                    if (input[0].type == "file") {
+                        fileNotSelected = true;
+                        var len = input.closest(".k-upload").find(".k-file").length;
+                        return len > 0;
+                    }
+                    return true;
+                }
+            }
+        }).data("kendoValidator");
+        $("#myForm").submit(function (e) {
+            $("#filesdp").removeAttr("disabled");
+            if (!validator.validate()) {
+                if (fileNotSelected) {
+                    alert('please select a file');
+                    fileNotSelected = false;
+                }
+                e.preventDefault()
+            }
+        });
+    }
+</script>
+<section>
+    @using (Html.BeginForm("UploadDrillPermits", "Upload", FormMethod.Post,new {@id="myForm",@name="myForm"}))
+    {
+        <div class="row">
+            <div class="col-sm-5">
+                @(Html.Kendo().Upload()
+                        .Name("filesdp")
+                        .HtmlAttributes(new { aria_label = "files" }))
+            </div>
+            <div class="col-sm-5">
+                @(Html.Kendo().DropDownList()
+                    .Name("ddlWellsdp")
+                    .OptionLabel("Select Well...")
+                    .DataValueField("wellId")
+                    .DataTextField("wellName")
+                    .Events(e => e.Change("wellChangePermits"))
+                    .BindTo(wellsdata)
+                    .HtmlAttributes(new { @class = "ddlwell" })
+                )
+                @Html.EditorFor(x => x.WellIdPermits)
+                @Html.ValidationMessageFor(model => model.WellIdPermits)
+            </div>
+            <div class="col-sm-2">
+                <button id="Upload" onclick="onClick()" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="fa fa-floppy-o"></span>Upload</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.UploadsGridFileModel>()
+                        .Name("uploaddocsdp")
+                        .HtmlAttributes(new { @class = "ra-section" })
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.WellName).Title("Well");
+                            columns.Bound(p => p.FileName).Title("File");
+                            columns.Bound(p => p.Date).Format("{0: MM/dd/yyyy}");
+                            columns.Bound(p => p.FileId).Title("Download").Width("100px").ClientTemplate("<a href='" + @Url.Action("Download", "Upload", new { fileId = "#=FileId#" }) + "' class='linkstyle'><span class='fa fa-file-text-o'></span></a>"); ;
+                        })
+                        .Pageable(p => p.ButtonCount(4))
+                        .Search(search =>
+                        {
+                            search.Field(p => p.WellName);
+                            search.Field(p => p.FileName);
+                        })
+                        .ToolBar(toolbar =>
+                        {
+                            toolbar.Search();
+                        })
+                        .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(10)
+                                .Batch(false)
+                                .Model(model => model.Id(p => p.FileId))
+                                .Read(read => read.Action("DrillPermits_Read", "Upload"))
+                        )
+                )
+            </div>
+        </div>
+    }
+</section>

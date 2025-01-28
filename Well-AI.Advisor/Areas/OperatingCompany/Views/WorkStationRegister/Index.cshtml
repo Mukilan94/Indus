@@ -1,0 +1,209 @@
+﻿@{
+	ViewData["Title0"] = "Workstation Register";
+	ViewData["Title"] = "";
+}
+
+<section class="content-header">
+	<style>
+        .k-i-close {
+            padding-left:5px;
+        }
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+		.k-link k-state-selected {
+			padding-top: 17px !important;
+		}
+        .fa-trash {
+            display: none !important;
+        }
+		.k-pager-numbers {
+			padding-top: 17px !important;
+		}
+
+		.k-window-content .k-edit-form-container {
+			width: inherit;
+		}
+
+		.k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+			background-color: #fff;
+		}
+
+		.k-window-titlebar {
+			background-color: #007BFF;
+			color: white;
+		}
+
+	</style>
+</section>
+<!-- Main content -->
+<section class="content">
+	@(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.WorkstationRegister>
+    ()
+    .Name("workstationdatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.RegisterationId).Hidden();
+        columns.Bound(p => p.DeviceName).Title("Device Name").ClientTemplate("<a href='javascript:void(0);' onclick='showDetails(this)' data-wksid='#=WorkstationIdentifier#' data-status='#=IsActive#' data-token='#=WorkstationToken#' data-dvname='#=DeviceName#' data-regdate='#=CreatedDate#' >#=DeviceName#</a>");
+        columns.Bound(p => p.WorkstationIdentifier).Title("WorkStation Id");
+        columns.Bound(p => p.IsActive).Title("Status").Width(10);
+        columns.Bound(p => p.CreatedDate).Title("Register Date").ClientTemplate("#= CreatedDate ? kendo.toString(kendo.parseDate(CreatedDate), 'MM/dd/yyyy') : '' #").Width(5);
+        columns.Command(command => { command.Edit().Text(" ");
+            command.Custom("Details").Click("showDetails").Text("<i class='fa fa-info'></i>");
+            command.Destroy().Text("<i class='fa fa-trash'></i>");
+        }).Title("Action");
+    })
+    .Sortable()
+    .Pageable()
+    .Scrollable(s => s.Enabled(false))
+    .ToolBar(toolbar => toolbar.Create().Text("New Registration"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditWorkstationRegister").Window(w => w.Title("Edit Workstation Details").Width(1000)))
+    .Filterable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.RegisterationId))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("WorkstationData_Create", "WorkStationRegister"))
+    .Read(read => read.Action("GetWorkstationRead", "WorkStationRegister"))
+    .Update(update => update.Action("workstationData_Update", "WorkStationRegister"))
+    .Destroy(update => update.Action("workstationData_Destroy", "WorkStationRegister"))
+   )
+    .Events(e =>
+    {
+        e.Edit("RenameWindow");
+        e.Save("OnSaveChanges");
+    })
+    )
+</section>
+
+
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add Workstation")
+    .Visible(false)
+    .Modal(true)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1000)
+)
+@(Html.Kendo().Window().Name("Details")
+    .Title("Workstation Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(700)
+)
+
+<script type="text/x-kendo-template" id="template">
+	<div id="details-container">
+		@*<p>FirstName: #= FirstName !=null ? FirstName : '' #</p>
+			<p>MiddleName: #= MiddleName !=null ? MiddleName : '' #</p>
+			<p>LastName: #= LastName !=null ? LastName : '' #</p>
+			<p>Phone: #= PhoneNumber !=null ? PhoneNumber : '' #</p>
+			<p>Mobile: #= Mobile !=null ? Mobile : '' #</p>
+			<p>Email: #= Email !=null ? Email : '' #</p>
+			<p>AdditionalNotes: #= AdditionalNotes != null ? AdditionalNotes : '' #</p>
+			<p>Address: #= Address != null ? Address : '' #</p>
+			<p>City: #= City !=null ? City : '' #</p>
+			<p>State: #= State !=null ? State : '' #</p>
+			<p>Zip: #= Zip !=null ? Zip : '' #</p>*@
+	</div>
+</script>
+<script>
+
+    function OnSaveChanges(e) {
+        setTimeout(function () {
+
+            $('#workstationdatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#workstationdatamaster').data('kendoGrid').refresh();
+            });
+
+        },1500);
+      
+    }
+
+ 
+    function RenameWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Workstation Register");
+        }
+    }
+    function DataBound(e) {
+        var grid = this;
+
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+
+        });
+    }
+</script>
+<script type="text/x-kendo-template" id="templateWorkStation">
+	<div id="details-container">
+		<p>Device Name  : #= DeviceName !=null ? DeviceName : '' #</p>
+		<p> WorkStation Id: #= WorkstationIdentifier !=null ? WorkstationIdentifier : '' #</p>
+		<p>Register Date   : #= CreatedDate !=null ? CreatedDate: '' #</p>
+		<p>Status      : #= IsActive ==true ? 'Active' : 'InActive' #</p>
+		<p>Token     : #= WorkstationToken !=null ? WorkstationToken : '' #</p>
+
+	</div>
+</script>
+<script type="text/javascript">
+    $(function () {
+		$('.k-dropdown').attr('style', 'display:none;');
+    });
+    var detailsTemplate = kendo.template($("#template").html());
+
+    function showDetails(e) {
+        e.preventDefault();
+
+		var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+		dataItem.CreatedDate = kendo.toString(kendo.parseDate(dataItem.CreatedDate), 'MM/dd/yyyy');
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+	}
+	
+
+	function OnStatusChange(e) {
+		if (e.checked) {
+			
+			$(".toggelVal").val("true");
+			$(".toggelVal").trigger("change");
+			$(".switchwrap .k-switch-label-on").show();
+			$(".switchwrap .k-switch-label-off").hide();
+		}
+		else {
+		
+			$(".toggelVal").val("false");
+			$(".toggelVal").trigger("change");
+			$(".switchwrap .k-switch-label-on").hide();
+			$(".switchwrap .k-switch-label-off").show();
+		}
+	}
+
+	var detailsTemplate = kendo.template($("#templateWorkStation").html());
+
+	function showDetails(e) {
+		e.preventDefault();
+		var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+		dataItem.CreatedDate = kendo.toString(kendo.parseDate(dataItem.CreatedDate), 'MM/dd/yyyy');
+		var wnd = $("#Details").data("kendoWindow");
+
+		wnd.content(detailsTemplate(dataItem));
+		wnd.center().open();
+	}
+
+</script>

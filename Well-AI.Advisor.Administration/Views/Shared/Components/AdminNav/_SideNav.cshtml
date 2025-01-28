@@ -1,0 +1,122 @@
+﻿@using Kendo.Mvc.UI.Fluent;
+@model List<Kendo.Mvc.UI.PanelBarItemModel>
+
+<ul class="sidebar-menu" data-widget="tree">
+    @if (Model != null)
+    {
+        @foreach (var navItem in Model)
+        {
+
+            if (!navItem.Items.Any())
+            {
+                string selected = navItem.Selected ? "selectedsidenavroot" : "";
+                <li class="active @selected">
+                    <a href="@navItem.Url">
+                        <i class="@navItem.SpriteCssClass"></i> <span class="navtextadmin">@navItem.Text</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                string menuopen = "menu-open";
+                string display = "display:block;";
+                string selected = navItem.Selected ? "selectedsidenavroot" : "";
+                <li class="treeview @menuopen @selected">
+
+                    <a href="#" onclick="event.stopPropagation();">
+                        <i class="@navItem.SpriteCssClass"></i> <span class="navtextadmin">@navItem.Text</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="@display">
+                        @foreach (var navsubItem in navItem.Items)
+                        {
+                            selected = navsubItem.Selected ? "selectedsidenav" : "";
+                        <li class="navtextadmin @selected"> <a href="@navsubItem.Url"> <i class="@navsubItem.SpriteCssClass"></i> @navsubItem.Text</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+        }
+    }
+</ul>
+<style type="text/css">
+
+   /* .fa-home
+    {
+        font-size:19px !important;
+    }
+*/
+    .treeview-menu {
+        display: block!important;
+    }
+
+    .fa-home {
+        font-size: 19px !important;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    .treeview-menu > li > a {
+        padding: 5px 5px 5px 15px;
+        display: block;
+        /* font-size: 13px;*/
+        font-size: 13px;
+        font-weight: normal !important;
+        color: black;
+        /*font-family: roboto !important;*/
+        font-family: 'Gothic A1 Black','Source Sans Pro', sans-serif !important;
+    }
+
+    .navtext {
+        color: #252525 !important;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 1px;
+        line-height: 28px;
+        /*color: #00000;*/
+        font-family: Roboto;
+    }
+    .navtextadmin {
+        color: #252525 !important;
+        /*font-weight: 500;*/
+        font-size: 15px;
+        letter-spacing: 1px;
+        line-height: 28px;
+        /* color: #00000;*/
+        /* font-family: Roboto !important;*/
+        font-family: 'Gothic A1 Black','Source Sans Pro', sans-serif !important;
+    }
+
+    /*.navtextadmin {
+        color: #252525 !important;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 1px;
+        line-height: 28px;*/
+        /* color: #00000;*/
+        /*font-family: Roboto !important;
+    }*/
+</style>
+<script>
+    $(document).ready(function () {
+        //$(".treeview li>ul").each(function () {
+        //    if (!$(this).hasClass('Treeviewexpand')) {
+        //        $(this).css('display', 'none'); // Hide all 2-level ul
+        //    }
+        //});
+        //$(".treeview").click(function (e) {
+        //    e.preventDefault();
+        //    //$(this).toggleClass("Treeviewcollapse Treeviewexpand");
+        //    //$(this).closest('li').children('ul').slideToggle();
+        //});
+        //$("span", ".treeview menu-open").unbind("click.treeview");        
+    });
+    $('a[href="#"]').click(function (e) {
+        e.preventDefault();
+    });
+</script>

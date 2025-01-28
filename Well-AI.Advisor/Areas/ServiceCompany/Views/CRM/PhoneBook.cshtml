@@ -1,0 +1,406 @@
+﻿@{
+    Layout = null;
+}
+
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        li.k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-grid .k-grid-details, .k-grid .k-grid-tdetails, .k-grid .k-grid-bdetails, .k-grid .k-grid-edit, .k-grid .k-grid-delete {
+            display: block !important;
+            background-color: #007bff !important;
+        }
+    </style>
+    <script>
+        
+
+        function customerCallEvent(taskName) {
+            $("#scheduler").data("kendoScheduler").addEvent({
+                title: "(No title)",
+            });
+        }
+
+        function scheduler_add(e) {
+            $('.k-window-title').text("Schedule Task");
+        }
+
+        function customSchedule(TenantID) {
+            
+            $.ajax({
+                url: "CRM/SetTenantIdForScheduler?tenantID=" + TenantID,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    
+                    customerCallEvent();
+                }
+            });
+
+        }
+
+        var selectedRow = null;
+        function Grid_OnRowSelect(e) {
+            var row = this.select();
+            if (row.length > 0) {
+                selectedRow = e.sender.select();
+                var item = e.sender.dataItem(selectedRow);
+                var id = item.ContactID;
+                console.log('item.ContactID' + id);
+                
+                window.location = "CRM/ContactDetail?contactId=" + id;
+            }
+        }
+
+        function gridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.data("kendoWindow").title("Add Contact");
+                $('.k-grid-update').text("Save");
+                ;
+            }
+
+            var grid = $("#ContactsGrid").data("kendoGrid");
+            
+            grid.editRow($(e.target).closest('tr'));
+        }
+
+        function customEdit(ContactID) {
+             
+            var grid = $("#ContactsGrid").data("kendoGrid");
+            grid.editRow($(e.target).closest('tr'));
+        }
+
+        function customDelete(ContactID) {
+            kendo.confirm("Are you sure delete this item?")
+                .done(function () {
+                    $.ajax({
+                        url: "CRM/ContactProfile_Destroy?contactId=" + ContactID,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            setTimeout(function () {
+                                $('#ContactsGrid').data('kendoGrid').dataSource.read().then(function () {
+                                    $('#ContactsGrid').data('kendoGrid').refresh();
+                                    contactCountUpdate();
+
+                                });
+                            }, 2000);
+                        }
+                    });
+
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+
+        
+
+        function DataBound(e) {
+            var grid = this;
+
+            
+
+            grid.element.off('click');
+
+            
+            grid.element.on('click', '.CustomContactEdit', function (e) {
+                grid.editRow($(e.target).closest('tr'));
+            });
+             
+        }
+
+        
+
+        function OnGrigSave(e) {
+            if (e.model.error) {
+                return false;
+            } else {
+                setTimeout(function () {
+                    $('#ContactsGrid').data('kendoGrid').dataSource.read().then(function () {
+                        $('#ContactsGrid').data('kendoGrid').refresh();
+                        contactCountUpdate();
+                    });
+                }, 3000);
+            }
+        }
+
+        function gridEdit(e) {
+            
+            if (e.model.isNew()) {
+                e.container.data("kendoWindow").title("Add Contact");
+                $('.k-grid-update').text("Save");
+                 
+            } else {
+                 
+            }
+             
+        }
+    </script>
+</section>
+<section class="">    
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.CrmModelSRVContact>()
+            .Name("ContactsGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.TenantID).Hidden();
+                columns.Bound(p => p.ContactID).Hidden();
+                columns.Bound(p => p.InstanceID).Hidden();
+                columns.Bound(p => p.CompanyID).Hidden();
+                columns.Bound(p => p.ContactID).Width(200).ClientTemplate("#: FirstName # #: LastName #").Title("Name").ClientTemplate("<a href='" + @Url.Action("ContactDetail", "CRM", new { contactId = "#=ContactID#" }) + "' class='linkstyle'>#=FirstName# #=LastName#</a>");
+                columns.Bound(p => p.CompanyName).Width(200);
+                 columns.Bound(p => p.Phone).Width(100);
+                columns.Bound(p => p.MobilePhone).Width(100);
+                 columns.Bound(p => p.Email).Width(150);
+                columns.Bound(p => p.ContactID).Filterable(false).Width(60).Title(" ").ClientTemplate("<i class='CustomContactEdit fa fa-edit'></i> <i class='fa fa-trash' onclick='customDelete(#= ContactID #)'></i> <i class='fa fa-calendar' onclick='customSchedule(\"#=TenantID#\")'></i>");
+ 
+            })
+            .ToolBar(toolbar =>
+            {
+                toolbar.Create().Text("Add Contact");
+                toolbar.Search();
+            })
+            .Search(search =>
+            {
+                search.Field(f => f.FirstName);
+                search.Field(f => f.LastName);
+                search.Field(f => f.Address1);
+                search.Field(f => f.Address2);
+                search.Field(f => f.City);
+                search.Field(f => f.StateRegion);
+                search.Field(f => f.PostalCode);
+                search.Field(f => f.Phone);
+                search.Field(f => f.Fax);
+                search.Field(f => f.Email);
+            })
+            .Selectable()
+            
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditContact").Window(w => w.Title("Edit Contact").Width(900)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("ContactProfile_Read", "CRM"))
+                .Model(model => model.Id(p => p.ContactID))
+                .Create(update => update.Action("ContactProfile_Create", "CRM"))
+                .Update(update => update.Action("ContactProfile_Update", "CRM"))
+                .Destroy(update => update.Action("ContactProfile_Destroy", "CRM"))
+
+            ).Events(e =>
+            {
+                e.Save("OnGrigSave");
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+            
+            })
+
+)
+    </div>
+</section>
+
+<div style="display:none" id="callEventScheduler">
+    <section class="content col-12">
+        @(Html.Kendo().Scheduler<WellAI.Advisor.Model.OperatingCompany.Models.ActivityViewModel>
+    ()
+    .Name("scheduler")
+    .Date(DateTime.Now)
+    .Height(800)
+    .Timezone("Etc/UTC")
+    .Events(e =>
+    {
+        e.Edit("scheduler_add");
+        
+
+    })
+    .MinorTickCount(1)
+    .Views(views =>
+    {
+        views.DayView();
+        views.WeekView();
+        views.MonthView(month =>
+        {
+            month.Selected(true);
+            month.EventsPerDay(4);
+            month.AdaptiveSlotHeight(true);
+            month.EventSpacing(5);
+            month.EventHeight(60);
+        });
+        views.AgendaView();
+    })
+    .DataSource(dataSource => dataSource
+    .Model(m =>
+    {
+        m.Id(f => f.ProjectId);
+        m.Field(f=>f.Title).DefaultValue("No title");
+        m.Field(f=>f.ProjectStatus).DefaultValue(1);
+        m.Field(f=>f.ProjectStatusName);
+        m.Field(f=>f.Description).DefaultValue("No Description");
+        m.Field(f=>f.Start);
+        m.Field(f=>f.End);
+        m.Field(f=>f.RecurrenceID);
+        m.Field(f=>f.RecurrenceRule);
+        m.Field(f=>f.RecurrenceException);
+        m.Field(f=>f.IsAllDay);
+        m.Field(f=>f.StartTimezone);
+        m.Field(f=>f.EndTimezone);
+
+    })
+    .Create("CreateCRMActivity", "CRM")
+    )
+    )
+    </section>
+</div>
+
+<script type="text/javascript">
+ 
+    function contactEdit(e) {
+        
+        var grid = $("#ContactsGrid").data("kendoGrid");
+        currentSelection = grid.select();
+        selectedRows = [];
+        currentSelection.each(function () {
+            var currentRowIndex = $(this).closest("tr").index();
+            grid.editRow(currentRowIndex);
+        })
+    }
+
+    function onChange(e) {
+
+    }
+
+    function BindCompanies(selectedCustomer) {
+        $("#CompaniesDrop").kendoDropDownList({
+            placeholder: "Company...",
+            dataTextField: "Name",
+            dataValueField: "CompanyID",
+            autoBind: true,
+            dataSource: {
+                type: "json",
+                serverFiltering: true,
+                transport: {
+                    read: {
+                        url: "/CRM/GetCompanyList?id=" + id,
+                    }
+                }
+            },
+            value: selectedCustomer,
+            change: customerChange
+        });
+    }
+    
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#ContactsGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function customerChange(e) {
+        var multiselect = $("#CompaniesDrop").data("kendoDropDownList");
+        var selectedData = "";
+
+
+    }
+
+    function contactCountUpdate() {
+        $.ajax({
+            url: '/CRM/contactCounts',
+            type: 'GET',
+            success: function (ResponseData) {
+                console.log(ResponseData);
+                $("#contactcount").text(ResponseData);
+                
+            }
+        });
+
+        $.ajax({
+            url: '/CRM/companyCounts',
+            type: 'GET',
+            success: function (ResponseData) {
+                console.log(ResponseData);
+                $("#companycount").text(ResponseData);
+                
+            }
+        });
+    }    
+    </script>

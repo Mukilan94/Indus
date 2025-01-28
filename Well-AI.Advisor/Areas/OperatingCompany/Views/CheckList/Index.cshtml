@@ -1,0 +1,1005 @@
+﻿@{
+    ViewData["Title0"] = "";
+    ViewData["Title"] = "Checklist";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.ProjectViewModel
+
+<section class="content-header">
+    <style>
+        .k-window {
+            width: 825px !important;
+        }
+        .k-edit-field{
+            width:100% !important;
+        }
+        .rightpart .fa-phone {
+            color: #3639A4;
+            height: 25px;
+            margin-top: 10px;
+            font-size: 20px;
+            width: 25px;
+            cursor: pointer;
+        }
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .row {
+            margin-top: 5px;
+        }
+        .k-window-content {
+            overflow: hidden !important;
+        }
+        .blockstyle {
+            height: 75px;
+            width: auto;
+            min-width: 130px;
+            display: inline-block;
+            margin: 10px 5px 0 5px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+            justify-content: space-between;
+        }
+        .box-shad {
+            box-shadow: none;
+        }
+        .card {
+            background-color: #151d32 !important;
+            color: white;
+        }
+        .dashboard-total {
+            color: #000;
+            font-size: 14px;
+        }
+        .dashboard-totalval {
+            color: #007bff;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 20px !important;
+        }
+        .topblocks {
+            margin-left: -22px;
+        }
+        .dashboard-toptitle {
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .dashboard-topdescription {
+            color: #728193;
+            width: 100%;
+            font-weight: bold;
+        }
+        .card-title {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .demo-section {
+            border: 4px solid #007AFC;
+            border-radius: 5px;
+        }
+        .card-body {
+            padding: 0;
+        }
+        .card-header {
+            padding-left: 0px;
+            position: relative;
+            height: 100px;
+        }
+        .chart-header {
+            display: inline-block;
+            width: 62%;
+            position: absolute;
+        }
+        .operatorfilter {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+        .operatorfilter .k-dropdown {
+                display: block;
+            }
+        .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                    background-color: #fff;
+                    color: #000;
+                }
+       .k-edit-buttons {
+            padding: 0.375rem 0.375rem;
+            border-width: 1px 0 0;
+            border-color: white !important;
+            text-align: right;
+            clear: both;
+            border-style: none;
+        }
+       .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+       .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+       .k-grid-content {
+            height: auto !important;
+        }
+       .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+       .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+       .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+       .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+       .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+       .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+       .auction-wrapper {
+            color: #fff;
+        }
+       .auctiontop {
+            margin-bottom: 10px;
+            display: flex;
+        }
+       .k-grid-save-changes:hover{
+            background-color:white !important;
+            color:white !important;
+        }
+        .k-grid-cancel-changes:hover {
+            background-color: white !important;
+            color: white !important;
+        }
+        .k-grid-AddChecklistItem:hover {
+            background-color: white !important;
+            color: white !important;
+        }
+        .topblock, .topblock1, .topblock2 {
+            display: inline-block;
+            width: 32%;
+            margin: 10px 20px;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid #007BFF;
+        }
+        .topblock1 {
+            border: 2px solid #77BD27;
+        }
+        .topblock2 {
+            border: 2px solid #F4AF00;
+        }
+        .lastmonthtitle {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .topblocktitle1 {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .topblocktitle2 {
+            margin-bottom: 20px;
+            background-color: #77BD27;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .topblocktitle3 {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .startedcount, .startedvalue {
+            display: inline-block;
+        }
+        .startedcount {
+            margin-right: 20%;
+        }
+        .startedvalue {
+            margin-left: 20%;
+        }
+        .startedcount > span, .startedvalue > span {
+                display: block;
+                text-transform: uppercase;
+            }
+        .topblock-top {
+            margin-top: 20px;
+        }
+        .topblock-bottom {
+            border-top: 1px solid grey;
+        }
+        .activelastmonthdate {
+            margin-top: 50px;
+        }
+        .bgClosed {
+            background-color: #00B855 !important;
+        }
+        .bgOpen {
+            background-color: #3288B7 !important;
+        }
+        .bgEvaluate {
+            background-color: #B87033 !important;
+        }
+        .allprojectbids {
+            display: inline-block;
+            color: #fff;
+            margin-right: 10px;
+        }
+        .bids-search {
+            margin-left: 25%;
+            margin-bottom: 10px;
+        }
+        .bids-search .labelchart {
+                display: inline-block;
+            }
+        .k-filtercell {
+            border: 1px solid #007BFF;
+        }
+        #Primary {
+            margin: 15px !important;
+        }
+        .toptitle {
+            color: #fff;
+        }
+        .CheckList-toptitle {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .CheckList-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+        .ticket-header {
+            display: inline-block;
+            width: 62%;
+            position: absolute;
+            margin-top: 20px;
+            margin-left: -15px;
+        }
+        #checklist {
+            margin-top: 15px;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-pager-numbers-wrap{
+            padding-bottom:5px !important;
+        }
+    </style>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row toptitle col-12">
+        <h4 class="CheckList-toptitle">At a Glance</h4>
+        <span class="CheckList-topdescription">Click on any of key metrics to open the related screen</span>
+    </div>
+    <div class="row topblocks col-12">
+        <div class="blockstyle" id="tasks">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Tasks</span>
+                </div>
+            </div>
+            <span class="dashboard-totalval"><a id="TotalTasks" onclick="funTasks()">@ViewBag.TotalTasks</a></span>
+        </div>
+        <!-- ./col -->
+        <div class="blockstyle" id="services">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Services</span>
+                </div>
+            </div>
+            <span class="dashboard-totalval"><a id="TotalService" onclick="funService()">@ViewBag.TotalService</a></span>
+        </div>
+        <div class="blockstyle" id="SpecialServices">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Special Services</span>
+                </div>
+            </div>
+            <span class="dashboard-totalval"><a id="TotalSpecial" onclick="funSpecial()">@ViewBag.TotalSpecial</a></span>
+        </div>
+        <div class="blockstyle" id="Supplies">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Supplies </span>
+                </div>
+            </div>
+            <span class="dashboard-totalval"><a id="TotalSupply" onclick="funSupply()">@ViewBag.TotalSupply</a></span>
+        </div>
+    </div>
+    <div class="row col-md-12">
+            <h3 class="card-title">Active Checklist</h3>
+            <span class="CheckList-topdescription">Select the checklist items.</span>
+    </div>
+   @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ProjectWellCheckListModel>()
+                    .Name("checklist")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.CheckListStatus).Filterable(false).ClientTemplate("<input type='checkbox' #= CheckListStatus==1 ? checked='checked' :'' # class='chkbx'/>").Editable("editckb").Title(" ").Width(90);
+                        columns.Bound(p => p.Well).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(150);
+                        columns.Bound(p => p.RigName).Title("Rig").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(150);
+                        columns.Bound(p => p.WellCheckListId).Hidden();
+                        columns.Bound(p => p.WellTaskId).Hidden();
+                        columns.Bound(p => p.WellTaskName).Title("Task").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(400);
+                        columns.Bound(p => p.ServiceCategory).Title("Category").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                        columns.Bound(p => p.Depth).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Hidden(false).Width(100);
+                        columns.Bound(p => p.VendorNumber).Filterable(false).Hidden(true);
+                        columns.Bound(p => p.Duration).Filterable(false).Hidden(true);
+                        columns.Bound(p => p.Day).Filterable(false).Hidden(true);
+                        columns.Bound(p => p.TypeName).Title("Type").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                        columns.Bound(p => p.StageType).Title("Stage").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).ClientGroupHeaderTemplate("Stage #=data.value#").Width(120);
+                        columns.ForeignKey(p => p.Vendor,
+                            (System.Collections.IEnumerable)ViewData["vendors"], "Vendor", "VendorName").Title("Provider").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(100);
+                        columns.Bound(p => p.IsBiddable).Title(" ").Filterable(false).ClientTemplate("#if (IsBiddable == true && CheckListStatus==0) { #" +
+                                "<a href='javaScript:void(0)' onclick='newRequest(\"#=WellId#\",\"#=WellTaskId#\",\"#=Well#\",\"#=WellTaskName#\")'><i class='fa fa-gavel' style='font-size:15px;'></i></a>" +
+                                "# } else { #" +
+                                "#if (VendorNumber != null) { #" +
+                                    "<a href='javaScript:void(0)' onclick='showCallWindow(\"#=VendorNumber#\");'><i class='fa fa-phone-square' style='font-size:16px;'></i></a>   <a href='javaScript:void(0)' onclick='customerCallEvent(\"#=WellTaskName#\");'><i class='fa fa-calendar-plus-o' style='font-size:15px;'></i></a>" +
+                                    "# } else { #" +
+                                    "" +
+                                    "# } #" +
+                                    "# } #" +
+                                    "<a href='javaScript:void(0)' onclick='removeCheckItem(\"#=WellId#\",\"#=WellCheckListId#\")'><i class='fa fa-trash' style='font-size:17px;'></i></a>"
+                                    ).Width(80);
+                    })
+                .Pageable(p =>p
+                    .Info(true)
+                    .Numeric(true)
+                    .PreviousNext(true)
+                    .PageSizes(true)
+                )
+                .ToolBar(toolBar =>
+                {
+                    toolBar.Save();
+                    toolBar.Custom().Text("Add Checklist Item").HtmlAttributes(new { id = "addCheckListCommand", onclick = "AddCheckListClickFun();" });
+                })
+              .Events(ev => ev.Change("onCheckedChange"))
+                .Editable(editable => editable.Mode(GridEditMode.InCell))
+                .Scrollable(scrollable => scrollable.Virtual(false))
+                .HtmlAttributes(new { style = "display: flex;  flex-flow: column; height:100%; max-height:85vh" })
+                .Sortable()
+                .Pageable()
+                .PersistSelection(true)
+                .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .PageSize(15)
+                        .Sort(sort =>
+                        {
+                            sort.Add("StageType").Ascending();
+                            sort.Add("CheckListStatus").Ascending();
+                        })
+                        .Batch(true)
+                        .ServerOperation(false)
+                        .Model(model =>
+                        {
+                            model.Id(p => p.WellCheckListId);
+                            model.Field(p => p.Well).Editable(false);
+                            model.Field(p => p.WellTaskName).Editable(false);
+                            model.Field(p => p.IsBiddable).Editable(false);
+                            model.Field(p => p.TypeName).Editable(false);
+                        })
+                        .Read(read => read.Action("CheckList_Read", "CheckList").Data("getRowCount"))
+                        .Group(x =>
+                        {
+                            x.Add(y => y.StageType);
+                        })
+                        .Update(update => update.Action("CheckList_Update", "CheckList"))
+              )
+                .Events(ev => ev.DataBound("renderTimeSpan"))
+                .Events(e =>
+                {
+                    e.Change("onDataBound");
+                })
+        )
+</section>
+
+<script id="templateddl" type="text/kendo-tmpl">
+    @(Html.Kendo().DropDownList()
+        .Name("myDropDown")
+        .DataValueField("VendorId")
+        .DataTextField("VendorName")
+        .BindTo((System.Collections.IEnumerable)ViewData["vendores"])
+       .ToClientTemplate()
+    )
+</script>
+
+<div style="text-align:center;">
+</div>
+
+@(Html.Kendo().Window().Name("newRequestsWindow")
+    .Title("Add Proposal Request")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text>
+        @using (Html.BeginForm("AddNewRequestAuctionsProposal", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.AddAuction.ProposalId)
+            @Html.HiddenFor(model => model.AddAuction.AuctionBidStatusId)
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(model => model.AddAuction.WellId)
+                        @Html.HiddenFor(model => model.AddAuction.WellId)
+                        @Html.HiddenFor(model => model.AddAuction.JobId)
+                    </div>
+                    <div class="col-sm-8">
+                        <label id="lblWell" name="lblWell"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(model => model.AddAuction.JobId)
+                    </div>
+                    <div class="col-sm-8">
+                        <label id="lblJob" name="lblJob"></label>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(model => model.AddAuction.ProjectDuration)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(model => model.AddAuction.ProjectDuration, new { @Class = "k-textbox", style = "width:50px;height:25px;" })
+                        @Html.ValidationMessageFor(model => model.AddAuction.ProjectDuration)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-4" style="padding-top:6px;">
+                        @Html.LabelFor(model => model.AddAuction.AuctionStart)
+                    </div>
+                    <div class="col-sm-8">
+                        @(Html.Kendo().DatePickerFor(model => model.AddAuction.AuctionStart)
+                .Value(DateTime.Today).Min(DateTime.Today)
+                    .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                  .Events(e => e.Change("startChange")))
+                        @Html.ValidationMessageFor(model => model.AddAuction.AuctionStart)
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" style="display:none;">
+                <div class="row">
+                    <div class="col-sm-4" style="padding-top:6px;">
+                        @Html.LabelFor(model => model.AddAuction.AuctionEnd)
+                    </div>
+                    <div class="col-sm-8">
+                        @(Html.Kendo().DatePickerFor(model => model.AddAuction.AuctionEnd)
+                              .Value(DateTime.Today).Min(DateTime.Today)
+                             .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                             .Events(e => e.Change("endChange")))
+                        @Html.ValidationMessageFor(model => model.AddAuction.AuctionEnd)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4"  style="display:none;">
+                <div class="row">
+                    <div class="col-sm-4" >
+                        @Html.LabelFor(model => model.AddAuction.ProjectStartDate)
+                    </div>
+                    <div class="col-sm-8">
+                        @(Html.Kendo().DatePickerFor(model => model.AddAuction.ProjectStartDate)
+                        .Min(DateTime.Now).DateInput()
+                        .ParseFormats(new string[] { "MM/dd/yyyy" }))
+                        @Html.ValidationMessageFor(model => model.AddAuction.ProjectStartDate)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4" style="display:none;">
+                <div class="row">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(model => model.AddAuction.Subject)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(model => model.AddAuction.Subject, new { @Class = "k-textbox", style = "width:100%" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="row">
+                    <div class="col-sm-12">Assign To Provider
+                        @(Html.Kendo().CheckBoxFor(model=> model.AddAuction.IsPrivate).Checked(false).HtmlAttributes(new { onchange = "onChengeckb();" }))
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div id="srvTenantDivId" style="display:none">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.SRVTenantId)
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DropDownListFor(model => model.SRVTenantId)
+                            .DataValueField("TenantId")
+                            .DataTextField("Name")
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetSRVTenantName", "projectauctions");
+                                });
+                            })
+                        )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="row" style="margin-left:0px;margin-right:0px;display:none;">
+                <div class="form-group" style="width:100%;">
+                    @Html.LabelFor(model => model.AddAuction.Summary)
+                    @Html.TextAreaFor(model => model.AddAuction.Summary, new { style = "height: 60px;width:100%" })
+                    @Html.ValidationMessageFor(model => model.AddAuction.Summary)
+                </div>
+            </div>
+            @*<div class="row" style="margin-left:0px;margin-right:0px;">
+                <div class="form-group" style="width:100%">
+                    @(Html.Kendo().Upload()
+                                .Name("files")
+                                .HtmlAttributes(new { aria_label = "files" }))
+                </div>
+            </div>*@
+                        <div class="row" style="margin-left:0px;margin-right:0px;">
+                            <div class="form-group">
+                                <label for="Description">@Html.LabelFor(model => model.AddAuction.Body,"Description")</label>
+                                @(Html.Kendo().EditorFor(model => model.AddAuction.Body)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "height:200px", required = "required", id="descripteditor" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+                            </div>
+                        </div>
+
+                        <div class="k-edit-buttons k-state-default">
+<button type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Update</button>
+<button type="button" role="button" id="btnProposalCancel" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+                        }
+</text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1000)
+)
+
+@(Html.Kendo().Window().Name("AddCheckListWindow")
+    .Title("Add CheckList")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(800)
+)
+
+<div style="display:none" id="callEventScheduler">
+    <section class="content col-12">
+        @(Html.Kendo().Scheduler<WellAI.Advisor.Model.OperatingCompany.Models.ActivityViewModel>
+    ()
+    .Name("scheduler")
+    .Date(DateTime.Now)
+    .Height(800)
+    .Events(e =>
+    {
+        e.Edit("scheduler_add");
+    })
+    .MinorTickCount(1)
+    .Views(views =>
+    {
+        views.DayView();
+        views.WeekView();
+        views.MonthView(month =>
+        {
+            month.Selected(true);
+            month.EventsPerDay(4);
+            month.AdaptiveSlotHeight(true);
+            month.EventSpacing(5);
+            month.EventHeight(60);
+        });
+        views.AgendaView();
+    })
+    .DataSource(dataSource => dataSource
+    .Model(m =>
+    {
+        m.Id(f => f.ProjectId);
+        m.Field(f=>f.Title).DefaultValue("No title");
+        m.Field(f=>f.ProjectStatus).DefaultValue(1);
+        m.Field(f=>f.ProjectStatusName);
+        m.Field(f=>f.Description).DefaultValue("No Description");
+        m.Field(f=>f.Start);
+        m.Field(f=>f.End);
+        m.Field(f=>f.RecurrenceID);
+        m.Field(f=>f.RecurrenceRule);
+        m.Field(f=>f.RecurrenceException);
+        m.Field(f=>f.IsAllDay);
+        m.Field(f=>f.StartTimezone);
+        m.Field(f=>f.EndTimezone);
+    })
+    .Create("Create", "ActivityView")
+    )
+    )
+    @(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+</section>
+</div>
+
+<script src="~/js/phonecall.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".k-grid-save-changes").click(function () {
+            setTimeout(function () {
+              $("#checklist").data("kendoGrid").dataSource.read();
+            }, 5000);
+        });
+
+        setInterval(CountsRefresh, 60000);
+
+        //CountsRefresh();
+        $('#checklist').data('kendoGrid').refresh();
+        $("#checklist tbody").on("dblclick", "td", function (e) {
+            var cellElement = this;
+            var cell = $(cellElement);
+            var grid = $("#checklist").getKendoGrid();
+            grid.closeCell(cell);
+        });
+        $("#checklist tbody").on("blur", "td", function (e) {
+            var cellElement = this;
+            var cell = $(cellElement);
+            var grid = $("#checklist").getKendoGrid();
+            grid.closeCell(cell);
+        });
+
+        $("#btnProposalCancel").click(function () {
+            var wnd = $("#newRequestsWindow").data("kendoWindow");
+            wnd.close();
+        });
+    });
+    function CountsRefresh() {
+        $.ajax({
+            url: '/CheckList/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('TotalTasks').innerHTML = ResponseData.TotalTasks;
+                document.getElementById('TotalService').innerHTML = ResponseData.TotalService;
+                document.getElementById('TotalSpecial').innerHTML = ResponseData.TotalSpecial;
+                document.getElementById('TotalSupply').innerHTML = ResponseData.TotalSupply;
+            }
+        });
+    }
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#checklist").data("kendoGrid").dataSource.read();
+        },IntTime);
+    }
+    function SaveChanges() {
+        setTimeout(function () {
+            var grid = $("#checklist").data("kendoGrid").dataSource.read();
+            grid.refresh();
+        },5000);
+    }
+    function Close() {
+        var window = $("#AddCheckListWindow").data("kendoWindow");
+        window.close();
+    }
+    function ScheduleTimeChange(e) {
+        var ddltimepicker = $("#ScheduleTimePicker").val();
+        $("#ScheduleTime").data("kendoMaskedTextBox").value(ddltimepicker);
+        $("#ScheduleTime").data("kendoMaskedTextBox").trigger("change");
+    }
+    function FilterByRig() {
+        return {
+            RigId: $("#ddlchecklistRigs").val()
+        };
+    }
+    function AddCheckListClickFun() {
+        var window = $("#AddCheckListWindow").data("kendoWindow");
+        window.refresh({
+            url: "/CheckList/EditTask"
+        });
+        window.center();
+        window.open();
+    };
+    function scheduler_add(e) {
+        $('.k-window-title').text("Schedule Task");
+    }
+    function onDataBound() {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function showCallWindow(phone) {
+        console.log("Calling : " + phone);
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/Communication/ManageCall/', { phone: phone }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            }
+        });
+    }
+    function customerCallEvent(taskName) {
+        $("#scheduler").data("kendoScheduler").addEvent({
+            title: taskName,
+        });
+    }
+    $(function () {
+        $('#checklist .k-grid-content').on('change', 'input.chkbx', function (e) {
+            var grid = $("#checklist").data("kendoGrid"),
+            dataItem = grid.dataItem($(e.target).closest("tr"));
+            $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+            dataItem.CheckListStatus = dataItem.CheckListStatus===1?0:1;
+            dataItem.dirty = true;
+            console.log('dataItem', dataItem)
+        })
+    })
+    function editckb(e) {
+        return false;
+    }
+    function funFilterCheckList(values) {
+        var grid = $("#checklist").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        dataSource.filter(
+            {
+                logic: "and",
+                filters: [
+                    { field: "TypeName", operator: "eq", value: values }
+                ]
+            });
+    }
+    function funFilterCheckListByWellName(values) {
+        var grid = $("#checklist").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        dataSource.filter(
+            {
+                logic: "and",
+                filters: [
+                    { field: "Well", operator: "eq", value: values }
+                ]
+            });
+    }
+    function funTasks() {
+        if (@ViewBag.TotalTasks!== 0) {
+            funFilterCheckList("Task");
+        }
+    }
+    function funService() {
+        if (@ViewBag.TotalService!== 0) {
+            funFilterCheckList("Service");
+        }
+    }
+    function funSpecial() {
+        if (@ViewBag.TotalSpecial!== 0) {
+            funFilterCheckList("Special");
+        }
+    }
+    function funSupply() {
+        if (@ViewBag.TotalSupply!== 0) {
+            funFilterCheckList("Supply");
+        }
+    }
+    $(function () {
+        if ('@TempData["wellNameFilter"]'!== '') {
+            funFilterCheckListByWellName('@TempData["wellNameFilter"]');
+        }
+        $("#tasks").click(function () {
+            funTasks();
+        });
+        $("#services").click(function () {
+            funService();
+        });
+        $("#SpecialServices").click(function () {
+            funSpecial();
+        });
+        $("#Supplies").click(function () {
+            funSupply();
+        });
+    });
+    function onWellName(e) {
+        var dataItem = this.dataItem(e.item.index());
+        $("#ServiceCategoryName").val(dataItem.ParentName).trigger("change");
+    }
+    function filterTaskByWell() {
+        return {
+            wellId: $("#ddlWellId").val()
+        };
+    }
+    function onChengeckb() {
+        if ($("#AddAuction_IsPrivate").is(':checked')) {
+            $('#srvTenantDivId').show();
+            $("#SRVTenantId").prop('required', 'true');
+        } else {
+            $('#srvTenantDivId').hide();
+            $("#SRVTenantId").removeAttr('required');
+        }
+    }
+    function startChange() {
+        var end = $("#AuctionEnd").data("kendoDatePicker");
+        var projectStartDate = $("#ProjectStartDate").data("kendoDatePicker");
+        var startDate = this.value();
+        var endDate = end;
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setDate(startDate.getDate());
+            end.value(new Date(startDate));
+            end.min(startDate);
+            projectStartDate.value(new Date(startDate));
+            projectStartDate.min(startDate);
+        } else if (endDate) {
+            start.max(new Date(endDate));
+        } else {
+            endDate = new Date();
+            start.max(endDate);
+            end.min(endDate);
+        }
+    }
+    function endChange() {
+        var start = $("#AuctionStart").data("kendoDatePicker");
+        var projectStartDate = $("#ProjectStartDate").data("kendoDatePicker");
+        var endDate = this.value();
+        var startDate = start;
+        if (endDate) {
+            endDate = new Date(endDate);
+            endDate.setDate(endDate.getDate());
+            start.max(endDate);
+        } else if (startDate) {
+            end.min(new Date(startDate));
+        } else {
+            endDate = new Date();
+            start.max(endDate);
+            end.min(endDate);
+        }
+        projectStartDate.value(new Date(endDate));
+        projectStartDate.min(endDate);
+    }
+
+    function WindowClose() {
+        $("#newRequestsWindow").data("kendoWindow").close();
+    }
+    function newRequest(wellId, taskId, well, task) {
+        var popup = $("#newRequestsWindow").data('kendoWindow');
+        popup.open();
+        popup.center();
+        $('input[name="AddAuction.WellId"]').val(wellId).trigger("change");
+        $('input[name="AddAuction.JobId"]').val(taskId).trigger("change");
+        $('[name="lblWell"]').text(well).trigger("change");
+        $('[name="lblJob"]').text(task);
+    }
+    function removeCheckItem(wellId, wellCheckListId) {
+        kendo.confirm("Are you sure to delete this item?")
+            .done(function () {
+                $.ajax({
+                    url: "CheckList/CheckList_DestroyItem?wellCheckListId=" + wellCheckListId + "&wellId=" + wellId,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#checklist").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    var initStart;
+    var initEnd;
+    var rowCount;
+    function renderTimeSpan() {
+        var grid = $('#checklist').data('kendoGrid');
+        var rows = grid.items();
+        $(rows).each(function (e) {
+            var row = this;
+            var dataItem = grid.dataItem(row);
+            if (dataItem.CheckListStatus === 1) {
+                grid.select(row);
+            }
+        });
+        initEnd = new Date();
+        $("#message")
+            .text(kendo.format("{0} items in {1} milliseconds", rowCount, initEnd - initStart));
+    }
+    function resetTimer() {
+        initStart = new Date();
+    }
+    function getRowCount() {
+        var dropDown = $("#count").data("kendoDropDownList");
+        rowCount = "100";
+        return {
+            rows: rowCount
+        };
+    }
+    function updateRowsCount() {
+        var grid = $("#grid").data("checklist");
+        grid.dataSource.read().then(function () {
+            $("#grid .k-scrollbar").scrollTop(0);
+            grid.refresh();
+        });
+    }
+    function onCheckedChange(args) {
+       
+    }
+    function stageCheckChange(e) {
+        var ddlstageValue = $("#ddlStages").val();
+        $("#StageName").data("kendoMaskedTextBox").value(ddlstageValue);
+        $("#StageName").data("kendoMaskedTextBox").trigger("change");
+    }
+    function categoryCheckChange(e) {
+        var ddlcatValue = $("#ddlCategory").val();
+        $("#CategoryName").data("kendoMaskedTextBox").value(ddlcatValue);
+        $("#CategoryName").data("kendoMaskedTextBox").trigger("change");
+    }
+    function RigCheckChange(e) {
+        var ddlwellValue = $("#ddlchecklistRigs").val();
+        $("#RigId").data("kendoMaskedTextBox").value(ddlwellValue);
+        $("#RigId").data("kendoMaskedTextBox").trigger("change");
+    }
+</script>

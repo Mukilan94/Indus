@@ -1,0 +1,17 @@
+﻿@model IEnumerable<WellAI.Advisor.Model.OperatingCompany.Models.CompanyServicesModel>
+    <ul class="k-list" id="ServicesUlList">
+        @{
+            if (Model != null)
+            {
+                @foreach (var item in Model)
+                {
+                    <li class="k-item" role="option">
+                        <div class="k-state-default">
+                            <div class="chatuser">@item.ServiceName</div>
+                           
+                        </div>
+                       </li>
+                }
+            }
+        }
+    </ul>

@@ -1,0 +1,768 @@
+﻿@using System.Collections.Generic;
+
+@model List<WellAI.Advisor.DLL.Entity.SubscriptionPackage>
+@using WellAI.Advisor.DLL.Data;
+@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Product Subscription";
+
+    WellAI.Advisor.Model.Common.CustomerSubscriptions subscriptions = ViewBag.CustomerSubscriptions;
+    var Providers = (List<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>)ViewData["Providers"];
+    var Name = WellAIAppContext.Current.Session.GetString("CompanyName");
+}
+<section class="content-header">
+</section>
+<!-- Main content -->
+
+
+<section class="content">
+
+    @if (subscriptions != null)
+    {
+        <div class="divsubscriptions">
+            <div class="row">
+                <h4><span>Current Subscription</span></h4>
+            </div>
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionName)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionName</div>
+                <div class="col-md-3">@Html.Label("Subscription Status")</div>
+                <div class="col-md-3">@subscriptions.IsEnableSubscription</div>
+            </div>
+            <div class="row">
+
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionUsersCount)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionUsersCount</div>
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionTotalAmount)</div>
+                <div class="col-md-3">$ @subscriptions.SubscriptionTotalAmount</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionStart)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionStart.Value.ToString("MM/dd/yyyy")</div>
+                @*<div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionEnd)</div>
+                <div class="col-md-3"> </div>*@
+            </div>
+            <div class="row">
+                <input type="button" id="btnCancelSubscription" onclick="CancelSubscription();" class="k-button k-button-icontext" value="Cancel Subscription">
+            </div>
+        </div>
+        <hr />
+    }
+    <div class="container-fluid dashboard">
+        <div id="list">
+            <div class="container">
+
+                @foreach (var item in Model)
+                {
+                    <div class="card border-success mb-3" style="min-width: 25rem; border:5px solid #007AFC !important;">
+                        <div class="card-header text-center" style="margin:10px;color:white;">
+                            <h4>@item.Name</h4>
+                            <h4>@item.PackageAmount</h4>
+                        </div>
+                        <div class="card-body text-left" style="color:black;">
+                            @Html.Raw(item.Description)
+                        </div>
+                        <div class="card-footer bg-transparent border-success">
+                            @using (Html.BeginForm("Index", "SubscriptionSRV", FormMethod.Post, new { id = "SubForm", enctype = "multipart/form-data" }))
+                            {
+                                @Html.HiddenFor(x => item.PackageId)
+                                <span class="k-card-actions k-card-actions-vertical" id="mySpan">
+                                    @if (subscriptions != null && item.PackageOrder == subscriptions.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Update">
+                                            Update
+                                        </button>
+                                    }
+                                    else if (subscriptions != null && subscriptions.PackageOrder > item.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Downgrade">
+                                            Downgrade
+                                        </button>
+                                    }
+                                    else if (subscriptions != null && subscriptions.PackageOrder < item.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Upgrade">
+                                            Upgrade
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="addfree">
+                                            SUBSCRIBE
+                                        </button>
+                                    }
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+        <p></p>
+        <div class="providers-bottom">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>()
+        .Name("providers")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ProviderId);
+            columns.Bound(p => p.Name).Width(200);
+            columns.Bound(p => p.Address1).Title("Address").Width(200);
+            columns.Bound(p => p.Phone).Width(150);
+            columns.Bound(p => p.City).Width(100);
+            columns.Bound(p => p.State).Width(100);
+            columns.Bound(p => p.MSADocument).ClientTemplate("<a href='" + @Url.Action("Download", "OperatingDirectory", new { tenId = "#=CompanyId#", fileId = "#=MSADocumentId#" }) + "' class='linkstyle'>#=MSADocument#</a>");
+            columns.Bound(p => p.Website).ClientTemplate("<a href='#=Website#' target='_blank' class='linkstyle'>#=Website#</a>").Hidden(true);
+            columns.Bound(p => p.RigName).Title("Subscribed Rigs").Width(350);
+            columns.Command(command => { command.Custom("Delete").Text("<button class='btn btn-primary'>UnRegister</button>").Click("SendTicket"); }).Title("Action").Width(100);
+        })
+        .Pageable(p =>
+                    p.Info(true)
+                     .Numeric(false)
+                     .PreviousNext(false)
+                )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .Sortable(s => s.Enabled(true))
+        .ToolBar(toolbar =>
+        {
+            toolbar.ClientTemplateId("AddVendorTemplate");
+        })
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditSubscribeOperator").Window(w => w.Title("#=Name#").Width(700)))
+        .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(10)
+                    .ServerOperation(true)
+                    .Model(model => model.Id(p => p.ProviderId))
+                    .Read(read => read.Action("Operators_Read", "ProductSubscriptionSRV"))
+                    .Create(update => update.Action("Operators_Create", "ProductSubscriptionSRV"))
+                    .Update(update => update.Action("Operators_Update", "ProductSubscriptionSRV"))
+                     .Events(events => events.Error("error"))
+
+                    ).BindTo(Providers)
+                    .Events(e => e.DataBound("onDataBound").Edit("OnGridEdit"))
+
+                    )
+        </div>
+    </div>
+</section>
+
+
+@(Html.Kendo().Window().Name("AddOperator")
+    .Title("Add Operator")
+    .Content(@<text>
+        <div class="buttons">
+            @Html.Kendo().Button().Name("Primary").Content("Submit").HtmlAttributes(new { @class = "k-button k-primary", type = "submit", onclick = "saveProvider();" })
+            @Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeProvider();" })
+        </div>
+@(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.CorporateProfileViewModel>()
+        .Name("vendors")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Select().Width(50);
+            columns.Bound(p => p.ID).Hidden();
+            columns.Bound(p => p.UserId).Hidden();
+            columns.Bound(p => p.TenantId).Hidden();
+            columns.Bound(p => p.Name);
+            columns.Bound(p => p.Website);
+            columns.Bound(p => p.City).Width(120);
+            columns.Bound(p => p.State).Width(120);
+        })
+         .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .PersistSelection()
+        .Sortable()
+        .ToolBar(toolbar =>
+        {
+            toolbar.Search();
+        })
+        .Events(ev => ev.Change("onChange").Save("onGridSave"))
+        .ClientDetailTemplateId("AddRigtemplate")
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Batch(false)
+                .Model(model => model.Id(p => p.ID))
+                .Read(read => read.Action("Providers_Read", "ProductSubscriptionSRV"))
+        )
+    )
+    </text>
+    )
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+@(Html.Kendo().Window().Name("OperatorRigs")
+    .Title("Alert : Unable to Register New Rigs")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="WindowContent">You have subscribed for access to<strong> @subscriptions.SubscriptionUsersCount  Rigs</strong>. Would you like to Upgrade
+      you subscription or change your selection ?</div>
+
+        <div class="text-center footer">
+            <button id="UpgradeteBtn" class="k-button k-primary" onclick="SubscribeUpdate()">Upgrade</button>
+            <button id="ReturBtn" class="k-button k-cancel-button" onclick="Cancel()">Return</button>
+        </div>
+
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(500)
+    .Height(100)
+    .Draggable(true)
+)
+
+
+<script id="AddRigtemplate" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.RigViewModel>()
+            .Name("grid_#=ID#")
+            .Columns(columns =>
+            {
+                columns.Select().Width(100);//Bound(p => p.RigId).ClientTemplate("<input type='checkbox' class='chkbx' onclick='checkAll(this)'/>").Width(50);
+                columns.Bound(p => p.RigName);
+
+            })
+             .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+              .PersistSelection()
+            .Sortable()
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Model(model => model.Id(p => p.RigId))
+                .Read(read => read.Action("ReadSubscibeOPerator_Rigs", "ProductSubscriptionSRV", new { TenantId = "#=ID#" }))
+            )
+            .Events(e =>
+            {
+                e.Change("OnRigSelect");
+            })
+            .ToClientTemplate()
+    )
+</script>
+<script id="AddVendorTemplate" type="text/x-kendo-template">
+    <div class="refreshBtnContainer">
+        <a href="\\#" class="providerbutton" title="Add Operator">+ Add Operator</a>
+    </div>
+</script>
+
+
+<script>
+
+    function SubscribeUpdate() {
+        document.getElementById('SubForm').submit();
+    }
+
+    function Cancel() {
+        var wnd = $("#OperatorRigs").data("kendoWindow");
+        wnd.close();
+    }
+
+    $(document).ready(function () {
+
+    });
+
+    function OnGridEdit(e) {
+        sessionStorage.setItem("CompanyId", e.model.CompanyId);
+        var readURL = "/ProductSubscriptionSRV/ReadSubscibeOPerator_Rigs?TenantId=" + e.model.CompanyId;
+        gridObject = $("#SubscribeOperatorRigs").data("kendoGrid");
+        gridObject.dataSource.transport.options.read.url = readURL;
+        gridObject.dataSource.read();
+
+        var window = e.container.data('kendoWindow')
+        window.setOptions({
+            position: {
+                top: 110,
+            }
+        });
+        if (e.model.isNew()) {
+            window.title(e.model.Name);
+        } else {
+            window.title(e.model.Name)
+        }
+    }
+
+    function OnRigDataBound(e) {
+        var CompanyId = sessionStorage.getItem("CompanyId");
+        var grid = $('#SubscribeOperatorRigs').data('kendoGrid');
+        var rows = grid.items();
+        console.log("rows:" + rows);
+        console.log(e);
+        $.ajax({
+            url: "/ProductSubscriptionSRV/Read_SubscribeOPerator_Rigs?CompanyId=" + CompanyId,
+            type: 'GET',
+            dataType: "Json",
+            async: false,
+            success: function (ResponseData) {
+                $(rows).each(function (e) {
+                    var row = this;
+                    var dataItem = grid.dataItem(row);
+                    for (var i = 0; i < ResponseData.Result.length; i++) {
+                        if (dataItem.RigId === ResponseData.Result[i].RigId) {
+                            grid.select(row);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function OnRigEdit(e) {
+        var selectedIds = e.sender.selectedKeyNames().join(";");
+        var CompanyId = sessionStorage.getItem("CompanyId");
+        var status = SelectedEditRigs.findIndex(x => x.CompanyId === CompanyId);
+        if (status !== -1) {
+            SelectedEditRigs.forEach(function (Compid) {
+                if (Compid.CompanyId == CompanyId) {
+                    Compid.RigId = selectedIds
+                }
+            });
+        } else {
+            var Rigs =
+            {
+                RigId: selectedIds,
+                CompanyId: CompanyId,
+            };
+            SelectedEditRigs.push(Rigs);
+        }
+    }
+
+    function onDataBound() {
+        var grid = this
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+
+
+    }
+
+    $(document).ready(function () {
+        $("#providers").data("kendoGrid").dataSource.read();
+        RefreshGrid();
+
+    });
+
+    function RefreshGrid() {
+        var IntTime = 300000;
+        setInterval(function () {
+            $("#providers").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+    function cancelnew() {
+        window.location.href = "/SubscriptionSRV";
+    }
+
+    function ADD(BeginForm) {
+        //Phase II Changes -  Confirm alert 
+        kendo.confirm("Are you sure you want to add subscription?")
+            .done(function () {
+                BeginForm.submit();
+            })
+            .fail(function () {
+                subscriptionalert("You decided to not adding subscription", "Alert");
+                return false;
+            });
+
+        
+    }
+
+</script>
+<script type="text/javascript">
+    var selectedVendor = [];
+    var SelectedRigs = [];
+    var SelectedEditRigs = [];
+    $(function () {
+        var grid = $("#providers");
+        grid.find(".k-grid-toolbar").on("click", ".providerbutton", function (e) {
+
+            var itemsCount = grid.data("kendoGrid").dataSource.total();
+            if (itemsCount >= @subscriptions.SubscriptionUsersCount) {
+                kendo.alert("Your subscription does not allow adding more operators. Upgrade your subscription if you need more operators.")
+            }
+            else {
+                openProviderDirectory();
+            }
+        });
+
+        function openProviderDirectory() {
+            var wnd = $("#AddOperator").data("kendoWindow");
+            wnd.center().open();
+        }
+    });
+    function onGridSave(e) {
+        setTimeout(function () {
+            $('#providers').data('kendoGrid').dataSource.read().then(function () {
+                $('#providers').data('kendoGrid').refresh();
+            });
+        }, 1800);
+    }
+    function saveProvider() {
+        var posturl = '@Url.Action("SaveProvider", "ProductSubscriptionSRV")';
+
+        var obj = JSON.stringify(selectedVendor);
+        var i = 0;
+        console.log(obj);
+        if (selectedVendor.length > 0) {
+
+            for (i = 0; i <= selectedVendor.length - 1; i++) {
+                $.ajax({
+                    url: posturl,
+                    type: 'POST',
+                    data: JSON.stringify(selectedVendor[i]),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data) {
+                            setTimeout(function () {
+                                $('#providers').data('kendoGrid').dataSource.read().then(function () {
+                                    $('#providers').data('kendoGrid').refresh();
+                                });
+                            }, 1800);
+                        }
+
+                    }
+                });
+            }
+
+            if (SelectedRigs.length > 0) {
+                $.ajax({
+                    url: "/ProductSubscriptionSRV/SaveSubscibeOPerator_Rigs?SelectedRigs=" + SelectedRigs,
+                    type: "POST",
+                    data: JSON.stringify(SelectedRigs),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success == true) {
+                            $('#WindowContent').css('color', 'black');
+                            var wnd = $("#OperatorRigs").data("kendoWindow");
+                            wnd.center().open();
+                            wnd.wrapper.find('.k-window-titlebar').css({
+                                color: 'white',
+                                'background-color': 'red'
+                            });
+                        }
+
+                    }
+
+                });
+            }
+
+            closeProvider();
+        }
+        else {           
+            subscriptionalert("Please Select Operator and Rigs","Alert");
+            return false;
+        }
+        $('#vendors').data('kendoGrid').clearSelection();
+        window.location.reload();
+
+    }
+    function closeProvider() {
+        var wnd = $("#AddOperator").data("kendoWindow");
+        $('#vendors').data('kendoGrid').dataSource.read().then(function () {
+            $('#vendors').data('kendoGrid').clear();
+        });
+        $('#vendors').data('kendoGrid').clearSelection();
+        wnd.close();
+    }
+
+    function onChange(e) {
+        var selectedRows = this.select();
+         selectedVendor = [];
+        for (var i = 0; i < selectedRows.length; i++) {
+            var dataItem = this.dataItem(selectedRows[i]);
+
+            var vendor =
+            {
+                CompanyId: dataItem.ID,
+                Secondary: false,
+            };
+            selectedVendor.push(vendor);
+        }
+    }
+
+    function SendTicket(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var Body = '@Name' + " " + "would like to unregister the" + " " + dataItem.Name;
+        sessionStorage.setItem("Body", Body);
+        sessionStorage.setItem("Subject", "UnRegister Subscribed Operator");
+
+        window.location.href="/SupportTicketsSRV/NewTicket";
+    }
+
+
+
+
+
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        kendo.confirm("Are you sure delete this item?")
+            .done(function () {
+                $.ajax({
+                    url: "ProductSubscriptionSRV/Operators_Destroy?companyId=" + dataItem.CompanyId,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#providers").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    function OnRigSelect(e) {
+        var selectedIds = e.sender.selectedKeyNames().join(";");
+            var CellId = e.sender._cellId;
+            var split = CellId.split("_");
+            var CompanyId = split[1];
+        var status = SelectedRigs.findIndex(x => x.CompanyId === CompanyId);
+        if (status !== -1) {
+            SelectedRigs.forEach(function (Compid) {
+                if (Compid.CompanyId == CompanyId) {
+                    Compid.RigId = selectedIds
+                }
+            });
+        } else {
+            var Rigs =
+            {
+                RigId: selectedIds,
+                CompanyId: CompanyId,
+            };
+            SelectedRigs.push(Rigs);
+        }
+
+        //}
+    }
+
+    function error(args) {
+        if (args.errors) {
+            var grid = $('#providers').data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+
+    function subscriptionalert(content,alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    //Phase II Changes - 03/09/2021
+    function CancelSubscription() {
+        var Body = '@Name' + " " + "would like to Cancel the Subscription";
+        sessionStorage.setItem("Body", Body);
+        sessionStorage.setItem("Subject", "Cancel Subscription Request");
+
+        window.location.href="/SupportTicketsSRV/NewTicket";
+    }
+
+</script>
+<script id="GridModule" type="text/x-kendo-template">
+    <div class="card center">
+        <h4>Module Subscription</h4>
+    </div>
+</script>
+<script id="GridSubscription" type="text/x-kendo-template">
+    <div class="card center">
+        <h4>Current Subscription</h4>
+    </div>
+</script>
+<style>
+    .footer {
+        bottom: 7px !important;
+    }
+    /* #WindowContent {
+        color: white !important;
+    }*/
+    #OperatorRigs {
+        overflow: hidden !important;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+
+    @@media (max-width:500px) {
+        .content {
+            margin: 0px !important;
+        }
+    }
+
+    .divsubscriptions {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .center {
+        text-align: center;
+        position: relative;
+    }
+
+    .blockstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-totalval {
+        color: #007AFC;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .topblocks {
+        margin-left: 10px;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .toptitle {
+        margin-left: 20px;
+        color: #fff;
+    }
+
+    .dashboard-toptitle {
+        margin-bottom: 0px;
+    }
+
+    .dashboard-topdescription {
+        color: #728193;
+        width: 100%;
+    }
+
+    .card-title {
+        margin-bottom: 0px;
+    }
+
+    .demo-section {
+        border: 2px solid #007AFC;
+        border-radius: 5px;
+    }
+
+    .demo-grid {
+        background-color: #007AFC;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .card-header {
+        padding-left: 0px;
+        background-color: #007AFC;
+    }
+
+    .border-success {
+        border-top-color: #007AFC !important;
+    }
+
+    .chart-header {
+        display: inline-block;
+        width: 72%;
+    }
+
+    .operatorfilter {
+        display: inline-block;
+        width: 23%;
+    }
+
+        .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff;
+            color: #000;
+        }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .content {
+        min-height: 450px;
+        padding: 15px;
+        margin-right: 15px;
+        margin-left: 15px;
+        background-color: white;
+        border: 3px solid #007AFC;
+        border-radius: 10px;
+    }
+
+    .k-card {
+        padding: 0px;
+        display: inline-block;
+        margin: 0 0 2% 0;
+        width: 31%;
+        background-color: #fff;
+        border: 7px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .RigValidation .k-window-titlebar {
+        background-color: red !important;
+    }
+</style>

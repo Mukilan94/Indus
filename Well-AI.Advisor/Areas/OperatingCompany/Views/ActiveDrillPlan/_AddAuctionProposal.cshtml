@@ -1,0 +1,211 @@
+﻿@using System.Collections.Generic;
+@using Kendo.Mvc.UI
+@model WellAI.Advisor.Model.OperatingCompany.Models.AddAuctionProposalViewModel
+@{
+    ViewData["Title"] = "Add Auction";
+}
+<script src="~/js/OperatingCompany/ActiveDrillPlan.js"></script>
+<section class="content">
+    @using (Html.BeginForm("AddNewRequestAuctionsProposal", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+    @Html.HiddenFor(model => model.JobName)
+    @Html.HiddenFor(model => model.ServiceCategoryId)
+    @Html.HiddenFor(model => model.WellId)
+    @Html.HiddenFor(model => model.WellName)
+    @Html.HiddenFor(model => model.JobId)
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.WellId)
+                </div>
+                <div class="col-sm-8">
+                    @Html.DisplayFor(m => m.WellName)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.JobId)
+                </div>
+                <div class="col-sm-8">
+                    @Html.DisplayFor(m => m.JobName)
+                </div>
+            </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-6">
+                    @Html.LabelFor(model => model.ProjectDuration)
+                </div>
+                <div class="col-sm-6">
+
+                    @Html.TextBoxFor(model => model.ProjectDuration, new { @Class = "k-textbox", required = "required", style = "width:160px;height:27px;" })
+                    @Html.ValidationMessageFor(model => model.ProjectDuration)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4" style="padding-top:6px;">
+                    @Html.LabelFor(model => model.AuctionStart, "Bid Open")
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DatePickerFor(model => model.AuctionStart)
+                        .Min(DateTime.Now)
+                        .Value(DateTime.Now)
+                        .Format("MM/dd/yyyy")
+                        .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                        )
+                    @Html.ValidationMessageFor(model => model.AuctionStart)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4" style="display:none;">
+            <div class="row">
+                <div class="col-sm-4" style="padding-top:6px;">
+                    @Html.LabelFor(model => model.AuctionEnd)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DateTimePickerFor(model => model.AuctionEnd)
+                             .Value(DateTime.Now)
+                             .DateInput()
+                             .Format("MM/dd/yyyy HH:mm")
+                             .TimeFormat("HH:mm")
+                             .ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })
+                             .HtmlAttributes(new { style="width:100%"})
+                             .Min(DateTime.Now)
+                    )
+                    @Html.ValidationMessageFor(model => model.AuctionEnd)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4" style="display:none;">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.ProjectStartDate)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DatePickerFor(model => model.ProjectStartDate)
+                        .Min(DateTime.Now).DateInput()
+                        .Value(DateTime.Now)
+                        .ParseFormats(new string[] { "MM/dd/yyyy" }))
+                    @Html.ValidationMessageFor(model => model.ProjectStartDate)
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().CheckBoxFor(model=> model.IsPrivate).Checked(false).HtmlAttributes(new { onchange = "onChengeckb();" }))
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div id="srvTenantDivId" style="display:none">
+                <div class="row">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(model => model.SRVTenantId)
+                    </div>
+                    <div class="col-sm-6">
+                        @(Html.Kendo().MultiColumnComboBox()
+                            .Name("SRVTenantId")
+                            .DataValueField("TenantId")
+                            .DataTextField("Name")
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetSRVTenantName", "projectauctions").Data("GetServiceTenantNames");
+                                }).ServerFiltering(true);
+                            })
+                            .AutoBind(false)
+                            .CascadeFrom("ServiceCategoryId")
+                            .HtmlAttributes(new { style = "width: 100%" })
+                        )
+                        @Html.ValidationMessageFor(model => model.SRVTenantId)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-left:0px;margin-right:0px;display:none;">
+        <div class="form-group" style="width:100%;">
+            @Html.LabelFor(model => model.Summary)
+            @Html.TextAreaFor(model => model.Summary, new { style = "height: 60px;width:100%" })
+            @Html.ValidationMessageFor(model => model.Summary)
+        </div>
+    </div>
+    <div class="row" style="margin-left:0px;margin-right:0px;">
+        <div class="form-group">
+            <label for="Description">@Html.LabelFor(model => model.Body, "Description")</label>
+            @(Html.Kendo().EditorFor(model => model.Body)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "height:200px", required = "required", id ="descripteditor" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+
+
+        </div>
+    </div>
+    <div class="k-edit-buttons k-state-default">
+        <button type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update" onclick="ValidateForm()" href="#"><span class="k-icon k-i-check"></span>Update</button>
+        <button type="button" role="button" id="btnProposalCancel" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Cancel</button>
+    </div>
+    }
+</section>
+<style>
+    .content {
+        min-height: unset !important;
+    }
+
+    .k-editor {
+        border-color: black !important;
+    }
+
+    .k-datepicker {
+        width: 100% !important;
+    }
+
+    .k-dropdown {
+        width: 100% !important;
+    }
+
+    .row {
+        margin-top: 5px;
+    }
+
+    .k-upload .k-dropzone {
+        border-color: #022f54;
+        color: #ffffff;
+        background-color: #fff;
+    }
+
+    .k-input k-valid {
+        color: black;
+    }
+
+    .k-button.k-upload-button {
+        background: #fff;
+        color: #000;
+        border: none;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function ValidateForm(e) {
+        if ($("#descripteditor").val() == null || $("#descripteditor").val() == "") {            
+            kendo.alert("Description should not be empty !");
+            e.preventDefault();
+        }
+        return true;
+    }
+
+</script>

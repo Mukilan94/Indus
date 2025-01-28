@@ -1,0 +1,266 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.CheckListTaskModel
+@using Kendo.Mvc.UI
+@{
+    var stages = (List<WellAI.Advisor.DLL.Entity.Stage>)ViewData["stages"];
+    var rigs = (List<WellAI.Advisor.Model.OperatingCompany.Models.RigViewModel>)ViewData["Rigs"];
+    var categories = (List<WellAI.Advisor.DLL.Entity.ServiceCategory>)ViewData["categories"];
+}
+
+@using (Html.BeginForm("CheckList_Create", "CheckList", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+<div id="edittaskwrap">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "1", new
+                {
+               id = "IsSpecialServices",
+               onclick = "SelectedSpecialService(1)"
+
+           })
+                @Html.Label("Task", "Task")
+            </div>
+        </div>
+        <div class="col-sm-3">
+           <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "2", new
+           {
+               onclick = "SelectedSpecialService(2)"
+           })
+                @Html.Label("Service", "Service")
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "3", new
+           {
+               onclick = "SelectedSpecialService(3)"
+           })
+                @Html.Label("SpecialService", "Special Service")
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.IsSpecialServices, "4", new
+           {
+               onclick = "SelectedSpecialService(4)"
+           })
+                @Html.Label("Supply", "Supply")
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">Name</div>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(model => model.Name, new { id = "name", style = "width:100%",required="Please select Name" })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-4">@Html.LabelFor(m => m.Day)</div>
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(model => model.Day, new { id = "Day", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-4">@Html.LabelFor(m => m.ScheduleTime)</div>
+                <div class="col-sm-8">
+                    <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                        @Html.Kendo().MaskedTextBoxFor(model => model.ScheduleTime)
+                    </div>
+                    @(Html.Kendo().TimePicker()
+                      .Name("ScheduleTimePicker")
+                      .Format("HH:mm")
+                      .Events(e => e.Change("ScheduleTimeChange"))
+                      .HtmlAttributes(new { style = "width: 100%", title = "timepicker" })
+                        )
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.Duration)</div>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(model => model.Duration, new { id = "Duration", style = "width:100%" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.Depth)</div>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(model => model.Depth, new { id = "depth", style = "width:100%" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.RigId, "Rig")</div>
+                    <div class="col-sm-8">
+                        <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                            @Html.Kendo().MaskedTextBoxFor(model => model.RigId)
+                        </div>
+                        @(Html.Kendo().DropDownList()
+                        .Name("ddlchecklistRigs")
+                        .DataValueField("RigId")
+                        .DataTextField("RigName")
+                        .Events(e => e.Change("RigCheckChange"))
+                        .HtmlAttributes(new { style = "width: 100%", @class = "wellschecklist", required = "Please select Rig" })
+                        .BindTo(rigs)
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.WellId, "Well")</div>
+                    <div class="col-sm-8">
+                        <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                            @*@Html.Kendo().MaskedTextBoxFor(model => model.WellId)*@
+                        </div>
+                        <div>
+                            @(Html.Kendo().DropDownList()
+                                  .Name("WellId")
+                                  .DataTextField("Name")
+                                  .DataValueField("WellId")
+                                  .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetWelllisByRig", "CheckList").Data("FilterByRig");
+                                      }).ServerFiltering(true);
+                                  })
+                                  .AutoBind(false)
+                                  .HtmlAttributes(new { style = "width: 100%", required = "Please select Well" })
+                                  .CascadeFrom("ddlchecklistRigs")
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.StageName, "Stage")</div>
+                    <div class="col-sm-8">
+                        <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                            @Html.Kendo().MaskedTextBoxFor(model => model.StageName)
+                        </div>
+                        <div>
+                            @(Html.Kendo().DropDownList()
+                                  .Name("ddlStages")
+                                  .DataTextField("Name")
+                                  .DataValueField("Name")
+                                  .Events(e => e.Change("stageCheckChange"))
+                                  .HtmlAttributes(new { style = "width: 100%", required = "Please select Stage" })
+                                  .BindTo(stages)
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-sm-4">@Html.LabelFor(m => m.CategoryName, "Category")</div>
+                    <div class="col-sm-8">
+                        <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                            @Html.Kendo().MaskedTextBoxFor(model => model.CategoryName)
+                        </div>
+                        <div>
+                            @(Html.Kendo().DropDownList()
+                                  .Name("ddlCategory")
+                                  .DataTextField("Name")
+                                  .DataValueField("Name")
+                                  .Events(e => e.Change("categoryCheckChange"))
+                                  .HtmlAttributes(new { style = "width: 100%", required = "Please select Category" })
+                                  .BindTo(categories)
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-sm-6">Is Biddable</div>
+                    <div class="col-sm-6">
+                        @(Html.Kendo().CheckBoxFor(m => m.IsBiddable))
+                    </div>
+                    <div @*class="k-edit-field"*@ style="visibility:hidden">
+                        @Html.TextBoxFor(model => model.IsSpecialServices)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="k-edit-buttons k-state-default">
+            <button type="submit" role="button" onclick="clickSave();" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Save</button>
+            <button type="button" role="button" onclick="Close()" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Cancel</button>
+        </div>
+    </div>
+}
+
+<script type="text/javascript" language="javascript">
+    function Close() {
+        var window = $("#AddCheckListWindow").data("kendoWindow");
+        window.close();
+    }
+    function FilterByRig() {
+        return {
+            RigId: $("#ddlchecklistRigs").val()
+        };
+    }
+    $(document).ready(function () {
+        document.getElementById("IsSpecialServices").checked  = true;
+        var valwellId = $("#WellId").val();
+        $("#ddlchecklistwells").data("kendoDropDownList").value(valwellId);
+        var valstageId = $("#StageId").val();
+        $("#ddlStages").data("kendoDropDownList").value(valstageId);
+        var valcatId = $("#CategoryId").val();
+        $("#ddlCategory").data("kendoDropDownList").value(valcatId);
+    });
+    function clickSave() {
+        var element = $("#edittaskwrap");
+        kendo.ui.progress(element, true);
+    }
+    function SelectedSpecialService(service) {
+        if (service == 1 || service == 0) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = "diabled";
+            document.getElementById("Duration").disabled = true;
+            document.getElementById("depth").disabled = false;
+        }
+        else if (service == 2) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = false;
+            document.getElementById("Duration").disabled = false;
+            document.getElementById("depth").disabled = false;
+        }
+        else if (service == 3) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = false;
+            document.getElementById("Duration").disabled = false;
+            document.getElementById("depth").disabled = false;
+        }
+        else if (service == 4) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = "diabled";
+            document.getElementById("Duration").disabled = true;
+            document.getElementById("depth").disabled = false;
+        }
+    }
+</script>

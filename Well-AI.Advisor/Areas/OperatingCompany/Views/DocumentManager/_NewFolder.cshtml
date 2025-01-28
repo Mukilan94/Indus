@@ -1,0 +1,111 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.DocumentManagerNewFolderModel
+@{
+    Layout = null;
+    ViewData["Title0"] = "Create folder";
+    ViewData["Title"] = "Document Manager";
+}
+
+<section class="content-header">
+    <style>
+        .k-widget k-window k-dialog {
+            width: 555px;
+        }
+
+        #Submit, #Cancel {
+            color: #fff !important;
+        }
+
+        #WellNewFolderWindow .content {
+            min-height: 180px;
+        }
+
+        #NewFolderName {
+            width: 315px;
+        }
+
+        .buttonsrow {
+            float: right;
+            margin-right:130px;
+        }
+
+        #ParentPath {
+            height: 0px;
+            visibility: hidden;
+            width: 0px !important;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        #Delete {
+            background-color: #000102 !important;
+            border-color: #023259 !important;
+        }
+
+            #Delete .k-icon, #Submit .k-icon {
+                margin-left: 5px;
+            }
+
+        #Cancel {
+            background-color: #000102 !important;
+            border-color: #023259 !important;
+        }
+
+            #Cancel .k-icon, #Submit .k-icon {
+                margin-right: 5px;
+            }
+
+       
+    </style>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div>
+        @using (Html.BeginForm("CreateFolderAndReload", "DocumentManager", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row2 row">
+                <div class="rowcol col-md-12">
+                    <div class="k-edit-label">
+                        @Html.LabelFor(model => model.ParentPath, "Create Folder in ")
+                    </div>
+                    <div class="k-edit-field">
+                        @Html.DisplayFor(model => model.ParentPath)
+                        @Html.Kendo().MaskedTextBoxFor(model => model.ParentPath)
+                    </div>
+                </div>
+            </div>
+            <div class="row2 row">
+                <div class="rowcol col-md-12">
+                    <div class="k-edit-label">
+                        @Html.LabelFor(model => model.NewFolderName, "Name of new folder")
+                    </div>
+                    <div class="k-edit-field">
+                        @Html.TextBoxFor(model => model.NewFolderName, new { @id = "FolderNmae" })
+                    </div>
+                </div>
+            </div>
+            <div class="row2 row buttonsrow">
+                @(Html.Kendo().Button()
+                    .Name("Submit")
+                    .HtmlAttributes(new { type = "submit", @class = "k-primary hide-on-narrow k-button", name = "Create", value = "Create" })
+                    .Content("<span class='k-icon k-i-check'></span><strong>Create</strong>"))
+                @(Html.Kendo().Button()
+                    .Name("Cancel")
+                    .HtmlAttributes(new { type = "button", @class = "k-primary hide-on-narrow k-button ml-3", name = "Cancel", value = "Cancel" })
+                    .Content("<span class='k-icon k-i-cancel'></span><strong>Cancel</strong>")
+                    .Events(e => e.Click("onCancelClick")))
+            </div>
+        }
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        $("#FolderNmae").attr("Required", "true");
+        var wnd = $("#WellNewFolderWindow").data("kendoWindow");
+        $('[name="Cancel"]').click(function (e) {
+            wnd.close();
+        });
+    });
+</script>

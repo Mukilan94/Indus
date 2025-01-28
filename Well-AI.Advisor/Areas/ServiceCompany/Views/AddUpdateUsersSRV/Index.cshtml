@@ -1,0 +1,326 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Add / Update Users";
+}
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #fff !important;
+            border: 0;
+        }
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+            margin:4px;
+        }
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details, .k-grid-Delete:hover {
+            border: none !important;
+        }
+            .k-grid-Delete, .k-grid-Delete:hover, .k-grid-edit, .k-grid-edit:hover {
+                background-color: transparent !important;
+            }
+        .k-button.k-button-icontext.k-grid-Delete {
+            display: unset !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.UserViewSRVModel>
+    ()
+    .Name("users")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+    //columns.Bound(p => p.UserName).ClientTemplate("#: FirstName # #: LastName #").Title("Name").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    columns.Bound(p => p.UserName).Width(200).Title("Name").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    columns.Bound(p => p.FirstName).Hidden();
+    columns.Bound(p => p.LastName).Hidden();
+    columns.Bound(p => p.JobTitle).Width(200).Title("Position").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    columns.Bound(p => p.Email).Width(250).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    columns.Bound(p => p.PhoneNumber).Title("Phone").Width(125).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    columns.Command(command =>
+    {
+    command.Custom("Details").Text("<i class='fa fa-info' style='font-size:20px;'></i>").Click("showDetails");
+    command.Custom("Delete").Text("<button id='BtnDisable' class='btn btn-primary BtnDisable'>Disable</button>").Click("customDelete");
+    }).Title("Action").Width(150);
+    })
+    .Pageable(p =>
+    p.Info(true)
+    .Numeric(false)
+    .PreviousNext(false)
+    )
+    .Groupable(false)
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+    .ToolBar(toolbar => toolbar.Create().Text("Add New User").HtmlAttributes(new { id = "btnCreateUser", onclick = "CreateUser()"}))
+    //.ToolBar(toolbar => toolbar.Create().Text("Add new User"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditUser").Window(w => w.Title("Edit User Details").Width(1000)))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .PageSize(10)
+    .Batch(false)
+    .Model(model => model.Id(p => p.UserID))
+    .Create(update => update.Action("AddUpdateUsers_Create", "AddUpdateUsersSRV"))
+    .Read(read => read.Action("AddUpdateUsers_Read", "AddUpdateUsersSRV"))
+    .Update(update => update.Action("UpdateUsers_Update", "AddUpdateUsersSRV"))
+    .Events(events => events.Error("error"))
+    )
+    .Events(e =>
+    {
+    e.Edit("RenameWindow");
+    e.DataBound("DataBound");
+    })
+    )
+</section>
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add User")
+    .Visible(false)
+    .Modal(true)
+    .Draggable(true)
+    .Width(1000)
+)
+@(Html.Kendo().Window().Name("Details")
+    .Title("User Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+@*<script type="text/x-kendo-template" id="templateUser">
+    <div id="details-container">
+        <p>FirstName  : #= FirstName !=null ? FirstName : '' #</p>
+        <p> MiddleName: #= MiddleName !=null ? MiddleName : '' #</p>
+        <p>LastName   : #= LastName !=null ? LastName : '' #</p>
+        <p>Phone      : #= PhoneNumber !=null ? PhoneNumber : '' #</p>
+        <p>Mobile     : #= Mobile !=null ? Mobile : '' #</p>
+        <p>Email      : #= Email !=null ? Email : '' #</p>
+        <p>Additional Notes: #= AdditionalNotes != null ? AdditionalNotes : '' #</p>
+        <p>Address    : #= Address != null ? Address : '' #</p>
+        <p>City       : #= City !=null ? City : '' #</p>
+        <p>State      : #= State !=null ? State : '' #</p>
+        <p>Zip        : #= Zip !=null ? Zip : '' #</p>
+    </div>
+</script>*@
+
+<script type="text/x-kendo-template" id="templateUser">
+    <div id="details-container">
+        <p>FirstName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;                                            : #= FirstName !=null ? FirstName : '' #</p>
+        <p> MiddleName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                : #= MiddleName !=null ? MiddleName : '' #</p>
+        <p>LastName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;                                      : #= LastName !=null ? LastName : '' #</p>
+        <p>Phone  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;               : #= PhoneNumber !=null ? PhoneNumber : '' #</p>
+        <p>Mobile &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;        : #= Mobile !=null ? Mobile : '' #</p>
+        <p>Email  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;          : #= Email !=null ? Email : '' #</p>
+        <p>Additional Notes &nbsp;&nbsp;&nbsp;                                                                    : #= AdditionalNotes != null ? AdditionalNotes : '' #</p>
+        <p>Address &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;    &nbsp;   : #= Address != null ? Address      : '' #</p>
+        <p>City   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;   &nbsp;   &nbsp;&nbsp;&nbsp;&nbsp;             : #= City !=null ? City : '' #</p>
+        <p>State &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;   &nbsp;  &nbsp;             : #= State !=null ? State : '' #</p>
+        <p>Zip &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  &nbsp; &nbsp;&nbsp;     : #= Zip !=null ? Zip : '' #</p>
+    </div>
+</script>
+<script>
+
+
+//    $(document).ready(function () {
+//        RefreshGrid();
+//    });
+//function RefreshGrid() {
+//    var IntTime = 3000;
+//    setInterval(function () {
+//        $("#users").data("kendoGrid").dataSource.read();
+//    }, IntTime);
+//}
+
+function planalert(content, alerttitle) {
+    $("<div></div>").kendoAlert({
+        title: alerttitle,
+        content: content
+    }).data("kendoAlert").open();
+}
+function RenameWindow(e) {
+    e_obj = e;
+    if (e.model.isNew()) {
+        e.container.data("kendoWindow").title("New User");
+        e.container.data("kendoWindow").close();
+    }
+  //  clearRefreshInterval();
+    $.ajax({
+    url: "/AddUpdateUsersSRV/UserCount_Check",
+    type: "GET",
+    async: false,
+    dataType: "json",
+    contentType: "application/json; chartset=uft-8",
+        success: function(response) {
+
+            if (response.UserTotalCount>= response.Usercount) {
+                if (e.model.isNew()) {
+                    e.container.data("kendoWindow").close();
+                }
+              //  planalert("you have reached limit. should be update your package. ", "Alert!");
+            }
+            else {
+                if (e.model.isNew()) {
+                    e.container.data("kendoWindow").open();
+                    e.container.data("kendoWindow").title("New User");
+                }
+            }
+    },
+});
+}
+function error(args) {
+    if (args.errors) {
+        var grid = $('#users').data("kendoGrid");
+        grid.one("dataBinding", function (e) {
+            e.preventDefault();
+            $.each(args.errors, function (propertyName) {
+                var messages = this.errors[0];
+                $('.errors').text(messages);
+                $('.errors').addClass("alert alert-danger");
+            });
+        });
+    }
+}
+
+function DataBound(e) {
+    var grid = this;
+    grid.tbody.find("tr[role='row']").each(function () {
+        var model = grid.dataItem(this);
+        if (model.IsActive != true) {
+            $(this).find(".k-grid-edit").addClass("k-state-disabled");
+            //$(this).find(".k-grid-Delete").addClass("k-state-disabled");
+            $(this).find(".BtnDisable").html("Enable");
+        } else if (model.IsMaster == true) {
+            $(this).find(".k-grid-Delete").addClass("k-state-disabled");
+        }
+        else {
+            $(this).find(".BtnDisable").html("Disable");
+        }
+    });
+    grid.element.off('dblclick');
+    grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+        var Model = grid.dataItem(this);
+        if (Model.IsActive == true) {
+            grid.editRow($(e.target).closest('tr'));
+        }
+    });
+}
+function CreateUser() {
+        console.log("The create button handler");
+    $.ajax({
+        url: "/AddUpdateUsersSRV/UserCount_Check",
+        type: "GET",
+        async: false,
+        dataType: "json",
+        contentType: "application/json; chartset=uft-8",
+        success: function(response) {
+            debugger;
+            if (response.UserTotalCount>= response.Usercount) {
+                planalert("you have reached limit. should be update your package. ", "Alert!");
+                  $('.k-button').click(function () {
+                      document.location = '@Url.Action("Index","ProductSubscriptionSRVNew")';
+                  });
+              
+            }
+            else
+            {
+                if(e_obj!=null)
+                {
+                    if (e_obj.model.isNew()) {
+                        e_obj.container.data("kendoWindow").open();
+                        e_obj.container.data("kendoWindow").title("New User");}
+            }
+            }
+        },
+    });
+    }
+</script>
+<script type="text/javascript">
+    var detailsTemplate = kendo.template($("#templateUser").html());
+    function showDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+       wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var userStatus = e.currentTarget.textContent == "Enable" ? true : false;
+        kendo.confirm("Are you sure you want to " + e.currentTarget.textContent + " this?")
+            .done(function () {
+                $.ajax({
+                    url: "AddUpdateUsersSRV/EnableAndDisableUsers?userId=" + dataItem.UserID + "&Status=" + userStatus,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        $('#users').data('kendoGrid').dataSource.read().then(function () {
+                            $('#users').data('kendoGrid').refresh();
+                        });
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    function multiChangeRoles(e) {
+        var multiselect = $("#userroles").data("kendoMultiSelect");
+        var selectedData = "";
+        var items = multiselect.value();
+        for (var i = 0; i < items.length; i++) {
+            selectedData += items[i] + ";";
+        }
+        $("#SelectedRoles").val(selectedData);
+        $("#SelectedRoles").trigger("change");
+    }
+    function setSelectedRoles(e) {
+        var row = $(event.srcElement).closest("tr");
+        var grid = $(event.srcElement).closest("[data-role=grid]").data("kendoGrid");
+        var dataItem = grid.dataItem(row);
+        if (dataItem != null) {
+           var userId = dataItem.UserID;
+            $.ajax({
+                url: "AddUpdateUsersSRV/SetSelected?userId=" + userId,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $("#userroles").data("kendoMultiSelect").value(data);
+                }
+            });
+        }
+    }
+</script>

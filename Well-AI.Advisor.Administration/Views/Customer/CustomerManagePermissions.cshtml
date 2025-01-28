@@ -1,0 +1,421 @@
+﻿@{
+    ViewData["Title"] = "Manage User Permissions";
+}
+@model System.Data.DataTable
+    <script src="~/js/OperatorPermission.js"></script>
+<section class="content-header">
+</section>
+<section class="content">
+    <div class="row">
+        <div id="CustomerDetails" class="col-md-6"><strong>Manage Permissions</strong></div>
+    </div>
+    @(Html.Kendo().Grid<dynamic>()
+    .Name("userpermissions")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        //columns.Command(command => { command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete");}).Title("Action").Width(100);
+        
+        foreach (System.Data.DataColumn Row in Model.Columns)
+        {
+            var c = columns.Bound(Row.ColumnName);
+            if (Row.ColumnName == "Id")
+            {
+                c.Hidden();
+            }
+            else if(Row.ColumnName == "Title")
+            {
+                c.Width(250).Locked(true).Lockable(false);
+            }
+            else
+            {
+                c.Editable("returnFalse").ClientTemplate("#=getComponentPermission(data,'" + Row.ColumnName + "')# #=dirtyField(data,'" + Row.ColumnName + "')#")
+                .Width(250).HtmlAttributes(new { style = "text-align: center", title = "" + Row.ColumnName + "" })
+                .ClientHeaderTemplate("<span>" + Row.ColumnName + "</span>" + "<i style='padding-left:5px;' class='fa fa-edit Permisssion' title='Edit' style='font-size:20px;' id='Permisssion_" + Row.ColumnName + "' onclick='AddPermission" + "(\"" + Row.ColumnName + "\")" + "'></i>" + "<i style='padding-left:5px;color:white;' class='fa fa-trash PermisssionDelete' title='Delete' id='PermisssionDelete$" + Row.ColumnName + "' style='font-size:20px;'></i>" + "<i style='padding-left:5px;color:white;' class='fa fa-check checkAllCls' title='Select All' id='PermissionAll_" + Row.ColumnName + "' style='font-size:20px;'></i>");
+
+            }
+        }
+    })
+   .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+    .Sortable(s => s.Enabled(false))
+     .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar =>
+    {
+        //toolbar.Create().Text("Add new Permission");
+        toolbar.Custom().Text("Add Permission").HtmlAttributes(new { id = "newpermission", onclick = "AddPermission()" });
+        toolbar.Save().Text("Save changes").HtmlAttributes(new { onclick = "SaveChanges()" });
+    })
+    //.Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditPermission").Window(w => w.Title("Edit Permission").Width(700)))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .PageSize(15)
+    .Batch(true)
+    .ServerOperation(false)
+    .Model(model => model.Id("Id"))
+    .Create(update => update.Action("ManagePermissions_Create", "Customer", new { tenantId = ViewBag.TenantId }).Data("additionalData"))
+    .Read(read => read.Action("ManagePermissions_Read", "Customer", new { tenantId = ViewBag.TenantId , accountType= ViewBag.AccountType }))
+    .Update(update => update.Action("ManagePermissions_Update", "Customer", new { tenantId = ViewBag.TenantId }).Data("additionalData"))
+    .Events(ev => ev.RequestEnd("refreshSummary"))
+    ).Events(e=>e.Change("griChange"))     
+    )
+    @(Html.Kendo().Window().Name("AddPermissionWindow")
+    .Title("Add Permission")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(800)
+   
+)
+    <div class="k-edit-buttons k-state-default">
+        <a role="button" onclick="goBack()" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Back</a>
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $.extend(true, kendo.ui.validator, {
+                rules: { // custom rules
+                    productnamevalidation: function (input, params) {
+                        if (input.id = "Title" && input.val() == "") {
+                            input.attr("required", true);
+
+                            return false;
+                        }
+
+                        return true;
+                    }
+                },
+                messages: { //custom rules messages
+                    productnamevalidation: function (input) {
+                        input.attr("required", true);
+                        return false;
+                    }
+                }
+            });
+
+            
+            $(".Permisssion").click(function () {
+                var Id = this.id.split("_")[1];
+                AddPermission(Id);
+            });
+
+
+            $(".PermisssionDelete").click(function () {
+                debugger;
+                var Id = this.id.split("$")[1];
+                customDelete(Id);
+            });
+
+              
+            $(".checkAllCls").click(function (e) {
+                //var Id = this.id.split("_")[1];
+                //AddPermission(Id);
+                var ele = this;  
+                //var state = $(ele).is(':checked');  
+                var datasourcedata = $('#userpermissions').data('kendoGrid').dataSource.data();
+                //if (state == true) {  
+                //    $('.check-box-inner').prop('checked', true).closest('tr');  
+                //}  
+                //else {  
+                //    $('.check-box-inner').prop('checked', false).closest('tr');  
+                //}
+                //var grid = $("#grid").data("kendoGrid"),
+
+                //var gridRows = this.tbody.find("tr");
+                //if (e.currentTarget.id=="")
+                var colName = e.currentTarget.id.replace("PermissionAll_", "");
+
+                //gridRows.each(function (e) {
+                //    var duedate = $(this).find(".duedate");
+                //    //custom logic
+                //});
+
+                //for (var i = 0; i < this.columns.length; i++) {
+                //    this.autoFitColumn(i);
+                //}
+
+                //var datasourcedata = grid.data();
+
+                for (var i = 0; i < datasourcedata.length; i++) {
+                    //var dataitem = ;
+                    //alert(dataitem);
+                    datasourcedata[i][colName] = true;
+
+                }
+                var grid = $("#userpermissions").data("kendoGrid");                
+                grid.refresh();
+                dataItem = grid.dataItem($(e.target).closest("tr"));
+                dataItem.dirty = true;
+                //datasourcedata.sync();
+
+
+                //dataItem.set(colName, true);
+
+                //var uid = this.element.closest("[data-uid]").data("uid");
+                //var dataSource = $("#userpermissions").data("kendoGrid").dataSource;
+                //var item = dataSource.getByUid(uid);
+                //item.dirty = true;
+
+                //var gridRows = this.tbody.find("tr");
+                //if (e.currentTarget.id == "") {
+
+                //}               
+                //altRows = grid.table.find("tr");
+                //debugger;
+                //var data = grid.dataItem($(e.target).closest("tr"));
+                //setTimeout(function () {
+                //    var row = grid.table.find("[data-uid=" + data.uid + "]");
+                //    var cell = row.find("td").eq(1);
+                //    //cell.addClass("k-dirty-cell").prepend("<span class='k-dirty' />");
+                //    cell.append("<span class='k-dirty' />");
+                //}, 200);
+
+
+                //$('#divGrid').data('kendoGrid').dataSource.hasChanges();
+
+                //dataItem = grid.dataItem($(e.target).closest("tr"));
+                //dataItem.set("Discontinued", this.checked);
+            });
+        });
+
+        function goBack() {
+            var id = getUrlParameter('id');
+            window.location.href = "/Customer/customerDetail?id=" + id;
+        }
+        var isChange = false;
+        function refreshSummary() {
+            if (isChange) {
+                $("#userpermissions").data("kendoGrid").dataSource.read();
+                isChange = false;
+            }
+        }
+        function griChange(e) {
+            if (e.action == "itemchange") {
+                e.items[0].dirtyFields = e.items[0].dirtyFields || {};
+                e.items[0].dirtyFields[e.field] = true;
+            }
+            
+        }
+        function SaveChanges() {
+         //   debugger;
+            var grid = $("#userpermissions").data("kendoGrid");
+            grid.saveChanges();
+        }
+        function dirtyField(data, fieldName){
+            if(data.dirty && data.dirtyFields[fieldName]){
+                return "<span class='k-dirty'></span>"
+            }
+            else{
+                return "";
+            }
+        }
+
+        function returnFalse() {
+            return false;
+        }
+        function additionalData() {
+            debugger;
+            isChange = true;
+            var grid = $("#userpermissions").data("kendoGrid");
+
+            return {
+                //data: JSON.stringify(grid.dataSource.view())
+                data: JSON.stringify(grid.dataSource.data())
+            };
+        }
+        function getComponentPermission(data, componentName) {
+
+            var checkedexpressions = data[componentName] ? "checked='checked'" : "''";
+            return "<input class='chkbx' type='checkbox' " + checkedexpressions + " />";
+        }
+
+        function customDelete(value) {
+            //var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            kendo.confirm("Are you sure want to delete this permission?")
+                .done(function () {
+                    $.ajax({
+                        url: "/Customer/ManagePermissions_Destroy?permissionName=" + value,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            //var grid = $("#userpermissions").data("kendoGrid");
+                            //grid.dataSource.read();
+                            window.location.reload();
+                        }
+                    });
+
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+
+        $(document).ready(function () {
+            $("#userpermissions .k-grid-content").on("change", "checkAllCls", function (e) {
+                var grid = $("#userpermissions").data("kendoGrid"),
+                    dataItem = grid.dataItem($(e.target).closest("tr"));
+                var td = $(e.target).closest("td");
+                var compName = td.attr("title");
+                $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+                dataItem[compName] = this.checked;
+                dataItem.dirty = true;
+            });
+
+            $("#userpermissions .k-grid-content").on("change", "input.chkbx", function (e) {
+                var grid = $("#userpermissions").data("kendoGrid"),
+                    dataItem = grid.dataItem($(e.target).closest("tr"));
+                var td = $(e.target).closest("td");
+                var compName = td.attr("title");
+                $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+                dataItem[compName] = this.checked;
+                dataItem.dirty = true;
+            });
+        });
+
+    </script>
+
+    <style>
+        li.k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-tooltip {
+            border-color: #f31700 !important;
+            color: #ffffff !important;
+            background-color: #f31700 !important;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: transparent !important;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            border: none;
+        }
+
+        .k-grid-Details .k-button {
+            width: 30px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #CustomerDetails {
+            font-size: 16px;
+            margin: 15px;
+        }
+
+        .fa-trash {
+            color: black;
+            font-size: 16px;
+        }
+    </style>
+    <style>
+        #userpermissions .k-grid-header .k-header .verticalText {
+            display: inline-block;
+            white-space: nowrap;
+            transform: translate(0,100%) rotate(-70deg);
+            transform-origin: 0 0;
+            position: absolute;
+            bottom: 10px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+
+        #apply {
+            margin-left: 20px;
+        }
+
+        .k-grid .k-button:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+            overflow-y: visible !important;
+        }
+
+        .k-grid-save-changes, .k-grid-save-changes:hover {
+            border-color: #007bff;
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        .k-grid-cancel-changes, .k-grid-cancel-changes:hover {
+            border-color: #007bff;
+            color: white;
+            background-color: #007bff;
+        }
+
+        .k-grid-cancel, .k-grid-cancel:hover {
+            background-color: #007bff !important;
+        }
+
+        input[type=checkbox], input[type=radio] {
+            box-sizing: border-box;
+            padding: 0;
+            width: 17px;
+            height: 17px;
+        }
+
+        .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+    </style>
+</section>

@@ -1,0 +1,13 @@
+https://demos.telerik.com/kendo-ui/grid/custom-command?_ga=2.27732600.530280091.1581654250-568807628.1579328476
+
+https://demos.telerik.com/aspnet-mvc/grid/custom-command
+
+
+
+1. Menu will be load as per account type.
+2. There will be two new fields for password for step 1.
+
+
+it will be two type of account type 
+company service
+operator service

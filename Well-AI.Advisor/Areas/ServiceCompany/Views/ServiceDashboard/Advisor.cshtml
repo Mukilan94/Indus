@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Dashboard";
+    //string accountType = @WellAIAppContext.Current.Session.GetString("AccountType");
+    string accountType = HttpContextAccessor.HttpContext.Session.GetString("AccountType");
+}
+
+@*<section class="content-header">
+</section>*@
+<div class="row" id="Tab">
+    <div class="col-md-12 demo-section k-content" >
+        @(Html.Kendo().TabStrip()
+    .Name("tabstrip")
+    .Items(tabstrip =>
+    {
+        tabstrip.Add().Text("Advisor").Enabled(@accountType == "2" ? false:true).Selected(@accountType != "2" ? true:false)
+            .LoadContentFrom(Url.Action("ServiceIndex", "ServiceDashboard", new { Area = "ServiceCompany" }));
+
+        tabstrip.Add().Text("Dispatch").Enabled(@accountType == "2" || @accountType == "4"? true:false).Selected(@accountType == "2" ? true:false)
+            .LoadContentFrom(Url.Action("Dashboard", "DispatchSRV", new { Area = "ServiceCompany" }));
+    })
+    //.Events(events => events
+    //    .Show("onShow")
+    //    .Select("onSelect")
+    //    .Activate("onActivate")
+    //    .ContentLoad("onContentLoad")
+    //    .Error("onError")
+    //)
+)
+    </div>
+</div>
+<style>
+    .k-content .k-state-active .wrapper .content-wrapper {
+        margin-left: 0px;
+    }
+
+        .k-content .k-state-active .wrapper .content-wrapper .content {
+            margin-top: -50px;
+        }
+    
+
+   /* .content-wrapper {
+        margin-top: -20px!important;
+    }*/
+</style>

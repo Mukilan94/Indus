@@ -1,0 +1,29 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.ActivityViewModel
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+    <div>
+        <div class="k-edit-label">
+            @(Html.LabelFor(model => model.Start))
+        </div>
+        <div data-container-for="start" class="k-edit-field">
+            @(Html.Kendo().DateTimePickerFor(model => model.Start).HtmlAttributes(new { data_bind = "value:start" }))
+        </div>
+        <div class="k-edit-label">
+            @(Html.LabelFor(model => model.End))
+        </div>
+        <div data-container-for="end" class="k-edit-field">
+            @(Html.Kendo().DateTimePickerFor(model => model.End).HtmlAttributes(new { data_bind = "value:end" }))
+        </div>
+        <div class="k-edit-label">
+            @(Html.LabelFor(model => model.ProjectStatusName))
+        </div>
+        <div data-container-for="projectStatusName" class="k-edit-field">
+            @(Html.TextBoxFor(model => model.ProjectStatusName, new { @class = "k-textbox", data_bind = "value:projectStatusName" }))
+        </div>
+        <div class="k-edit-label">
+            @(Html.LabelFor(model => model.Description))
+        </div>
+        <div id="div-project-detail" data-container-for="description" class="project-detail">
+        </div>
+    </div>

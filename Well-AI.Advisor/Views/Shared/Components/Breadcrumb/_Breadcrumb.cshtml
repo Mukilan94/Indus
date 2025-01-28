@@ -1,0 +1,11 @@
+﻿<div class="breadcrumb-wrap">
+    <nav id="breadcrumb" name="breadcrumb" data-role="breadcrumb" class="k-widget k-breadcrumb" aria-label="Breadcrumb">
+        <div class="k-breadcrumb-input-container" style="display: none;"></div>
+        @{
+            string AccountType = HttpContextAccessor.HttpContext.Session.GetString("AccountType");
+
+
+        }
+        @Html.BuildBreadcrumbNavigation(AccountType)
+    </nav>
+</div>

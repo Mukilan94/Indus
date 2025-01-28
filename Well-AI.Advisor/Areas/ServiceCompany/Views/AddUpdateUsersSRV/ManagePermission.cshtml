@@ -1,0 +1,43 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.RolePermissionTypeViewModelList;
+@{
+    ViewData["Title"] = "ManagePermission";
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+    var permissions = (List<WellAI.Advisor.Model.ServiceCompany.Models.RolePermissionTypeViewModel>)ViewData["permissions"];
+}
+<section class="content-header">
+    <div class="row">
+        <div class="col-md-6" style="padding-left:10%;">
+            <h4>Manage Permission</h4>
+        </div>
+    </div>
+    <hr />
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-7" style="padding-left:10%;">
+            <form asp-action="ManagePermission">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <select asp-for="Name" class="form-control" asp-items='new SelectList(roles,"Id","Name")'></select>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PermissionName"></label>
+                    <select asp-for="PermissionName" class="form-control" asp-items='new SelectList(permissions,"Value","Text")'></select>
+                    <span asp-validation-for="PermissionName" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Manage Permission</button>
+            </form>
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

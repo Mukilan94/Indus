@@ -1,0 +1,479 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.SubscriptionPackageViewModel
+@{
+    ViewData["Title0"] = "Product Subscription";
+    ViewData["Title"] = "Subscription";
+    var paytypedata = (List<SelectListItem>)ViewData["paytypes"];
+    var packageType = ViewData["PackageType"];
+}
+<section class="content-header">
+    <style>
+        .k-upload {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        #preview {
+            display: inline-block;
+        }
+        .k-dropzone, .k-upload-button {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+        .k-dropzone {
+            float: left;
+        }
+        .k-upload-files {
+            float: right;
+        }
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-left: -15px;
+            margin-top: 10px;
+        }
+        .k-edit-buttons {
+            border-style: none;
+        }
+        .left-padding0 {
+            padding-left: 0;
+        }
+        .rught-padding0 {
+            padding-right: 0;
+        }
+        .k-edit-label.lbl {
+            width: 33% !important;
+            text-align: left;
+            padding-right: 5px;
+       }
+            .k-edit-label.lbl label {
+                display: inline;
+            }
+        .k-dropdown {
+            background-color: white !important;
+        }
+    </style>
+</section>
+<section class="content">
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.PackageId)
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.Unit)
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.Name)
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.Length)
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.TotalOccurrences)
+    @Html.HiddenFor(x => x.SubscriptionPackageModel.TrialOccurrences)
+    <div class="card" style="margin-top:10px">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0" style="text-align:center; color:white">
+                Subscription
+            </h5>
+        </div>
+    </div>
+    <div>
+        @if (Model.PaymentDetail.Count() > 0)
+        {
+            <div class="row-fluid" style="margin-top:20px; margin-bottom:20px">
+                <div class="form-inline">
+                    <div class="form-group col-sm-4">
+                        <span>Package Name:</span>
+                        <span id="packageName" data-packageid="@Model.SubscriptionPackageModel.PackageId">@packageType</span>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <span>Rigs:</span>
+                        @Html.TextBox("txtUserCount", Model.SubscriptionPackageModel.Unit, new { @min = "0", @class = "form-control", @type = "number", @onkeyup = "UpdateTotalPackageAmount(this)", @onblur = "UpdateTotalPackageAmount(this)" })
+                    </div>
+                    <div class="form-group col-sm-4">
+                        @Html.LabelFor(x => x.SubscriptionPackageModel.PackageAmount, "Package Total:")
+                        @Html.TextBoxFor(x => x.SubscriptionPackageModel.PackageAmount, new { @Class = "k-textbox", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(x => x.SubscriptionPackageModel.NewPackageAmount, new { @id = "hdnPackageAmount" })
+            <div class="card" style="margin-top:10px">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0" style="text-align:center; color:white">
+                        Payment Details
+                    </h5>
+                </div>
+            </div>
+            @foreach (var item in Model.PaymentDetail)
+            {
+                if (item.PayType == "2" || item.PayType == "1")
+                {
+                    <div class="card-body" data-id="@item.ID">
+                        <div class="row-fluid form-inline">
+                            <!--<div class="form-inline">-->
+                            <div class="form-group left-padding0  col-sm-1">
+                                <input type="radio" id="@item.ID" data-fullname="@item.FullName" data-address="@item.FullAddress"
+                                       data-state="@item.StateName" data-city="@item.City" data-country="@item.CountryName" data-zip="@item.Zip"
+                                       name="AddressId" onchange="UpdateAddressDetail(this)" />
+                            </div>
+                            <div class="form-group left-padding0  col-sm-3">
+                                <span>@item.FullName</span>
+                            </div>
+                            <div class="form-group left-padding0 col-sm-3">
+                                <span>XXXX XXXX XXXX  @item.Number.Substring(@item.Number.Length - 4, 4)</span>
+                            </div>
+                            <div class="form-group left-padding0 col-sm-3">
+                                <span> @item.ValidTill</span>
+                            </div>
+                            <div class="form-group left-padding0 col-sm-2">
+                                <div class="k-edit-label lbl">
+                                    @Html.LabelFor(model => item.CVV, "CVV")
+                                </div>
+                                <div class="k-edit-field">
+                                    <input type="password" id="txtcvv_@item.ID" class="k-textbox txtcvvcls" min="3" maxlength="3" />
+                                    @*@Html.PasswordFor(model => item.CVV, new { @Class = "k-textbox txtcvvcls",@id="txtcvv", @maxlength = "3" ,@min = 3})*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="card" style="margin-top:10px">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0" style="text-align:center; color:white">
+                        Billing Details
+                    </h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row-fluid form-inline">
+                    <!--<div class="form-inline">-->
+                    <div class="form-group left-padding0  col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].FullName, " Name:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblName">@Model.PaymentDetail[0].FullName</span>
+                        </div>
+                    </div>
+                    <div class="form-group left-padding0 col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].Number, "Address:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblAddress">@Model.PaymentDetail[0].FullAddress</span>
+                        </div>
+                    </div>
+                    <div class="form-group left-padding0  col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].City, " City:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblCity">@Model.PaymentDetail[0].City</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid form-inline">
+                    <!--<div class="form-inline">-->
+                    <div class="form-group left-padding0 col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].State, "State:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblState">@Model.PaymentDetail[0].StateName</span>
+                        </div>
+                    </div>
+                    <div class="form-group left-padding0 col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].Country, "Country:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblCountry">@Model.PaymentDetail[0].CountryName</span>
+                        </div>
+                    </div>
+                    <div class="form-group left-padding0 col-sm-4">
+                        <div class="k-edit-label lbl">
+                            @Html.LabelFor(model => model.PaymentDetail[0].Zip, "Zip:")
+                        </div>
+                        <div class="k-edit-field" style="padding-top:10px;">
+                            <span id="lblZip">@Model.PaymentDetail[0].Zip</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <input type="hidden" id="hdnselectedId" />
+                <div class="col-sm-12 text-center">
+                    <button id="Apply" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Subscribe</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div id="AlertPopupWindow" style="display:none;padding:0 !important"></div>
+</section>
+<div id="dialog"></div>
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Subscription Details")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="WindowContent"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+)
+<style>
+    .disablelink {
+        pointer-events: none;
+        background-color: #a29e9e !important;
+        border-color: #a29e9e !important;
+    }
+    .k-numerictextbox, #State, #Country, #PayType, #Agreement {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+    .k-dropdown .k-dropdown-wrap {
+        background-color: #fff;
+        color: #000;
+        border-color: #80808054;
+    }
+    #accordion {
+        display: inline-block;
+        width: 800px;
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+    .card-body label {
+        white-space: nowrap;
+    }
+    .card-header {
+        background-color: #007BFF;
+    }
+        .card-header .btn-link {
+            color: #fff;
+        }
+    #content .lbl {
+        width: 17% !important;
+        margin-right: 20px;
+        text-align: left;
+    }
+    #content .edt {
+        width: 28% !important;
+        float: left !important;
+    }
+    .k-edit-form-container {
+        width: 100%;
+    }
+    .switchwrap .k-tooltip-validation {
+        display: none !important;
+    }
+    .switchwrap {
+        display: inline-block;
+        width: 10%;
+    }
+   .switchlbl {
+       display: inline-block;
+        margin-top: 20px;
+        width: 85%
+    }
+    .k-switch-off .k-switch-container {
+        background-color: #c1c2c3 !important;
+    }
+   .switchwrap .k-switch {
+        margin-bottom: 20px;
+    }
+   .doclink {
+        margin-top: 10px;
+    }
+       .doclink a, .doclink a:hover {
+            color: #000;
+        }
+    .custom-default {
+        vertical-align: top;
+        text-align: left
+    }
+        .custom-default input[type=checkbox] {
+            vertical-align: middle;
+            margin-left: 5px
+        }
+    .div-visible {
+        display: block;
+    }
+    .div-invisible {
+        display: none;
+    }
+</style>
+<script>
+		$(function () {
+			if ($('.k-breadcrumb-link').attr('href') == '/Subscription') {
+				$('.k-breadcrumb-link').attr('href','/ProductSubscription');
+			}
+			var paymentDetailCount = '@Model.PaymentDetail.Count()';
+		if (paymentDetailCount <=0) {
+			loadMessagePoup();
+		}
+		});
+	function loadMessagePoup() {
+        $("#AlertPopupWindow").kendoWindow({
+            content: {
+                url: "@Html.Raw(Url.Action("LoadPopup", "SubscriptionSRV"))",
+            },
+            width: "300px",
+            height: "130px",
+            title: "Subscription Alert",
+            visible: false,
+            modal: true
+        });
+        $("#AlertPopupWindow").data("kendoWindow").center().open();
+    }
+	function UpdateTotalPackageAmount(ctrl) {
+		var initialAmount = parseFloat($('#hdnPackageAmount').val().replace('$', ''));
+		if ($(ctrl).val() != '') {
+			var userCount = parseInt($(ctrl).val());
+			if (userCount == 0) {
+				$(ctrl).val(1);
+				$('#SubscriptionPackageModel_PackageAmount').val('$' + initialAmount);
+			}
+			else {
+				var updatedAmount = initialAmount * userCount;
+				$('#SubscriptionPackageModel_PackageAmount').val('$' + updatedAmount.toFixed(2));
+			}
+		}
+		else {
+			$('#SubscriptionPackageModel_PackageAmount').val('$0.00');
+		}
+	}
+	function UpdateAddressDetail(ctrl) {
+		var AddrssId = $(ctrl).attr('id');
+		$('#hdnselectedId').val(AddrssId);
+		$('#lblName').html($(ctrl).data('fullname'));
+		$('#lblAddress').html($(ctrl).data('address'));
+		$('#lblCity').html($(ctrl).data('city'));
+		$('#lblState').html($(ctrl).data('state'));
+		$('#lblCountry').html($(ctrl).data('country'));
+		$('#lblZip').html($(ctrl).data('zip'));
+	};
+	function onOK(e) {
+		window.location.href = '@Html.Raw(Url.Action("Index", "PaymentMethods"))';
+	}
+    $('#Apply').on("click", function () {
+
+        var id = "";
+        var Cvvvalue = "";
+        $('input[name="AddressId"]').each(function () {
+            if (this.checked) {
+                id = this.id;
+            }
+        });
+
+        if (id != null) {
+            var CvvDetails = document.getElementsByClassName('txtcvvcls');
+            for (var i = 0; i < CvvDetails.length; i++) {
+                var Cvvid = CvvDetails[i].id;
+                var val = Cvvid.split("_")[1];
+                if (val == id) {
+                    Cvvvalue = CvvDetails[i].value;
+                }
+            }
+        }        
+
+
+        if (validateForm() && Cvvvalue != "") {
+			displayLoading(".content", true);
+			var addressId = $('#hdnselectedId').val();
+			var totalAmount = $('#SubscriptionPackageModel_PackageAmount').val();
+			var userCount = $('#txtUserCount').val();
+			var packageType = $('#packageName').html().split(" ").join("");
+			var packageId = $('#packageName').data('packageid')
+			var SubscriptionViewModel = { AddressId: addressId, TotalAmount: totalAmount.replace('$', ''), RigCount: userCount, PackageType: packageType, PackageId: packageId }
+			var posturl = '@Url.Action("CreateSubscription", "Subscription")';
+			$.ajax({
+				url: posturl,
+				type: 'POST',
+				data: JSON.stringify(SubscriptionViewModel),
+				contentType: 'application/json; charset=utf-8',
+				success: function (data) {
+                    var html = '';
+                    if (data.message == "") {
+                        html = '<div class="mb-3">';
+                        html = html + '<div class="card-header text-center" style="margin:10px;color:white;"><p> You have been subscribed <b>' + data.data.name + '</b> and charged amount <b>$' + data.data.packageAmount + '</b> for ' + data.data.RigCount +' Rigs.</p></div>';
+                        html = html + '<div class="card-body text-left" style="color:black;">' + data.data.description + '</div>';
+                        html = html + '<div><p>Kindly save this TransactionId ' + data.data.invoiceId +' for future Reference.</p></div>';
+                        html = html + '</div>';
+                    } else {
+                        html = data.message;
+                    }
+                    displayLoading(".content", false);
+                    var dialog = $("#dialog");
+                    dialog.kendoDialog({
+                        width: "400px",
+                        title: "Thank you for your subscription!",
+                        closable: false,
+                        modal: true,
+                        content: html,
+                        actions: [
+                            { text: 'OK', primary: true, action: onOK }
+                        ],
+                        close: onClose
+                    });
+                    dialog.data("kendoDialog").open();
+				}
+			});
+		}
+		else {
+			$('#WindowContent').html("Please select card or enter CVV number");
+			$('#WindowContent').css('color', 'Red')
+			var wnd = $("#Creates").data("kendoWindow");
+			wnd.center().open();
+		}
+	});
+    function onClose(e) {
+    }
+    function onOK(e) {
+        window.location.href = "/ProductSubscription";
+    }
+	function displayLoading(target, bool) {
+		var element = $(target);
+		kendo.ui.progress(element, bool);
+	}
+    function validateForm() {
+		var message = true;
+		var selectedCard = $('#hdnselectedId').val();
+		if ($('#hdnselectedId').val() == '' || $("div[data-id='" + selectedCard + "']").find('#item_CVV').val() == '') {
+			message = false;
+		}
+		return message;
+	}
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".txtcvvcls").keydown(function (event) {
+            if (event.shiftKey) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>

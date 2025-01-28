@@ -1,0 +1,26 @@
+﻿@model WellAI.Advisor.Model.Administration.SuppliesModel
+@using Kendo.Mvc.UI
+<div class="row">
+    <div class="col-md-12 errors"></div>
+    @Html.HiddenFor(x => x.SupplyId)
+</div>
+<div class="row">
+    <div class="col-md-3">Name</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.SupplyName, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.SupplyName)
+
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col-md-12">
+        @Html.LabelFor(x => x.Description)
+        @Html.TextAreaFor(model => model.Description, new { style = "width:100%" })
+    </div>
+</div>
+<div class="row">
+<div class="col-md-2">@Html.LabelFor(x => x.IsActive ,"Active")</div>
+<div class="col-md-1">
+    @Html.CheckBoxFor(model => model.IsActive, new { style = "width:100%",@checked="checked" })
+</div>
+</div>

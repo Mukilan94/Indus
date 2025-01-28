@@ -1,0 +1,278 @@
+﻿@using System.Collections.Generic;
+@using Kendo.Mvc.UI
+@model WellAI.Advisor.Model.OperatingCompany.Models.AddAuctionProposalViewModel
+@{
+    ViewData["Title"] = "Add Auction";
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+}
+<section class="content">
+    @using (Html.BeginForm("AddUpdateAuctionsProposal", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(model => model.ProposalId)
+        @Html.HiddenFor(model => model.AuctionBidStatusId)
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.RigId)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DropDownList()
+                      .Name("RigId")
+                      .DataTextField("RigName")
+                      .DataValueField("RigId")
+                      .DataSource(source =>
+                      {
+                          source.Read(read =>
+                          {
+                              read.Action("GetRiglistddl", "ProjectAuctions");
+                          });
+                      })
+                      .Events(e => e.DataBound("RigCheckChange"))
+                      .HtmlAttributes(new { style = "width: 100%" })
+    )
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.WellId)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().MultiColumnComboBox()
+                          .Name("WellId")
+                          .DataTextField("Name")
+                          .DataValueField("WellId")
+                          .Events(x => x.Select("onWellName"))
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetWelllistddl", "ProjectAuctions").Data("FilterByRig");
+                              }).ServerFiltering(true);
+                          })
+                          .AutoBind(false)
+                          .HtmlAttributes(new { style = "width: 100%" })
+                          .CascadeFrom("RigId")
+                        )
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row" style="display:block;">
+               
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.ProjectStartDate,"Estimated Start Date")
+                </div>
+                <div class="col-sm-8">
+                    <div style="width:0px; height:0px; overflow:hidden;">
+                        @(Html.Kendo().DateTimePicker()
+                        .Name("startDate")
+                        .DateInput()
+                        .Format("MM/dd/yyyy HH:mm")
+                        .TimeFormat("HH:mm")
+                        .Value(DateTime.Now)
+                        .HtmlAttributes(new {style="width:100%" })
+                        .Events(e => e.Change("firstDateChange"))
+                        )
+                    </div>                   
+
+                    @Html.ValidationMessageFor(model => model.ProjectStartDate)
+
+                    <!--ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })--><!--                        .Min(DateTime.Now.AddHours(5))-->
+                    @(Html.Kendo().DateTimePickerFor(model => model.ProjectStartDate)
+                        .DateInput()
+                        .Format("MM/dd/yyyy HH:mm")
+                        .TimeFormat("HH:mm")
+                        .Value(DateTime.Now)
+                        .HtmlAttributes(new {style="width:100%" })
+                        .Events(e => e.Change("StartChange"))
+                    )
+                    @Html.ValidationMessageFor(model => model.ProjectStartDate)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <!-- CATEGORY--> <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.ServiceCategoryId)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().MultiColumnComboBox()
+                              .Name("ServiceCategoryId")
+                              .DataTextField("Name")
+                              .DataValueField("ServiceCategoryId")
+                              .Filter("StartsWith")
+                              .DataSource(source =>
+                              {
+                                  source.Read(read =>
+                                  {
+                                      read.Action("GetServiceCategoryList", "ProjectAuctions").Data("filterTaskByWell");
+                                  }).ServerFiltering(true);
+                              })
+                              .CascadeFrom("WellId")
+                              .HtmlAttributes(new { style = "width: 100%" })/*.AutoBind(false)*//*.CascadeFrom("WellId")*/
+            )
+                    @Html.ValidationMessageFor(model => model.ServiceCategoryId)
+                </div>
+            </div><!-- CATEGORY-->
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.JobId)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().MultiColumnComboBox()
+              .Name("JobId")
+              .DataTextField("Name")
+              .DataValueField("TaskId")
+              .Filter("StartsWith")
+              .DataSource(source =>
+              {
+                  source.Read(read =>
+                  {
+                      read.Action("GetTaskByWellTypeIdForJob", "ProjectAuctions").Data("FilterServices");
+                  }).ServerFiltering(true);
+              })
+              .HtmlAttributes(new { style = "width: 100%" })
+              .AutoBind(false)
+              .CascadeFrom("ServiceCategoryId")
+    )
+                    @Html.ValidationMessageFor(model => model.JobId)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4" style="padding-top:6px;">
+                    @Html.LabelFor(model => model.AuctionStart,"Bid Open")
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DatePickerFor(model => model.AuctionStart)
+                        .Min(DateTime.Now)
+                        .Format("MM/dd/yyyy")
+                        .DateInput().ParseFormats(new string[] { "MM/dd/yyyy" })
+                        )
+                    @Html.ValidationMessageFor(model => model.AuctionStart)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4" style="padding-top:6px;">
+                    @Html.LabelFor(model => model.AuctionEnd)
+                </div>
+                <div class="col-sm-8">
+                    @(Html.Kendo().DateTimePickerFor(model => model.AuctionEnd)
+                             .Value(DateTime.Now)
+                             .DateInput()
+                             .Format("MM/dd/yyyy HH:mm")
+                             .TimeFormat("HH:mm")
+                             .ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })
+                             .HtmlAttributes(new { style="width:100%"})
+                             .Min(DateTime.Now)
+                             .Events(e => e.Change("endChange")))
+                    @Html.ValidationMessageFor(model => model.AuctionEnd)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().CheckBoxFor(model=> model.IsPrivate).Checked(false).HtmlAttributes(new { onchange = "onChengeckb();" }))
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div id="srvTenantDivId" style="display:none">
+                <div class="row">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(model => model.SRVTenantId)
+                    </div>
+                    <div class="col-sm-6">
+                        @(Html.Kendo().MultiColumnComboBox()
+                            .Name("SRVTenantId")
+                            .DataValueField("TenantId")
+                            .DataTextField("Name")
+                            .DataSource(source =>
+                            {
+                                source.Read(read =>
+                                {
+                                    read.Action("GetSRVTenantName", "projectauctions").Data("GetServiceTenantNames");
+                                }).ServerFiltering(true);
+                            })
+                            .AutoBind(false)
+                            .CascadeFrom("ServiceCategoryId")
+                            .HtmlAttributes(new { style = "width: 100%" })
+                        )
+                        @Html.ValidationMessageFor(model => model.SRVTenantId)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="row" style="margin-left:0px;margin-right:0px;display:none;">
+            <div class="form-group" style="width:100%;">
+                @Html.LabelFor(model => model.Summary)
+                @Html.TextAreaFor(model => model.Summary, new { style = "height: 60px;width:100%" })
+                @Html.ValidationMessageFor(model => model.Summary)
+            </div>
+        </div>
+        <div class="row" style="margin-left:0px;margin-right:0px;">
+            <div class="form-group">
+                @(Html.Kendo().EditorFor(model => model.Body)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "height:200px", required = "required", id="descripteditor" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+            </div>
+        </div>
+    }
+</section>
+<style>
+    .content {
+        min-height: unset !important;
+    }
+    .k-editor {
+        border-color: black !important;
+    }
+    .k-datepicker {
+        width: 100% !important;
+    }
+    .k-dropdown {
+        width: 100% !important;
+    }
+    .row {
+        margin-top: 5px;
+    }
+    .k-upload .k-dropzone {
+        border-color: #022f54;
+        color: #ffffff;
+        background-color: #fff;
+    }
+    .k-input k-valid {
+        color: black;
+    }
+    .k-button.k-upload-button {
+        background: #fff;
+        color: #000;
+        border: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {       
+        setTimeout(function () {
+            var datepicker = $("#startDate").data("kendoDateTimePicker");
+            datepicker.value(new Date());
+            datepicker.min(new Date());
+            $("#startDate").data("kendoDateTimePicker").trigger("change");
+        }, 1000);
+    });
+</script>

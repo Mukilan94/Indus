@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "CustomerWorkStation";
+    Layout = null;
+}
+
+<section class="content-header">
+    <style>
+        .k-calendar .k-footer .k-nav-today, .k-calendar .k-calendar-header .k-today {
+            color: #007bff !important;
+        }
+
+        .k-i-close {
+            padding-left: 5px;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .fa-trash {
+            display: block !important;
+            color:black !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-i-close {
+            display: none;
+        }
+        #closeicon{
+            display:block !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section>
+    @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.WorkstationRegister>()
+    .Name("workstationdatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+    columns.Bound(p => p.RegisterationId).Hidden();
+    columns.Bound(p => p.DeviceName).Width(350).Title("Device Name").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+    columns.Bound(p => p.WorkstationIdentifier).Width(170).Title("WorkStation Id").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+    columns.Bound(p => p.WorkstationToken).Title("Auth Token").Filterable(false);
+    columns.Bound(p => p.IsActive).Title("Status").Width(80).Filterable(false).ClientTemplate("#if (IsActive == true) { #" +
+    "<a href='javascript:void(0)'><span class='text-success k-icon k-i-check'></span></a>" +
+    "# } else { #" +
+    "<a href='javascript:void(0)'><span class='text-danger k-icon k-i-close' id='closeicon'></span></a>" +
+    "# } #");
+    columns.Bound(p => p.CreatedDate).Format("{0:MM/dd/yyyy}").Title("Register Date").ClientTemplate("#= CreatedDate ? kendo.toString(kendo.parseDate(CreatedDate), 'MM/dd/yyyy') : '' #").Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("gte")));
+    columns.Command(command => {
+    command.Destroy().Text("<i class='fa fa-trash' style='font-size:20px;'></i>");
+    }).Width(80).Title("Action");
+    })
+    .Sortable()
+    .Pageable(p =>
+    p.Info(true)
+    .Numeric(false)
+    .PreviousNext(false)
+    )
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar => toolbar.Create().Text("New Registration"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditWorkstationRegister").Window(w => w.Title("Edit Workstation Details").Events(e => e.Close("refreshWorkstation")).Width(500)))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.RegisterationId))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("WorkstationData_Create", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Read(read => read.Action("GetWorkstationRead", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Update(update => update.Action("workstationData_Update", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Destroy(update => update.Action("workstationData_Destroy", "Customer", new { tenantId = ViewBag.TenantId }))
+    )
+    .Events(e =>
+    {
+
+    e.Edit("RenameWorkstationWindow");
+    e.Save("OnSaveWorkstationChanges");
+    e.DataBound("OnDataBound");
+    })
+    )
+</section>

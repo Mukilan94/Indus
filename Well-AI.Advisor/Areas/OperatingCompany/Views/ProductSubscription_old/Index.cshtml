@@ -1,0 +1,274 @@
+﻿@using System.Collections.Generic;
+@using WellAI.Advisor.DLL.Data;
+@using Microsoft.AspNetCore.Http;
+@model List<WellAI.Advisor.DLL.Entity.SubscriptionPackage>
+@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Product Subscription";
+    WellAI.Advisor.Model.Common.CustomerSubscriptions subscriptions = ViewBag.CustomerSubscriptions;
+    var Name = WellAIAppContext.Current.Session.GetString("CompanyName");
+}
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    @if (subscriptions != null)
+    {
+        <div class="divsubscriptions">
+            <div class="row">
+                <h4><span>Current Subscription</span></h4>
+            </div>
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionName)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionName</div>
+                <div class="col-md-3">@Html.Label("Subscription Status")</div>
+                <div class="col-md-3">@subscriptions.IsEnableSubscription</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionUsersCount)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionUsersCount</div>
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionTotalAmount)</div>
+                <div class="col-md-3">$ @subscriptions.SubscriptionTotalAmount</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionStart)</div>
+                <div class="col-md-3">@subscriptions.SubscriptionStart.Value.ToString("MM/dd/yyyy")</div>
+                @*<div class="col-md-3">@Html.LabelFor(m => subscriptions.SubscriptionEnd)</div>
+                    <div class="col-md-3"> </div>*@
+            </div>
+            <div class="row">
+                <input type="button" id="btnCancelSubscription" onclick="CancelSubscription();" class="k-button k-button-icontext" value="Cancel Subscription">
+            </div>
+        </div>
+        <hr />
+    }
+    <div class="container-fluid dashboard">
+        <div id="list">
+            <div class="container">
+                @foreach (var item in Model)
+                {
+                    <div class="card border-success mb-3" style="min-width: 25rem; border:5px solid #007AFC !important;">
+                        <div class="card-header text-center" style="margin:10px;color:white;">
+                            <h4>@item.Name</h4>
+                            <h4>@item.PackageAmount</h4>
+                        </div>
+                        <div class="card-body text-left" style="color:black;">
+                            @Html.Raw(item.Description)
+                        </div>
+                        <div class="card-footer bg-transparent border-success">
+                            @using (Html.BeginForm("Index", "Subscription", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.HiddenFor(x => item.PackageId)
+                                <span class="k-card-actions k-card-actions-vertical" id="mySpan">
+                                    @if (subscriptions != null && item.PackageOrder == subscriptions.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Update">
+                                            Update
+                                        </button>
+                                    }
+                                    else if (subscriptions != null && subscriptions.PackageOrder > item.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Downgrade">
+                                            Downgrade
+                                        </button>
+                                    }
+                                    else if (subscriptions != null && subscriptions.PackageOrder < item.PackageOrder)
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="Upgrade">
+                                            Upgrade
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="k-button k-flat k-primary" type="submit" id="btnaddfree" name="btnaddfree" value="addfree">
+                                            SUBSCRIBE
+                                        </button>
+                                    }
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <p></p>
+    </div>
+</section>
+<script>
+	function cancelnew() {
+		window.location.href = "/Subscription";
+	}
+    function ADD(BeginForm) {
+
+        kendo.confirm("Are you sure you want to add subscription?")
+            .done(function () {
+                BeginForm.submit();
+            })
+            .fail(function () {
+                subscriptionalert("You decided to not adding subscription", "Alert");
+                return false;
+            });
+    }
+    //Phase II Changes - Alert
+    function subscriptionalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+     //Phase II Changes - 03/09/2021
+    function CancelSubscription() {
+        var Body = '@Name' + " " + "would like to Cancel the Subscription";
+        sessionStorage.setItem("Body", Body);
+        sessionStorage.setItem("Subject", "Cancel Subscription Request");
+
+        window.location.href="/SupportTickets/NewTicket";
+    }
+
+</script>
+<script id="GridModule" type="text/x-kendo-template">
+    <div class="card center">
+        <h4>Module Subscription</h4>
+    </div>
+</script>
+<script id="GridSubscription" type="text/x-kendo-template">
+    <div class="card center">
+        <h4>Current Subscription</h4>
+    </div>
+</script>
+<style>
+    .divsubscriptions {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .center {
+        text-align: center;
+        position: relative;
+    }
+
+    .blockstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-totalval {
+        color: #007AFC;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .topblocks {
+        margin-left: 10px;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .toptitle {
+        margin-left: 20px;
+        color: #fff;
+    }
+
+    .dashboard-toptitle {
+        margin-bottom: 0px;
+    }
+
+    .dashboard-topdescription {
+        color: #728193;
+        width: 100%;
+    }
+
+    .card-title {
+        margin-bottom: 0px;
+    }
+
+    .demo-section {
+        border: 2px solid #007AFC;
+        border-radius: 5px;
+    }
+
+    .demo-grid {
+        background-color: #007AFC;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .card-header {
+        padding-left: 0px;
+        background-color: #007AFC;
+    }
+
+    .border-success {
+        border-top-color: #007AFC !important;
+    }
+
+    .chart-header {
+        display: inline-block;
+        width: 72%;
+    }
+
+    .operatorfilter {
+        display: inline-block;
+        width: 23%;
+    }
+
+        .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff;
+            color: #000;
+        }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .content {
+        min-height: 450px;
+        padding: 15px;
+        margin-right: 15px;
+        margin-left: 15px;
+        background-color: white;
+        border: 3px solid #007AFC;
+        border-radius: 10px;
+    }
+
+    .k-card {
+        padding: 0px;
+        display: inline-block;
+        margin: 0 0 2% 0;
+        width: 31%;
+        background-color: #fff;
+        border: 7px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+</style>

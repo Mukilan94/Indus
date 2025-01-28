@@ -1,0 +1,481 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.DashboardModel
+
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<div class="content">
+    <div class="container-fluid dashboard">
+        <!-- Small boxes (Stat box) -->
+        <div class="row toptitle">
+            <h4 class="dashboard-toptitle">At a Glance</h4>
+            <span class="dashboard-topdescription">Click on any of key metrics to open the related screen</span>
+        </div>
+        <div class="row topblocks">
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Upcoming Services</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.UpcomingServices</h1>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Bids Won</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.BidsWon</h1>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Open Field Tickets</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.OpenFieldTickets</h1>
+            </div>
+            <!-- ./col -->
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div id="list" class="row" style="width:100%;">
+            <div class="container" style="width:100%;">
+                <div class="row" style="width:100%;">
+                    <!-- Left col -->
+                    <div class="k-card col-md-6 " style="padding:0px !important">
+                        <!-- Custom tabs (Charts with tabs)-->
+                        <div class="card-body chartstyle">
+                            <div class="demo-section k-content wide ">
+                                @(Html.Kendo().Map()
+                                    .Name("map")
+                                    .Center(Model.Map.CenterLatitude, Model.Map.CenterLongitude)
+                                    .Zoom(3)
+                                    .Layers(layers =>
+                                        layers.Add()
+                                            .Type(MapLayerType.Tile)
+                                            .UrlTemplate("http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png")
+                                            .Subdomains("a", "b", "c")
+                                            .Attribution("&copy; <a href='http://osm.org/copyright'>OpenStreetMap contributors</a>")
+                                    )
+                                    .Markers(markers =>
+                                     {
+                                         foreach (var marker in Model.Map.Markers)
+                                         {
+                                             markers.Add()
+                                             .Location(marker.latlng)
+                                             .Title(marker.Name);
+                                         }
+                                     })
+                                )
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.Left col -->
+                    <!-- right col (We are only adding the ID to make the widgets sortable)-->
+                    <div class="k-card col-md-6 h-100" style="padding:0px !important">
+                        <!-- Map card -->
+                        <div class="card-body chartstyle">
+                            <div class="demo-section k-content wide h-100 ">
+                                <chart:CategoricalAxis LabelFitMode="MultiLine" />
+                                @(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.OperatingWellAIRAWStatusViewModel>()
+                                .Name("chart")
+                               .Title("Task")
+                                .Legend(legend => legend
+                                    .Position(ChartLegendPosition.Bottom)
+                                     .Labels(labels => labels.Template("#= wrapText(text)#"))
+                                )
+                                .SeriesDefaults(seriesDefaults =>
+                                    seriesDefaults.Bar().Stack(true)
+                                )
+                                .ChartArea(chartArea => chartArea.Height(600))
+                                .DataSource(ds => ds.Read(read => read.Action("GetWellAIRAWStatusData", "Dashboard")))
+                                .Series(series => {
+                                    series.Bar(model => model.UpcomingCount).Name("Upcoming Task").Color("#f3ac32");
+                                    series.Bar(model => model.OngoingCount).Name("Ongoing Task").Color("#b8b8b8");
+                                    series.Bar(model => model.ClosedCount).Name("Closed Task").Color("#bb6e36");
+                                })
+                                .CategoryAxis(axis => axis
+                                    .Categories(model => model.WellName)
+                                    .MajorGridLines(lines => lines.Visible(false))
+                                )
+                                .ValueAxis(axis => axis
+                                    .Numeric()
+                                    .Labels(labels => labels.Format("{0}"))
+                                    .Line(line => line.Visible(false))
+                                    .MajorGridLines(lines => lines.Visible(true))
+                                )
+                                .Tooltip(tooltip => tooltip
+                                    .Visible(true)
+                                    .Template("#= series.name #:<br/> #= value #")
+                               )
+                            )
+                            </div>
+                        </div>
+                    </div>
+                    <!-- right col -->
+                </div>
+            </div>
+            <div class="container" style="width:100%;">
+                <div class="row" style="width:100%;height:75%;">
+                    <!-- Left col -->
+                    <div class="k-card col-md-6 " style="padding:0px !important">
+                        <!-- Custom tabs (Charts with tabs)-->
+                        <div class="card-body chartstyle" style="flex: 0;">
+                            <div class="demo-section k-content wide ">
+                                @(Html.Kendo().TreeMap()
+                                      .Name("treeMap")
+                                      .DataSource(dataSource => dataSource
+                                          .Read(read => read
+                                              .Action("BasicUsage_PopulationUSA", "Dashboard")
+                                          )
+                                          .Model(m => m.Children("Items"))
+                                      )
+                                      .ValueField("Value")
+                                      .TextField("Name")
+                                      .HtmlAttributes(new { style = "height:600px; font-size: 12px;" })
+                                )
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.Left col -->
+                    <!-- right col (We are only adding the ID to make the widgets sortable)-->
+                    <div class="k-card col-md-6 " style="padding:0px !important">
+                        <!-- Map card -->
+                        <div class="card-body chartstyle">
+                            <div class="demo-section k-content wide">
+                                @(Html.Kendo().Scheduler<WellAI.Advisor.Model.OperatingCompany.Models.TaskViewModel>()
+                                       .Name("scheduler")
+                                       .Date(DateTime.Today)
+                                       .StartTime(DateTime.Now)
+                                       .Selectable(true)
+                                       .MinorTickCount(1)
+                                       .AllDayEventTemplate("<div style='background:red;'></div>")
+                                       .EventTemplate(
+                                            "<div style='background:red;'></div>")
+                                       .Editable(editable =>
+                                       {
+                                           editable.Create(false);
+                                           editable.Update(true);
+                                           editable.Destroy(false);
+                                       })
+                                       .Height(600)
+                                       .Views(views =>
+                                       {
+                                           views.MonthView(monthview =>
+                                           {
+                                               monthview.Selected(true);
+                                           }  );
+                                       })
+                                       .Timezone("Etc/UTC")
+                                         .Resources(resource =>
+                                         {
+                                             resource.Add(m => m.OwnerID)
+                                                 .Title("Owner")
+                                                 .DataTextField("Text")
+                                                 .DataValueField("Value")
+                                                 .DataColorField("Color")
+                                                 .BindTo(new[] {
+                                                              new { Text = "Task1", Value = 1, Color = "#f8a398" },
+                                                              new { Text = "Task2", Value = 2, Color = "#56ca85" },
+                                                              new { Text = "Task3", Value = 3, Color = "#FFFF00" },
+                                                              new { Text = "Task4", Value = 4, Color = "#C0C0C0" },
+                                                              new { Text = "Task5", Value = 5, Color = "#808080" },
+                                                              new { Text = "Task6", Value = 6, Color = "#00FF00" },
+                                                              new { Text = "Task7", Value = 7, Color = "#008080" },
+                                                              new { Text = "Task8", Value = 8, Color = "#000080" },
+                                                              new { Text = "Task9", Value = 9, Color = "#800080" },
+                                                              new { Text = "Task10", Value =10, Color = "#00FFFF"}
+                                                 });
+                                         })
+                                       .DataSource(d => d
+                                           .Model(m =>
+                                           {
+                                               m.Id(f => f.TaskID);
+                                               m.RecurrenceId(f => f.RecurrenceID);
+                                               m.Field(f => f.OwnerID).DefaultValue(1);
+                                           })
+                                           .Read("Event_Selection_Read", "Dashboard")
+                                       )
+                                   )
+                            </div>
+                        </div><!-- /.card-body -->
+                    </div>
+                    <!-- right col -->
+                </div>
+            </div>
+        </div>
+        <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+</div>
+
+<style>
+    .blockstyle {
+        height: 120px;
+        width: 120px;
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+    .box-shad {
+        box-shadow: none;
+    }
+    .card {
+        background-color: #151d32 !important;
+        color: white;
+    }
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+    .dashboard-totalval {
+        color: #007AFC;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 30px !important;
+    }
+    .topblocks {
+        margin-left: -10px;
+    }
+    .toptitle {
+        margin-left: 5px;
+        color: #fff;
+    }
+    .dashboard-toptitle {
+        margin-bottom: 0px;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .dashboard-topdescription {
+        color: #728193;
+        width: 100%;
+        font-weight: bold;
+    }
+    .card-title {
+        margin-bottom: 0px;
+        font-weight: bold;
+        font-size: 26px;
+    }
+    .demo-section {
+        border: 2px solid #007AFC;
+        border-radius: 5px;
+    }
+    .card-body {
+        padding: 0;
+    }
+    .card-header {
+        padding-left: 0px;
+        position: relative;
+        height: 100px;
+    }
+    .chart-header {
+        display: inline-block;
+        width: 62%;
+        position: absolute;
+    }
+    .operatorfilter {
+        display: inline-block;
+        position: absolute;
+        right: 0;
+    }
+    .operatorfilter .k-dropdown {
+            display: block;
+        }
+    .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                background-color: #fff;
+                color: #000;
+            }
+    .k-dropdown {
+        border: 2px solid blue !important;
+    }
+    @@media (max-width: 570px) {
+        .card-header {
+            height: auto !important;
+        }
+        .chart-header, .operatorfilter {
+            position: inherit !important;
+            display: block !important;
+            width: auto !important;
+        }
+    }
+    .chartstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+</style>
+
+<script type="text/javascript" language="javascript">
+    function operatorChange() {
+        var chart = $("#chartdepth").data("kendoChart");
+        chart.dataSource.read();
+    }
+    function onChartRead(e) {
+        var ddlOperatorValue = $("#filterdepth").val();
+        return {
+            operId: ddlOperatorValue
+        };
+    }
+    function operatorTimeChange() {
+        var chart = $("#charttime").data("kendoChart");
+        chart.dataSource.read();
+    }
+    function onTimeChartRead(e) {
+        var ddlOperatorValue = $("#filtertime").val();
+        return {
+            operId: ddlOperatorValue
+        };
+    }
+    function onSeriesClick(e) {
+        window.location.href = "/ServiceDashboard/Depthtimechart?id=" + e.dataItem.Name;
+    }
+</script>
+
+<style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        max-width: 100% !important;
+    }
+    .k-card {
+        margin: 0 0 0 0;
+       width: auto;
+        background-color: transparent !important
+    }
+</style>
+
+<style>
+    #calendar,
+    #calendar .k-calendar-view,
+    #calendar .k-content {
+        width: 100%;
+    }
+    .exhibition,
+    .party,
+    .cocktail {
+        font-weight: bold;
+    }
+    .exhibition {
+        color: #ff9e00;
+    }
+   .party {
+        color: #ff4081;
+    }
+    .cocktail {
+        color: #00a1e8;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $(".options").bind("change", refresh);
+    });
+    function refresh() {
+        $("#treeMap").getKendoTreeMap().setOptions({
+            type: $("input[name=type]:checked").val()
+        });
+    }
+</script>
+
+<style>
+    .k-scheduler-table th {
+        color: #000;
+    }
+    .k-datetimepicker .k-select, .k-datetimepicker .k-state-hover .k-select, .k-calendar .k-nav-fast:hover,
+    .k-calendar .k-nav-prev:hover, .k-datetimepicker .k-state-active .k-select {
+        background-color: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+    .k-dropdown .k-dropdown-wrap, .k-numerictextbox .k-numeric-wrap .k-select, .k-calendar .k-header, .k-datepicker .k-picker-wrap .k-select,
+    .k-calendar .k-header k-state-hover, .k-numerictextbox .k-numeric-wrap:hover .k-select,
+    .k-numerictextbox .k-numeric-wrap.k-state-hover .k-select {
+        background-color: #fff;
+        color: #000;
+    }
+    .k-scheduler-delete, .k-scheduler-delete:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .k-check {
+        padding-right: 10px;
+    }
+</style>
+
+<script type="text/javascript">
+$(function () {
+        $("#people :checkbox").change(function (e) {
+            var checked = $.map($("#people :checked"), function (checkbox) {
+                return parseInt($(checkbox).val());
+            });
+            var filter = {
+                logic: "or",
+                filters: $.map(checked, function (value) {
+                    return {
+                        operator: "eq",
+                        field: "OwnerID",
+                        value: value
+                    };
+                })
+            };
+            var scheduler = $("#scheduler").data("kendoScheduler");
+            scheduler.dataSource.filter(filter);
+        });
+    })
+</script>
+
+<style>
+    #team-schedule {
+        background: url('@Url.Content("~/Content/web/scheduler/")team-schedule.png') transparent no-repeat;
+        height: 115px;
+        position: relative;
+    }
+    #people {
+        background: url('@Url.Content("~/Content/web/scheduler/")scheduler-people.png') no-repeat;
+        width: 345px;
+        height: 115px;
+        position: absolute;
+        right: 0;
+    }
+    #alex {
+        position: absolute;
+        left: 4px;
+        top: 81px;
+    }
+    #bob {
+        position: absolute;
+        left: 119px;
+        top: 81px;
+    }
+    #charlie {
+        position: absolute;
+        left: 234px;
+        top: 81px;
+    }
+</style>

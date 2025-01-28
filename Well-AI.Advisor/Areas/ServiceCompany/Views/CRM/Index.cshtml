@@ -1,0 +1,485 @@
+﻿@{
+    ViewData["Title"] = "CRM";
+}
+
+@model WellAI.Advisor.Model.ServiceCompany.Models.CrmModelSRV
+
+<section class="content-header">
+    <style>
+        .k-virtual-scrollable-wrap td {
+            font-size: 14px;
+            white-space: nowrap;
+            line-height: 13px;
+        }
+
+        .wrapper {
+            background: #151d32 !important;
+        }
+
+        .logo-txt {
+            margin-left: 20px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .logo-txt1 {
+            margin-left: 35px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center !important;
+            font-weight: 600;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .k-listbox {
+            width: 100% !important;
+            height: 350px;
+            text-align: left;
+        }
+
+        .content {
+            margin: 13px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding: 5px 5px 0 5px;
+        }
+
+        div#tabstrip-1 {
+            overflow: hidden !important;
+        }
+
+        div#tabstrip-2 {
+            overflow: hidden !important;
+        }
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            border: none;
+        }
+
+        .k-grid-Details .k-button {
+            width: 30px !important;
+        }
+
+        input[type="text"] {
+            width: 100%
+        }
+
+        .k-button {
+            
+        }
+
+        #appendto {
+            margin-top: 5px;
+            height: 15px;
+        }
+
+            #appendto .k-i-error {
+                padding-right: 8px;
+            }
+
+        .k-widget.k-window {
+            
+        }
+
+        .h4 {
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid #cac3c3;
+            line-height: 0.1em;
+            margin: 20px 0px 17px 1px;
+        }
+
+            .h4 span {
+                background: #fff;
+                padding: 0 10px;
+            }
+
+        .k-tabstrip-items .k-item, .k-tabstrip-items .k-item:hover {
+            color: #ffffff;
+            padding: 10px !important;
+        }
+
+        .kbuttonkprimary {
+            border-color: #007bff;
+            
+            background-color: #007bff;
+        }
+
+        .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-hover,
+        .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-active {
+            color: #FFFFFF !important;
+            width: auto;
+            padding: 10px !important;
+            font-weight: 900 !important;
+            background-color: #007bff;
+        }
+
+        .k-link:hover {
+            color: #FFFFFF !important;
+            text-decoration: solid;
+            font-weight: bold !important;
+        }
+
+        .k-link {
+            font-size: 15px !important;
+            font-weight: bold !important;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #CustomerDetails {
+            font-size: 16px;
+            margin: 15px;
+            margin-top: 25px;
+        }
+
+        .hideResetPassword {
+            display: none;
+        }
+
+        .k-chat .k-message-time {
+            opacity: 1 !important;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: opacity .2s ease-in-out;
+        }
+    </style>
+
+    
+<style>
+        .blockstyle {
+            height: 75px;
+            width: auto;
+            min-width: 130px;
+            display: inline-block;
+            margin: 10px 5px 0 5px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        .box-shad {
+            box-shadow: none;
+        }
+
+        .card {
+            background-color: #151d32 !important;
+            color: white;
+        }
+
+        .dashboard-total {
+            color: #000;
+            font-size: 14px;
+        }
+
+    .dashboard-totalval {
+        color: #007bff;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 500;
+       
+        font-size: 20px !important;
+        font-family: Roboto;
+    }
+
+        .topblocks {
+            margin-left: -5px;
+        }
+
+        .toptitle {
+            margin-left: 0px;
+            color: #fff;
+        }
+
+        .dashboard-toptitle {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        
+        .card-title {
+            font-family: Roboto;
+            font-weight: normal;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-decoration: underline;
+            text-underline-position: under !important;
+        }
+
+        text {
+            font-family: Roboto !important;
+            font-weight: 600 !important;
+        }
+        
+        .dashboard-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+
+        .demo-section {
+            border: 4px solid #007AFC;
+            border-radius: 5px;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .card-header {
+            padding-left: 0px;
+            position: relative;
+            height: 100px;
+        }
+
+        .chart-header {
+            display: inline-block;
+            width: 62%;
+            position: absolute;
+        }
+
+        .operatorfilter {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+
+            .operatorfilter .k-dropdown {
+                display: block;
+            }
+
+                .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                    background-color: #fff;
+                    color: #000;
+                }
+
+        @@media (max-width: 570px) {
+            .card-header {
+                height: auto !important;
+            }
+
+            .chart-header, .operatorfilter {
+                position: inherit !important;
+                display: block !important;
+                width: auto !important;
+            }
+        }
+</style>
+    
+    <style>
+        .divsubscriptions {
+            color: #000;
+            padding: 0px 45px 20px;
+        }
+
+        .center {
+            text-align: center;
+            position: relative;
+        }
+
+        .blockstyle {
+            padding: 0px;
+            display: inline-block;
+            margin: 10px 10px 0 10px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .box-shad {
+            box-shadow: none;
+        }
+
+        .dashboard-total {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .dashboard-totalval {
+            color: #007bff;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 600;
+            
+        }
+
+        .topblocks {
+            margin-left: 10px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .toptitle {
+            margin-left: 20px;
+            color: #fff;
+        }
+
+        .dashboard-toptitle {
+            margin-bottom: 0px;
+        }
+
+        .dashboard-topdescription {
+            color: #728193;
+            width: 100%;
+        }
+
+        .card-title {
+            margin-bottom: 0px;
+        }
+
+        .demo-section {
+            border: 2px solid #007AFC;
+            border-radius: 5px;
+        }
+
+        .demo-grid {
+            background-color: #007AFC;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .card-header {
+            padding-left: 0px;
+            background-color: #007AFC;
+        }
+
+        .border-success {
+            border-top-color: #007AFC !important;
+        }
+
+        .chart-header {
+            display: inline-block;
+            width: 72%;
+        }
+
+        .operatorfilter {
+            display: inline-block;
+            width: 23%;
+        }
+
+            .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                background-color: #fff;
+                color: #000;
+            }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .k-card {
+            padding: 0px;
+            display: inline-block;
+            margin: 0 0 2% 0;
+            width: 31%;
+            background-color: #fff;
+            border: 7px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .centerpart {
+            display: inline-block;
+            width: 50%;
+            height: 87vh;
+        }
+
+        .k-button.k-flat.k-primary {
+            color: #007bff !important;
+        }
+    </style>
+</section>
+<div class="container-fluid dashboard">
+    <!-- Small boxes (Stat box) -->
+    <div class="row toptitle">
+        <h4 class="dashboard-toptitle" style="margin-left:-10px">At a Glance</h4>
+        <span class="dashboard-topdescription"> </span>
+    </div>
+    <div class="row topblocks" style="margin-left:-3px !important">
+        <div class="blockstyle" id="rigscount">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Total Contacts</span>
+
+                </div>
+            </div>
+            <span id="contactcount" class="dashboard-totalval">@ViewData["TotalContacts"]</span>
+        </div>
+
+        <div class="blockstyle" id="rigscount">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="dashboard-total">Total Companies</span>
+
+                </div>
+            </div>
+            <span id="companycount" class="dashboard-totalval">@ViewData["TotalCompany"]</span>
+        </div>
+    </div>
+</div>
+<section class="content" style="margin-left:20px">
+    
+
+    <div id="loadingId">
+        <div class="wrapper">
+            @(Html.Kendo().TabStrip()
+                    .Name("tabstrip")
+                    .Items(tabstrip =>
+                    {
+                        tabstrip.Add().Text("Directory")
+                        .Selected(true)
+                        .LoadContentFrom(Url.Content("~/CRM/PhoneBook"));
+              tabstrip.Add().Text("Companies")
+                        .LoadContentFrom(Url.Content("~/CRM/CompanyBook"));
+                    })
+            )
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    function CountsRefresh() {
+        $.ajax({
+            url: '/CRM/contactCounts',
+            type: 'GET',
+            success: function (ResponseData) {
+                console.log(ResponseData);
+                $("#contactcount").text(ResponseData);
+            }
+        });
+
+    }
+</script>

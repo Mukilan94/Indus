@@ -1,0 +1,1645 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    string SubscriptionType = HttpContextAccessor.HttpContext.Session.GetString("subscriptiontype");
+    //if (SubscriptionType != "AdvisorDispatch")
+    //{
+    //    Layout = "~/Views/Shared/_Layout.cshtml";
+    //}
+    //else
+    //{
+    //Layout = "~/Views/Shared/_LayoutAdvisorDispatch.cshtml";
+    //}
+}
+
+
+@model WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidsModel
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<section class="content-header">
+    <style>
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            background: #fff;
+            color: #000;
+            border-radius: 10px !important;
+        }
+
+        a.k-button.k-button-icontext2.k-grid-Details {
+            background: #fff;
+            color: #000;
+            border-radius: 10px !important;
+        }
+        .Upcoming {
+            background-color: red;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .Active {
+            background-color: #77BD27;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .closed {
+            background-color: #F4AF00;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .InActive {
+            background-color: purple;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .OnSite {
+            background-color: dodgerblue;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+
+        .ACTIVE {
+            background-color: #77BD27;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .INACTIVE {
+            background-color: purple;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .ON-SITE {
+            background-color: dodgerblue;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .ON-ROUTE {
+            background-color: #F4AF00;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .OVERDUE {
+            background-color: red;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+        .auction-wrapper {
+            color: #fff;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .auctiontop {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .k-i-filter-clear {
+            color: #007bff !important;
+        }
+
+        .topblockactive, .topblockinactive, .topblockonsite, .topblockonroute, .topblockoverdue {
+            display: inline-block;
+            width: 32%;
+            margin-bottom: 20px;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 10px;
+            border: 4px solid #007BFF;
+        }
+
+        .topblockactive {
+            border: 4px solid #77BD27;
+            margin-left: 2px;
+        }
+
+        .topblockinactive {
+            border: 4px solid purple;
+            margin-left: 10px;
+        }
+
+        .topblockonsite {
+            border: 4px solid #007BFF;
+            margin-left: 10px;
+        }
+
+        .topblockonroute {
+            border: 4px solid #F4AF00;
+            margin-left: 10px;
+        }
+
+        .topblockoverdue {
+            border: 4px solid red;
+            margin-left: 10px;
+        }
+
+        .lastmonthtitle {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .topblocktitle1 {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .topblocktitle2 {
+            margin-bottom: 20px;
+            background-color: #77BD27;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockinactivetitle {
+            margin-bottom: 20px;
+            background-color: purple;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockonsitetitle {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockonroutetitle {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockoverduetitle {
+            margin-bottom: 20px;
+            background-color: red;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+
+
+        .topblocktitle3 {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .startedcount, .startedvalue {
+            display: inline-block;
+        }
+
+        .startedcount {
+            margin-left: 5px !important;
+        }
+
+        .startedvalue {
+            margin-right: 5px !important;
+        }
+
+            .startedcount > span, .startedvalue > span {
+                display: block;
+                text-transform: uppercase;
+            }
+
+        .topblock-top {
+            margin-top: 20px;
+        }
+
+        .topblock-bottom {
+            border-top: 1px solid grey;
+        }
+
+        .activelastmonthdate {
+            margin-top: 50px;
+        }
+
+        .bgInitiate {
+            background-color: #00B855 !important;
+        }
+
+        .bgPlan {
+            background-color: #3288B7 !important;
+        }
+
+        .bgEvaluate {
+            background-color: #B87033 !important;
+        }
+
+        .allprojectbids {
+            display: inline-block;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .bids-search {
+            margin-left: 25%;
+            margin-bottom: 10px;
+        }
+
+
+            .bids-search .labelchart {
+                display: inline-block;
+            }
+
+        .k-filtercell {
+            border: 1px solid #007BFF;
+        }
+
+        .cntSize {
+            font-size: 2.5rem;
+        }
+
+    /*    .content-wrapper {
+            margin-top: 20px !important;
+        }*/
+
+        .k-grid-Note {
+            background-color: white;
+            height: 20px;
+            width: 20px;
+        }
+          
+            .k-grid-Note:hover {
+                background-color: white;
+               
+            }
+
+        .k-window-content, .k-prompt-container {
+            overflow: hidden;
+        }
+
+    </style>
+    <script>
+        //function onDataBound() {
+        //    var grid = this;
+        //    grid.tbody.find('tr').each(function () {
+        //        var dataItem = grid.dataItem(this);
+
+        //        $(this).addClass('bg' + dataItem.BidStatusName);
+        //    })
+        //}
+
+        function onBidsGridRead(e) {
+        }
+    </script>
+</section>
+@(Html.Kendo().Window().Name("Details")
+    .Title("Project Details")
+    .Visible(false)
+    .Content(@<text><div id="wndContent">Loading....</div></text>)
+    .Modal(true)
+    .Draggable(true)
+    .Width(1000)
+)
+
+<input type="hidden" id="hdnCurrentUser" />
+<script>
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+    $(document).ready(function () {
+        GetStatusCout();
+      //  RefreshRoutes();
+
+        $(".k-grid-save-changes").click(function () {
+
+
+            var result = kendo.confirm("Do you want to Save this Changes ?")
+                .done(function () {
+                    displayLoading("#auctions", true);
+                    //debugger;
+
+                    var displayedData = $("#auctions").data().kendoGrid.dataSource.view()
+
+
+                    $.each(displayedData, function (key, value) {
+
+                        var roustatusdetails = {
+                            userId: value.userid,
+                            DispatchId: value.dispatchid,
+                            RouteStatus: value.routestatus,
+                            ScheduledArrival: value.scheduledArrivalDate,
+                            ETA: value.eta,
+                            LocationName: value.locationname
+                        }
+                        // debugger;
+                        $.ajax({
+                            url: "/Dispatch/UpdateRouterStatus",
+                            type: "POST",
+                            dataType: "json",
+                            data: JSON.stringify(roustatusdetails),
+                            contentType: "application/json; chartset=uft-8",
+                            success: function (response) {
+
+                                $.ajax({
+                                    url: '/Dispatch/GetDispatchStatusCount',
+                                    type: 'POST',
+                                    dataType: "json",
+                                    contentType: "application/json; chartset=uft-8",
+                                    success: function (response) {
+                                        //  debugger;
+                                        ///  $("#ProjectActiveCount").text(parseInt(response.ACTIVE)+());
+                                        $("#ProjectActiveCount").text(parseInt(response.ACTIVE) + parseInt(response.ONSITE) + parseInt(response.ONROUTE) + parseInt(response.OVERDUE));
+                                        $("#ProjectInActiveCount").text(response.INACTIVE);
+                                        $("#ProjectOnSiteCount").text(response.ONSITE);
+                                        $("#ProjectOnRouteCount").text(response.ONROUTE);
+                                        $("#ProjectOverDueCount").text(response.OVERDUE);
+
+
+                                        //  displayLoading("#auctions", false);
+
+                                    },
+                                });
+
+                                //debugger;
+                                //if (response == true) {
+                                //    var gridObj = $('#Dispatch').data('kendoGrid');
+                                //    gridObj.dataSource.read();
+                                //    gridObj.refresh();
+                                //}
+                                //else {
+                                //    planalert(response, "Error");
+                                //}
+                                var gridObj = $('#auctions').data('kendoGrid');
+                                //  gridObj.dataSource.read();
+                                gridObj.refresh();
+
+                                displayLoading("#auctions", false);
+
+                            },
+                            error: function (xhr, status, error) {
+                                planalert(xhr.responseText, "Error");
+                            }
+                        });
+
+                    });
+
+
+                    setTimeout(function () {
+
+                        //  $("#auctions").data("kendoGrid").dataSource.read();
+                        // var gridObj = $('#auctions').data('kendoGrid');
+
+                    }, 5000);
+                    //  displayLoading(".content", false);
+
+                })
+                .fail(function () {
+                    return false;
+                });
+
+
+
+        });
+
+
+        //$(".k-grid-save-changes").click(function () {
+
+
+        //    var result = kendo.confirm("Do you want to Save this Changes ?")
+        //        .done(function () {
+        //            displayLoading("#auctions", true);
+        //            //debugger;
+
+        //            var displayedData = $("#auctions").data().kendoGrid.dataSource.view()
+
+
+        //            $.each(displayedData, function (key, value) {
+
+        //                var roustatusdetails = {
+        //                    userId: value.userid,
+        //                    DispatchId: value.dispatchid,
+        //                    RouteStatus: value.routestatus,
+        //                    ScheduledArrival: value.scheduledArrivalDate,
+        //                }
+        //                // debugger;
+        //                $.ajax({
+        //                    url: "/Dispatch/UpdateRouterStatus",
+        //                    type: "POST",
+        //                    dataType: "json",
+        //                    data: JSON.stringify(roustatusdetails),
+        //                    contentType: "application/json; chartset=uft-8",
+        //                    success: function (response) {
+
+        //                        $.ajax({
+        //                            url: '/Dispatch/GetDispatchStatusCount',
+        //                            type: 'POST',
+        //                            dataType: "json",
+        //                            contentType: "application/json; chartset=uft-8",
+        //                            success: function (response) {
+        //                                //  debugger;
+        //                                ///  $("#ProjectActiveCount").text(parseInt(response.ACTIVE)+());
+        //                                $("#ProjectActiveCount").text(parseInt(response.ACTIVE) + parseInt(response.ONSITE) + parseInt(response.ONROUTE) + parseInt(response.OVERDUE));
+        //                                $("#ProjectInActiveCount").text(response.INACTIVE);
+        //                                $("#ProjectOnSiteCount").text(response.ONSITE);
+        //                                $("#ProjectOnRouteCount").text(response.ONROUTE);
+        //                                $("#ProjectOverDueCount").text(response.OVERDUE);
+
+
+        //                                //  displayLoading("#auctions", false);
+
+        //                            },
+        //                        });
+
+        //                        //debugger;
+        //                        //if (response == true) {
+        //                        //    var gridObj = $('#Dispatch').data('kendoGrid');
+        //                        //    gridObj.dataSource.read();
+        //                        //    gridObj.refresh();
+        //                        //}
+        //                        //else {
+        //                        //    planalert(response, "Error");
+        //                        //}
+        //                        var gridObj = $('#auctions').data('kendoGrid');
+        //                        //  gridObj.dataSource.read();
+        //                        gridObj.refresh();
+
+        //                        displayLoading("#auctions", false);
+
+        //                    },
+        //                    error: function (xhr, status, error) {
+        //                        planalert(xhr.responseText, "Error");
+        //                    }
+        //                });
+
+        //            });
+
+
+        //            setTimeout(function () {
+
+        //                //  $("#auctions").data("kendoGrid").dataSource.read();
+        //                // var gridObj = $('#auctions').data('kendoGrid');
+
+        //            }, 5000);
+        //            //  displayLoading(".content", false);
+
+        //        })
+        //        .fail(function () {
+        //            return false;
+        //        });
+
+
+
+        //});
+      //  $(".k-button k-button-icontext k-grid-Note").removeClass("k-button-icontext");
+     //   document.getElementsByClassName(".k-button .k-button-icontext .k-grid-Note").removeAttribute("class")
+    });
+
+   //Dispatch
+
+    function RefreshRoutes() {
+        debugger;
+        displayLoading(".content", true);
+
+
+
+        $.ajax({
+            url: '/Dispatch/GetDispatchDetails_active',
+            type: 'POST',
+            dataType: "json",
+            contentType: "application/json; chartset=uft-8",
+            success: function (response) {
+                debugger;
+                if (response != null) {
+                    if (response.Data != null) {
+                        var userid_equal = '';
+                        debugger;
+                        $.each(response.Data, function (key, value) {
+
+
+                            //2. New Destination	- May be entered "Scheduled Arrival"
+                            if (value.eta != null && value.eta != '' && value.scheduledArrivalDate != null && value.scheduledArrivalDate != '') {
+                                var eta = new Date(value.eta);
+                                var scheduledArrivalDate = new Date(value.scheduledArrivalDate);
+                                var values = (eta) - (scheduledArrivalDate)
+
+
+                                const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+                                const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+                                const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+                                const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+                                if (days_ofduration < 0) {
+                                    updatestatus(value.userid, value.dispatchid, 'OVERDUE', "", null);
+                                }
+                                else if (hours_ofduration < 0) {
+                                    updatestatus(value.userid, value.dispatchid, 'OVERDUE', "", null);
+                                }
+                                else if (minutes_ofduration < 0) {
+                                    updatestatus(value.userid, value.dispatchid, 'OVERDUE', "", null);
+                                }
+
+                                GetStatusCout();
+                                // var gridObj = $('#auctions').data('kendoGrid');
+                                // gridObj.dataSource.read();
+                                // gridObj.refresh();
+                                //const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+                                //const hours_ofduration = parseInt(Math.abs(eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24);
+                                //const minutes_ofduration = parseInt(Math.abs(eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60);
+                                //const seconds_ofduration = parseInt(Math.abs(eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60);
+                            }
+
+
+
+                            //3. If user current location equals any one of the destination - ON-SITE
+                            else {
+
+
+                                if (userid_equal != value.userid) {
+                                    userid_equal = value.userid;
+
+                                    $.ajax({
+                                        url: "/Dispatch/GetUserCurrentRoutes?userId=" + value.userid,
+                                        type: "GET",
+                                        dataType: "json",
+                                        contentType: "application/json; chartset=uft-8",
+                                        success: function (response2) {
+                                            var latitude_2 = "";
+                                            var longitude_2 = "";
+                                            var eta_timestamp_UT_2 = "";
+                                            if (response2.location != null) {
+                                                latitude_2 = response2.location.latitude;
+                                                longitude_2 = response2.location.longitude;
+                                                eta_timestamp_UT_2 = response2.location.eta_timestamp_UT;
+                                            }
+                                            //  debugger
+                                            $.each(response.Data, function (key2, value2) {
+                                                if (response != null) {
+
+                                                    if (response.location != null) {
+
+                                                        var destinations = response2.destinations
+                                                        var location = response2.location
+                                                        var k = 0;
+
+
+                                                        var eta_timestamp_UT = location.eta_timestamp_UT.toString();
+                                                        var locationlatitude = location.latitude.toString();
+                                                        var locationlatitude = location.latitude.toString();
+                                                        var locationlongitude = location.longitude.toString();
+                                                        var latitude = value2.latitude.toString();
+                                                        var longitude = value2.longitude.toString();
+
+                                                        if (latitude.substr(0, 6) + ',' + longitude.substr(0, 6) ==
+                                                            locationlatitude.substr(0, 6) + ',' + locationlongitude.substr(0, 6)) {
+
+                                                            for (j = 0; j <= key2; j++) {
+                                                                if (value2.userid == response.Data[j].userid) {
+
+                                                                    //-------------
+                                                                    var dispatchid2 = response.Data[j].dispatchid;
+                                                                    var userid2 = response.Data[j].userid
+                                                                    updatestatus(userid2, dispatchid2, 'ACTIVE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+
+                                                                    //-------------
+                                                                    if (response.Data[j].eta != null && response.Data[j].eta != '' && response.Data[j].scheduledArrivalDate != null
+                                                                        && response.Data[j].scheduledArrivalDate != '') {
+
+                                                                        var eta = new Date(response.Data[j].eta);
+                                                                        var scheduledArrivalDate = new Date(response.Data[j].scheduledArrivalDate);
+                                                                        var values = (eta) - (scheduledArrivalDate)
+
+
+                                                                        const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+                                                                        const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+                                                                        const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+                                                                        const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+                                                                        if (days_ofduration < 0) {
+                                                                            updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                        }
+                                                                        else if (hours_ofduration < 0) {
+                                                                            updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                        }
+                                                                        else if (minutes_ofduration < 0) {
+                                                                            updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                        }
+                                                                        else {
+                                                                            updatestatus(value2.userid, value2.dispatchid, 'ON-SITE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                        }
+
+                                                                    }
+                                                                    else {
+                                                                        updatestatus(value2.userid, value2.dispatchid, 'ON-SITE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                    }
+
+                                                                }
+
+
+                                                            }
+
+                                                            //   updatestatus(value2.dispatchid, 'ON-SITE');
+
+                                                            //    for (j = 0; j <= key; j++) {
+
+                                                            if (value2.eta != null && value2.eta != '' && value2.scheduledArrivalDate != null
+                                                                && value2.scheduledArrivalDate != '') {
+
+                                                                var eta = new Date(value2.eta);
+                                                                var scheduledArrivalDate = new Date(value2.scheduledArrivalDate);
+                                                                var values = (eta) - (scheduledArrivalDate)
+
+
+                                                                const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+                                                                const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+                                                                const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+                                                                const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+                                                                if (days_ofduration < 0) {
+                                                                    updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                }
+                                                                else if (hours_ofduration < 0) {
+                                                                    updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                }
+                                                                else if (minutes_ofduration < 0) {
+                                                                    updatestatus(value2.userid, value2.dispatchid, 'OVERDUE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                }
+                                                                else {
+                                                                    updatestatus(value2.userid, value2.dispatchid, 'ON-SITE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                                }
+
+                                                            }
+                                                            else {
+                                                                updatestatus(value2.userid, value2.dispatchid, 'ON-SITE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                            }
+
+
+
+                                                        }
+                                                        else {
+                                                            updatestatus(value2.userid, value2.dispatchid, 'ON-ROUTE', locationlatitude + ',' + locationlongitude, eta_timestamp_UT);
+                                                        }
+
+                                                    }
+
+                                                    else {
+                                                        if (response2.location != null) {
+                                                            updatestatus(value.userid, value.dispatchid, 'ON-ROUTE', response2.location.latitude + ',' + response2.location.longitude, response2.location.eta_timestamp_UT);
+
+                                                        }
+                                                        else {
+                                                            updatestatus(value.userid, value.dispatchid, 'ON-ROUTE', '', null);
+
+                                                        }
+                                                    }
+
+                                                    //  displayLoading(".content", false);
+                                                }
+                                                else {
+                                                    if (response2.location != null) {
+                                                        updatestatus(value.userid, value2.dispatchid, 'ON-ROUTE', response2.location.latitude + ',' + response2.location.longitude, response2.location.eta_timestamp_UT);
+
+                                                    }
+                                                    else {
+                                                        updatestatus(value.userid, value2.dispatchid, 'ON-ROUTE', '', null);
+
+                                                    }
+
+                                                }
+
+                                                displayLoading(".content", false);
+                                            });
+                                            //for (j = 0; j < destinations.length; j++) {
+
+                                            //    var locationlatitude = location.latitude.toString();
+                                            //    var locationlongitude = location.longitude.toString();
+                                            //    //if (destinations[0].destination.latitude.substr(0, 7) + ',' + destinations[0].destination.longitude.substr(0, 7) ==
+                                            //    //    locationlatitude.substr(0, 7) + ',' + locationlongitude.substr(0, 7)) {
+                                            //    //}
+
+                                            //    if (destinations[j].destination.latitude.substr(0, 7) + ',' + destinations[j].destination.longitude.substr(0, 7) ==
+                                            //        locationlatitude.substr(0, 7) + ',' + locationlongitude.substr(0, 7)) {
+                                            //    }
+
+                                            //}
+                                            displayLoading(".content", false);
+                                            GetStatusCout();
+                                            // var gridObj = $('#auctions').data('kendoGrid');
+                                            // gridObj.dataSource.read();
+                                            // gridObj.refresh();
+                                        },
+                                        error: function (xhr, status, error) {
+
+                                        }
+                                    });
+
+                                }
+
+
+                            }
+                        });
+                    }
+
+                }
+                else {
+                    $.ajax({
+                        url: '/Dispatch/RefreshRoutes',
+                        type: 'POST',
+                        dataType: "json",
+                        contentType: "application/json; chartset=uft-8",
+                        success: function (response) {
+                            GetStatusCout();
+                            //var gridObj = $('#auctions').data('kendoGrid');
+                            //gridObj.dataSource.read();
+                            //gridObj.refresh();
+                        },
+                        error: function (xhr, status, error) {
+                            planalert(xhr.responseText, "Error");
+                        }
+                    })
+                }
+
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+        })
+    }
+
+
+    //function RefreshRoutes() {
+    //    debugger;
+    //    displayLoading(".content", true);
+
+
+
+    //    $.ajax({
+    //        url: '/Dispatch/GetDispatchDetails_active',
+    //        type: 'POST',
+    //        dataType: "json",
+    //        contentType: "application/json; chartset=uft-8",
+    //        success: function (response) {
+    //            debugger;
+    //            if (response != null) {
+    //                if (response.Data != null) {
+    //                    var userid_equal = '';
+    //                    //  debugger;
+    //                    $.each(response.Data, function (key, value) {
+
+
+    //                        //2. New Destination	- May be entered "Scheduled Arrival"
+    //                        if (value.eta != null && value.eta != '' && value.scheduledArrivalDate != null && value.scheduledArrivalDate != '') {
+    //                            var eta = new Date(value.eta);
+    //                            var scheduledArrivalDate = new Date(value.scheduledArrivalDate);
+    //                            var values = (eta) - (scheduledArrivalDate)
+
+
+    //                            const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+    //                            const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+    //                            const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+    //                            const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+    //                            if (days_ofduration < 0) {
+    //                                updatestatus(value.userid, value.dispatchid, 'OVERDUE');
+    //                            }
+    //                            else if (hours_ofduration < 0) {
+    //                                updatestatus(value.userid, value.dispatchid, 'OVERDUE');
+    //                            }
+    //                            else if (minutes_ofduration < 0) {
+    //                                updatestatus(value.userid, value.dispatchid, 'OVERDUE');
+    //                            }
+
+    //                            GetStatusCout();
+    //                            // var gridObj = $('#auctions').data('kendoGrid');
+    //                            // gridObj.dataSource.read();
+    //                            // gridObj.refresh();
+    //                            //const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+    //                            //const hours_ofduration = parseInt(Math.abs(eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24);
+    //                            //const minutes_ofduration = parseInt(Math.abs(eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60);
+    //                            //const seconds_ofduration = parseInt(Math.abs(eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60);
+    //                        }
+
+
+
+    //                        //3. If user current location equals any one of the destination - ON-SITE
+    //                        else {
+
+
+    //                            if (userid_equal != value.userid) {
+    //                                userid_equal = value.userid;
+
+    //                                $.ajax({
+    //                                    url: "/Dispatch/GetUserCurrentRoutes?userId=" + value.userid,
+    //                                    type: "GET",
+    //                                    dataType: "json",
+    //                                    contentType: "application/json; chartset=uft-8",
+    //                                    success: function (response2) {
+    //                                        //  debugger
+    //                                        $.each(response.Data, function (key2, value2) {
+    //                                            if (response != null) {
+
+    //                                                if (response.location != null) {
+
+    //                                                    var destinations = response2.destinations
+    //                                                    var location = response2.location
+    //                                                    var k = 0;
+
+    //                                                    var locationlatitude = location.latitude.toString();
+    //                                                    var locationlongitude = location.longitude.toString();
+    //                                                    var latitude = value2.latitude.toString();
+    //                                                    var longitude = value2.longitude.toString();
+
+    //                                                    if (latitude.substr(0, 6) + ',' + longitude.substr(0, 6) ==
+    //                                                        locationlatitude.substr(0, 6) + ',' + locationlongitude.substr(0, 6)) {
+
+    //                                                        for (j = 0; j <= key2; j++) {
+    //                                                            if (value2.userid == response.Data[j].userid) {
+
+    //                                                                //-------------
+    //                                                                var dispatchid2 = response.Data[j].dispatchid;
+    //                                                                var userid2 = response.Data[j].userid
+    //                                                                updatestatus(userid2, dispatchid2, 'ACTIVE');
+
+    //                                                                //-------------
+    //                                                                if (response.Data[j].eta != null && response.Data[j].eta != '' && response.Data[j].scheduledArrivalDate != null
+    //                                                                    && response.Data[j].scheduledArrivalDate != '') {
+
+    //                                                                    var eta = new Date(response.Data[j].eta);
+    //                                                                    var scheduledArrivalDate = new Date(response.Data[j].scheduledArrivalDate);
+    //                                                                    var values = (eta) - (scheduledArrivalDate)
+
+
+    //                                                                    const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+    //                                                                    const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+    //                                                                    const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+    //                                                                    const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+    //                                                                    if (days_ofduration < 0) {
+    //                                                                        updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                                    }
+    //                                                                    else if (hours_ofduration < 0) {
+    //                                                                        updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                                    }
+    //                                                                    else if (minutes_ofduration < 0) {
+    //                                                                        updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                                    }
+    //                                                                    else {
+    //                                                                        updatestatus(value2.userid, value2.dispatchid, 'ON-SITE');
+    //                                                                    }
+
+    //                                                                }
+    //                                                                else {
+    //                                                                    updatestatus(value2.userid, value2.dispatchid, 'ON-SITE');
+    //                                                                }
+
+    //                                                            }
+
+
+    //                                                        }
+
+    //                                                        //   updatestatus(value2.dispatchid, 'ON-SITE');
+
+    //                                                        //    for (j = 0; j <= key; j++) {
+
+    //                                                        if (value2.eta != null && value2.eta != '' && value2.scheduledArrivalDate != null
+    //                                                            && value2.scheduledArrivalDate != '') {
+
+    //                                                            var eta = new Date(value2.eta);
+    //                                                            var scheduledArrivalDate = new Date(value2.scheduledArrivalDate);
+    //                                                            var values = (eta) - (scheduledArrivalDate)
+
+
+    //                                                            const days_ofduration = parseInt((eta - scheduledArrivalDate) / (1000 * 60 * 60 * 24));
+    //                                                            const hours_ofduration = (eta - scheduledArrivalDate) / (1000 * 60 * 60) % 24;
+    //                                                            const minutes_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000 * 60) % 60;
+    //                                                            const seconds_ofduration = (eta.getTime() - scheduledArrivalDate.getTime()) / (1000) % 60;
+
+    //                                                            if (days_ofduration < 0) {
+    //                                                                updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                            }
+    //                                                            else if (hours_ofduration < 0) {
+    //                                                                updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                            }
+    //                                                            else if (minutes_ofduration < 0) {
+    //                                                                updatestatus(value2.userid, value2.dispatchid, 'OVERDUE');
+    //                                                            }
+    //                                                            else {
+    //                                                                updatestatus(value2.userid, value2.dispatchid, 'ON-SITE');
+    //                                                            }
+
+    //                                                        }
+    //                                                        else {
+    //                                                            updatestatus(value2.userid, value2.dispatchid, 'ON-SITE');
+    //                                                        }
+
+
+
+
+    //                                                    }
+    //                                                    else {
+    //                                                        updatestatus(value2.userid, value2.dispatchid, 'ON-ROUTE');
+    //                                                    }
+
+    //                                                }
+
+    //                                                else {
+    //                                                    updatestatus(value2.userid, value2.dispatchid, 'ON-ROUTE');
+    //                                                }
+
+    //                                                //  displayLoading(".content", false);
+    //                                            }
+    //                                            else {
+    //                                                updatestatus(value2.userid, value2.dispatchid, 'ON-ROUTE');
+    //                                            }
+
+    //                                            displayLoading(".content", false);
+    //                                        });
+    //                                        //for (j = 0; j < destinations.length; j++) {
+
+    //                                        //    var locationlatitude = location.latitude.toString();
+    //                                        //    var locationlongitude = location.longitude.toString();
+    //                                        //    //if (destinations[0].destination.latitude.substr(0, 7) + ',' + destinations[0].destination.longitude.substr(0, 7) ==
+    //                                        //    //    locationlatitude.substr(0, 7) + ',' + locationlongitude.substr(0, 7)) {
+    //                                        //    //}
+
+    //                                        //    if (destinations[j].destination.latitude.substr(0, 7) + ',' + destinations[j].destination.longitude.substr(0, 7) ==
+    //                                        //        locationlatitude.substr(0, 7) + ',' + locationlongitude.substr(0, 7)) {
+    //                                        //    }
+
+    //                                        //}
+    //                                        displayLoading(".content", false);
+    //                                        GetStatusCout();
+    //                                        // var gridObj = $('#auctions').data('kendoGrid');
+    //                                        // gridObj.dataSource.read();
+    //                                        // gridObj.refresh();
+    //                                    },
+    //                                    error: function (xhr, status, error) {
+
+    //                                    }
+    //                                });
+
+    //                            }
+
+
+    //                        }
+    //                    });
+    //                }
+
+    //            }
+    //            else {
+    //                $.ajax({
+    //                    url: '/Dispatch/RefreshRoutes',
+    //                    type: 'POST',
+    //                    dataType: "json",
+    //                    contentType: "application/json; chartset=uft-8",
+    //                    success: function (response) {
+    //                        GetStatusCout();
+    //                        //var gridObj = $('#auctions').data('kendoGrid');
+    //                        //gridObj.dataSource.read();
+    //                        //gridObj.refresh();
+    //                    },
+    //                    error: function (xhr, status, error) {
+    //                        planalert(xhr.responseText, "Error");
+    //                    }
+    //                })
+    //            }
+
+    //        },
+    //        error: function (xhr, status, error) {
+    //            planalert(xhr.responseText, "Error");
+    //        }
+    //    })
+    //}
+
+
+    function customNotes(e) {
+        debugger;
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        dishbatchgrdobj = this.dataItem($(e.currentTarget).closest("tr"));
+        //     var subscriptionstatus = dataItem.subscriptionstatus;
+        var _dispatchnotes = dataItem.dispatchnotes;
+        var _userid = dataItem.userid;
+        // var _operatorid = null;
+        // var _activityid = dataItem.activityid;
+
+        $("#hdnCurrentUser").val(_userid);
+
+        var window = $("#DispatchNotesWindow").data("kendoWindow");
+        window.refresh({
+            url: "/Dispatch/LoadDispatchNotes"
+        });
+
+        $("#DispatchNotesWindow").closest(".k-window").css({
+            top: 150,
+            left: 650
+        });
+
+        window.center().open();
+
+    }
+
+
+    function onDashboardDataBound(e) {
+        var grid = this;
+       // debugger;
+        counter = 1;
+        var columns = e.sender.columns;
+        var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "DriverStatus" + "]").index();
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var units = dataItem.get("DriverStatus");
+
+            var cell = row.children().eq(columnIndex);
+            cell.addClass(templateFunction(units));
+        }
+
+    //k-widget k-dropdown
+
+        grid.element.on('Change', '.k-dropdown', function (e) {
+            debugger;
+
+            //debugger;
+            var dataItem = grid.dataItem($(e.target).closest("tr"));
+
+            $("#hdnCurrentUser").val(dataItem.userid);
+
+
+            $.ajax({
+                url: "/Dispatch/Senddispatchrouts_V2",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(dataItem.userid),
+                contentType: "application/json; chartset=uft-8",
+                success: function (response) {
+                    debugger;
+                    if (response == true) {
+                        var gridObj = $('#Dispatch').data('kendoGrid');
+                        gridObj.dataSource.read();
+                        gridObj.refresh();
+                    }
+                    else {
+                        planalert(response, "Error");
+                    }
+
+
+                },
+                error: function (xhr, status, error) {
+                    planalert(xhr.responseText, "Error");
+                }
+            });
+
+
+
+        });
+
+
+    }
+
+
+    function onChange(e) {
+        debugger;
+
+        var uid = '';
+        var selected = $.map(this.select(), function (item) {
+
+            uid = item.dataset.uid;
+            return $(item[1]).text();
+           
+        });
+
+        var grid = $('#auctions').data('kendoGrid');;
+        var currentRow = grid.table.find("tr[data-uid='" + uid + "']");
+        var currentreord = currentRow.children().eq(0).text();
+
+        var _userid = uid;
+        var _dispatchid = currentRow.children().eq(1).text();
+        var _routstatus = currentRow.children().eq(0).text();
+
+        var currentcommandbutton2 = currentRow.find(".ACTIVE");
+
+        var roustatusdetails = {
+            DispatchId: _dispatchid,
+            RouteStatus: _routstatus,
+            userId:_userid
+        }
+    };
+
+
+    function updatestatus(_userid, _dispatchid, _routstatus, _location, _eta) {
+
+        var roustatusdetails = {
+            userId: _userid,
+            DispatchId: _dispatchid,
+            RouteStatus: _routstatus,
+            ETA: _eta,
+            LocationName: _location
+        }
+        // debugger;
+        $.ajax({
+            url: "/Dispatch/UpdateRouterStatus",
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(roustatusdetails),
+            contentType: "application/json; chartset=uft-8",
+            success: function (response) {
+
+                //debugger;
+                //if (response == true) {
+                //    var gridObj = $('#Dispatch').data('kendoGrid');
+                //    gridObj.dataSource.read();
+                //    gridObj.refresh();
+                //}
+                //else {
+                //    planalert(response, "Error");
+                //}
+
+
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+        });
+    }
+
+
+    //function updatestatus(_userid , _dispatchid, _routstatus) {
+
+    //    var roustatusdetails = {
+    //        userId: _userid,
+    //        DispatchId: _dispatchid,
+    //        RouteStatus: _routstatus
+
+    //    }
+    //    debugger;
+    //    $.ajax({
+    //        url: "/Dispatch/UpdateRouterStatus",
+    //        type: "POST",
+    //        dataType: "json",
+    //        data: JSON.stringify(roustatusdetails),
+    //        contentType: "application/json; chartset=uft-8",
+    //        success: function (response) {
+              
+    //            //debugger;
+    //            //if (response == true) {
+    //            //    var gridObj = $('#Dispatch').data('kendoGrid');
+    //            //    gridObj.dataSource.read();
+    //            //    gridObj.refresh();
+    //            //}
+    //            //else {
+    //            //    planalert(response, "Error");
+    //            //}
+
+
+    //        },
+    //        error: function (xhr, status, error) {
+    //            planalert(xhr.responseText, "Error");
+    //        }
+    //    });
+    //}
+
+    function GetStatusCout() {
+
+        $.ajax({
+            url: '/Dispatch/GetDispatchStatusCount',
+            type: 'POST',
+            dataType: "json",
+            contentType: "application/json; chartset=uft-8",
+            success: function (response) {
+             //   debugger;
+              //  $("#ProjectActiveCount").text(response.ACTIVE);
+
+                $("#ProjectActiveCount").text(parseInt(response.ACTIVE) + parseInt(response.ONSITE) + parseInt(response.ONROUTE) + parseInt(response.OVERDUE));
+
+                $("#ProjectInActiveCount").text(response.INACTIVE);
+                $("#ProjectOnSiteCount").text(response.ONSITE);
+                $("#ProjectOnRouteCount").text(response.ONROUTE);
+                $("#ProjectOverDueCount").text(response.OVERDUE);
+
+                var gridObj = $('#auctions').data('kendoGrid');
+                gridObj.dataSource.read();
+                gridObj.refresh();
+
+            },
+        });
+
+    }
+
+    function UpdateDispatch() {
+        /* debugger;*/
+        var dispatchNotes = $("#instructionsNotes").val();
+        var dispatchId = $("#hdnDispatchId").val();
+        var dispatch = {
+            dispatchid: dispatchId,
+            dispatchnotes: dispatchNotes,
+            userid: $("#hdnCurrentUser").val()
+        }
+        var dispatchJson = JSON.stringify(dispatch);
+        $.ajax({
+            url: "/Dispatch/UpdateDispatchNotes",
+            type: "POST",
+            dataType: "json",
+            data: dispatchJson,
+            contentType: "application/json; chartset=uft-8",
+            success: function (response) {
+                //var gridObj = $('#Dispatch').data('kendoGrid');
+                //gridObj.dataSource.read();
+                //gridObj.refresh();
+
+                var window = $("#DispatchNotesWindow").data("kendoWindow");
+                window.close();
+
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+        });
+    }
+</script>
+<script id="templateddl" type="text/kendo-tmpl">
+    @(Html.Kendo().DropDownList()
+        .Name("myDropDown")
+        .DataValueField("StatusId")
+        .DataTextField("StatusName")
+        .BindTo((System.Collections.IEnumerable)ViewData["DispatchStatus"])
+       .ToClientTemplate()
+    )
+</script>
+<!-- Main content -->
+
+<section class="content">
+    <div class="auction-wrapper">
+        <div class="auctiontop" style="margin-top:50px;">
+
+            <div class="topblockactive">
+                <div class="topblockborder">
+                    <div class="topblocktitle2">Active</div>
+                    <div class="topblock-top">
+                        <div class="activecount"><span id="ProjectActiveCount" class="cntSize">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topblockinactive">
+                <div class="topblockborder">
+                    <div class="topblockinactivetitle">InActive</div>
+                    <div class="topblock-top">
+                        <div class="activecount"><span id="ProjectInActiveCount" class="cntSize">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topblockonsite">
+                <div class="topblockborder">
+                    <div class="topblockonsitetitle">On-Site</div>
+                    <div class="topblock-top">
+                        <div class="activecount"><span id="ProjectOnSiteCount" class="cntSize">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topblockonroute">
+                <div class="topblockborder">
+                    <div class="topblockonroutetitle">On-Route</div>
+                    <div class="topblock-top">
+                        <div class="activecount"><span id="ProjectOnRouteCount" class="cntSize">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topblockoverdue">
+                <div class="topblockborder">
+                    <div class="topblockoverduetitle">OverDue</div>
+                    <div class="topblock-top">
+                        <div class="activecount"><span id="ProjectOverDueCount" class="cntSize">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+          
+
+        </div>
+
+        <div class="row">
+         
+            <div class="col-md-12 float-right" style="display: inline-block; padding-left: 0px !important">
+                <div style="padding-bottom:30px">
+                    <button class="btn btn-primary float-right" id="btnRefreshRoutes" onclick="RefreshRoutes()"><i class="fa fa-refresh"></i> Refresh Routes</button>
+                </div>
+
+
+            </div>
+            </div>
+        <div>
+            <div class="auction-bottom">
+                <div class="k-header k-grid-toolbar"><a role="button" class="k-button k-button-icontext2 k-grid-save-changes" href="#">
+                    <span class="k-icon k-i-check"></span>Save changes</a>
+              
+
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.DispatchRoutesViewModel>()
+                .Name("auctions")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.ForeignKey(p => p.routestatus, (System.Collections.IEnumerable)ViewData["DispatchStatus"], "DriverStatus", "StatusName").HtmlAttributes(new { @class = "#= routestatus #" }).Title("Status").Width(80);
+                    //.ClientTemplate("#= routstatus #").Title("Location").Title("Status").Width(80);
+                    columns.Bound(p => p.dispatchid).Hidden(true);
+                    columns.Bound(p => p.userid).Hidden(true);
+
+                    columns.Bound(p => p.username).Title("NAME").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(90);
+                    columns.Bound(p => p.locationname).Title("Location").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(180);
+                    columns.Bound(p => p.wellname).Hidden(true).Title("DESTINATION WELL").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(60);
+
+                    columns.Bound(p => p.rigname).Hidden(true).Title("DESTINATION RIG").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(60);
+                    columns.Bound(p => p.scheduledArrivalDate).Format("{0: yyyy-MM-dd HH:mm}").Title("Scheduled Arrival Date").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(70);
+                    columns.Bound(p => p.eta).Format("{0: yyyy-MM-dd HH:mm}").Title("ETA Date").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(60);
+                    columns.Bound(p => p.dispatchnotes).Hidden(true);
+
+                    columns.Command(command =>
+                    {
+                        command.Custom("Note").Text("<i class='fa fa-pencil-square-o' data-toggle='tooltip' title='Notes' style='font-size:16px;'></i>").Click("customNotes");
+
+
+                        //command.Custom("NOTES").Visible("notesVisible").Text("<i class='fa fa-pencil-square-o' data-toggle='tooltip' title='Notes' style='font-size:16px;'></i>").Click("customNotes");
+
+                    }).Title("NOTES").Width(30);
+
+                })
+                .Sortable(s => s.Enabled(true))
+                 .Editable(editable => editable.Mode(GridEditMode.InCell))
+                 .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .DataSource(dataSource => dataSource.Ajax()
+                         //.Model(model => model.Id(p => p.dispatchid))
+
+                         .Model(model =>
+                         {
+                             model.Id(p => p.dispatchid);
+                             model.Field(p => p.username).Editable(false);
+                             model.Field(p => p.locationname).Editable(false);
+                             //   model.Field(p => p.rigname).Editable(false);
+                             model.Field(p => p.eta).Editable(false);
+
+                         })
+
+                        .Read(read => read.Action("GetDispatchDetails", "Dispatch"))
+                        .PageSize(15)
+                ).Events(ev => ev.DataBound("onDashboardDataBound")
+                //  .Change("onChange"))
+                )
+             .Events(e => { e.Change("onChange"); })
+            )
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<section class="content">
+
+    @(Html.Kendo().Window().Name("DispatchNotesWindow")
+            .Title("Notes")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text><div id="wndContent">Loading...</div></text>)
+            .Actions(actions => actions
+                .Close()
+            )
+            .Draggable(true)
+            .Width(700)
+    )
+
+</section>
+<script>
+
+
+
+
+    function notesVisible(dataItem) {
+        debugger;
+        if (dataItem.userid == "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        RefreshGrid();
+        $(".multidest").kendoSwitch();
+    });
+
+
+
+    function RefreshGrid() {
+        var IntTime = 300000;
+        setInterval(function () {
+            $("#auctions").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+    function CountsRefresh() {
+        $.ajax({
+            url: '/ProjectAuctionsSRV/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('ActiveBidsCount').innerHTML = ResponseData.ActiveBidsCount;
+                document.getElementById('ActiveBidsValue').innerHTML = ResponseData.ActiveBidsValue == 0 ? "$" + 0.00 : "$" + ResponseData.ActiveBidsValue;
+                document.getElementById('AwardedBidsThisMonthCount').innerHTML = ResponseData.AwardedBidsThisMonthCount;
+                document.getElementById('AwardedBidsThisMonthValue').innerHTML = ResponseData.AwardedBidsThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.AwardedBidsThisMonthValue;
+                document.getElementById('ProjectsStartedThisMonthCount').innerHTML = ResponseData.ProjectsStartedThisMonthCount;
+                document.getElementById('ProjectsStartedThisMonthValue').innerHTML = ResponseData.ProjectsStartedThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.ProjectsStartedThisMonthValue;
+            }
+        });
+
+    }
+
+    function funFilterStatusList(values) {
+        var grid = $("#auctions").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        dataSource.filter(
+            {
+                logic: "and",
+                filters: [
+                    { field: "AuctionBidStatusName", operator: "eq", value: values }
+                ]
+            });
+    }
+
+    function UpcomingCounts() {
+        funFilterStatusList("Upcoming");
+    }
+    function ActiveCounts() {
+        funFilterStatusList("Active");
+    }
+    function CompletedCounts() {
+        funFilterStatusList("Completed");
+    }
+
+
+    $(function () {
+
+        var grid = $("#auctions").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        if (sessionStorage.getItem("AwardedBids") === 'Completed') {
+            dataSource.filter(
+                {
+                    logic: "and",
+                    filters: [
+
+                        { field: "AuctionBidStatusName", operator: "eq", value: "Completed" }
+                    ]
+                });
+        } else if (sessionStorage.getItem("OpenBidsCount") === 'Active') {
+            dataSource.filter(
+                {
+                    logic: "and",
+                    filters: [
+                        { field: "AuctionBidStatusName", operator: "eq", value: "Active" }
+                    ]
+                });
+        } else {
+            dataSource.filter({});
+        }
+        sessionStorage.clear();
+    });
+
+
+
+
+    var counter = 1;
+    function templateFunction(units) {
+        switch (units) {
+            case "ACTIVE":
+                return "Active";
+            case "OVERDUE":
+                return "Upcoming";
+            case "ON-ROUTE":
+                return "closed";
+            case "INACTIVE":
+                return "InActive";
+            case "ON-SITE":
+                return "OnSite";
+        }
+    }
+    var counter = 1;
+
+
+
+    function onCancelClick() {
+        window.location.href = "/ProjectAuctionsSRV";
+    }
+
+    function renderNumber(data) {
+        return counter++;
+    }
+
+    var detailsTemplate = kendo.template($("#template").html());
+
+
+
+    function downloadFile(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+
+    }
+
+</script>
+
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= AuctionBidStatusName #</h2>
+        <em>Start on #= kendo.toString(ProjectStartDate, 'MM/dd/yyyy') #</em>
+        <p>TenantID: #= TenantID #</p>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= ProposalId #</h2>
+        <em>Start on #= kendo.toString(AuctionEnd, 'MM/dd/yyyy') #</em>
+        <p>Description: #= Subject #</p>
+
+    </div>
+</script>

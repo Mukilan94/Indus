@@ -1,0 +1,660 @@
+﻿@{
+    ViewData["Title"] = "Billing History";
+    string SubscriptionType = HttpContextAccessor.HttpContext.Session.GetString("subscriptiontype");
+    //if (SubscriptionType != "AdvisorDispatch")
+    //{
+    //    Layout = "~/Views/Shared/_Layout.cshtml";
+    //}
+    //else
+    //{
+    //Layout = "~/Views/Shared/_LayoutAdvisorDispatch.cshtml";
+    //}
+}
+
+
+@*@model WellAI.Advisor.Model.ServiceCompany.Models.BillingInvoiceHistorySRVNewModel*@
+@model WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<section class="content-header">
+    <style>
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            background: #fff;
+            color: #000;
+            border-radius: 10px !important;
+        }
+
+        .Upcoming {
+            background-color: red;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .Active {
+            background-color: #77BD27;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .closed {
+            background-color: #F4AF00;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .InActive {
+            background-color: purple;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .OnSite {
+            background-color: dodgerblue;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+
+        .auction-wrapper {
+            color: #fff;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .auctiontop {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .k-i-filter-clear {
+            color: #007bff !important;
+        }
+
+        .topblockactive, .topblockinactive, .topblockonsite, .topblockonroute, .topblockoverdue {
+            display: inline-block;
+            width: 32%;
+            margin-bottom: 20px;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 10px;
+            border: 4px solid #007BFF;
+        }
+
+        .topblockactive {
+            border: 4px solid #77BD27;
+            margin-left: 2px;
+        }
+
+        .topblockinactive {
+            border: 4px solid purple;
+            margin-left: 10px;
+        }
+
+        .topblockonsite {
+            border: 4px solid #007BFF;
+            margin-left: 10px;
+        }
+
+        .topblockonroute {
+            border: 4px solid #F4AF00;
+            margin-left: 10px;
+        }
+
+        .topblockoverdue {
+            border: 4px solid red;
+            margin-left: 10px;
+        }
+
+        .lastmonthtitle {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .topblocktitle1 {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .topblocktitle2 {
+            margin-bottom: 20px;
+            background-color: #77BD27;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockinactivetitle {
+            margin-bottom: 20px;
+            background-color: purple;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockonsitetitle {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockonroutetitle {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblockoverduetitle {
+            margin-bottom: 20px;
+            background-color: red;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+
+
+        .topblocktitle3 {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .startedcount, .startedvalue {
+            display: inline-block;
+        }
+
+        .startedcount {
+            margin-left: 5px !important;
+        }
+
+        .startedvalue {
+            margin-right: 5px !important;
+        }
+
+            .startedcount > span, .startedvalue > span {
+                display: block;
+                text-transform: uppercase;
+            }
+
+        .topblock-top {
+            margin-top: 20px;
+        }
+
+        .topblock-bottom {
+            border-top: 1px solid grey;
+        }
+
+        .activelastmonthdate {
+            margin-top: 50px;
+        }
+
+        .bgInitiate {
+            background-color: #00B855 !important;
+        }
+
+        .bgPlan {
+            background-color: #3288B7 !important;
+        }
+
+        .bgEvaluate {
+            background-color: #B87033 !important;
+        }
+
+        .allprojectbids {
+            display: inline-block;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .bids-search {
+            margin-left: 25%;
+            margin-bottom: 10px;
+        }
+
+
+            .bids-search .labelchart {
+                display: inline-block;
+            }
+
+        .k-filtercell {
+            border: 1px solid #007BFF;
+        }
+
+        .cntSize {
+            font-size: 2.5rem;
+        }
+
+      /*  .content-wrapper {
+            margin-top: 20px !important;
+        }*/
+    </style>
+    <script>
+        //function onDataBound() {
+        //    var grid = this;
+        //    grid.tbody.find('tr').each(function () {
+        //        var dataItem = grid.dataItem(this);
+
+        //        $(this).addClass('bg' + dataItem.BidStatusName);
+        //    })
+        //}
+
+        function onBidsGridRead(e) {
+        }
+    </script>
+</section>
+@*@(Html.Kendo().Window().Name("Details")
+        .Title("Project Details")
+        .Visible(false)
+        .Content(@<text><div id="wndContent">Loading....</div></text>)
+        .Modal(true)
+        .Draggable(true)
+        .Width(1000)
+    )*@
+
+<script>
+    function onBillighistoryDataBound(e) {
+        counter = 1;
+        var columns = e.sender.columns;
+        var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "DriverStatus" + "]").index();
+
+        //var rows = e.sender.tbody.children();
+        //for (var j = 0; j < rows.length; j++) {
+        //    var row = $(rows[j]);
+        //    var dataItem = e.sender.dataItem(row);
+
+        //    var units = dataItem.get("DriverStatus");
+
+        //    var cell = row.children().eq(columnIndex);
+        //    cell.addClass(templateFunction(units));
+        //}
+    }
+</script>
+@*<script id="templateddl" type="text/kendo-tmpl">
+        @(Html.Kendo().DropDownList()
+            .Name("myDropDown")
+            .DataValueField("StatusId")
+            .DataTextField("StatusName")
+            .BindTo((System.Collections.IEnumerable)ViewData["DispatchStatus"])
+           .ToClientTemplate()
+        )
+    </script>*@
+<!-- Main content -->
+
+<section class="content">
+    <div class="row">
+        <div id="PageHeading" class="col-md-6"><strong><b>Billing History</b></strong></div>
+    </div>
+    <div class="auction-bottom">
+        @*@(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.BillingInvoiceHistorySRVNewModel>()*@
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory>()
+            .Name("Subscription1Grids")
+            //   .ToolBar(tools => tools.Pdf())
+
+            //   .Pdf(pdf => pdf
+            //.AllPages()
+            //.AvoidLinks()
+            //.PaperSize("A4")
+            //.Scale(0.8)
+            //.Margin("2cm", "1cm", "1cm", "1cm")
+            //.Landscape()
+            //.RepeatHeaders()
+            //.TemplateId("page-template")
+            //.FileName("Kendo UI Grid Export.pdf")
+            //.ProxyURL(Url.Action("Pdf_Export_Save", "BillingInvoiceHistorySRVNew"))
+            //   )
+
+            .Columns(columns =>
+            {
+                //columns.Bound(p => p.InvoiceId).Title("ID").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                //columns.Bound(p => p.InvoiceNo).Title("Invoice").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                //columns.Bound(p => p.Product).Title("Package").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                //columns.Bound(p => p.BillDate).Title("Bill Date").Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Width(80);
+                //columns.Bound(p => p.Amount).Title("Amount").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                //columns.Bound(p => p.Paymentmethod).Title("Payment Method").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+
+                columns.Bound(p => p.BillDate).Title("Bill Date").Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Width(80);
+                columns.Bound(p => p.Invoice).Title("ID").Hidden(true).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                columns.Bound(p => p.Invoice).Title("Invoice").Hidden(true).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                columns.Bound(p => p.TransactionID).Title("Transaction ID").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                columns.Bound(p => p.Name).Title("Product").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+
+                columns.Bound(p =>  p.Amount ).ClientTemplate("$#= Amount #").Title("Amount").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                columns.Bound(p => p.PayMethod).Title("Payment Method").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+
+                columns.Command(command =>
+                {
+                    command.Custom("Download").Text("<i class='fa fa-download CustomDownload' style='background-color: #ffff;  font-size:20px; text-align: right;'></i>").Click("customDownload");
+
+
+
+                }).Title("Action").Width(70);
+
+            })
+            //.ToolBar(toolbar => toolbar.Create().Text("Add Billing History"))
+            //.ToolBar(toolbar => toolbar.Save().Text("Save Billing History"))
+            .Filterable()
+            //.Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+            //.Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("Edit Subcription").Window(w => w.Title("Edit Subscription").Width(600)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                 .PageSize(10)
+                 .Sort(sort =>
+                 {
+                     //sort.Add("InvoiceNo").Ascending();
+                     sort.Add("Invoice").Ascending();
+                 })
+                .Read(read => read.Action("GetBillinghistory", "BillingInvoiceHistorySRVNew"))
+            //.Model(model => model.Id(p => p.InvoiceId))
+             .Model(model => model.Id(p => p.Invoice))
+
+            ).Events(e =>
+            {
+                e.DataBound("onBillighistoryDataBound");
+                //e.Save("OnGrigSave");
+                //e.Edit("gridEdit");
+                //e.DataBound("DataBound");
+            })
+            )
+
+    </div>
+
+</section>
+
+<section class="content">
+    @(Html.Kendo().Window().Name("billigpdf")
+    .Title("Reorder Destinations")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1500)
+    .Height(510)
+
+)
+
+</section>
+
+    <script type="text/x-kendo-template" id="template">
+        <div id="details-container">
+            <h2>#= AuctionBidStatusName #</h2>
+            <em>Start on #= kendo.toString(ProjectStartDate, 'MM/dd/yyyy') #</em>
+            <p>TenantID: #= TenantID #</p>
+        </div>
+    </script>
+
+    <script type="text/x-kendo-template" id="template">
+        <div id="details-container">
+            <h2>#= ProposalId #</h2>
+            <em>Start on #= kendo.toString(AuctionEnd, 'MM/dd/yyyy') #</em>
+            <p>Description: #= Subject #</p>
+
+        </div>
+    </script>
+
+
+    <script type="text/javascript">
+
+        function customDownload(e) {
+
+         //   debugger;
+
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            dataItem.tr
+            /*    window.open("https://localhost:5001/BillingInvoiceHistorySRVNew/Pdf", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400");*/
+         //   window.open("https://localhost:5001/BillingInvoiceHistorySRVNew/Pdf?TransactionID=" + dataItem.TransactionID +" ", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+
+           var currLoc = $(location).attr('href');
+            currLoc = currLoc + '/Pdf?TransactionID=' + dataItem.TransactionID;
+            currLoc = currLoc.replace('#', '').replace('"','');
+
+           // window.open(currLoc, "_blank", "toolbar = yes, scrollbars = yes, resizable = yes").trigger();
+
+            var left = (screen.width - 900) / 2;
+            var top = (screen.height -580) / 4;
+            window.open(currLoc, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=" + top +",left=" + left+",width=1000,height=850").trigger();
+
+
+
+           // window.trigger();
+          //  window.open("https://localhost:5001/BillingInvoiceHistorySRVNew/Pdf?TransactionID=" + dataItem.TransactionID + " ", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+          
+           // window.open(currLoc, "_blank", "toolbar = yes, scrollbars = yes, resizable = yes");
+
+         //   window.open(currLoc, "_blank", "toolbar = yes, scrollbars = yes, resizable = yes");
+           // window.focus();
+
+       //     debugger;
+            //$.get("/BillingInvoiceHistorySRVNew/Pdf?invoice=" + dataItem.Invoice + "&billDate=" + dataItem.BillDate, function (pageContent) {
+            //    // $('#pageview').html(pageContent);
+            //   // debugger;
+            //  //  window.open(pageContent, '_blank');
+            //});
+
+
+            @*var url = '@Url.Action("Pdf", "BillingInvoiceHistorySRVNew", new {target="_blank"})';
+            window.location.href = url;*@
+
+         //   $('.k-breadcrumb-link').attr('href', '/BillingInvoiceHistorySRVNew/Pdf?invoice=' + dataItem.Invoice + '&billDate=' + dataItem.BillDate);
+
+
+            //var window_p = $("#billigpdf").data("kendoWindow");
+            //window_p.refresh({
+            //    url: "/BillingInvoiceHistorySRVNew/Pdf?invoice=" + dataItem.Invoice + "&billDate=" + dataItem.BillDate
+            //});
+
+            //$("#billigpdf").closest(".k-window").css({
+            //    top: 150,
+            //    left: 650
+            //});
+            //debugger;
+            //window_p.open();
+
+    //        $.ajax({
+    //type: "POST",
+    ////data: { Employeeid: Employeeidv },
+    //url:  "/BillingInvoiceHistorySRVNew/Pdf?invoice=" + dataItem.Invoice + "&billDate=" + dataItem.BillDate,
+    //success: function (result) {
+    //   //Open url in new window
+    //    window.open("https://localhost:5001/BillingInvoiceHistorySRVNew", "_blank", "height=300,width=300");
+    //            }
+    //        });
+
+            //$.ajax({
+            //    url: "/BillingInvoiceHistorySRVNew/Pdf?invoice=" + dataItem.Invoice + "&billDate=" + dataItem.BillDate,
+            //    type: 'POST',
+            //    dataType: 'json',
+            //    contentType: 'application/json; charset=utf-8',
+            //    success: function (data) {
+
+
+
+            //    }
+            //});
+
+            //kendo.confirm("Are you sure you want to delete this?")
+            //    .done(function () {
+
+            //    })
+            //    .fail(function () {
+            //        return false;
+            //    });
+        }
+
+        $(document).ready(function () {
+
+
+
+
+            setInterval(CountsRefresh, 60000);
+            RefreshGrid();
+            $(".multidest").kendoSwitch();
+        });
+
+        function RefreshGrid() {
+            var IntTime = 300000;
+            setInterval(function () {
+                $("#auctions").data("kendoGrid").dataSource.read();
+            }, IntTime);
+        }
+
+        function CountsRefresh() {
+            $.ajax({
+                url: '/ProjectAuctionsSRV/Counts',
+                type: 'GET',
+                success: function (ResponseData) {
+                    document.getElementById('ActiveBidsCount').innerHTML = ResponseData.ActiveBidsCount;
+                    document.getElementById('ActiveBidsValue').innerHTML = ResponseData.ActiveBidsValue == 0 ? "$" + 0.00 : "$" + ResponseData.ActiveBidsValue;
+                    document.getElementById('AwardedBidsThisMonthCount').innerHTML = ResponseData.AwardedBidsThisMonthCount;
+                    document.getElementById('AwardedBidsThisMonthValue').innerHTML = ResponseData.AwardedBidsThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.AwardedBidsThisMonthValue;
+                    document.getElementById('ProjectsStartedThisMonthCount').innerHTML = ResponseData.ProjectsStartedThisMonthCount;
+                    document.getElementById('ProjectsStartedThisMonthValue').innerHTML = ResponseData.ProjectsStartedThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.ProjectsStartedThisMonthValue;
+                }
+            });
+
+        }
+
+        function funFilterStatusList(values) {
+            var grid = $("#auctions").data("kendoGrid");
+            var dataSource = grid.dataSource;
+            dataSource.filter(
+                {
+                    logic: "and",
+                    filters: [
+                        { field: "AuctionBidStatusName", operator: "eq", value: values }
+                    ]
+                });
+        }
+
+        function UpcomingCounts() {
+            funFilterStatusList("Upcoming");
+        }
+        function ActiveCounts() {
+            funFilterStatusList("Active");
+        }
+        function CompletedCounts() {
+            funFilterStatusList("Completed");
+        }
+
+
+        $(function () {
+
+            var grid = $("#auctions").data("kendoGrid");
+            var dataSource = grid.dataSource;
+            if (sessionStorage.getItem("AwardedBids") === 'Completed') {
+                dataSource.filter(
+                    {
+                        logic: "and",
+                        filters: [
+
+                            { field: "AuctionBidStatusName", operator: "eq", value: "Completed" }
+                        ]
+                    });
+            } else if (sessionStorage.getItem("OpenBidsCount") === 'Active') {
+                dataSource.filter(
+                    {
+                        logic: "and",
+                        filters: [
+                            { field: "AuctionBidStatusName", operator: "eq", value: "Active" }
+                        ]
+                    });
+            } else {
+                dataSource.filter({});
+            }
+            sessionStorage.clear();
+        });
+
+
+
+
+        var counter = 1;
+        function templateFunction(units) {
+            switch (units) {
+                case "ACTIVE":
+                    return "Active";
+                case "OVERDUE":
+                    return "Upcoming";
+                case "ON-ROUTE":
+                    return "closed";
+                case "INACTIVE":
+                    return "InActive";
+                case "ON-SITE":
+                    return "OnSite";
+            }
+        }
+        var counter = 1;
+
+
+
+        function onCancelClick() {
+            window.location.href = "/ProjectAuctionsSRV";
+        }
+
+        function renderNumber(data) {
+            return counter++;
+        }
+
+        var detailsTemplate = kendo.template($("#template").html());
+
+
+
+        function downloadFile(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            var id = dataItem.AttachmentId;
+            window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+
+        }
+
+    </script>

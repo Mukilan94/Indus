@@ -1,0 +1,293 @@
+﻿@{
+    ViewData["Title"] = "Manage Roles";
+}
+@model System.Data.DataTable
+
+    <section class="content-header">
+        <style>
+            li.k-button {
+                color: black;
+                background-color: white;
+            }
+
+            .k-edit-buttons {
+                border-style: none;
+            }
+
+            .k-grid .k-grid-add:hover {
+                color: #fff !important;
+            }
+            .k-grid-content {
+                height: auto !important;
+            }
+            .k-window-content #sidebar .k-edit-label {
+                margin-left: -50px;
+            }
+
+            .k-window-content .k-edit-form-container {
+                width: inherit;
+            }
+
+            .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+                background-color: transparent !important;
+            }
+
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+
+            a.k-button.k-button-icontext.k-grid-Details {
+                border: none;
+            }
+
+            .k-grid-Details .k-button {
+                width: 30px;
+            }
+
+            .k-grid-content {
+                height: auto !important;
+            }
+
+            .k-widget.k-window {
+            }
+
+            span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+                color: #000000 !important;
+                background-color: #ffff !important;
+                width: 100%;
+            }
+
+            .row {
+                padding-top: 3px;
+            }
+
+            #CustomerDetails {
+                font-size: 16px;
+                margin: 15px;
+            }
+            .fa-trash {
+                color: black;
+                font-size: 16px;
+            }
+        </style>
+        <style>
+            #userpermissions .k-grid-header .k-header .verticalText {
+                display: inline-block;
+                white-space: nowrap;
+                transform: translate(0,100%) rotate(-70deg);
+                transform-origin: 0 0;
+                position: absolute;
+                bottom: 10px;
+            }
+
+            .k-link k-state-selected {
+                padding-top: 17px !important;
+            }
+
+            .k-pager-numbers {
+                padding-top: 17px !important;
+            }
+
+            #userpermissions .k-grid-header .k-header {
+                height: 200px !important;
+            }
+
+            #apply {
+                margin-left: 20px;
+            }
+
+            .k-grid .k-button:hover {
+                color: #fff !important;
+            }
+
+            .k-grid-content {
+                height: auto !important;
+                overflow-y: visible !important;
+            }
+            .k-tooltip {
+                border-color: #f31700 !important;
+                color: #ffffff !important;
+                background-color: #f31700 !important;
+            }
+
+            .k-grid-save-changes, .k-grid-save-changes:hover {
+                border-color: #007bff;
+                color: #fff;
+                background-color: #007bff;
+            }
+
+            .k-grid-cancel-changes, .k-grid-cancel-changes:hover {
+                border-color: #007bff;
+                color: white;
+                background-color: #007bff;
+            }
+            .k-grid-cancel, .k-grid-cancel:hover {
+                background-color: #007bff !important;
+            }
+
+            input[type=checkbox], input[type=radio] {
+                box-sizing: border-box;
+                padding: 0;
+                width: 17px;
+                height: 17px;
+            }
+
+            .k-grid-Delete, .k-grid-Delete:hover {
+                background-color: #fff;
+            }
+        </style>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div id="CustomerDetails" class="col-md-6"><strong>Manage Roles</strong></div>
+        </div>
+        @(Html.Kendo().Grid<dynamic>
+        ()
+        .Name("userroles")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Command(command => { command.Custom("Delete").Text("<i class='fa fa-trash' style=font-size:20px></i>").Click("customDelete");}).Title("Action").Width(100);
+            foreach (System.Data.DataColumn column in Model.Columns)
+            {
+                
+                var c = columns.Bound(column.ColumnName);
+
+                if (column.ColumnName == "Id")
+                {
+                    c.Hidden();
+                }
+                else if(column.ColumnName == "Title")
+                {
+                    c.Width(150).Locked(true).Lockable(false);
+                }
+                else
+                {
+                    c.Editable("returnFalse").ClientTemplate("#=getRolePermission(data,'"+column.ColumnName+"')#")
+                    .Width(100).HtmlAttributes(new { style = "text-align: center", title = "" + column.ColumnName + "" })
+                    .ClientHeaderTemplate("<span>" + column.ColumnName + "</span>");
+                }
+            }
+        })
+        .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+        .Sortable(s => s.Enabled(false))
+         .Scrollable(scrollable => scrollable.Virtual(true))
+        .ToolBar(toolbar => {
+            toolbar.Create().Text("Add new role");
+            toolbar.Save().Text("Save changes").HtmlAttributes(new { onclick = "SaveChanges()" });
+        })
+        .Editable(editable => editable.Mode(GridEditMode.InCell))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(10)
+            .Batch(true)
+            .ServerOperation(false)
+            .Model(model => model.Id("Id"))           
+            .Create(update => update.Action("ManageRoles_Create", "Customer", new { tenantId = ViewBag.TenantId }).Data("additionalData"))
+            .Read(read => read.Action("ManageRoles_Read", "Customer", new { tenantId = ViewBag.TenantId }))
+            .Update(update => update.Action("ManageRoles_Update", "Customer", new { tenantId = ViewBag.TenantId }).Data("additionalData"))
+            .Events(ev => ev.RequestEnd("refreshSummary"))
+        ).Events(e=>e.DataBound("RolesDataBound"))
+    )
+        <div class="k-edit-buttons k-state-default">
+            <a role="button" onclick="goBack()" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Back</a>
+        </div>
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                $.extend(true, kendo.ui.validator, {
+                    rules: { 
+                        productnamevalidation: function (input, params) {
+                            if (input.id = "Title" && input.val() == "") {
+                                input.attr("required", true);
+
+                                return false;
+                            }
+
+                            return true;
+                        }
+                    },
+                    messages: { 
+                        productnamevalidation: function (input) {
+                            input.attr("required", true);
+                            return false;
+                        }
+                    }
+                });
+            });
+
+            //Roles Databound for column autofit
+            function RolesDataBound(e) {
+                for (var i = 0; i < this.columns.length; i++) {
+                    this.autoFitColumn(i);
+                }
+            }
+            function goBack() {
+                var id = getUrlParameter('id');
+                window.location.href = "/Customer/customerDetail?id=" + id;
+            }
+            var isChange = false;
+            function refreshSummary() {
+                if (isChange) {
+                    $("#userroles").data("kendoGrid").dataSource.read();
+                    isChange = false;
+                }
+            }
+            function SaveChanges() {
+
+            }
+            function returnFalse() {
+                return false;
+            }
+            function additionalData() {
+                isChange = true;
+                var grid = $("#userroles").data("kendoGrid");
+                console.log(JSON.stringify(grid.dataSource.view()));
+                return {
+                    data: JSON.stringify(grid.dataSource.view())
+                };
+            }
+            function getRolePermission(data, permissionName) {
+                var checkedexpressions = data[permissionName] ? "checked='checked'" : "''";
+                return "<input class='chkbx' type='checkbox' " + checkedexpressions + " />";
+            }
+            function customDelete(e) {
+
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                kendo.confirm("Are you sure want to delete this role?")
+                    .done(function () {
+                        $.ajax({
+                            url: "/Customer/ManageRoles_Destroy?roleId=" + dataItem.Id,
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+                                var grid = $("#userroles").data("kendoGrid");
+                                grid.dataSource.read();
+                            }
+                        });
+                    })
+                    .fail(function () {
+                        return false;
+                    });
+            }
+
+            $(document).ready(function () {
+                $("#userroles .k-grid-content").on("change", "input.chkbx", function (e) {
+                    var grid = $("#userroles").data("kendoGrid"),
+                        dataItem = grid.dataItem($(e.target).closest("tr"));
+                    var td = $(e.target).closest("td");
+                    var compName = td.attr("title");
+                    $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+                    dataItem[compName] = this.checked;
+                    dataItem.dirty = true;
+                });
+            });
+        </script>
+
+    </section>

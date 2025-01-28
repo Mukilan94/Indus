@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title0"] = "Rig Data";
+    ViewData["Title"] = "Well Metrics";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.WellMetricsSRVModel
+
+<section class="content-header">
+    <script>
+        function onSeriesClick(e) {
+            
+               window.location.href = "/WellMetricsSRV/WellMetricsProfile?id=" + e.dataItem.Name;
+    }
+    </script>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid dashboard">
+        <div class="row topblocks">
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Total Wells</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.TotalWells</h1>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Active Wells</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.ActiveWells</h1>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Inactive Wells</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.InactiveWells</h1>
+            </div>
+            <!-- ./col -->
+            <div class="blockstyle">
+                <!-- small box -->
+                <div class="small-box box-shad">
+                    <div class="inner">
+                        <span class="dashboard-total">Wells On Service</span>
+                    </div>
+                </div>
+                <h1 class="dashboard-totalval">@Model.WellsOnService</h1>
+            </div>
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+            <!-- Left col -->
+            <section class="col-lg-6 connectedSortable">
+                <!-- Custom tabs (Charts with tabs)-->
+                <div class="card">
+                    <div class="card-header">
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="demo-section k-content wide">
+                            @(Html.Kendo().Chart(Model.ChartWellData)
+                                .Name("chartwells")
+                                .Title("")
+                                .Legend(legend => legend.Visible(false))
+                                .ChartArea(chartArea => chartArea
+                                    .Background("transparent")
+                                )
+                                .Series(series =>
+                                        {
+                                    series.Column(model => model.Value).ColorField("Color");
+                                })
+                                .CategoryAxis(axis => axis
+                                    .Name("series-axis")
+                                    .Line(line => line.Visible(false))
+                                )
+                                .CategoryAxis(axis => axis
+                                    .Name("label-axis")
+                                    .Categories("Well 1", "Well 2", "Well 3", "Well 4", "Well 5", "Well 6", "Well 7")
+                                )
+                                .ValueAxis(axis => axis
+                                    .Numeric()
+                                    .Min(0).Max(20500).MajorUnit(1500)
+                                    .Reverse(true)
+                                )
+                                .Tooltip(tooltip => tooltip
+                                    .Visible(false)
+                                )
+                                .Events(events => events
+                                        .SeriesClick("onSeriesClick"))
+                            )
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </section>
+            <!-- /.Left col -->
+            <!-- right col (We are only adding the ID to make the widgets sortable)-->
+            <section class="col-lg-6 connectedSortable">
+
+                <!-- Map card -->
+                <div class="card bg-gradient-primary">
+                    <div class="card-header border-0">
+                        <h3 class="card-title"></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="demo-section demo-grid k-content wide">
+                            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.CompanyWellData>()
+                                .Name("wellscompany")
+                                .HtmlAttributes(new { @class = "ra-section" })
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(p => p.Company);
+                                    columns.Bound(p => p.TotalWells).Title("Total Wells");
+                                    columns.Bound(p => p.ActiveWells).Title("Active Wells");
+                                    columns.Bound(p => p.InactiveWells).Title("Inactive Wells");
+                                    columns.Bound(p => p.WellsOnService).Title("Wells on Service");
+                                })
+                                .Sortable(s => s.Enabled(true))
+                                .Scrollable(s => s.Enabled(false))
+                                .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .PageSize(10)
+                                ).BindTo(Model.CompanyWells)
+                            )
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+            </section>
+            <!-- right col -->
+        </div>
+        <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+</section>
+<style>
+    .blockstyle {
+        height: 120px;
+        width: 120px;
+        padding: 0px;
+        display: inline-block;
+        margin: 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .demo-grid {
+        background-color: #007AFC;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .card {
+        background-color: #151d32 !important;
+        color: white;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-totalval {
+        color: #007AFC;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .topblocks {
+        margin-left: 10px;
+    }
+
+    .toptitle {
+        margin-left: 20px;
+        color: #fff;
+    }
+
+    .dashboard-toptitle {
+        margin-bottom: 0px;
+    }
+
+    .dashboard-topdescription {
+        color: #728193;
+        width: 100%;
+    }
+
+    .card-title {
+        margin-bottom: 0px;
+    }
+
+    .demo-section {
+        border: 2px solid #007AFC;
+        border-radius: 5px;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+</style>

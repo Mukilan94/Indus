@@ -1,0 +1,15 @@
+
+
+app.module.ts
+
+
+import { ErrorDialogComponent } from '../app/routes/error-dialog/error-dialog.component';
+import { HttpConfigInterceptor} from './interceptor/httpconfig.interceptor';
+import { ErrorDialogService } from '../app/routes/error-dialog/error-dialog.service';
+
+declarations , ErrorDialogComponent
+entryComponents: [ ErrorDialogComponent
+
+  providers: [
+ ErrorDialogService,
+ { provide: HTTP_INTERCEPTORS, useClass: HttpConfigInterceptor, multi: true },

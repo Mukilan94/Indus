@@ -1,0 +1,341 @@
+﻿@{
+    ViewData["Title0"] = "Dashboard";
+    ViewData["Title"] = "Indepth Rig data";
+}
+
+@model WellAI.Advisor.Model.ServiceCompany.Models.CompanyDepthRigModel
+
+<section class="content-header">
+</section>
+<section class="content">
+    <div class="container-fluid dashboard">
+
+
+        <div class="row">
+
+            <section class="col-lg-6 connectedSortable">
+
+                <div class="card" style="height:100%">
+                    <div class="card-header">
+                        <h3 class="card-title">RIG <span>@Model.continfo.ServiceRigNo</span></h3>
+                        <span class="dashboard-topdescription">Highlight and point on the chart to view more details</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="demo-section k-content wide" id="DepthRigTimeData" style="background:white; border-radius:10px;">
+                            @(Html.Kendo().Chart<WellAI.Advisor.Model.ServiceCompany.Models.RigDepth>()
+                                .Name("DepthTimeChart")
+                                .Title("Depth Time Chart ")
+                                .Legend(legend => legend
+                                    .Position(ChartLegendPosition.Bottom)
+                                )
+                                .DataSource(ds => ds.Read(read => read.Action("RigDepth", "Line_Charts")))
+                                .Series(series =>
+                                        {
+                                    series.Line(model => model.Depth).Name("Rig Depth").CategoryField("Day");
+                                    series.Line(model => model.Premodel).Name("Predective Model").CategoryField("Day");
+                                })
+                                .CategoryAxis(axis => axis
+                                    .Line(line => line.Visible(false))
+                                    .Labels(labels => labels.Rotation(-90))
+                                    .Crosshair(c => c.Visible(true))
+                                )
+                                .ValueAxis(axis => axis
+                                    .Numeric().Labels(labels => labels.Format("{0:N0}"))
+                                    .Line(line => line.Visible(false))
+                                    .MinorGridLines(lines => lines.Visible(true))
+                                    .Reverse(true)
+                                    .AxisCrossingValue(35000)
+                                )
+                                .Tooltip(tooltip => tooltip
+                                    .Visible(true)
+                                    .Shared(true)
+                                    .Format("{0:N0}")
+                                )
+                            )
+
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="col-lg-6 connectedSortable" style="height:100%">
+                <div class="provider-user">
+                    <div class="user-call">
+                        <a href="#"><span class=@(@Model.continfo.ContactUserStatus? "greenpecstatus" : "yellowpecstatus")><i class='fa fa-circle'></i></span></a>
+                    </div>
+                    <div class="user-contacts">
+                        <i class="fa fa-phone"></i>
+                        <i class="fa fa-video-camera"></i>
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                    <div class="user-photoname">
+                        <img class="provider-userphoto" src="~/img/nophotouser.png">
+                        <div class="provider-usercard">
+                            <div class="provider-fullname">@Model.User.FirstName @Model.User.LastName</div>
+                            <div class="provider-jobitle">@Model.continfo.ServiceRigNo</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-12 card">
+                    <div class="card-header">
+                        <h3 class="card-title">Services</h3>
+                        <span class="dashboard-topdescription">Select the information sets from the dropdown menu</span>
+
+                    </div>
+                    <div>
+                        @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.Details>()
+                            .Name("ServiceGrid")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(p => p.UpcommingService).Title("Upcomming Service");
+                                columns.Bound(p => p.Depth).Title("Depth");
+                                columns.Bound(p => p.Day).Title("Day");
+                                columns.Bound(p => p.RFP).Title("RFP");
+                            })
+                            .ToolBar(toolbar =>
+                                    {
+                                toolbar.ClientTemplateId("ServiceGridToolbarTemplate");
+                            })
+                            .Pageable()
+                            .Sortable()
+                            .Scrollable(scr => scr.Height(230))
+                            .DataSource(dataSource => dataSource
+                              .Custom()
+                              .Type("odata")
+                              .PageSize(10)
+                              .Transport(t => t.Read(read => read.Action("Service", "DepthRigTimeChart")))
+                         )
+                            .BindTo(Model.ServiceDetails)
+                        )
+
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg 12">
+                    <br />
+                    <div class="card-header demo-section k-content wide align-items-center" align="right" style="background-color:lightgreen;border-radius:30px;direction: rtl;float:right">
+                        @(Html.Kendo().CheckBox().Name("eq1").Checked(true).Label("MSA STATUS"))
+                    </div>
+                </div>
+                <div class="row col-lg 12">
+                    <div class="col-lg-6 card">
+                        <div class="card-header">
+                            <h3 class="card-title">Avaliable RFP's</h3>
+                        </div>
+                        <div class="blockstyle-full">
+                            <ln>
+                                @(Html.Kendo().Grid< WellAI.Advisor.Model.ServiceCompany.Models.AvaliableRFP >()
+                                    .Name("RFPGrid")
+                                    .Columns(columns =>
+                                    {
+                                        columns.Bound(p => p.RFP).Title("Avaliable RFP's");
+                                    })
+                                    .Scrollable(scr => scr.Height(100))
+                                    .Events(events => events.DetailInit("hideDetailGridHeaders"))
+                                    .DataSource(dataSource => dataSource
+                                        .Ajax()
+                                        .PageSize(5)
+                                        .ServerOperation(false)
+                                     )
+                                    .BindTo(Model.AvaliableRFP)
+                                )
+                            </ln>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 card">
+                        <div class="card-header">
+                            <h3 class="card-title">Submitted Proposals</h3>
+                        </div>
+                        <div class="blockstyle-full">
+
+                            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.SubmittedProposal>()
+                                .Name("ProposalGrid")
+                                .Columns(columns =>
+                                {
+                                    columns.Bound(p => p.Proposals).Title("Submitted Proposals");
+
+                                })
+                                .Scrollable(scr => scr.Height(100))
+                                .Events(events => events.DetailInit("hideDetailGridHeaders"))
+                                .DataSource(dataSource => dataSource
+                                    .Ajax()
+                                    .PageSize(5)
+                                    .ServerOperation(false)
+                                 )
+                                .BindTo(Model.SubmittedProposal)
+                            )
+                        </div>
+                    </div>
+                </div>
+   </section>
+
+        </div>
+
+    </div>
+</section>
+
+<script id="ServiceGridToolbarTemplate" type="text/x-kendo-template">
+    <div class="refreshBtnContainer">
+        <a href="\\#" class="k-pager-refresh k-link k-button k-button-icon" title="Refresh"><span class="k-icon k-i-reload"></span></a>
+    </div>
+    <div class="toolbar">
+        <label class="category-label" for="category">Select the information sets from the dropdown menu:</label>
+        @(Html.Kendo().DropDownList()
+          .Name("Services")
+          .BindTo(new List<string>() {
+              "Upcomming",
+              "Ongoing",
+              "Completed",
+              "Cancalled"
+          })
+         .Events(e => e.Change("categoriesChange"))
+         .HtmlAttributes(new { style = "width: 25%;background-color:white;border-radius:20px" })
+         .ToClientTemplate()
+        )
+
+    </div>
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var grid = $("#ServiceGrid");
+        grid.find(".k-grid-toolbar").on("click", ".k-pager-refresh", function (e) {
+            e.preventDefault();
+            grid.data("kendoGrid").dataSource.read();
+        });
+    });
+
+    function categoriesChange() {
+        var value = this.value(),
+            grid = $("#ServiceGrid").data("kendoGrid");
+
+        if (value) {
+            grid.dataSource.filter({ field: "Status", operator: "eq", value: parseInt(value) });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+</script>
+
+
+<style>
+
+    .chart {
+        width: 180px;
+        display: inline-block;
+        margin-right: 90px;
+        position: relative;
+    }
+</style>
+<style>
+
+    .provider-user span {
+        display: inline-block;
+        text-align: right;
+    }
+
+    .provider-user {
+        width: 330px;
+        height: 95px;
+        float: right;
+        display: block;
+        background-color: #fff;
+        border-radius: 10px;
+        border: 2px #007BFF solid;
+    }
+
+    .provider-userphoto {
+        width: 65px;
+        border-radius: 50px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .user-contacts {
+        float: left;
+    }
+
+    .user-contacts, .user-call {
+        width: 50px;
+        border-right: 2px lightgrey solid;
+        display: inline-block;
+        height: 91px;
+        padding-right: 25px;
+        padding-left: 10px;
+    }
+
+    .user-photoname {
+        display: inline-block;
+        color: #000;
+        float: left;
+        margin-top: 20px;
+        margin-left: 10px;
+    }
+
+    .user-call {
+        float: left;
+    }
+
+        .user-call .fa-circle {
+            color: #03e637;
+            margin-top: 35px;
+            margin-left: 10px;
+        }
+
+    .user-contacts .fa-phone {
+        color: darkblue;
+        height: 25px;
+        margin-top: 10px;
+    }
+
+    .user-contacts .fa-video-camera {
+        color: blue;
+        height: 25px;
+    }
+
+    .user-contacts .fa-envelope {
+        color: #ffd800;
+        height: 25px;
+    }
+
+    .greenpecstatus {
+        color: limegreen;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    .yellowpecstatus {
+        color: orange;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+
+
+    .provider-usercard {
+        display: inline-block;
+    }
+
+    .provider-jobitle {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .provider-location {
+        position: absolute;
+    }
+
+    .innerlocation {
+        width: 150px;
+    }
+</style>

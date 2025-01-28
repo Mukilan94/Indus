@@ -1,0 +1,572 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.AuctionProposalBidDeatilsViewModel
+
+@{
+    ViewData["Title0"] = "Bids ";
+    ViewData["Title"] = "Bid Details";
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+}
+
+<section class="content">
+
+    @if (Model != null)
+    {
+        @using (Html.BeginForm("AddAcuctionBidsBySRV", "ProjectAuctionsSRV", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row k-window-titlebar">
+                <h5 class="col-md-12" style=" text-align: left"> @Model.RigName - @Model.WellName : @Model.JobId</h5>
+                @Html.HiddenFor(x => x.ProposalId)
+                @Html.HiddenFor(x => x.AuctionNumber)
+                @Html.HiddenFor(x => x.BidID)
+                @Html.HiddenFor(x => x.RigName)
+                @Html.HiddenFor(x => x.WellName)
+                @Html.HiddenFor(x => x.JobName)
+            </div>
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.WellName)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.WellName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.RigName)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.RigName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.JobId)
+                                </div>
+                                <div class="col-sm-9">
+                                    @Html.DisplayFor(model => model.JobId)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AuctionStart)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.AuctionStart)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AuctionEnd)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.AuctionEnd)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.ProjectDuration)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.ProjectDuration)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    @Html.LabelFor(model => model.AuctionBidStatusName)
+                                </div>
+                                <div class="col-sm-8">
+                                    @Html.DisplayFor(model => model.AuctionBidStatusName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Summary)
+                                </div>
+                                <div class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Summary)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    @Html.LabelFor(model => model.Body)
+                                </div>
+                                <div class="col-sm-10">
+                                    @Html.Raw(Model.Body)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-4">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.AuctionProposalAttachmentOpeViewModel>()
+                .Name("auctionsFileOpr")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.AttachmentId).Filterable(false).ClientTemplate("#= renderNumber(data) #").Title("#").Width(3);
+                    columns.Bound(p => p.FileName).Filterable(false).Title("Requirements");
+                    columns.Bound(p => p.TenantId).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                          "<a href='" + @Url.Action("DownloadOper", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                          "<a href='javaScript:void(0)' onclick='ViewOpePdfFile(\"#=AttachmentId#\",\"#=TenantId#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                          "#}else{#" +
+                           "<a href='" + @Url.Action("DownloadOper", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                           "#} #"
+                          ).Width(100);                 
+                })
+               .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .HtmlAttributes(new { width = "100%" })
+                .DataSource(dataSource => dataSource.Ajax()
+                        .PageSize(4)
+                        .Read(read => read.Action("GetAuctionProposalOperatorAttachmentByProposalId", "ProjectAuctions", new { proposalId = Model.ProposalId }))
+
+                ))
+                </div>
+
+            </div>
+
+
+
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.BidAmount)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(model => model.BidAmount, new { @type = "number",@min = 0, @id = "txtLoyalty" })
+                            @Html.ValidationMessageFor(model => model.BidAmount)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+
+                        </div>
+                        <div class="col-sm-8">
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row" style="margin-left:0px;margin-right:0px;">
+                <div class="form-group">
+                    <label for="Description">@Html.LabelFor(model => model.BidSummary)</label>
+                    @(Html.Kendo().EditorFor(model => model.BidSummary)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "min-height:250px", required = "required" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+                </div>
+            </div>
+            <div class="row" style="margin-left:0px;margin-right:0px;">
+                <div class="form-group" style="width:100%">
+                    @(Html.Kendo().Upload()
+                                .Name("files")
+                                .Multiple(false)
+                                .HtmlAttributes(new { aria_label = "files"})
+                                )
+                </div>
+                <div id="status"></div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="k-edit-buttons k-state-default">
+                        <button type="submit" onclick="OnClickUpdate()" role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Update</button>
+                        <button type="button" onclick="onClearClick()" role="button" class="k-button k-button-icontext k-grid-clear"><i class="fa fa-undo"></i>Clear</button>
+                        <button type="button" onclick="onCancelClick()" role="button" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Close</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 auction-bottom">
+                    <div class="col-sm-12">
+                        <h3>Bidding History</h3>
+                    </div>
+                    <div class="col-sm-12">
+                        @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidAmountHistoryViewModel>()
+            .Name("auctions2")
+            .HtmlAttributes(new { @class = "ra-section" })
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.Id).Filterable(false).ClientTemplate("#= renderNumber(data) #").Title("#").Width(5);
+                columns.Bound(p => p.BidAmount).Width(150).Filterable(false);
+                columns.Bound(p => p.AuthorId).Filterable(false).Title("Bidder");
+                columns.Bound(p => p.BidDate).Width(200).Filterable(false).Format("{0:MM/dd/yyyy HH:mm}");
+            })
+            .Sortable(s => s.Enabled(true))
+            .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .DataSource(dataSource => dataSource.Ajax()
+                    .PageSize(4)
+            .Read(read => read.Action("GetAuctionBidsAmountHistory", "ProjectAuctionsSRV",new { Bidsid=Model.BidID}))
+
+            )
+            .Events(e => e.DataBound("onDataBound"))
+            )
+                    </div>
+                </div>
+                <div class="col-sm-6 auction-bottom">
+                    <div class="col-sm-12">
+                        <h3>Attachments</h3>
+                    </div>
+                    <div class="col-sm-12">
+                        @(Html.Kendo().Grid(Model.auctionProposalAttachments)
+                    .Name("auctionsFile")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.AttachmentId).Filterable(false).ClientTemplate("#= renderNumber1(data) #").Title("#").Width(3);
+                        columns.Bound(p => p.FileName).Filterable(false);
+                        columns.Bound(p => p.TenantId).Title("Download").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                         "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=AttachmentId#\",\"#=TenantId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                         "#}else{#" +
+                          "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></span></a>" +
+                          "#} #"
+                         ).Width(120);                      
+                    })
+                   .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                    .HtmlAttributes(new { width = "100%" })
+                    .DataSource(dataSource => dataSource.Ajax()
+                            .PageSize(4)
+                            .ServerOperation(false)
+                    ))
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+            <hr />
+
+        }
+    }
+    else
+    {
+        <div class="row k-window-titlebar">
+            <h5 class="col-md-12" style=" text-align: left">Auction Request not found!!</h5>
+        </div>
+    }
+</section>
+
+
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)
+
+
+
+<style>
+    .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+        color: white !important;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+
+    .k-pager-numbers {
+        display: contents !important;
+    }
+
+    .k-editor {
+        border-color: black !important;
+    }
+
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .content {
+        margin: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+
+    .k-grid-Download, .k-grid-Download:hover {
+        background-color: white;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+        padding-top: 5px;
+        margin-top: 0px;
+        height: 35px;
+    }
+
+    .k-widget.k-window {
+        top: 50px !important;
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+
+    .k-edit-label {
+        width: 35%;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .k-edit-form-container {
+        width: 100%
+    }
+
+    .k-edit-field {
+        margin: 7px 0 1rem 0;
+        width: 65%;
+        float: right;
+        clear: right;
+        text-align: center;
+    }
+
+    .k-upload .k-dropzone {
+        border-color: #022f54;
+        color: #ffffff;
+        background-color: #fff;
+    }
+
+
+
+    span.k-dropdown-wrap.k-state-default {
+        background: #fff;
+        color: #000;
+    }
+
+    .row1.row .k-edit-field {
+        text-align: left;
+    }
+
+    .row1 .rowcol .k-edit-label {
+        width: 17%;
+    }
+
+    .row1 .rowcol .k-edit-field {
+        width: 83%;
+    }
+
+    .fa-undo {
+        margin-right: 5px;
+    }
+    #PdfFile {
+        width: auto !important;
+    }
+</style>
+<script>
+    //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewOpePdfFile(MsaId, TenId) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProjectAuctions/GetOpePdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },
+                download: {
+                    url: "/ProjectAuctions/DownloadOper?fileId=" + MsaId + "&TenId=" + TenId,
+                }
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+
+    //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewPdfInPdfViewer(MsaId, TenId,fileName) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(fileName);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProjectAuctions/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },              
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('form').kendoValidator().data("kendoValidator");
+
+        $('.k-button.k-upload-button').addClass('k-primary')
+        $(".k-grid-Download").empty().append("<i class='fa fa-download'></i>");
+
+    });
+    var counter = 1;
+
+    function onDataBound(e) {
+        counter = 1;
+    }
+
+    function renderNumber(data) {
+        return counter++;
+    }
+    var counter1 = 1;
+    function renderNumber1(data) {
+        return counter1++;
+    }
+    function onCancelClick() {
+        window.location.href = "/ProjectAuctionsSRV/";
+    }
+    function onClearClick() {
+        window.location.reload();
+    }
+    function OnClickUpdate() {
+        setTimeout(function () {
+            window.location.href = "/ProjectAuctionsSRV/"
+        }, 3000);
+    }
+
+
+    function downloadFile(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+
+    }
+    function downloadFileAucOper(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/DownloadOper?AttachmentId=' + id;
+
+    }
+    
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtLoyalty").keydown(function (event) {
+            if (event.shiftKey) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+

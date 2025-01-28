@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title0"] = "Rig Data";
+    ViewData["Title"] = "Data Manager";
+}
+@model IEnumerable<WellAI.Advisor.Model.OperatingCompany.Models.WellData>
+
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.WellData>()
+        .Name("welldatamanager")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Rig);
+            columns.Bound(p => p.CementStage);
+            columns.Bound(p => p.ServiceCompany);
+            columns.Bound(p => p.BitDepth);
+            columns.Bound(p => p.HoleDepth);
+            columns.Bound(p => p.Hookload);
+            columns.Bound(p => p.ROP);
+            columns.Bound(p => p.WOB);
+            columns.Bound(p => p.Updated).Format("{0: hh:mm:ss}");
+        })
+        .Sortable(s => s.Enabled(true))
+        .Scrollable(s => s.Enabled(false))
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Menu))
+        .DataSource(dataSource => dataSource
+                .Custom()
+                .Type("odata")
+                .PageSize(10)
+                .ServerPaging(true)
+                .ServerSorting(true)
+                .ServerFiltering(true)
+        ).BindTo(Model)
+    )
+</section>

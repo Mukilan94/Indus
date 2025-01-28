@@ -1,0 +1,150 @@
+﻿<input type="hidden" id="hdnCurrentUser" />
+<div>
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.DispatchRoutesModel>()
+            .Name("DispatchRoutes")
+
+            .HtmlAttributes(new { @class = "ra-section" })
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.username).Title("User").Hidden();
+                columns.Bound(p => p.rigname).Title("Rig").ClientTemplate("#= rigname # #= wellname # #= locationname #").Title("Location");
+                columns.Bound(p => p.dispatchid).Hidden(true);
+                columns.Bound(p => p.dispatchnotes).Hidden(true);
+                columns.Bound(p => p.userid).Hidden(true);
+                columns.Bound(p => p.customer).Title("Customer").Hidden(true);;
+            })
+            //.Pageable(p =>
+            //            p.Info(true)
+            //             .Numeric(false)
+            //             .PreviousNext(false)
+            //        )
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            //.Sortable()
+            //.Filterable()
+            .Selectable()
+            .Resizable(r => r.Columns(true))
+            .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Read(read => read.Action("GetDispatchList", "DispatchSRV",new { userId = ViewBag.UserId }))
+                    //.PageSize(10)
+                    .Model(model => model.Id(p => p.dispatchid))
+            )
+            )@(Html.Kendo().Sortable()
+    .For("#DispatchRoutes")
+    .Filter("table > tbody > tr:not(.k-grouping-row)")
+    .Cursor("move")
+    .HintHandler("noHint")
+    .PlaceholderHandler("placeholder")
+    .ContainerSelector("#Dispatch tbody")
+    .Events(events => events.Change("onChange"))
+    )
+</div>
+<div class="k-edit-buttons k-state-default">
+    <button id="btnSaveOrders" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-save"></span>Update</button>
+    <button id="btnClose" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Grid filter clear
+        debugger;
+        var gridDataSource = $("#DispatchRoutes").data("kendoGrid").dataSource;
+        for (var i = 0; i < gridDataSource.options.fields.length - 1; i++) {
+            gridDataSource.filter({ field: gridDataSource.options.fields[i].field, value: "" });
+        }
+        gridDataSource.filter([]);
+     
+    });
+
+    $(".k-grid-cancel").click(function () {
+        var window = $("#DispatchUserRoutesWindow").data("kendoWindow");
+        window.close();
+    });
+    
+     $(".k-grid-update").click(function () {
+       
+        var dispatchJson = "";
+        UpdateOrders();
+     });      
+     
+function UpdateOrders() {
+    /*debugger;*/
+    var gridObj = $('#DispatchRoutes').data('kendoGrid');
+    
+    var dispatch = $('#DispatchRoutes').data('kendoGrid')._data;
+    var dispatchList = [];
+    var userid = "";
+    routeOrder = 1;
+    var dispatchRoutes = "";
+    var dispatchNew ="";
+   
+    dispatch.forEach(function (value) {
+
+        if (userid != value.userid) {
+            routeOrder = 1
+            userid = value.userid;
+        } else {
+            routeOrder = parseInt(routeOrder) + 1;
+        }
+        var dispatchNew = {
+            routeorder: routeOrder,
+            userid: value.userid,
+            dispatchid: value.dispatchid
+        }        
+
+        dispatchList.push(dispatchNew);
+    });
+
+    var Details = {
+        DispatchRoutesModel: dispatchList
+    }
+
+    dispatchRoutes.DispatchRoutesModel = dispatchList;
+
+    $.when(dispatchJson = JSON.stringify(Details)).done(function (x) {
+      
+        $.ajax({
+            url: "/DispatchSRV/UpdateDispatchRouteOrder",
+            type: "POST",
+            dataType: "json",
+            data: dispatchJson,
+            contentType: "application/json; chartset=uft-8",
+            success: function (response) {
+                
+                var window = $("#DispatchUserRoutesWindow").data("kendoWindow");
+                window.close();
+
+                var gridObj = $('#Dispatch').data('kendoGrid');
+                gridObj.dataSource.read();
+                gridObj.refresh();
+
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+        });
+    });       
+}
+
+</script>
+
+<script>
+    var noHint = $.noop;
+
+    function placeholder(element) {
+        return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+    }
+
+    function onChange(e) {
+    
+        var grid = $("#DispatchRoutes").data("kendoGrid"),
+            skip = grid.dataSource.skip(),
+            oldIndex = e.oldIndex + skip,
+            newIndex = e.newIndex + skip,
+            data = grid.dataSource.data(),
+            dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+        grid.dataSource.remove(dataItem);
+        grid.dataSource.insert(newIndex, dataItem);
+    }
+</script>

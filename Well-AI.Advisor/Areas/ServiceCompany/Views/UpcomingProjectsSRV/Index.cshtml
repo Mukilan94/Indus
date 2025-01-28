@@ -1,0 +1,450 @@
+﻿@{
+        ViewData["Title"] = "Services";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.ProjectDashboardSerViewModel
+
+    <section class="content-header">
+        <style>
+            .k-grid-header .k-header{
+                text-transform: uppercase;
+                font-weight: 900 !important;
+                font-size: 12px !important;
+            }
+            .k-grid-Details, .k-grid-Details:hover {
+                background-color: #fff;
+                border-color: #007BFF;
+                border-radius: 10px;
+            }
+            .k-link k-state-selected {
+                padding-top: 17px !important;
+            }
+            .k-grid-content {
+                height: auto !important;
+            }
+            .k-pager-numbers {
+                padding-top: 17px !important;
+            }
+            .k-window-titlebar {
+                background-color: #007BFF;
+                color: white;
+            }
+            .auction-wrapper {
+                color: #fff;
+            }
+
+            .auctiontop {
+                margin-bottom: 10px;
+                display: flex;
+            }
+
+            .topblock, .topblock1, .topblock2, .topblock4 {
+                display: inline-block;
+                width: 25%;
+                margin-bottom:20px;
+                background-color: #fff;
+                color: #000;
+                text-align: center;
+                border-radius: 10px;
+                border: 4px solid #007BFF;
+            }
+
+            .topblock1 {
+                border: 4px solid #77BD27;
+                margin-left: 2px;
+            }
+
+            .topblock2 {
+                border: 4px solid #F4AF00;
+                margin-left: 32px;
+                margin-right: 32px;
+            }
+
+            .topblock4 {
+                border: 4px solid #ff0d00;
+                margin-left: 32px;
+            }
+
+            .lastmonthtitle {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .topblocktitle1 {
+                margin-bottom: 20px;
+                background-color: #007BFF;
+                color: white;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+            .topblocktitle2 {
+                margin-bottom: 20px;
+                background-color: #77BD27;
+                color: white;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+            .topblocktitle3 {
+                margin-bottom: 20px;
+                background-color: #F4AF00;
+                color: white;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+            .topblocktitle4 {
+                margin-bottom: 20px;
+                background-color: #ff0d00;
+                color: white;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+            .Upcoming {
+                background-color: #007BFF;
+                border-color: white !important;
+                border-width: 4px !important;
+                color: white;
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+               
+            }
+
+            .Active {
+                background-color: #77BD27;
+                border-color: white !important;
+                border-width: 4px !important;
+                color: white;
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+               
+            }
+
+            .Closed {
+                background-color: #F4AF00;
+                border-color: white !important;
+                border-width: 4px !important;
+                color: white;
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+            
+            }
+
+            .Suspended {
+                background-color: #ff0d00;
+                border-color: white !important;
+                border-width: 4px !important;
+                color: white;
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+                
+            }
+            .startedcount, .startedvalue {
+                display: inline-block;
+            }
+            .k-i-filter-clear {
+                color: #007bff !important;
+            }
+            .startedcount {
+                margin-right: 20%;
+            }
+
+            .startedvalue {
+                margin-left: 20%;
+            }
+
+                .startedcount > span, .startedvalue > span {
+                    display: block;
+                    text-transform: uppercase;
+                }
+
+            .topblock-top {
+                margin-top: 20px;
+            }
+
+            .topblock-bottom {
+                border-top: 1px solid grey;
+            }
+
+            .activelastmonthdate {
+                margin-top: 50px;
+            }
+
+            .bgClosed {
+                background-color: #00B855 !important;
+            }
+
+            .bgOpen {
+                background-color: #3288B7 !important;
+            }
+
+            .bgEvaluate {
+                background-color: #B87033 !important;
+            }
+
+            .allprojectbids {
+                display: inline-block;
+                color: #fff;
+                margin-right: 10px;
+            }
+
+            .bids-search {
+                margin-left: 25%;
+                margin-bottom: 10px;
+            }
+
+
+                .bids-search .labelchart {
+                    display: inline-block;
+                }
+
+            .k-filtercell {
+                border: 1px solid #007BFF;
+            }
+            .cntSize {
+                font-size: 2.5rem;
+            }
+
+            .cntMid {
+                text-align: center;
+            }
+        </style>
+    </section>
+<!-- Main content -->
+    <section class="content">
+        <div class="auction-wrapper">
+            <div class="auctiontop">
+
+                <div class="topblock1" onclick="ActiveCounts()">
+                    <div class="topblockborder">
+                        <div class="topblocktitle2">Active</div>
+                        <div class="topblock-top">
+                            <div  class="activecount"><span id="ProjectActiveCount" class="cntSize">@Model.ProjectActiveCount </span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topblock2" onclick="CompletedCounts()">
+                    <div class="topblockborder">
+                        <div class="topblocktitle3">Completed</div>
+                        <div class="topblock-top">
+                            <div  class="activecount"><span id="ProjectsAwardedThisMonthCount" class="cntSize">@Model.ProjectsAwardedThisMonthCount </span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topblock" onclick="UpcomingCounts()">
+                    <div class="topblockborder">
+                        <div class="topblocktitle1">Upcoming</div>
+                        <div class="topblock-top">
+                            <div class="activecount"><span  id="ProjectsStartedThisMonthCount" class="cntSize">@Model.ProjectsStartedThisMonthCount </span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topblock4" onclick="SuspendedCounts()">
+                    <div class="topblockborder">
+                        <div class="topblocktitle4">Suspended</div>
+                        <div class="topblock-top">
+                            <div class="activecount"><span  id="ProjectSuspendedCount" class="cntSize">@Model.ProjectSuspendedCount </span></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="auction-bottom">
+           @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>()
+        .Name("Projects")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ProjectId).ClientTemplate("<a href='" + @Url.Action("ProjectDetails", "UpcomingProjectsSRV", new { id = "#=ProjectId#" }) + "' class='linkstyle'>#=ProjectCode#</a>").Title("Id").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200).Hidden(true);
+            columns.Bound(p => p.ProjectStatusName).Title("Status").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(80) ;
+            columns.Bound(p => p.Job).Title("Service").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(300);
+            columns.Bound(p => p.Depth).Title("Depth").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(70);
+            columns.Bound(p => p.OperatorCompanyName).Title("Operator").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(150);
+            columns.Bound(p => p.RigName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(120);
+            columns.Bound(p => p.WellName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(120);
+            columns.Bound(p => p.ProjectDuration).Format("{0:0.0} Hours").Title("Hours").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Filterable(false).Width(80);
+
+            columns.Bound(p => p.ExpectedStartDate).Title("Date").Format("{0: MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Width(80);
+            columns.Bound(p => p.ModifyDate).Title("Date").Format("{0: MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Hidden(true);
+
+        })
+         .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .Selectable()
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+        .Reorderable(r => r.Columns(true))
+        .Resizable(r => r.Columns(true))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+         .Sort(sort =>
+                   {
+                      sort.Add("ProjectStatus").Ascending();
+                      sort.Add("ModifyDate").Descending();
+                   })
+        .Read(read => read.Action("UpcomingProject_Read", "UpcomingProjectsSRV")))
+        .Events(e =>
+        {
+            e.Change("Grid_OnRowSelect").DataBound("onDataBound");
+        })
+
+        )
+            </div>
+        </div>
+    </section>
+
+@(Html.Kendo().Window().Name("Details")
+    .Title("Project Details")
+    .Visible(false)
+    .Modal(true)
+    .Draggable(true)
+    .Resizable()
+    .Actions(actions => actions
+        .Pin()
+        .Minimize()
+        .Maximize()
+        .Close()
+    )
+    .Events(events => events.Close("close"))
+    .Width(1000)
+)
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= CustomerName #</h2>
+        <em>Start on #= kendo.toString(StartDate, 'MM/dd/yyyy') #</em>
+        <p>Description: #= Description #</p>
+    </div>
+</script>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        RefreshGrid();
+    });
+
+    function CountsRefresh() {
+        $.ajax({
+            url: '/UpcomingProjectsSRV/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('ProjectActiveCount').innerHTML = ResponseData.ProjectActiveCount;
+                document.getElementById('ProjectsAwardedThisMonthCount').innerHTML = ResponseData.ProjectsAwardedThisMonthCount;
+                document.getElementById('ProjectsStartedThisMonthCount').innerHTML = ResponseData.ProjectsStartedThisMonthCount;
+                document.getElementById('ProjectSuspendedCount').innerHTML = ResponseData.ProjectSuspendedCount;
+            }
+        });
+
+    }
+
+
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#Projects").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+
+    var selectedRow = null;
+    function Grid_OnRowSelect(e) {
+        var row = this.select();
+        if (row.length > 0) {
+            selectedRow = e.sender.select();
+            var item = e.sender.dataItem(selectedRow);
+            var id = item.ProjectId;
+            window.location = '/UpcomingProjectsSRV/ProjectDetails?id=' + id;
+        }
+    }
+
+    function funFilterCheckList(values) {
+        var grid = $("#Projects").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        dataSource.filter(
+            {
+                logic: "and",
+                filters: [
+                    { field: "ProjectStatusName", operator: "eq", value: values }
+                ]
+            });
+    }
+
+    function UpcomingCounts() {
+        funFilterCheckList("Upcoming");
+    }
+    function ActiveCounts() {
+        funFilterCheckList("Active");
+    }
+    function SuspendedCounts() {
+        funFilterCheckList("Suspended");
+    }
+    function CompletedCounts() {
+        funFilterCheckList("Completed");
+    }
+
+   
+    var counter = 1;
+    function templateFunction(units) {
+        switch (units) {
+            case "Active":
+                return "Active";
+            case "Upcoming":
+                return "Upcoming";
+            case "Completed":
+                return "Closed";
+            case "Suspended":
+                return "Suspended";
+        }
+    }
+    function onDataBound(e) {
+        counter = 1;
+        var columns = e.sender.columns;
+        var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "ProjectStatusName" + "]").index();
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var units = dataItem.get("ProjectStatusName");
+
+            var cell = row.children().eq(columnIndex);
+            cell.addClass(templateFunction(units));
+        }
+    }
+
+    var detailsTemplate = kendo.template($("#template").html());
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+
+    function close() {
+        $("#undo").fadeIn(300);
+    }
+    $(document).ready(function () {
+        $("#undo").bind("click", function () {
+            $("#window").data("kendoWindow").open();
+            $("#undo").hide();
+        });
+    });
+
+</script>

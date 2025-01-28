@@ -1,0 +1,161 @@
+﻿@{
+    ViewData["Title0"] = "Technician Tracker";
+    ViewData["Title"] = "Technician Tracker";
+}
+@model IEnumerable<WellAI.Advisor.Model.OperatingCompany.Models.Technician>
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="leftpart">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ServiceVehicleViewModel>()
+        .Name("chathistory")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ProjectName).ClientTemplate("<a href='javascript:void(0);' onclick='getLatLngOfVehicle(\"#=Samaaraid#\")' class='linkstyle'>#=ProjectName#</a>");
+            columns.Bound(p => p.TechnicianName);
+            columns.Bound(p => p.Id).Hidden(true);
+            columns.Bound(p => p.Samaaraid).Hidden(true);
+        })
+        .Pageable()
+        .Sortable()
+        .Filterable()
+        .Reorderable(r => r.Columns(true))
+        .Resizable(r => r.Columns(true))
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("GetActiveTechnicianAndProjectByTenantId", "TechnicianTracker").Data("onBidsGridRead"))
+                .PageSize(10)
+                .Model(model => model.Id(p => p.Id))
+        ))
+    </div>
+    <div class="rightpart">
+        @(Html.Kendo().Map()
+        .Name("map")
+        .Center(30.268107, -97.744821)
+        .Zoom(10)
+        .Layers(layers =>
+        {
+            layers.Add()
+                .Type(MapLayerType.Tile)
+                .UrlTemplate("http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png")
+                .Subdomains("a", "b", "c")
+                .Attribution("&copy; <a href='http://osm.org/copyright'>OpenStreetMap contributors</a>");
+        }))
+    </div>
+</section>
+<style>
+    .k-map {
+        height: 600px !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+    .k-pager-numbers {
+        display: contents !important;
+    }
+    div.k-loading-mask {
+        z-index: 3; /* must be larger than the z-index:2 of #container */
+    }
+    .chathisttitle {
+        color: #ffffff;
+    }
+    .leftpart {
+        width: 29%;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .rightpart {
+        width: 70%;
+        display: inline-block;
+    }
+    .content {
+    }
+    .km-widget {
+        border: 4px solid #007BFF;
+        border-radius: 10px;
+    }
+    .k-pager-numbers {
+        padding-top:0px;
+        display:contents !important;
+    }
+    .k-pos-left {
+        right: 0;
+        left: unset;
+    }
+    .k-pos-top {
+        top: unset;
+        bottom: 10px;
+    }
+</style>
+<script>
+    // Map Code Start
+    var sidv = '';
+    function getLatLngOfVehicle(sid) {
+        displayLoading("#map", true);
+        $.ajax({
+            url: "/TechnicianTracker/getLatLngOfVehicle?Id=" + sid,
+            type: 'Get',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                sidv = sid;
+                displayLoading("#map", false);
+                createMap(data.latitude, data.longitude, data.reverseGeo.formattedLocation);
+            }
+        });
+    }
+function createMap(Lat, Long, content) {
+        $("#map").kendoMap({
+            center: [Lat, Long],
+            zoom: 14,
+            layers: [{
+                type: "tile",
+                urlTemplate: "http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png",
+                subdomains: ["a", "b", "c"],
+                attribution: "&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
+            }],
+            markers: [{
+                location: [Lat, Long],
+                shape: "pinTarget",
+                tooltip: {
+                    content: content
+                }
+            }]
+        });
+    }
+    function onClick(e) {
+        var map = $("#map").data("kendoMap");
+        var loc = map.eventToLocation(e);
+        map.center(loc);
+        map.markers.add({ location: loc });
+    }
+    function updateControls() {
+        var map = $("#map").data("kendoMap");
+        var center = map.center();
+    }
+    //Map End coding
+    function onBidsGridRead(e) {
+    }
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+</script>

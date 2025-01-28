@@ -1,0 +1,468 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.CrmModelSRVContact
+@using System.Collections.Generic;
+@using Kendo.Mvc.UI
+
+<div class="row">
+    <div class="col-md-12 errors"></div>
+</div>
+
+<div class="k-edit-form-container" id="wrapper">
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.FirstName, "First Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.FirstName, new { @Class = "k-textbox", required = "required", @maxlength = "400", validationmessage = "The First Name field is required" })
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.LastName, "Last Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.LastName, new { @Class = "k-textbox", required = "required", @maxlength = "400", validationmessage = "The Last Name field is required" })
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Title, "Title")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Title, new { @Class = "k-textbox", required = "required", @maxlength = "400" })
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+        </div>
+    </div>
+    <div class="row" style="width: 97%;">
+        <div class="col-md-1.5" style="padding-left:2%;">
+            <div class="k-edit-label" style="width:100%">
+                @Html.LabelFor(model => model.FirstName, "Address 1")
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-edit-field" style="width:98%; float:none;padding-left:3%;">
+                @Html.TextBoxFor(model => model.Address1, new { @Class = "k-textbox", @maxlength = "2000", @left = "-49%", @width = "100%" })
+                @Html.ValidationMessageFor(model => model.Address1)
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-edit-label" style="width:80%;padding-left:3%">
+                @Html.LabelFor(model => model.Address2, "Address 2")
+            </div>
+        </div>
+        <div class="col-md-4" style="left:-14%">
+            <div class="k-edit-field" style="float:none;width:77%">
+                @Html.TextBoxFor(model => model.Address2, new { @Class = "k-textbox", @maxlength = "2000", @left = "-49%" })
+            </div>
+        </div>
+    </div>
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.City, "City")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.City, new { @Class = "k-textbox", @maxlength = "400" })
+                @Html.ValidationMessageFor(model => model.City)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.StateRegion, "State")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.StateRegion, new { @Class = "k-textbox", @maxlength = "400" })
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.PostalCode, "PostalCode")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.PostalCode, new { @Class = "k-textbox", @id = "txtpostal", @maxlength = "40" })
+                @Html.ValidationMessageFor(model => model.PostalCode)
+            </div>
+        </div>
+    </div>
+    <div class="row3">
+        <div class="rowcol">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Phone, "Phone")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Phone, new { @Class = "k-textbox", @id = "txtphone", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.Phone)
+            </div>
+        </div>
+        <div class="rowcol2">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.MobilePhone, "Mobile")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.MobilePhone, new { @Class = "k-textbox", @id = "txtmobile", @maxlength = "100" })
+            </div>
+        </div>
+        <div class="rowcol3">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Fax, "Fax")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Fax, new { @Class = "k-textbox", @id="txtfax", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.Fax)
+            </div>
+        </div>
+    </div>
+    <div class="row3" style="width: 97%;">
+        <div class="">
+            <div class="k-edit-label" style="width:11%;">
+                @Html.LabelFor(model => model.Email, "Email")
+            </div>
+        </div>
+        <div class="rowcol">
+            <div class="k-edit-field" style="float:none;padding-left:1%;width:69%">
+                @Html.TextBoxFor(model => model.Email, new { @Class = "k-textbox", @maxlength = "200" })
+                @Html.ValidationMessageFor(model => model.Email)
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+
+    });
+
+</script>
+
+<style>
+    .k-dropdown, .k-dropdown:hover {
+        width: 100%;
+        display: inline-block !important;
+    }
+
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            border-color: #011627;
+            color: black;
+            background-color: white !important;
+        }
+
+    .k-edit-form-container {
+        width: inherit;
+        min-width: 400px;
+        border-color: inherit;
+        position: relative;
+    }
+
+    .k-window-content, .k-prompt-container {
+        overflow: hidden !important;
+    }
+
+    .k-multiselect {
+        width: 270px !important;
+        height: 100px;
+        overflow: auto;
+    }
+
+    .k-datepicker .k-picker-wrap .k-select {
+        border: 0px;
+        background-color: #fff;
+        color: #000;
+    }
+
+    #SelectedRoles {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .row1 {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .row3 .rowcol3, .row3 .rowcol33 {
+        float: right;
+        width: 30%;
+        display: inline-block;
+    }
+
+    .row3 .rowcol35 {
+        width: 14%;
+        display: inline-block;
+        margin-left: 70px;
+    }
+
+        .row3 .rowcol35 .k-edit-field, .row3 .rowcol36 .k-edit-field {
+            width: 50%;
+        }
+
+    .row3 .rowcol36 {
+        width: 11%;
+        display: inline-block;
+    }
+
+        .row3 .rowcol36 #Field {
+            vertical-align: bottom;
+        }
+
+    .row3 .rowcol1 .k-edit-label, .row2 .rowcol1 .k-edit-label {
+        text-align: left;
+    }
+
+    .row3 .rowcol, .row3 .rowcol1, .row3 .rowcol2 {
+        display: inline-block;
+        width: 34%;
+    }
+
+    .row1 .rowcol .k-edit-label {
+        width: 8%;
+    }
+
+    .row1 .rowcol {
+        width: 100%;
+    }
+
+    .row3 .rowcol33 {
+        width: 32%;
+    }
+
+        .row3 .rowcol33 .k-edit-label {
+            width: 20%;
+        }
+
+        .row3 .rowcol33 .k-edit-field {
+            width: 70%;
+        }
+
+    .row1 .rowcol .k-edit-label > label {
+        float: left;
+    }
+
+    .row1 .rowcol .k-edit-field {
+        width: 89%;
+    }
+
+    .row3 .rowcol2 .k-edit-label {
+        line-height: 20px;
+        margin-bottom: 7px;
+        text-align: right;
+    }
+
+    .row2 .rowcol, .row2 .rowcol1 {
+        display: inline-block;
+        width: 49%;
+    }
+
+        .row2 .rowcol .k-edit-field {
+            margin-right: -10px;
+        }
+
+    .row3 .rowcol {
+        display: inline-block;
+        width: 30%;
+        margin-right: 20px;
+    }
+
+        .row3 .rowcol .k-edit-label {
+            text-align: left;
+        }
+
+    .row2 .rowcol1 .k-edit-label {
+        width: 10%;
+    }
+
+    .row2 .rowcol1 .k-edit-field {
+        width: 77%;
+    }
+
+    .row3 .rowcol2 .middle {
+        margin-bottom: 20px !important;
+    }
+
+    #MiddleName {
+        margin-bottom: 7px;
+    }
+
+    #Email, #JobTitle, #Address {
+        margin-left: -5px;
+    }
+
+    .roleswrap {
+        height: 0px;
+    }
+
+    .k-grid-cancel {
+        border-color: #023259;
+        color: #ffffff;
+        background-color: #000102
+    }
+
+    #IsPrimary {
+        margin-top: 23px;
+    }
+
+    #AdditionalNotes {
+        margin-left: -5px;
+    }
+
+    .notes {
+        width: 33% !important;
+    }
+
+    .radiogroup label {
+        display: block;
+    }
+
+    .radiogroup {
+        width: 100px;
+        margin-left: 20px;
+        margin-top: -14px;
+    }
+
+    .row3 .radios {
+        width: 20%;
+        margin-left: 95px;
+    }
+
+        .row3 .radios .k-edit-label {
+            width: 70px;
+        }
+
+    .row3 .wells {
+        width: 37%;
+    }
+
+        .row3 .wells .k-edit-label {
+            width: 18%;
+        }
+
+        .row3 .wells .k-edit-field {
+            width: 77%;
+        }
+
+    #SelectedWells {
+        visibility: hidden;
+        height: 0px;
+        width: 0px;
+        padding: 0px;
+        margin: 0px;
+        border: 0px;
+    }
+
+    #wrappers {
+        overflow: hidden;
+    }
+
+    .subsriptupgrade {
+        font-size: 20px;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtpostal").keydown(function (event) {
+            if (event.shiftKey) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtmobile").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtfax").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>

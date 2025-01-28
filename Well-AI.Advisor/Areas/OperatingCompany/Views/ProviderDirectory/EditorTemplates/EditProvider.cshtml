@@ -1,0 +1,245 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.OperatingCompany.Models.ProviderProfile
+@{
+    ViewData["Title"] = "Add Service Provider";
+    var companydata = (List<WellAI.Advisor.Model.OperatingCompany.Models.ProviderCompany>)ViewData["Companies"];
+    var statusdata = (List<SelectListItem>)ViewData["Statuses"];
+    var approvedata = (List<SelectListItem>)ViewData["Approvals"];
+    var pecdata = (List<SelectListItem>)ViewData["PEC"];
+    var msadata = (List<WellAI.Advisor.Model.OperatingCompany.Models.MSA>)ViewData["msa"];
+}
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+       
+           $(".k-grid-cancel").click(function () {
+                $('#providers').data('kendoGrid').dataSource.read().then(function () {
+                    $('#providers').data('kendoGrid').refresh();
+                });
+           });
+
+        $(".k-grid-update").click(function () {
+            setTimeout(function () {
+                $('#providers').data('kendoGrid').dataSource.read().then(function () {
+                    $('#providers').data('kendoGrid').refresh();
+                });
+            },5000)         
+        });
+        var valcompany = $("#CompanyId").val();
+        $("#ddlCompany").data("kendoDropDownList").value(valcompany);
+        var valmsa = $("#MSADocumentId").val();
+        $("#ddlMSA").data("kendoDropDownList").value(valmsa);
+        var Insurance = $("#InsuranceId").val();
+        $("#Insurance").data("kendoDropDownList").value(Insurance);
+        var prefval = $("#Preferred").val();
+        console.log(prefval);
+        if (prefval == "true") {
+            $("#switchpref").data("kendoSwitch").toggle();
+            $(".prefswitch .k-switch-label-on").show();
+            $(".prefswitch .k-switch-label-off").hide();
+        }
+        else {
+            $(".prefswitch .k-switch-label-on").hide();
+            $(".prefswitch .k-switch-label-off").show();
+        }
+        var secval = $("#Secondary").val();
+        if (secval == "true") {
+            $("#switchsec").data("kendoSwitch").toggle();
+            $(".secswitch .k-switch-label-on").show();
+            $(".secswitch .k-switch-label-off").hide();
+        }
+        else {
+            $(".secswitch .k-switch-label-on").hide();
+            $(".secswitch .k-switch-label-off").show();
+        }
+    });
+
+</script>
+<div class="k-edit-form-container" id="wrapper">
+    <div id="content">
+        <div class="row"><div class="col-md-12 errors"></div></div>
+        <div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.CompanyId, "Service Company")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.CompanyId)
+            </div>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlCompany")
+                .DataValueField("CompanyId")
+                .DataTextField("Name")
+                .Enable(false).AutoBind(false)
+                .Events(e => e.Change("companyChange"))
+                .BindTo(companydata)
+            )
+        </div>
+        @*<div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.Approval, "Approval")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.ApprovalId)
+            </div>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlApproval")
+                .DataValueField("Value")
+                .DataTextField("Text")
+                .Events(e => e.Change("approvalChange"))
+                .BindTo(approvedata)
+            )
+        </div>
+        <div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.Status, "Status")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.StatusId)
+            </div>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlStatus")
+                .DataValueField("Value")
+                .DataTextField("Text")
+                .Events(e => e.Change("statusChange"))
+                .BindTo(statusdata)
+            )
+        </div>*@
+        @*<div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.PecStatus, "PEC")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.PecStatusId)
+            </div>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlPEC")
+                .DataValueField("Value")
+                .DataTextField("Text")
+                .Events(e => e.Change("pecChange"))
+                .BindTo(pecdata)
+            )
+        </div>*@
+        <div class="k-edit-label lbl">
+            @Html.LabelFor(model => model.MSADocument, "MSA Document")
+        </div>
+        <div class="k-edit-field edt">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.MSADocumentId)
+            </div>
+            <script>
+                function filterMSA() {
+                    return {
+                        CompanyId: $("#ddlCompany").val()
+                    };
+                }
+                function filterInsurance() {
+                    return {
+                        CompanyId: $("#ddlCompany").val()
+                    };
+                }
+            </script>
+            @(Html.Kendo().DropDownList()
+                .Name("ddlMSA")
+                .DataValueField("MsaId")
+                .DataTextField("Attachment")
+                .Events(e => e.Change("msaChange"))
+                .DataSource(ds => ds
+                    .Read(r => r.Action("ProviderDirectoryMSA_Read", "ProviderDirectory").Data("filterMSA")).ServerFiltering(true))
+                .AutoBind(false)
+            )
+        </div>
+        <div class="k-edit-label">         
+            @Html.LabelFor(model => model.InsuranceId, "Insurance Document")
+        </div>
+        <div class="k-edit-field">
+            <div style="height:0px;">
+                @Html.Kendo().MaskedTextBoxFor(model => model.InsuranceId)
+            </div>
+
+            @(Html.Kendo().DropDownList()
+                .Name("Insurance")
+                .DataValueField("InsId")
+                .DataTextField("Attachment")
+                .Events(e => e.Change("InsuranceChange"))
+                .DataSource(ds => ds
+                    .Read(r => r.Action("Insurance_Read", "ProviderDirectory").Data("filterInsurance")).ServerFiltering(true))
+                .AutoBind(false)
+           )
+        </div>
+        @*<div class="k-edit-label">
+            @Html.LabelFor(model => model.InsuranceStart, "Insurance start")
+        </div>
+        <div class="k-edit-field">
+            @Html.Kendo().DatePickerFor(model => model.InsuranceStart).HtmlAttributes(new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.InsuranceStart)
+        </div>*@
+        <div class="k-edit-label">
+            @Html.LabelFor(model => model.InsuranceExpire, "Insurance expire")
+        </div>
+        <div class="k-edit-field">
+            @Html.Kendo().DatePickerFor(model => model.InsuranceExpire).HtmlAttributes(new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.InsuranceExpire)
+        </div>
+
+
+        <!--Phase II Changes - Added Preferred Status Label-->
+        @*<div class="k-edit-label">
+            @Html.LabelFor(model => model.PreferredStatus, "Vendor Status")
+        </div>
+        <div class="k-edit-field">
+            @Html.Kendo().TextBoxFor(model => model.PreferredStatus).HtmlAttributes(new { @class = "k-label", @readonly = "readonly" })
+        </div>*@
+        <!--Phase II Changes - Preferred status will change based on MSA change-->
+        @*<div class="k-edit-label">
+            @Html.LabelFor(model => model.Preferred, "Preferred?")
+        </div>*@
+        @*<div class="k-edit-field prefswitch">
+            <div class="hidwrap">
+                @Html.Kendo().MaskedTextBoxFor(model => model.Preferred)
+            </div>
+            @(Html.Kendo().Switch()
+                      .Name("switchpref").Enabled(true)
+                      .Messages(c => c.Checked("YES").Unchecked("NO"))
+                      .Events(ev => ev.Change("preferredChange"))
+            )
+            @Html.ValidationMessageFor(model => model.Preferred)
+        </div>*@
+        @*<div class="k-edit-label">
+            @Html.LabelFor(model => model.Secondary, "Secondary?")
+        </div>*@
+        @*<div class="k-edit-field secswitch">
+            <div class="hidwrap">
+                @Html.Kendo().MaskedTextBoxFor(model => model.Secondary)
+            </div>
+            @(Html.Kendo().Switch()
+                      .Name("switchsec").Enabled(true)
+                      .Messages(c => c.Checked("YES").Unchecked("NO"))
+                      .Events(ev => ev.Change("secondaryChange"))
+            )
+            @Html.ValidationMessageFor(model => model.Secondary)
+        </div>*@
+    </div>
+    </div>
+<style>
+    .k-numerictextbox, #CompanyId, #ApprovalId, #StatusId, #PecStatusId, #Preferred, #Secondary, #MSADocumentId, .hidwrap{
+        height:0px;
+        visibility:hidden;
+        width:0px !important;
+        border:0;
+        padding:0;
+        margin:0;
+    }
+    .k-dropdown .k-dropdown-wrap{
+        background-color:#fff;
+        color:#000;
+        border-color:#80808054;
+    }
+    .k-edit-form-container{
+        width:100%;
+    }
+    .k-switch-off .k-switch-container{
+        background-color:#c1c2c3 !important;
+    }
+    .k-calendar .k-header{
+        background-color:#007BFF;
+    }
+</style>

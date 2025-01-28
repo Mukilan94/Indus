@@ -1,0 +1,514 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.CrmModelSRV
+@using System.Collections.Generic;
+@using Kendo.Mvc.UI
+
+<div class="row">
+    <div class="col-md-12 errors">
+
+    </div>
+</div>
+
+<div class="k-edit-form-container" id="wrapper">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Name, "Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Name, new { @Class = "k-textbox", required = "required", @maxlength = "200", @width = "100%" })
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label" >
+                @Html.LabelFor(model => model.Address1, "Address 1")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Address1, new { @Class = "k-textbox", @maxlength = "2000", @width = "100%" })
+                @Html.ValidationMessageFor(model => model.Address1)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Address2, "Address 2")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Address2, new { @Class = "k-textbox", @maxlength = "2000" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.City, "City")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.City, new { @Class = "k-textbox", @maxlength = "400" })
+                @Html.ValidationMessageFor(model => model.City)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.StateRegion, "State")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.StateRegion, new { @Class = "k-textbox", @maxlength = "400" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.PostalCode, "ZIP")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.PostalCode, new { @Class = "k-textbox", @id = "txtpostal", @maxlength = "40" })
+                @Html.ValidationMessageFor(model => model.PostalCode)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Phone, "Phone")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Phone, new { @Class = "k-textbox", @id = "txtphone", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.Phone)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Fax, "Fax")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Fax, new { @Class = "k-textbox", @id = "txtfax", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.Fax)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Email, "Email")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Email, new { @Class = "k-textbox", @type = "Email" })
+                @Html.ValidationMessageFor(model => model.Email)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="k-edit-label">
+                @Html.LabelFor(m => m.Website, "Website")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(m => m.Website, new { @Class = "k-textbox", @maxlength = "500" })
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+    $(document).ready(function () {
+
+
+        $(".k-grid-update").click(function () {
+            setTimeout(function () {
+                $('#CompanyGrid').data('kendoGrid').dataSource.read().then(function () {
+                    $('#CompanyGrid').data('kendoGrid').refresh();
+                });
+            }, 2000);
+        });
+
+    });
+</script>
+
+
+<style>
+    .k-multiselect {
+        width: 270px !important;
+        height: 100px;
+        overflow: auto;
+    }
+
+    .k-window-content {
+        overflow: hidden !important;
+    }
+
+    #SelectedRoles {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .row1 {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .row3 .rowcol3, .row3 .rowcol33 {
+        float: right;
+        width: 30%;
+        display: inline-block;
+    }
+
+    .row3 .rowcol35 {
+        width: 14%;
+        display: inline-block;
+        margin-left: 70px;
+    }
+
+        .row3 .rowcol35 .k-edit-field, .row3 .rowcol36 .k-edit-field {
+            width: 50%;
+        }
+
+    .row3 .rowcol36 {
+        width: 11%;
+        display: inline-block;
+    }
+
+        .row3 .rowcol36 #Field {
+            vertical-align: bottom;
+        }
+
+    .row3 .rowcol1 .k-edit-label, .row2 .rowcol1 .k-edit-label {
+        text-align: left;
+    }
+
+    .row3 .rowcol, .row3 .rowcol1, .row3 .rowcol2 {
+        display: inline-block;
+        width: 34%;
+    }
+
+    .row1 .rowcol .k-edit-label {
+        width: 8%;
+    }
+
+    .row1 .rowcol {
+        width: 100%;
+    }
+
+    .row3 .rowcol33 {
+        width: 32%;
+    }
+
+        .row3 .rowcol33 .k-edit-label {
+            width: 20%;
+        }
+
+        .row3 .rowcol33 .k-edit-field {
+            width: 70%;
+        }
+
+    .row1 .rowcol .k-edit-label > label {
+        float: left;
+    }
+
+    .row1 .rowcol .k-edit-field {
+        width: 89%;
+    }
+
+    .row3 .rowcol2 .k-edit-label {
+        line-height: 20px;
+        margin-bottom: 7px;
+        text-align: right;
+    }
+
+    .row2 .rowcol, .row2 .rowcol1 {
+        display: inline-block;
+        width: 49%;
+    }
+
+        .row2 .rowcol .k-edit-field {
+            margin-right: -10px;
+        }
+
+    .row3 .rowcol {
+        display: inline-block;
+        width: 30%;
+        margin-right: 20px;
+    }
+
+        .row3 .rowcol .k-edit-label {
+            text-align: left;
+        }
+
+    .row2 .rowcol1 .k-edit-label {
+        width: 10%;
+    }
+
+    .row2 .rowcol1 .k-edit-field {
+        width: 77%;
+    }
+
+    .row3 .rowcol2 .middle {
+        margin-bottom: 20px !important;
+    }
+
+    #MiddleName {
+        margin-bottom: 7px;
+    }
+    .roleswrap {
+        height: 0px;
+    }
+
+    .k-grid-cancel {
+        border-color: #023259;
+        color: #ffffff;
+        background-color: #000102
+    }
+
+    #IsPrimary {
+        margin-top: 23px;
+    }
+
+    #AdditionalNotes {
+        margin-left: -5px;
+    }
+
+    .notes {
+        width: 33% !important;
+    }
+
+    .radiogroup label {
+        display: block;
+    }
+
+    .radiogroup {
+        width: 100px;
+        margin-left: 20px;
+        margin-top: -14px;
+    }
+
+    .row3 .radios {
+        width: 20%;
+        margin-left: 95px;
+    }
+
+        .row3 .radios .k-edit-label {
+            width: 70px;
+        }
+
+    .row3 .wells {
+        width: 37%;
+    }
+
+        .row3 .wells .k-edit-label {
+            width: 18%;
+        }
+
+        .row3 .wells .k-edit-field {
+            width: 77%;
+        }
+
+    #SelectedWells {
+        visibility: hidden;
+        height: 0px;
+        width: 0px;
+        padding: 0px;
+        margin: 0px;
+        border: 0px;
+    }
+
+    #wrappers {
+        overflow: hidden;
+    }
+
+    .subsriptupgrade {
+        font-size: 20px;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtpostal").keydown(function (event) {
+            if (event.shiftKey) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtfax").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<div class="row">
+        <div class="col-md-2">Name</div>
+        <div class="col-md-6">
+            @Html.TextBoxFor(model => model.Name, new { id = "name", style = "width:100%" })
+            @Html.ValidationMessageFor(model => model.Name)
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Address1)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Address1, new { id = "Address1", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Address2)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Address2, new { id = "Address2", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.City)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.City, new { id = "City", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.StateRegion)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.StateRegion, new { id = "StateRegion", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.PostalCode)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.PostalCode, new { id = "PostalCode", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Phone)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Phone, new { id = "Phone", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.MobilePhone)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.MobilePhone, new { id = "MobilePhone", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Fax)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Fax, new { id = "Fax", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Email)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Email, new { id = "Email", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">@Html.LabelFor(m => m.Website)</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.Website, new { id = "Website", style = "width:100%" })
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+

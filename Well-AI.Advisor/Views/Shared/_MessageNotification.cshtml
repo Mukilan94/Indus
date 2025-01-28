@@ -1,0 +1,407 @@
+﻿@using WellAI.Advisor.DLL.Data;
+@model IEnumerable<WellAI.Advisor.DLL.Entity.MessageQueue>
+@{
+    int i = 0;
+    int modelcnt = Model.Count();
+}
+
+<head>
+    <style>
+        #AdvisorLogo {
+            padding: 4px 5px 14px 39px;
+        }
+        .content-wrapper {
+            margin-top: 50px !important;
+        }
+        #footerText {
+            padding: 4px 5px 0PX 39px;
+        }
+        .k-pager-numbers-wrap .k-dropdown {
+            display: none;
+        }
+        .nav-profile-wrapper > .navbar-nav {
+            flex-direction: row !important;
+        }
+        .user-menu {
+            width: 280px;
+        }
+        .wellslistlayout {
+            border-width: 0px !important;
+        }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            color: black;
+            font-size: 10px;
+        }
+        .nav-left-company {
+            display: inline;
+            margin-right: 10px;
+        }
+        /*------------- #NOTIFICATION --------------*/
+        .notification-list {
+            margin-bottom: 0;
+        }
+        .notification-list li {
+                padding: 10px 20px 10px 20px;
+                border-bottom: 1px solid #e6ecf5;
+                display: block;
+                position: relative;
+                transition: all .3s ease;
+                line-height: 25px;
+            }
+        .notification-list .notification-list li > * {
+                margin-bottom: 0;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        .notification-list .notification-list li:hover {
+                background-color: #fafbfd;
+            }
+        .notification-list .notification-list li:hover {
+                opacity: 1;
+            }
+
+        .notification-list .notification-list li.un-read {
+                background-color: #f7f9fc;
+            }
+        .notification-list .selectize-dropdown-content > *.un-read .notification-icon, .notification-list li.un-read .notification-icon {
+                color: #9da2c1;
+                fill: #9da2c1;
+            }
+        .notification-list .selectize-dropdown-content > * {
+                cursor: pointer;
+            }
+        .notification-list .selectize-dropdown-content > *:last-child {
+                    border-bottom: none;
+                }
+        .notification-list .notification-friend {
+                display: inline-block;
+            }
+        .notification-list .more {
+                position: absolute;
+                right: 10px;
+                top: 5px;
+                font-size: 10px;
+                color: #d6d9e6;
+                opacity: 0;
+            }
+        .notification-list .more i + i {
+                    margin-left: 5px;
+                }
+        .notification-list .more svg + i {
+                    margin-left: 5px;
+                }
+        .notification-list .more i + svg {
+                    margin-left: 5px;
+                }
+        .notification-list .more svg + svg {
+                    margin-left: 5px;
+                }
+        .notification-list.chat-message {
+                background-color: transparent;
+            }
+        .notification-friend {
+            margin-bottom: 0;
+        }
+        .friend-requests .notification-icon {
+            margin-top: 0;
+        }
+        .friend-requests .notification-friend {
+            display: block;
+        }
+        .friend-requests .accepted .notification-friend {
+            display: inline-block;
+        }
+        .friend-requests .accepted .notification-link {
+            color: #00b7ff;
+        }
+        .friend-requests .accepted .notification-icon {
+            margin-top: 10px;
+        }
+        .friend-requests .chat-message-item {
+            font-size: 12px;
+        }
+        .chat-message-item-duration {
+            font-size: 10px;
+            color: #0B0B0B;
+        }
+        .notification {
+            width: 300px;
+            max-height: 590px;
+            overflow-y: auto;
+        }
+        .logo-img {
+            height: 45px;
+            width: auto !important;
+            object-fit: contain !important;
+        }
+        .sidebar-toggle:before {
+            content: url('../img/logohumb.png');
+            display: block;
+        }
+        .sidebar-toggle {
+            float: left;
+            background-color: transparent;
+            background-image: none;
+            padding-top: -3px;
+            font-family: fontAwesome;
+        }
+        .CmpLogo {
+            height: 45px;
+            margin-top: -10px;
+            width: 200px;
+            padding: 5px;
+            margin-left: 10px;
+            object-fit: contain;
+        }
+        .mySelect {
+            padding: .2em 0;
+            font-size: 1em;
+        }
+        .notification-event{
+            cursor:pointer !important;
+        }
+    </style>
+
+    <style>
+        .dropbtn {
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            border: none;
+            cursor: default;
+        }
+        .dropbtn:hover, .dropbtn:focus {
+                    }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+        min-width: 160px;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            max-height: 300px;
+        }
+        .dropdown-content a {
+                color: black;
+                padding: 10px 24px;
+                text-decoration: none;
+                display: block;
+            }
+        .dropdown a:hover {
+            background-color: #ddd;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="notification-click" class="">
+        <ul class="notification-list friend-requests" style="padding:0">
+            @foreach (var item in Model)
+            {
+                @if (item.Type != 0 && (item.Type == 5 || item.Type == 3))
+                {
+                    if (i == Convert.ToInt32(modelcnt))
+                    {
+                        <li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+                            <div class="notification-event">
+                                <a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+                                <span class="chat-message-item">@item.TaskName</span>&nbsp;
+                                <span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+                            <div class="notification-event">
+                                <a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+                                <span class="chat-message-item">@item.TaskName</span>&nbsp;
+                                <span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+                            </div>
+                        </li>
+                    }
+                }
+                else if (item.Type != 0 && item.Type != 5 && item.Type != 3 && item.Type != 9 && item.Type != 10)
+                {
+                    if (i == Convert.ToInt32(modelcnt))
+                    {
+                        <li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+                            <div class="notification-event">
+                                <a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+                                <span class="chat-message-item"> @item.TaskName</span>&nbsp;
+                                <span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+                            <div class="notification-event">
+                                <a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+                                <span class="chat-message-item"> @item.TaskName</span>&nbsp;
+                                <span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+                            </div>
+                        </li>
+                    }
+                }
+                else if (item.Type == 9 || item.Type == 10)
+                {
+                    <li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+                        <div class="notification-event">
+                            <a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+                            <span class="chat-message-item"> @item.TaskName</span>&nbsp;
+                        </div>
+                    </li>
+                }
+                i = i + 1;
+            }
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript">
+		$('.notification-list li').click(function () {
+		var item = $(this);
+		var messageQueueId = $(this).attr('id').substr($(this).attr('id').indexOf('_') + 1);
+		$.ajax({
+			url: '/Identity/Account/Login?handler=UpdateNotificationStatus',
+			type: 'GET',
+			data: { MessageQueueId: messageQueueId },
+			contentType: 'application/json; charset=utf-8',
+			beforeSend: function (xhr) {
+				$(".loadingimg").show();
+				xhr.setRequestHeader("XSRF-TOKEN",
+					$('input:hidden[name="__RequestVerificationToken"]').val());
+			},
+			success: function (data) {
+				if (data) {
+					console.log(data);
+					var MessageCount = data.messageValue /*+ ' Notifications'*/;
+                    $('#messageCount').text(MessageCount);
+					var taskType = item.data('type');
+					if (taskType == 2) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/SupportTickets/TicketDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/SupportTicketsSRV/TicketDetail?id=" + ticketId;
+						}
+                    }
+                    else if (taskType == 3) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/ProjectAuctions/AddUpdateAuctionsProposalDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/ProjectAuctionsSRV/AuctionBidContent?id=" + ticketId;
+						}
+					}
+					else if (taskType == 4) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+                            window.location.href ="/InDepthRigData/Index?wellId=" + ticketId;
+						}
+						else {
+							window.location.href = "/InDepthRigDataSrv/Index?wellId=" + ticketId;
+						}
+					}
+					else if (taskType == 5) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/ProjectAuctions/AddUpdateAuctionsProposalDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/ProjectAuctionsSRV/AuctionBidContent?id=" + ticketId;
+						}
+					}
+					else if (taskType == 6) {
+                        var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+                            window.location.href = "/UpcomingProjects/ProjectDetails?id=" + ticketId;
+						}
+						else {
+                            window.location.href = "/UpcomingProjectsSRV/ProjectDetails?id=" + ticketId;
+						}
+					}
+					else if (taskType == 1) {
+                        var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+                            window.location.href = "/communication";
+						}
+						else {
+                            window.location.href = "/communicationSRV";
+						}
+                    }
+                        //Well AI Phase II changes 02/01/2021 - Navigation for MSA Document review
+                    else if (taskType == 7) {
+                        var ProviderId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+                            window.location.href = "/ProviderDirectory/ProviderProfile?id=" + ProviderId ;
+                        }
+                        else if (userType == 1) {
+                            window.location.href = "/OperatingDirectory/OperatorProfile?id=" + ProviderId;
+                        }
+                    }
+                    else if (taskType == 8) {
+                        var ProviderId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 1) {
+                            window.location.href = "/DocumentManagerSRV";
+						}
+                    }
+                    else if (taskType == 9) {
+                        var ProviderId = item.data('entiyid');
+                        var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+                        if (userType == 0 && ProviderId != "") {
+                            window.location.href = "/ChecklistTemplate/Details?CheckListId=" + ProviderId;
+                        } else {
+                            window.location.href = "/ChecklistTemplate";
+                        }
+                    }
+                    else if (taskType == 10) {
+                        var ProviderId = item.data('entiyid');
+                        console.log("ProviderId :" + ProviderId);
+                        var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+                        if (userType == 0 && ProviderId != null) {
+                            window.location.href = "/DrillingPlan/DrillPlanDetails?DrillingPlanId=" + ProviderId;
+                        } else {
+                            window.location.href = "/DrillingPlan/Index";
+                        }
+                    }
+
+
+				}
+			}
+		});
+    });
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById('notification-click');
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (modal.style.display = "block") {
+            document.getElementById("divmessagemenu").style.display = "none";
+            modal.style.display = "none";
+        }
+    }
+</script>

@@ -1,0 +1,303 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.DispatchViewModel
+
+<div class="row">
+    <div class="col-md-6">
+        <div style="display:inline-block">
+            @Html.Label("Search By")
+            <div class="radiogroup" style="display:inline-block">
+                <label><input type="radio" name="radio1" value="API" checked onclick="onSearchOptionClick()"> API</label>
+                <label><input type="radio" name="radio1" value="Name" onclick="onSearchOptionClick()"> Well Name</label>
+                <label><input type="radio" name="radio1" value="Rig" onclick="onSearchOptionClick()"> Rig Name</label>
+            </div>
+        </div>
+
+        <div>
+            @Html.Label("Destination Lookup")
+        </div>
+
+    </div>
+    <div class="col-md-6" >
+        <div class="k-edit-field col-md-12 spancols"style="margin-bottom: 30px; "></div>
+            @Html.Label("Destination Address")
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-field" id="divApiSearch" style="display:block">
+                @(Html.Kendo().AutoComplete()
+                 .Name("numAPI")
+                      .DataTextField("api_number")
+                      .Filter("contains")
+                      .MinLength(5)
+                      .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                      .DataSource(source => {
+                          source
+                              .Read(read =>
+                              {
+                                  read.Action("GetWellDetailsByApiNumber", "DispatchSRV")
+                                  .Data("onFilter");
+                              })
+                              .ServerFiltering(true);
+                      })
+                      .FooterTemplate("Total #: instance.dataSource.total() # items found")
+                       .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                      .Height(400)
+                      .Template("#= api_number # |  #= name # ")
+                        .Events(e =>
+                        {
+                            e.Select("onApiNumSelect").Change("onApiNumChange");
+                        }).Placeholder("Search will begin when input 5 letters")
+                    )
+            </div>
+            <div class="k-edit-field" id="divRigSearch" style="display:none">
+                @(Html.Kendo().AutoComplete()
+                 .Name("rigNameSearch")
+                      .DataTextField("name")
+                      .Filter("contains")
+                      .MinLength(3)
+                      .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                      .DataSource(source => {
+                          source
+                              .Read(read =>
+                              {
+                                  read.Action("GetRigDetailsByName", "DispatchSRV")
+                                  .Data("onRigFilter");
+                              })
+                              .ServerFiltering(true);
+                      })
+                      .FooterTemplate("Total #: instance.dataSource.total() # items found")
+                       .HtmlAttributes(new { style = "width:100%;text-transform:uppercase !important;" })
+                      .Height(400)
+                      .Template("#= rig # ")
+                        .Events(e =>
+                        {
+                            e.Select("onRigNameSelect").Change("onRigNameChange");
+                        }).Placeholder("Search will begin when input 3 letters")
+                    )
+            </div>
+            <div class="k-edit-field">
+                @Html.Kendo().TextBox().Name("customer").Placeholder("Customer").HtmlAttributes(new { @maxlength = "100" })
+            </div>
+            <div class="k-edit-field col-md-12 spancols">
+                <span class="col-md-4 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("api").Placeholder("API").HtmlAttributes(new { @maxlength = "10"})
+                </span>
+                <span class="col-md-7 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("wellName").Placeholder("Well Name").HtmlAttributes(new { @maxlength = "100"})
+                </span>
+                 @Html.Hidden("wellId")
+            </div>
+            <div class="k-edit-field ">
+                @Html.Kendo().TextBox().Name("rigName").Placeholder("Rig Name").HtmlAttributes(new { @maxlength = "100"})
+                @Html.Hidden("rigId")
+            </div>
+        </div>
+        <div class="col-md-6 ">
+            <div class="k-edit-field">
+                @Html.Kendo().TextBox().Name("locationname").Placeholder("Location").HtmlAttributes(new { @maxlength = "100"})
+            </div>
+            <div class="k-edit-field">
+                @Html.Kendo().TextBox().Name("address").Placeholder("Address").HtmlAttributes(new { @maxlength = "100"})
+            </div>
+            <div class="k-edit-field col-md-12 spancols">
+                <span class="col-md-5 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("city").Placeholder("City").HtmlAttributes(new { @maxlength = "50"})
+                </span>
+                <span class="col-md-3 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("state").Placeholder("State").HtmlAttributes(new { @maxlength = "50" })
+                </span>
+                <span class="col-md-3 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("zip").Placeholder("Zip").HtmlAttributes(new { @maxlength = "5"})
+                </span>
+            </div>
+            <div class="k-edit-field col-md-12 spancols">
+                <span class="col-md-6 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("latitude").Placeholder("Latitude")
+                </span>
+                <span class="col-md-5 spancols" style="display:inline-block;">
+                    @Html.Kendo().TextBox().Name("longitude").Placeholder("Longitude")
+                </span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            @Html.Label("Dispatch Instructions / Notes")
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-12 spancols">
+              
+                @Html.TextArea("instructions", "", new { @class = "k-textbox", style = "width: 100%; height: 150px; text-transform:uppercase !important;",  maxlength="500" })
+            </div>
+        </div>
+    </div>
+
+<!--//.Events(e => e.Change("OnChange")))-->
+<div class="k-edit-buttons k-state-default">
+    <button id="btnSaveDispatchUser" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-save"></span>Assign Dispatch</button>
+    <button id="btnCloseDispatch" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+<style type="text/css">
+
+    .textarea { 
+        height: 100px; 
+    }
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+    .k-edit-field{
+        width:100%;
+    }
+    .spancols{
+        padding-left:0px;
+        padding-right:0px;
+    }
+    .k-textbox, .k-input.k-textbox, .k-textarea{
+        width:unset;
+    }
+    .upper {
+        text-transform: uppercase !important;
+    }
+    .k-window  div.k-window-content
+     {
+        overflow: hidden;
+     }
+    .k-textbox > input {
+        text-transform: uppercase;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+       
+         var userId = $("#hdnCurrentUser").val();
+          $.ajax({
+            url: '/DispatchSRV/GetActiveUserNotes?userId=' + userId,
+            type: 'GET',
+            dataType: "json",
+            contentType: "application/json; chartset=uft-8",
+            success: function (response, textStatus, jqXHR) { 
+               
+                $("#hdnDispatchNotes").val(response.data);
+                $("#instructions").val($("#hdnDispatchNotes").val());
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+          });
+
+        $(document).on("keyup", "#latitude", function () {
+            $("#latitude").val($("#latitude").val().replace(/[^0-9^.-\s]/gi, '').replace(/[_\s]/g, '').toLowerCase());
+        });
+
+        $(document).on("keyup", "#longitude", function () {
+            $("#longitude").val($("#longitude").val().replace(/[^0-9^.-\s]/gi, '').replace(/[_\s]/g, '').toLowerCase());
+        });
+    });
+
+    
+
+    $(".k-grid-cancel").click(function () {
+        var window = $("#DispatchAssignWindow").data("kendoWindow");
+        window.close();
+    });
+
+    function getDispatchJson(){
+
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var todateDate = year + '-' + month + '-' + day;
+
+
+        var currentuser = $("#hdnCurrentUser").val();
+        var location = $("#locationname").val();
+        var address = $("#address").val();
+        var city = $("#city").val();
+        var state = $("#state").val();
+        var zip = $("#zip").val();
+        var latitude = $("#latitude").val();
+        var longitude = $("#longitude").val();
+        var notes = $("#instructions").val();
+        var customer = $("#customer").val();
+        var api = $("#api").val();
+        var wellName = $("#wellName").val();
+        var rigName = $("#rigName").val();
+        var wellId = $("#wellId").val();
+        var rigId = $("#rigId").val();
+         var dispatch = {
+            createddate: todateDate,
+            locationname: location,
+            customer: customer,
+            address: address,
+            city: city,
+            state: state,
+            zip: zip,
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+            dispatchnotes: notes,
+            dispatchid: "",
+            userid: currentuser,
+            api: api,
+            wellname: wellName,
+            rigname: rigName,
+            wellid: wellId,
+            rigid: rigId
+        };
+        return JSON.stringify(dispatch);
+    }
+
+    $(".k-grid-update").click(function () {
+       
+        var dispatchJson = "";
+
+        if ($("#customer").val() == undefined || $("#customer").val() == "") {
+            planalert("Please enter the Customer name");
+            return false;
+        }
+        if (location == "" && address == "") {
+            if ($("#latitude").val() == undefined || $("#latitude").val() == "") {
+                planalert("Please enter the latitude");
+                return false;
+            }
+        }
+        if (location == "" && address == "") {
+            if ($("#longitude").val() == undefined || $("#longitude").val() == "") {
+                planalert("Please enter the longitude");
+                return false;
+            }
+        }
+        //if ($("#instructions").val() == undefined || $("#instructions").val() == "") {
+        //    planalert("Please enter the Dispatch instructions");
+        //    return false;
+        //}
+
+        $.when(dispatchJson = getDispatchJson()).done(function (x) {            
+            $.ajax({
+                url: "/DispatchSRV/AddNewDispatch",
+                type: "POST",
+                dataType: "json",
+                data: dispatchJson,
+                contentType: "application/json; chartset=uft-8",               
+                success: function (response) {
+                    var gridObj = $('#Dispatch').data('kendoGrid');
+                    gridObj.dataSource.read();
+                    gridObj.refresh();
+
+                    var window = $("#DispatchAssignWindow").data("kendoWindow");
+                    window.close();
+
+                },
+                error: function (xhr, status, error) {
+                    planalert(xhr.responseText, "Error");
+                }
+        });
+
+
+        });            
+         
+    });
+   
+</script>

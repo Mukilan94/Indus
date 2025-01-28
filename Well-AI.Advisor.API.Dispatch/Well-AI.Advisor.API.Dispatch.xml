@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Well-AI.Advisor.API.Dispatch</name>
+    </assembly>
+    <members>
+        <member name="T:WellAI.Advisor.API.Dispatch.Models.UserProfile">
+            <summary>
+            Service Company User Profile for Dispatch
+            </summary>
+        </member>
+    </members>
+</doc>

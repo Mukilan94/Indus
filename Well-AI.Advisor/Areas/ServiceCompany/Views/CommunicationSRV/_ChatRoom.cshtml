@@ -1,0 +1,21 @@
+﻿@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.ChatRoomModel>
+    <ul class="k-list">
+        @foreach (var item in Model)
+        {
+            @if (item.LastChatDate != "")
+            {
+        <li class="k-item" role="option"  id="li_@item.UserId" aria-selected="false" onclick="GetTwilioUserChannel('@item.UserName', '@item.CompanyName','@item.Email', '@item.Phone');">
+            <span class="k-state-default">
+                <span class="timechat">@item.LastChatDate</span>
+            </span>
+            <div class="k-state-default">
+                <div class="chatuser">@item.UserRoomName</div>
+                <div class="chatjobtitle">@item.LastChatMessage</div>
+            </div>
+            <span class="k-state-default">
+                <i class="chatcls fa fa-trash" onclick="LeaveTwilioChatRoom('@item.Email','@item.UserId');"></i>
+            </span>
+        </li>
+            }
+        }
+    </ul>

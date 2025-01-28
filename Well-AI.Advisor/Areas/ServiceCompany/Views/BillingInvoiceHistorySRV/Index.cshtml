@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Billing History";
+}
+@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.ServiceBillingHistory>
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.BillingHistory>()
+        .Name("billhistory")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Invoice).Title("Invoice#").Width(200);
+            columns.Bound(p => p.Name).Title("Product");
+            columns.Bound(p => p.BillDate).Title("Bill Date").Format("{0: MM/dd/yyyy}").Width(100);
+            columns.Bound(p => p.Amount).Title("Amount").Format("{0:c}").Width(100);
+            columns.Bound(p => p.PayMethod).Title("Payment Method");
+        })
+         .Pageable(p =>
+            p.Info(true)
+            .Numeric(false)
+            .PreviousNext(false)
+        )
+        .Groupable(false)
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .Sortable(s => s.Enabled(true))
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Model(model => model.Id(p => p.ID))
+                .Read(read => read.Action("BillingHistory_Read", "BillingInvoiceHistorySRV"))
+        )
+    )
+</section>
+<script>
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#billhistory").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+</script>
+<style>
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+</style>

@@ -1,0 +1,346 @@
+﻿<h2 style="text-align:center">Your Package is Updated Successfully</h2>
+<div class="row">
+    <div class="form-fields-wrapper row">
+        <div class="col-md-12">
+            <div class="row" style="font-size:large">
+                <div class="col-md-12 form-field">
+                </div>
+            </div>
+        </div>
+        <table id="maintable" class="table table-responsive table-hover">
+            <thead id="tablehead">
+                <tr id="header" style="display:block">
+                    <th style="width:170px;">Package</th>
+                    <th style="min-width: 170px; text-align: center">No.of.<label id="lblUnitTypes" style="height: 11px"></label> </th>
+                    <th style="min-width: 170px; text-align: center">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="trDispatch1" style="display:none">
+                    <td style="width:170px;">Dispatch</td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblDispatchCount"></label></td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblDispatchTotal1" value="lblDispatchTotal"></label></td>
+                </tr>
+                <tr id="trProvider1" style="display:none">
+                    <td style="width:170px;">Provider</td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblProviderCount"></label></td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblProviderTotal1" value="lblProviderTotal"></label></td>
+                </tr>
+                <tr id="trOperator1" style="display:none">
+                    <td style="width:170px;">Operator</td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblOperatorCount"></label></td>
+                    <td style="min-width: 170px; text-align: center"> <label id="lblOperatorTotal1" value="lblOperatorTotal"></label></td>
+                </tr>
+                <tr id="Total" style="display:block">
+                    <td style="width:170px;">Total</td>
+                    <td style="min-width: 291px; text-align: right"><label id="lblOTotal"></label></td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <div class="col-lg-12" style="font-size:medium">
+            <label class="text-lg-left">Starting Date    : </label><label class="text-large" id="lblStartDate"></label>
+            <label class="text-lg-left" style="margin-left: 33.8%">Next Renewal Date    : </label><label class="text-large" id="lblEndDate"></label>
+        </div>
+        <div class="col-md-6">
+            <div class="card border mb-2" style="min-width: 23rem; border: 1px solid steelblue !important; ">
+                <div class="card-header" style="color:white;background-color:#34587e">
+                    <h5 style="margin-left:10px">Billing Address</h5>
+                </div>
+                <div class="card-body" style="color: steelblue; margin-top: 5px ">
+                    <div class="row">
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">Name: </label><label class="text-small" id="lblName1"></label>
+                        </div>
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">Email: </label><label class="text-small" id="lblEmail1"></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">Phone: </label><label class="text-small" id="lblPhone1"></label>
+                        </div>
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">Address: </label><label class="text-small" id="lblAddress1"></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">City: </label><label class="text-small" id="lblCity1"></label>
+                        </div>
+                        <div class="col-md-6 form-field">
+                            <label class="text-small">Zip: </label><label class="text-small" id="lblZip1"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border mb-2" style="min-width: 23rem; border: 1px solid steelblue !important; ">
+                <div class="card-header" id="PaymentTypecard" style="color:white;background-color:#34587e">
+                    <h5 style="margin-left:10px">Payment Method</h5>
+                </div>
+                <div id="ordercarddetails" style="display:block">
+                    <div class="card-body" style="color: steelblue; margin-top: 5px">
+                        <div class="col-md-12 form-field">
+                            <label class="text-small">Card Holder : </label><label class="text-small" id="lblCardHolder1"></label>
+                        </div>
+                        <div class="col-md-12 form-field">
+                            <label class="text-small">Card Number : </label><label class="text-small" id="lblCardNumber1"></label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7 form-field">
+                                <label class="text-small">Payment Type : </label><label class="text-small" id="lblPaymentType1"></label>
+                            </div>
+                            <div class="col-md-5 form-field">
+                                <label class="text-small">Expiry on : </label><label class="text-small" id="lblCardMonth1"></label>/<label class="text-small" id="lblCardYear1"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="orderachdetails" style="display:none">
+                    <div class="card-body" style="color: steelblue; margin-top: 5px">
+                        <div class="row">
+                            <div class="col-md-5 form-field">
+                                <label class="text-small">Name : </label><label class="text-small" id="lblCustomerName"></label>
+                            </div>
+                            <div class="col-md-7 form-field">
+                                <label class="text-small">Bank Name : </label><label class="text-small" id="lblBankName"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 form-field">
+                                <label class="text-small">A/C Type : </label><label class="text-small" id="lblAccountType"></label>
+                            </div>
+                            <div class="col-md-7 form-field">
+                                <label class="text-small">A/C Number : </label><label class="text-small" id="lblaccountNumber"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 form-field">
+                                <label class="text-small">Routing No : </label><label class="text-small" id="lblRoutingNumber"></label>
+                            </div>
+                            <div class="col-md-7 form-field">
+                                <label class="text-small">Payment Type : </label><label class="text-small" id="lblPT"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div >
+     
+       
+</div>
+<div style="margin-left:95%">
+    <button class="k-button k-button-icontext k-grid-cancel" sytle="float:right" onclick="Redirecthome()">Ok</button>
+</div>
+
+<link href="~/css/common.css" rel="stylesheet" />
+<style>
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    ul.dropdown-menu > li {
+        max-width: 60px;
+        color: steelblue;
+    }
+
+    .k-wizard .k-wizard-step {
+        padding-top: 0px;
+    }
+
+    .form-fields-wrapper1 {
+        font-size: 12px;
+        font-weight: normal;
+        padding-left: 150px;
+    }
+
+    .table {
+        color: steelblue;
+        padding-left: 80px;
+    }
+
+    .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .k-wizard {
+        font-size: 12px;
+    }
+
+    .form-control1 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control2 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control3 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control4 {
+        width: 200px;
+        margin-top: 25px;
+        padding-inline-end: unset;
+    }
+
+    .lable1 {
+        margin-bottom: 10px;
+    }
+
+    .p {
+        text-align: center;
+    }
+</style>
+
+
+
+<style>
+    #maintable {
+        margin-left: 25%;
+    }
+
+    #tablehead {
+        font-size: medium;
+    }
+</style>
+
+
+<script>
+
+    function Redirecthome()
+    {
+     debugger;
+        //$.ajax({
+        //    url: "Dispatch/Dashboard",
+        //      //  type: 'POST',
+        //        dataType: 'json',
+        //        contentType: 'application/json; charset=utf-8',
+        //        success: function (data) {
+
+              
+
+        //        }
+        //    });
+      //  window.location.href = '/Dispatch/Dashboard';
+        var window = $("#ordersummary").data("kendoWindow");
+        window.close();
+       // window.opener.location.href = '@Url.Action("Dashboard", "Dispatch")', window.close();
+        //location.reload();
+
+    }
+
+    $(document).ready(function () {
+       DetailsForSummary();
+        loadsummary();
+    });
+
+    function loadsummary() {
+        $("#lblUnitTypes").text($("#lblUnitTypeForCount").text());
+        $("#lblName1").text($("#lblName").text());
+        $("#lblPhone1").text($("#lblPhone").text());
+        $("#lblEmail1").text($("#lblEmail").text());
+        $("#lblAddress1").text($("#lblAddress").text());
+        $("#lblCity1").text($("#lblCity").text());
+        $("#lblZip1").text($("#lblZip").text());
+        $("#lblOTotal").text($("#lblTotal1").text());
+
+        //var Type = $("#PaymentType").val();
+        //if (Type == "Credit Card" || Type == "Debit Card") {
+            $("#orderachdetails").css("display", "none");
+            $("#ordercarddetails").css("display", "block");
+            $("#lblCardHolder1").text($("#lblCardHolder").text());
+            $("#lblCardNumber1").text($("#lblCardNumbermask").text());
+            $("#lblPaymentType1").text($("#lblPaymentType").text());
+            $("#lblCardMonth1").text($("#lblCardMonth").text());
+            $("#lblCardYear1").text($("#lblCardYear").text());
+        //}
+        //else if (Type == "ACH Payment") {
+            $("#orderachdetails").css("display", "block");
+            $("#ordercarddetails").css("display", "none");
+            $("#lblCustomerName").text($("#CustomerName").val());
+            $("#lblaccountNumber").text($("#AccountNumber").val());
+            $("#lblBankName").text($("#BankName").val());
+            $("#lblAccountType").text($("#TypeofAccount").val());
+            $("#lblRoutingNumber").text($("#RoutingNumber").val());
+            $("#lblPT").text($("#PaymentType").val());
+
+        //}
+        //date
+        var today = new Date();
+        var date = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+        $("#lblStartDate").text(date);
+        var myFutureDate = new Date(today);
+        myFutureDate.setDate(myFutureDate.getDate() + 30);
+        var edate = (myFutureDate.getMonth() + 1) + '/' + myFutureDate.getDate() + '/' + myFutureDate.getFullYear();
+        $("#lblEndDate").text(edate);
+    }
+    function DetailsForSummary() {
+        if ($("#chkDispatch").prop("checked") && $("#chkProvider").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "block");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal1").text($("#lblDispatchTotal").text());
+            $("#lblProviderCount").text($("#txtProviderCount").val());
+            $("#lblProviderTotal1").text($("#lblProviderTotal").text())
+        }
+        else if ($("#chkDispatch").prop("checked") && $("#chkOperator").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "block");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal1").text($("#lblDispatchTotal").text());
+            $("#lblOperatorCount").text($("#txtOperatorCount").val());
+            $("#lblOperatorTotal1").text($("#lblOperatorTotal").text());
+        }
+        else if ($("#chkDispatch").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal1").text($("#lblDispatchTotal").text());
+        }
+        else if ($("#chkProvider").prop("checked")) {
+            $("#trDispatch1").css("display", "none");
+            $("#trProvider1").css("display", "block");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblProviderCount").text($("#txtProviderCount").val());
+            $("#lblProviderTotal1").text($("#lblProviderTotal").text());
+
+        }
+        else if ($("#chkOperator").prop("checked")) {
+            $("#trDispatch1").css("display", "none");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "block");
+
+            $("#lblUnitType").text("Rig");
+            $("#lblOperatorCount").text($("#txtOperatorCount").val());
+            $("#lblOperatorTotal1").text($("#lblOperatorTotal").text());
+        }
+    }
+
+</script>

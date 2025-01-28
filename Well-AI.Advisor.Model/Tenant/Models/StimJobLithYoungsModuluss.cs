@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WellAI.Advisor.Model.Tenant.Models
+{
+    public partial class StimJobLithYoungsModuluss
+    {
+        public StimJobLithYoungsModuluss()
+        {
+            StimJobReservoirIntervals = new HashSet<StimJobReservoirIntervals>();
+        }
+
+        [Key]
+        public int LithYoungsModulusId { get; set; }
+        public string Uom { get; set; }
+        public string Text { get; set; }
+
+        [InverseProperty("LithYoungsModulus")]
+        public virtual ICollection<StimJobReservoirIntervals> StimJobReservoirIntervals { get; set; }
+    }
+}

@@ -1,0 +1,56 @@
+﻿@model WellAI.Advisor.Model.Administration.LoginViewModel
+@{
+        string message = TempData["Message"] != null? TempData["Message"].ToString():null;
+}
+<style>
+    .content-wrapper, .main-footer {
+        margin-left: 0px !important;
+    }
+</style>
+    <div>
+        <div class="row login-row">
+            <div class="col-md-5 login-logo"></div>
+            <div class="col-md-2" style="padding-top:10%;">
+                <section>
+                    <form id="account" method="post">
+                        @if (!string.IsNullOrEmpty(message))
+                        {
+                            <h3 style="color:forestgreen">@message</h3>
+                        }
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Email)
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="RememberMe">
+                                    <input asp-for="RememberMe" />
+                                    @Html.DisplayNameFor(m => m.RememberMe)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                       
+                    </form>
+                </section>
+            </div>
+            <div class="col-md-5"></div>
+        </div>
+    </div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<link href="~/css/common.css" rel="stylesheet" />
+<style>
+    .navbar-custom-menu {
+        display: none;
+    }
+</style>

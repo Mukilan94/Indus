@@ -1,0 +1,363 @@
+﻿@{
+    ViewData["Title0"] = "Support Tickets";
+    ViewData["Title"] = "Support Ticket Detail";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.TicketHistoryItem
+
+@using (Html.BeginForm("SaveTicketDetail", "SupportTicketsSRV", FormMethod.Post,new { id = "TicketDetailsForm" }))
+{
+    <p></p>
+    <section class="content-header" style="margin-left: 16px;margin-right:16px;">
+        <div id="comments">
+            <div class="row-comment" style="margin-left:initial;margin-top:10px;width:100%;">
+                
+                <div class="row " style="padding-top: 15px; padding-left:15px; padding-right:15px;">
+                    <h6 class="col-md-6" style=" text-align: left"> SUBJECT : @Model.Subject</h6>
+                    <h6 class="col-md-6" style=" text-align: right"> TICKET NO : @Model.TicketId</h6>
+                </div>
+                @Html.HiddenFor(model => model.TicketId)
+                @Html.HiddenFor(model => model.Subject)
+                @Html.HiddenFor(model => model.Status)
+                @Html.HiddenFor(model => model.Department)
+                @Html.HiddenFor(model => model.HelpTopic)
+                <div class="comment-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="k-edit-label">
+                                @Html.LabelFor(model => model.Status)
+                            </div>
+                            <div class="k-edit-field" style="margin:initial">
+                               
+                                @Html.Raw(@Model.Status)
+                            </div>
+
+                            <div class="k-edit-label">
+                                @Html.LabelFor(model => model.Department)
+                            </div>
+                            <div class="k-edit-field" style="margin:initial">
+                               
+                                @Html.Raw(@Model.Department)
+                            </div>
+
+                            <div class="k-edit-label"style="font-weight: bolder">
+                                @Html.LabelFor(model => model.ReplyMessage, "Description :")
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <div class="k-edit-label">
+                                @Html.LabelFor(model => model.CreateDate, "Create Date")
+                            </div>
+                            <div class="k-edit-field" style="margin:initial">
+                               
+                                @Html.Raw(@Model.CreateDate)
+                            </div>
+                            <div class="k-edit-label">
+                                @Html.LabelFor(model => model.LastActivity, "Last Activity")
+                            </div>
+                            <div class="k-edit-field" style="margin:initial">
+                               
+                                @Html.Raw(@Model.LastActivity)
+                            </div>
+                            <div class="k-edit-label">
+                                @Html.LabelFor(model => model.LastMessage, "Last Message")
+                            </div>
+                            <div class="k-edit-field" style="margin:initial">
+                                
+                                @Html.Raw(@Model.LastMessage)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div style="margin:initial; width:100% !important; padding: 1px 25px">
+                            @(Html.Kendo().EditorFor(model => Model.ReplyMessage)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(false))
+                           .Tools(tools => tools.Clear().Unlink())
+                           )
+                            @*@Html.TextAreaFor(model => Model.ReplyMessage, new { @Class = "k-text-insert", @Readonly = "readonly" })*@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div id="comments">
+
+            @foreach (var CommentSRV in Model.CommentSRV)
+            {
+                @*@Html.Partial("_CommentSRVPartial", CommentSRV);*@
+                <partial name="_CommentSRVPartial" model="CommentSRV" />
+            }
+        </div>
+        <br />
+        <div>
+            <div class="comment-replylabel">Leave a reply</div>
+            <div class="comment-replytext">
+                <!--Phase II Changes Name assigned to Last reply editor to pass vaues to controller-->
+                @(Html.Kendo().EditorFor(m => m.LeaveReplay)
+                          //.Name("LeaveReplay")
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "width: 90%", required = "required" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript()
+                           .Formatting().CleanFormatting().InsertImage())
+                  )
+
+            </div>
+
+            <div class="comment-replybtn">
+                <button class="k-button btn btn-default k-primary hide-on-narrow"
+                        type="submit" id="btnsubmit" name="submit" value="Submit"
+                        @(Model.Status == "Closed" ? "disabled='disabled'" : "")>
+                    SUBMIT
+                </button>
+               
+                <button class="k-button btn btn-default k-primary hide-on-narrow"
+                        type="submit" id="btncloseticket" name="closeticket" value="Close Ticket" onclick="return isConfirmClose();"
+                        @(Model.Status == "Closed" ? "disabled='disabled'" : "")>
+                    CLOSE TICKET
+                </button>
+
+                @(Html.Kendo().Button()
+                            .Name("Cancel")
+                            .HtmlAttributes(new { type = "button" , @class = "k-primary hide-on-narrow", value = "Cancel", onclick = "cancelnew();" })
+                            .Content("<strong> CANCEL</strong>")
+                        )
+
+                <h5>@ViewBag.message</h5>
+            </div>
+
+        </div>
+
+    </section>
+}
+<script>
+    function cancelnew() {
+        window.location.href = "/SupportTicketsSRV";
+    }
+
+    function isConfirmClose() {
+        debugger;
+        kendo.confirm("Are you sure you want to close the ticket?")
+            .done(function () {
+                debugger;
+                var editor = $("#LeaveReplay").data("kendoEditor");
+                    var ticketID = "@Model.TicketId";
+                    var reply = editor.value();
+                    var status = "@Model.Status";
+                    var ticket = { ticketId: ticketID.toString(), ticketMessage: reply, ticketStatus: status };
+                    var ticketData = JSON.stringify(ticket);
+                    $.ajax({
+                        url: "CloseTicket",
+                        type: 'POST',
+                        async: true,
+                        contentType: 'application/json',
+                        data: ticketData,
+                        dataType: 'json',
+                        success: function (status, data) {
+                            cancelnew();
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            ticketalert("Ticket not closed " + errorThrown, "Alert");
+                        }      
+                    });
+            })
+            .fail(function () {
+                ticketalert("You decided to not close the ticket!", "Alert");
+                return false;
+            });
+
+                console.log("final status" + status);
+                return false;
+      }
+
+
+    //Phase II Changes - Alert
+    function ticketalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function confSubmit(BeginForm) {
+         document.SupportTicket.addEventListener("submit", function (event) {
+
+            //Phase II Changes - Confirm
+            kendo.confirm("Are you sure you want to close the ticket?")
+                .done(function () {
+                    BeginForm.submit();
+                })
+                .fail(function () {
+                    ticketalert("You decided to not close the ticket!", "Alert");
+                    event.preventDefault();
+                });
+        });
+
+    }
+
+
+</script>
+<style>
+    .k-dropdown-wrap{
+        border-color:white !important;
+    }
+    table.k-editor {
+        width: 100% !important;
+    }
+    .ticketlabel {
+        margin-left: 20px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .comment-replybtn {
+        display: block;
+        margin-top: 10px;
+       
+    }
+ 
+    .comment-replylabel {
+        display: block;
+        margin-left: 10px;
+    }
+
+   
+
+    #ReplyMessage {
+        width: 500px;
+        height: 100px;
+    }
+ 
+    .k-edit-label {
+        text-align: left;
+        padding: calc(0.10rem - 1px) 10px !important;
+        margin: 0 0 0.1rem 0;
+        padding-top: 0px !important;
+    }
+
+    .k-edit-field textarea {
+        width: 70% !important;
+        resize: none !important;
+    }
+
+    .profile-user-img {
+        border: 0px !important;
+        width: 70px;
+    }
+
+    .comment-content {
+        width: 100%;
+        margin-top: 10px;
+        font-size: 14px;
+     }
+
+    .comment-author {
+        width: 83%;
+        color: #fff;
+        height: 53px;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+        .comment-author > span {
+            margin-left: 10px;
+        }
+
+    .comment-date {
+        font-size: 13px;
+        margin-left: 10px;
+    }
+
+    .commentphoto {
+        margin-right: 20px;
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 10px;
+        margin-top: 5px;
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+    .row-comment {
+        background-color: #007bff;
+        border-radius: 10px;
+        width: 100% !important;
+    }
+
+    .comment-content {
+        background-color: #fff;
+        color: #000;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding-left: 10px;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+    .k-text-insert {
+        color: #000 !important;
+        font-weight: bolder !important;
+        background-color: #F8F8FF;
+        line-height: initial !important;
+        width:100% !important;
+    }
+
+    .content {
+        padding-top: 10px;
+        min-height: 250px;
+        padding: 15px;
+        padding-left: 17px;
+        padding-right: 15px;
+    }
+
+    .k-grid-toolbar, .k-toolbar, .k-editor .k-editor-toolbar, .k-gantt-toolbar {
+        border-color: #007bff;
+        color: #ffffff;
+        background-color: #007bff;
+    }
+</style>
+
+<script>
+    function onClose() {
+        $("#undo").show();
+    }
+
+    $(document).ready(function () {
+        $("#undo").bind("click", function () {
+            $("#window").data("kendoWindow").open();
+            $("#undo").hide();
+        });
+    });
+</script>
+<style>
+
+    #undo {
+        text-align: center;
+        position: absolute;
+        white-space: nowrap;
+        padding: 1em;
+        cursor: pointer;
+    }
+
+
+    .k-window-content p {
+        margin-bottom: 1em;
+    }
+
+    .k-window-content a {
+        color: #BBB;
+    }
+</style>

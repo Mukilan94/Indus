@@ -1,0 +1,30 @@
+﻿
+@model WellAI.Advisor.Model.Administration.ConfigurationViewModel
+@using Kendo.Mvc.UI
+<div class="row">
+    <div class="col-md-12 errors"></div>
+    @Html.HiddenFor(x => x.Index)
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.FriendlyName)</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.FriendlyName, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.FriendlyName)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.ConstantName)</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.ConstantName, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.ConstantName)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.Value)</div>
+    <div class="col-md-9">
+        @Html.TextAreaFor(model => model.Value, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.Value)
+    </div>
+</div>

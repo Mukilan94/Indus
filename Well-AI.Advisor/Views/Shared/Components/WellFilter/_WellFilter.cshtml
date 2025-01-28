@@ -1,0 +1,72 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.WellFilterLayoutViewModel
+
+@if (Model != null && !string.IsNullOrEmpty(Model.SelectedWellId))
+{
+    @(Html.Kendo().DropDownList()
+                        .Name("filterwellslayout")
+                        .DataValueField("WellId")
+                        .DataTextField("Name")
+                        .Events(e => e.Change("wellChangeLayout"))
+                        .HtmlAttributes(new { @class = "wellslistlayout" })
+                        .BindTo(Model.Wells)
+    )
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var ddlWells = $("#filterwellslayout").data("kendoDropDownList");
+
+        if (ddlWells != undefined) {
+            var initWellId = "@Model.SelectedWellId";
+
+            var cookwellid = getCookie("wellfilterlayout");
+            if (cookwellid != initWellId) {
+                setCookie("wellfilterlayout", initWellId);
+            }
+
+            ddlWells.value(initWellId);
+            ddlWells.trigger("change");
+        }
+    });
+    function wellChangeLayout() {
+        var ddlWellValue = $("#filterwellslayout").val();
+
+        var cookwellid = getCookie("wellfilterlayout");
+
+        if (ddlWellValue !== "" && cookwellid != ddlWellValue) {
+            setCookie("wellfilterlayout", ddlWellValue);
+
+            window.location.reload();
+        }
+    }
+    function setCookie(cname, cvalue) {
+        var d = new Date();
+        d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+</script>
+<style>
+    .wellfilterli .k-dropdown .k-dropdown-wrap .k-input {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+    .wellslistlayout{
+        width:220px;
+    }
+</style>

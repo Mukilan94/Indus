@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null;
+}
+
+<section class="content-header">
+    <style>
+        li.k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-grid-edit, .k-grid-Resetpassword {
+            background-color: transparent !important;
+        }
+
+        .k-button {
+            border-style: none
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .fa-phone {
+            color: #3639A4;
+            font-size: 20px;
+        }
+
+        .fa-video-camera {
+            color: #007BFF;
+            font-size: 20px;
+        }
+
+        .fa-comment {
+            color: green;
+            font-size: 20px;
+        }
+
+       /* .k-window {
+            width: 600px !important;
+        }*/
+
+        .k-button.k-flat, .k-button.k-bare {
+            color: inherit !important;
+        }
+
+        .k-chat .k-message-box .k-button:hover {
+            color: #007bff !important;
+        }
+    </style>
+</section>
+
+ 
+<div class="auction-bottom">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.CustomerUsersModel>()
+            .Name("CustomerUserGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.UserID).Width(350).Filterable(false);
+                columns.Bound(p => p.FullName).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.Email).Width(300).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.PhoneNumber).Width(150).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.JobTitle).Width(200).Title("Position").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+                columns.Bound(p => p.UserID).Filterable(false).Width(100).Title(" ").ClientTemplate("<i class='fa fa-phone' onclick='MakePhoneCall( #= PhoneNumber #)'></i> <i class='fa fa-video-camera' onclick='showVideo(\"#=FullName#\",\"#=Email#\",\"#=UserID#\")'></i> <i class='fa fa-comment' onclick='showTwilioChat(\"#=FullName#\",\"#=Email#\",\"#=UserID#\")'></i>");
+
+            })
+            .ToolBar(toolbar =>
+            {
+                toolbar.Create().Text("Add new User");
+
+            })
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditCustomerUser").Window(w => w.Title("Edit User Details").Width(1000)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+            .Selectable()
+            .Scrollable(scrollable => scrollable.Virtual(true))
+            .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(15)
+                .Create(update => update.Action("AddUpdateUsers_Create", "Customer", new { tenantId = ViewBag.TenantId }))
+                .Read(read => read.Action("CustomerUsers_Read", "Customer", new { tenantId = ViewBag.TenantId }))
+                .Model(model => model.Id(p => p.UserID))
+                .Update(update => update.Action("AddUpdateUsers_Update", "Customer"))
+                .Events(events => events.Error("errorUser"))
+            ).Events(e =>
+            {
+                e.Edit("UsergridEdit");
+                e.DataBound("DataBound");
+            }))
+    <div style="width:400px !important">
+        <div id="dialog"></div>
+    </div>
+
+</div>

@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "API Configuration";
+}
+@model WellAI.Advisor.Model.Common.TenantConfigurationModel
+
+<section class="content-header">
+    <style>
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-left: -15px;
+            margin-top: 10px;
+        }
+
+        label {
+            margin-top: 4.5px;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+            margin-right: 15%;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+
+        .confheader {
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .k-textbox, .k-textarea, .k-input.k-textbox {
+            margin-left: -20%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    </style>
+
+</section>
+<!-- Main content -->
+@using (Html.BeginForm("Update", "ApiConfiguration", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <section class="content">
+        @Html.HiddenFor(x => x.Index)
+        @Html.HiddenFor(x => x.TenantId)
+        <div class="row">
+            <div class="col-sm-12 confheader">Configuration</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @*<div class="row">
+                        <div class="col-sm-12">PEC</div>
+                    </div>*@
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.PecClientId, "PEC Client Id:")</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.PecClientId, new { @Class = "k-textbox", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.PecClientId)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.PecGrantyType, "Granty Type:")</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.PecGrantyType, new { @Class = "k-textbox", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.PecGrantyType)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.PecClientSecret, "Client Secret:")</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.PecClientSecret, new { @Class = "k-textbox", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.PecClientSecret)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="k-edit-buttons k-state-default">
+                <button id="Apply" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Save</button>
+                <button type="button" onclick="window.location='@Url.Action("Index", "Configuration")'" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+            </div>
+        </div>
+    </section>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

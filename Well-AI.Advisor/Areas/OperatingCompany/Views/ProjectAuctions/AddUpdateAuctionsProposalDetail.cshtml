@@ -1,0 +1,644 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.AddAuctionProposalViewModel
+@{
+    ViewData["Title0"] = "Bids";
+    ViewData["Title"] = "Bid Details";
+    var TechnicineName = (List<WellAI.Advisor.Model.Identity.WellIdentityUser>)ViewData["TechName"];
+
+    var AuctionStartDate = Model.AuctionStart;
+
+}
+<style>
+    .k-button.k-button-icontext.k-grid-Details {
+        display: block !important;
+    }
+
+    #Details {
+        overflow: hidden;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+
+    .k-editor {
+        border-color: black !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+
+    .k-pager-numbers {
+        display: contents !important;
+    }
+
+    div.k-loading-mask {
+        z-index: 3; /* must be larger than the z-index:2 of #container */
+    }
+
+    .k-datepicker {
+        width: 100% !important;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .content {
+        margin: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+
+    .row {
+        margin-top: 2px;
+    }
+
+    .k-edit-form-container {
+        width: 100%;
+        min-width: 100%;
+        border-color: inherit;
+        position: relative;
+    }
+
+    .k-dateinput, .k-datepicker, .k-datetimepicker, .k-timepicker {
+        width: 16.4em;
+    }
+
+    .k-dropdown, .k-dropdowntree {
+        width: 14.4em;
+    }
+
+        .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+    .k-grid-Download {
+        background-color: white;
+        color: black;
+    }
+
+    .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+        color: #000 !important;
+        background-color: #fff !important;
+        border: 0;
+    }
+
+    .k-button:hover {
+        border-color: #ffff;
+        color: black;
+        background-color: #ffff;
+    }
+
+    .k-upload-button:hover {
+        border-color: blue;
+        color: black;
+        background-color: #ffff;
+    }
+
+    .k-upload .k-dropzone {
+        border-color: #ffff !important;
+        color: black !important;
+        background-color: #ffff !important;
+    }
+
+    a.k-button.k-button-icontext.k-grid-Delete, .k-grid-Details:hover {
+        background-color: white;
+        color: black;
+    }
+
+    a.k-button.k-button-icontext.k-grid-Delete, .k-grid-Details {
+        background-color: white;
+        color: black;
+    }
+
+    .hideButtom {
+        display: none !important;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+        padding-top: 5px;
+        margin-top: 0px;
+        height: 35px;
+    }
+
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .fa-undo {
+        margin-right: 5px;
+    }
+
+    .k-button.k-button-icontext.k-grid-Details {
+        color: white !important;
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+    #PdfFile {
+        width: auto !important;
+    }
+    .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+        color: white !important;
+    }
+</style>
+<section class="content-header">
+    <section class="content">
+        @using (Html.BeginForm("AddUpdateAuctionsProposal", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.ProposalId)
+            @Html.HiddenFor(model => model.AuctionNumber)
+            @Html.HiddenFor(model => model.AuctionBidStatusId)
+            <input type="hidden" id="hdnTitle" value="@Model.RigName - @Model.WellName:@Model.JobName" />
+            <div class="row k-window-titlebar">
+                <h5 class="col-md-12" style=" text-align: left">
+                    @Model.RigName - @Model.WellName:@Model.JobName
+                </h5>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.RigId)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.HiddenFor(model => model.RigId)
+                            @Html.TextAreaFor(model => model.RigName, new { @Class = "k-textbox", style = "width:100%" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.WellId)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.HiddenFor(model => model.WellId)
+                            @Html.TextAreaFor(model => model.WellName, new { @Class = "k-textbox", style = "width:100%" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            Estimated Start Date
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DateTimePickerFor(model => model.ProjectStartDate)
+                              .DateInput()
+                             .Format("MM/dd/yyyy HH:mm")
+                             .TimeFormat("HH:mm")
+                             .ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })
+                             .HtmlAttributes(new { style = "width:100%;" })
+                             .Min(AuctionStartDate)
+                             .Events(e => e.Change("OnProjectStartDate"))
+                             )
+                            @Html.ValidationMessageFor(model => model.ProjectStartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ServiceCategoryId, "Category")
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DropDownList()
+                          .Name("ServiceCategoryId")
+                          .DataTextField("Name")
+                          .DataValueField("ServiceCategoryId")
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetServiceCategoryList", "ProjectAuctions").Data("filterTaskByWell");
+                              }).ServerFiltering(true);
+                          })
+                          .Events(e =>
+                            {
+                                e.DataBound(" onDataBoundddl1");
+                            })
+                          .HtmlAttributes(new { style = "width: 100%"})/*.AutoBind(false)*//*.CascadeFrom("WellId")*/
+        )
+                            @Html.ValidationMessageFor(model => model.ServiceCategoryId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.JobId)
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DropDownList()
+                                  .Name("JobId")
+                                  .DataTextField("Name")
+                                  .DataValueField("TaskId")
+                                    .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetTaskByWellTypeIdForJob", "ProjectAuctions").Data("FilterServices");
+                                      }).ServerFiltering(true);
+                                  })
+                                  .Events(e =>
+                                  {
+                                      e.DataBound("onDataBoundddl");
+                                  })
+                                  .HtmlAttributes(new { style = "width: 100%"})
+                                  .AutoBind(false)
+                                  .CascadeFrom("ServiceCategoryId")
+                        )
+                            @Html.ValidationMessageFor(model => model.JobId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-offset-4"></div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4" style="padding-top:5px;">
+                            Bid Open
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DatePickerFor(model => model.AuctionStart)
+                             .Min(Model.AuctionStart)
+                             .Format("MM/dd/yyyy")
+                             .DateInput().ParseFormats(new string[] { "MM/dd/yyyy"})
+                             )
+                            @Html.ValidationMessageFor(model => model.AuctionStart)
+                        </div>
+                    </div>
+                </div>
+                <!-- Planned Start -->
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-4" style="padding-top: 5px;">
+                            Bid Closed
+                        </div>
+                        <div class="col-sm-8">
+                            @(Html.Kendo().DateTimePickerFor(model => model.AuctionEnd)
+                             .DateInput()
+                             .Format("MM/dd/yyyy HH:mm")
+                             .TimeFormat("HH:mm")
+                             .ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })
+                             .Min(AuctionStartDate)
+                             .HtmlAttributes(new {style="width:100%" })
+                            )
+                            @Html.ValidationMessageFor(model => model.AuctionEnd)
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.SRVTenantId != null)
+                {
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="col-sm-4" style="padding-top: 5px;">
+                              Assigned Provider
+                            </div>
+                            <div class="col-sm-8">
+                                @Html.HiddenFor(m => m.SRVTenantId)
+                               @Html.TextAreaFor(m => m.VendorName, new { @Class = "k-textbox", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.VendorName)
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+            </div>
+            <div class="row" style="margin-left:0px;margin-right:0px;margin-top:10px;">
+                <div class="form-group" style="width:100%">
+                    @(Html.Kendo().Upload()
+                                .Name("files")
+                                .HtmlAttributes(new { aria_label = "files" }))
+                </div>
+            </div>
+            <div class="row" style="margin-left:0px;margin-right:0px;">
+                <div @*class="form-group"*@>
+                    @(Html.Kendo().EditorFor(model => model.Body)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "min-height:250px", required = "required", id = "descripteditor" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+                </div>
+            </div>
+            <div class="comment-replybtn">
+                <div class="k-edit-buttons k-state-default">
+                    <button type="submit" onclick="OnClickUpdate()" name="submit" value="Submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Update</button>
+                    <button type="button" onclick="onClearClick()" role="button" class="k-button k-button-icontext k-grid-clear"><i class="fa fa-undo"></i>Clear</button>
+                    <button type="button" onclick="onCancelClick()" role="button" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Close</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-7">
+                    <h3>Current Bids</h3>
+                    @(Html.Kendo().Grid(Model.AuctionBidderDetailsViewModels)
+                .Name("auctionsBid")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.BidId).Filterable(false).ClientTemplate("#= renderNumber(data) #").Title("#").Width(3);
+                    columns.Bound(p => p.ServiceCompany).Title("Bidder");
+                    columns.Bound(p => p.BidAmount).Width(30);
+                    columns.Bound(p => p.BidDate).Format("{0:MM/dd/yyyy}");
+                    columns.Command(command =>
+                    {
+                        command.Custom("Details").Text("<i class='fa fa-info' style='font-size:20px;'></i>").Click("showDetails");
+                    }).Title("Action");
+                })
+                 .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                .Sortable(s => s.Enabled(true))
+                .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .Pageable()
+                .Scrollable(s => s.Enabled(false))
+                .DataSource(dataSource => dataSource.Ajax()
+                        .PageSize(10)
+                        .ServerOperation(false)
+                )
+                .Events(e => e.DataBound("onDataBound"))
+                    )
+                </div>
+                <div class="col-sm-5">
+                    <h3>Attachments</h3>
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.AuctionProposalAttachmentOpeViewModel>()
+                   .Name("auctionsFile")
+                   .HtmlAttributes(new { @class = "ra-section" })
+                   .Columns(columns =>
+                   {
+                       columns.Bound(p => p.AttachmentId).Filterable(false).ClientTemplate("#= renderNumber(data) #").Title("#").Width(3);
+                       columns.Bound(p => p.FileName).Filterable(false).Width(70);
+                       columns.Bound(p => p.TenantId).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                         "<a href='" + @Url.Action("DownloadOper", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         ""+
+                         "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=AttachmentId#\",\"#=TenantId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                         "#}else{#" +
+                          "<a href='" + @Url.Action("DownloadOper", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                          "#} #"
+                         ).Width(30);                       
+                   })
+                    .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                   .HtmlAttributes(new { width = "100%" })
+                   .DataSource(dataSource => dataSource.Ajax()
+                           .PageSize(4)
+                           .Read(read => read.Action("GetAuctionProposalOperatorAttachmentByProposalId", "ProjectAuctions", new { proposalId = Model.ProposalId }))
+
+                ).Events(e =>
+                {
+                    e.DataBound("DataBoundAttach");
+                }))
+                </div>
+            </div>
+        }
+    </section>
+</section>
+@(Html.Kendo().Window().Name("Details")
+    .Title("Bidder Details")
+    .Visible(false)
+    .Content(@<text><div id="wndContent">Loading....</div></text>)
+.Modal(true)
+.Draggable(true)
+.Width(1200)
+)
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)
+
+<script>
+
+    function OnProjectStartDate()
+    {
+        var ProjectstartDate = $("#ProjectStartDate").data("kendoDateTimePicker").value();
+        var ProjectEndDate = $("#AuctionEnd").data("kendoDateTimePicker");
+        //ProjectEndDate.value(ProjectstartDate);
+        ProjectEndDate.min(ProjectstartDate);
+    }
+
+    //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewPdfInPdfViewer(MsaId, TenId,FileName) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(FileName);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProjectAuctions/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },                
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+    function startChange() {
+        var end = $("#AuctionEnd").data("kendoDatePicker");
+        var projectStartDate = $("AuctionEnd").data("kendoDatePicker");
+       var startDate = this.value();
+        var endDate = end;
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setDate(startDate.getDate());
+            end.value(new Date(startDate));
+            end.min(startDate);
+            projectStartDate.value(new Date(startDate));
+            projectStartDate.min(startDate);
+        } else if (endDate) {
+            start.max(new Date(endDate));
+        } else {
+            endDate = new Date();
+            start.max(endDate);
+            end.min(endDate);
+        }
+    }
+
+    function endChange() {
+        var start = $("#AuctionStart").data("kendoDatePicker");
+        var projectStartDate = $("#AuctionEnd").data("kendoDatePicker");
+        var endDate = this.value();
+        var startDate = start;
+        if (endDate) {
+            endDate = new Date(endDate);
+            endDate.setDate(endDate.getDate());
+            start.max(endDate);
+        } else if (startDate) {
+            end.min(new Date(startDate));
+        } else {
+            endDate = new Date();
+            start.max(endDate);
+            end.min(endDate);
+        }
+        projectStartDate.value(new Date(endDate));
+        projectStartDate.min(endDate);
+    }
+    function onChange(e) {
+        var orders = $("#AuctionBidStatusId").data("kendoDropDownList");
+        $("#AuctionBidStatusName").val(orders._oldText);
+    }
+    function DataBoundAttach(e) {
+        $(".k-grid-Download").empty().append("<i class='fa fa-download'></i>");
+    }
+    function filterTaskByWell() {
+        return {
+            text: $("#JobId").val(), wellId: $("#WellId").val()
+        };
+    }
+    function filterTaskByWell1() {
+        return {
+            text: $("#ServiceCategoryId").val()
+        };
+    }
+    function FilterByRig() {
+        return {
+            RigId: $("#RigId").val()
+        };
+    }
+    function FilterServices() {
+        return {
+            ServiceCategoryId: $("#ServiceCategoryId").val(), wellId: $("#WellId").val()
+        };
+    }
+    function onDataBoundddl(e) {
+        e.sender.value('@Model.JobId');
+    }
+     function onDataBoundddl1(e) {
+        e.sender.value('@Model.ServiceCategoryId');
+    }
+     function onDataBoundddl2(e) {
+        e.sender.value('@Model.WellId');
+    }
+    function onWellName(e) {
+        var dataItem = this.dataItem(e.item.index());
+        $("#ServiceCategoryName").val(dataItem.ParentName).trigger("change");
+    }
+    var counter = 1;
+   function onDataBound(e) {
+        counter = 1;
+    }
+    function renderNumber(data) {
+        return counter++;
+    }
+    function showDetails(e) {
+        $("#wndContent").empty();
+        $("#wndContent").text("Loading....");
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        var id = dataItem.BidId;
+        var title = $('#hdnTitle').val();
+        $('#wndContent').load('/ProjectAuctions/AuctionBidderDetailContent/', { id: id, title: title }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            } else {
+            }
+        });
+    }
+    function downloadFileAucOper(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/DownloadOper?AttachmentId=' + id;
+    }
+    function downloadFile(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+    }
+    function onCancelClick() {
+        window.location.href = "/projectauctions/";
+    }
+    function OnClickUpdate() {
+        setTimeout(function () {
+            window.location.href = "/projectauctions"
+        },3000);
+    }
+    function onClearClick() {
+        window.location.reload();
+    }
+    $(document).ready(function () {
+        $('.k-button.k-upload-button').addClass('k-primary')
+        var auctionStatus = $("#AuctionBidStatusId").val();
+        if (auctionStatus > 1) {
+            $('[class="k-input"]').addClass("k-state-disabled");
+            $('.k-button.k-upload-button').addClass('k-state-disabled');
+            $('.k-dropdown').addClass('k-state-disabled');
+            $('.k-datepicker').addClass('k-state-disabled');
+           $('.k-editor-widget').addClass('k-state-disabled');
+            $('[class="k-editable-area"]').addClass("k-state-disabled");
+            $('[class="k-textbox"]').addClass("k-state-disabled");
+            $('[name="submit"]').addClass("k-state-disabled");
+            $("textarea").prop('disabled', true);
+        }
+    });
+</script>

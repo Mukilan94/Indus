@@ -1,0 +1,1050 @@
+﻿@using System.Security.Claims;
+@{
+    ViewData["Title0"] = "Providers";
+    ViewData["Title"] = "Provider Profile";
+
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;
+    var userId = userIdentity.Name;
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.ProviderProfile
+
+
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="providers-wrap">
+        <div class="providers-top">
+            <div class="providers-counts">
+                <div>
+                    <h4 class="provider-name">@Model.Name</h4>
+                </div>
+                <div class="provider-contacts">
+                    <div class="blockstyle1">
+                        <div class="inner">
+                            <a onclick="showCallWindow(@Model.Phone);" href="javascript:void(0);"><span><i class="fa fa-phone" style="color:#3639A4"></i>@Model.Phone</span></a>
+                        </div>
+                    </div>
+                    <div class="blockstyle1">
+                        <div class="innerlocation">
+                            <a href="#" onclick="showLocation();">
+                                <div class="provider-location">
+                                    <i class="fa fa-map-marker" style="color:#FF6344"></i>
+                                </div>
+                                <span>@Model.Location</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="blockstylesite">
+                        <div class="inner">
+                            <i class="fa fa-globe" style="color:#2BDDCD"></i>
+                            <a href="@Model.Website" target="_blank"><span>@Model.Website</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="provider-contacts">
+                    <div class="blockstyle">
+                        <div class="inner">
+                            <span class="provider-total">Approval</span>
+                            <span class="provider-totalval">@Model.Approval</span>
+                        </div>
+                    </div>
+                    <div class="blockstyle">
+                        <div class="inner">
+                            <span class="provider-total">Status</span>
+                            <span class="provider-totalval">@Model.Status</span>
+                        </div>
+                    </div>
+                    @*<div class="blockstyle">
+                            <div class="inner">
+                                <span class="provider-total">PEC Status</span>
+                                <span class=@(@Model.PecStatus == "Good" ? "greenpecstatus" : @Model.PecStatus == "Average" ? "yellowpecstatus" : "redpecstatus")><i class='fa fa-circle'></i></span>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="providers-right">
+                <div>
+                    <div class="provider-rating">
+                        <span>Avg. Operator Rating</span>
+                        <div class="operator-rating">
+                            @(Html.Kendo().Rating()
+                             .Name("provrating")
+                             .Min(1)
+                             .Max(5)
+                             .Value(Model.Rating)
+                             .HtmlAttributes(new { data_prov = Model.ProviderId })
+                             .Events(e => e.Change("ratingChange"))
+                            )
+                        </div>
+                    </div>
+                    <div class="provider-user">
+                        <div class="user-call">
+                            <i class="fa fa-circle"></i>
+                        </div>
+                        <div class="user-contacts">
+                            <a onclick="showCallWindow(@Model.Phone);" href="javascript:void(0);"><i class="fa fa-phone"></i></a>
+                            @{
+                                var FirstName = Model.User == null ? "" : Model.User.FirstName;
+                                var LastName = Model.User == null ? "" : Model.User.LastName;
+                                var Email = Model.User == null ? "" : Model.User.Email;
+                                var UserId = Model.User == null ? "" : Model.User.UserID;
+                            }
+                            <i class="fa fa-video-camera" onclick="showVideoProfile('@FirstName' + ' ' + '@FirstName', '@Email','@UserId');"></i>
+                        </div>
+                        <div class="user-photoname">
+                            <img class="provider-userphoto" src="~/img/nophotouser.png">
+                            <div class="provider-usercard">
+                                <div class="provider-fullname">@(@Model.User == null ? "" : @Model.User.FirstName) @(@Model.User == null ? "" : @Model.User.LastName)</div>
+                                <div class="provider-jobitle">@(@Model.User == null ? "" : @Model.User.JobTitle)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="providers-bottom">
+            <div class="providers-bottom-left">
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.CurrentActivity>()
+                    .Name("curactivity")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.CurrentActivityId);
+                        columns.Bound(p => p.Title).Title("Current Activity");
+                    })
+                    .Sortable(s => s.Enabled(true))
+                  .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                    ).BindTo(Model.CurrentActivity)
+                )
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.UpcomingActivity>()
+                    .Name("upactivity")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.UpcomingActivityId);
+                        columns.Bound(p => p.Title).Title("Upcoming Activity");
+                    })
+                    .Sortable(s => s.Enabled(true))
+                    .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                    ).BindTo(Model.UpcomingActivity)
+                )
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ServiceOffering>()
+                    .Name("servoffers")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.ServiceOfferId);
+                        columns.Bound(p => p.Title).Title("Service Offerings");
+                    })
+                    .Sortable(s => s.Enabled(true))
+                     .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                    ).BindTo(Model.ServiceOffering)
+                )
+            </div>
+            <div class="providers-bottom-right">
+
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.RigsDepthPermission_Model>()
+                  .Name("DepthPermission")
+                  .HtmlAttributes(new { @class = "ra-section" })
+                  .Columns(column =>
+                  {
+                      column.Bound(b => b.RigId).Hidden(true);
+                      column.Bound(b => b.WellId).Hidden(true);
+                      column.Bound(b => b.RigName).Title("RigName").Width(30);
+                      column.Bound(b => b.WellName).Title("WellName").Width(30);
+                      column.Bound(b => b.WellPrediction).Title("Predict").Width(20).Filterable(false).ClientTemplate("#if (WellPrediction == true) { #" +
+                        "<span class='text-success k-icon k-i-check'></span>" +
+                        "# } else { #" +
+                        "<span class='text-danger k-icon k-i-close'></span>" +
+                        "# } #");
+                      column.Bound(b => b.DepthPermission).Width(20).ClientTemplate("<input class='DepthPer' type='checkbox' id='Permission_#:RigId#' data-role='switch' value='true' #if (DepthPermission == true) {# checked #} # #if (PreferredStatus == 'Welcome') {# disabled #} # #if (WellPrediction == false) {# disabled #} # />");
+
+                  })
+                    .Sortable(s => s.Enabled(true))
+                     .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                           )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .Read(read => read.Action("GetRigs", "ProviderDirectory",new {CompanyId = Model.CompanyId }))
+                            .Model(model => model.Id(p => p.ID))
+                    )
+                    .Events(e => e.DataBound("OnDataBound").DataBinding("DepthPermissionDataBinding")/*.DataBinding("OnDataBinding")*/)
+                 )
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.MSA>()
+                    .Name("msa")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.MsaId);
+                        columns.Bound(p => p.Status).Title("Status").Width(8);
+                        columns.Bound(p => p.FileUploadTime).Format("{0: MM/dd/yyyy}").Title("Uploaded On").Width(13);
+                        columns.Bound(p => p.Attachment).Title("MSA").Width(30);
+                        columns.Bound(p => p.Attachment).Title("Action").ClientTemplate("#if (Attachment.split('.').reverse()[0] == 'pdf' ){#" +
+                            "<a href='" + @Url.Action("DownloadForServiceCompany", "ProviderDirectory", new { fileId = "#=MsaId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;'></i></ a>" +
+                            "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=Attachment#\",\"#=MsaId#\",\"#=Value#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></a>" +
+                            "#}else{#" +
+                            "<a href='" + @Url.Action("DownloadForServiceCompany", "ProviderDirectory", new { fileId = "#=MsaId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;'></i></a>" +
+                            "#} #"
+                            ).Width(10);
+                        columns.Bound(p => p.IsApproved).Title("Approved").ClientTemplate("<input id = 'DocApproval_#:MsaId#' value='true' type = 'checkbox' data-role='switch' #if (IsApproved == true) {# checked #} # #if (IsPermitted == false) {# disabled #} #").Width(10);
+                    })
+                    .Sortable(s => s.Enabled(true))
+                     .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                           )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .Model(model => model.Id(p => p.CompanyId))
+                            .Read(read => read.Action("ProviderProfileMSA", "ProviderDirectory", new { companyId = Model.CompanyId,userId = userId }))
+                    )//.BindTo(Model.Msa)
+                    .Events(e =>
+                    {
+                        e.DataBinding("DataBinding");
+                        e.DataBound("DataBound");
+                    })
+                )
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.Insurance>()
+                    .Name("insurance")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.Expiration).Title("Date").Format("{0: MM/dd/yyyy}").Width(150);
+                        columns.Bound(p => p.Directory).Title("Insurance");
+                        columns.Bound(p => p.Attachment).Title("Action").ClientTemplate("#if (Attachment.split('.').reverse()[0] == 'pdf' ){#" +
+                            "<a href='" + @Url.Action("InsurenceDownload", "ProviderDirectory", new { tenId = "#=Value#", fileId = "#=InsId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></ a>" +
+                            "<a href='javaScript:void(0)' onclick='ViewInsPdfFile(\"#=InsId#\",\"#=Value#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></a>" +
+                            "#}else{#" +
+                            "<a href='" + @Url.Action("InsurenceDownload", "ProviderDirectory", new { tenId = "#=Value#", fileId = "#=InsId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></a>" +
+                            "#} #"
+                            ).Width(100);
+                    })
+                    .Sortable(s => s.Enabled(true))
+                     .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .ServerOperation(false)
+                    ).BindTo(Model.Insurance)
+                )
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ProjectAuctionModel>()
+                    .Name("proposals")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.AuctionID);
+                        columns.Bound(p => p.Name).Title("Proposals").Width(35);
+                        columns.Bound(p => p.Status).Width(10);
+                        columns.Bound(p => p.OpenDate).Format("{0: MM/dd/yyyy}").Width(15);
+                        columns.Bound(p => p.Attachment).Width(30);
+                        columns.Bound(p => p.Attachment).Title("Action").ClientTemplate("#if (Attachment.split('.').reverse()[0] == 'pdf' ){#" +
+                            "<a href='" + @Url.Action("DownloadProposal", "ProviderDirectory", new { tenId = "#=Description#", fileId = "#=Location#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></a>" +
+                           "<a href='javaScript:void(0)' onclick='ViewProPdfFile(\"#=Attachment#\",\"#=Location#\",\"#=Description#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></a>" +
+                           "#}else{#" +
+                            "<a href='" + @Url.Action("DownloadProposal", "ProviderDirectory", new { tenId = "#=Description#", fileId = "#=Location#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></a>" +
+                            "#} #"
+                           ).Width(10);
+                    })
+                    .Sortable(s => s.Enabled(true))
+                    .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .ServerOperation(false)
+                    ).BindTo(Model.Proposals)
+                )
+            </div>
+        </div>
+    </div>
+</section>
+@(Html.Kendo().Window().Name("MapLocation")
+    .Title("Provider Location")
+    .Content(@<text>
+            @(Html.Kendo().Map()
+            .Name("locationmap")
+            .Zoom(16)
+            .Layers(layers =>
+            {
+                layers.Add()
+                    .Type(MapLayerType.Tile)
+                    .UrlTemplate("http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png")
+                    .Subdomains("a", "b", "c")
+                    .Attribution("&copy; <a href='http://osm.org/copyright'>OpenStreetMap contributors</a>");
+            })
+            )
+    </text>
+)
+.Visible(false)
+.Actions(actions => actions.Close())
+.Modal(true)
+.Draggable(true).Width(1000)
+)
+@(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+    .Events(ev => ev.Close("onCallWindowClose"))
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+@(Html.Kendo().Window().Name("VideoDetailsOperatingCompany")
+    .Title("Video Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+    {
+        e.Close("onClose");
+    })
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)
+<script src="//media.twiliocdn.com/sdk/js/chat/v3.3/twilio-chat.min.js"></script>
+<script type="text/x-kendo-template" id="templateProvider">
+    <div id="details-container">
+        <div class="videoleftpart">
+            <div id="remote-media"></div>
+        </div>
+        <div class="videorightpart">
+            <div id="local-media"></div>
+        </div>
+        <div class="text-center">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowClose();"><span class="k-icon k-i-cancel"></span>End Call</button>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    function tabSelect(e) {
+        kendo.ui.progress(e.sender.element, true);
+    }
+
+    function tabShow(e) {
+        kendo.ui.progress(e.sender.element, false);
+    }
+
+    $(document).ready(function () {
+        $('#msa').data('kendoGrid').dataSource.read().then(function () {
+            $('#msa').data('kendoGrid').refresh();
+        });
+
+        $(".DepthPer").kendoSwitch();
+    });
+
+    function DepthPermissionDataBinding(e) {
+        console.log('Data Binding event calls start at Page load');
+        depthRigPermissionCount = parseInt(depthRigPermissionCount) + 1;
+    }
+
+    function OnDataBound(e)
+    {
+        console.log('Depth Rig Permission Count ' + depthRigPermissionCount);
+        var grid = this;
+      
+            grid.tbody.find("tr[role='row']").each(function () {
+                $(this).find("[id^='Permission_']").kendoSwitch({
+                    change: function (e) {
+                        var dataItem = grid.dataItem(this.element.closest("tr"));
+
+                        var Rigid = dataItem.RigId;
+                        var Wellid = dataItem.WellId;
+                        var Sertenant = '@Model.CompanyId';
+                        var DepthPermission = e.sender.element[0].checked == true ? "true" : "false";
+
+                        $.ajax({
+                            url: "/ProviderDirectory/SaveRigsDepth_Permission?Rigid=" + dataItem.RigId + "&Wellid=" + Wellid + "&Sertenant=" + Sertenant + "&DepthPermission=" + DepthPermission,
+                            type: "POST",
+                            async: false,
+                            dataType: "Json",
+                            success: function (Response) {
+                                $('#DepthPermission').data('kendoGrid').dataSource.read().then(function () {
+                                    $('#DepthPermission').data('kendoGrid').refresh();
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+    }
+
+      //Open or View Operating Company Pdf Document files in PdfViewer
+    function ViewPdfInPdfViewer(value, MsaId, TenId) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(value);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProviderDirectory/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },                
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+    function ViewInsPdfFile(value,TenId) {
+        wnd.title(value);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProviderDirectory/GetPdfFile?fileId=" + value + "&TenId=" + TenId,
+                },              
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+    function ViewProPdfFile(value, MsaId, TenId) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(value);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/ProviderDirectory/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },              
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+
+    var videoRoom = 'WellAI';
+    var mSABindingCount = 0;
+    var depthRigPermissionCount = 0;
+    $(document).ready(function () {
+        console.log('ReceiveVideoNotification at Provider directory');
+        chatHub.on('ReceiveVideoNotification', function (sender, receiver, roomName) {
+            if (sender === '@senderUser' && roomName==='Close') {
+                windowClose();
+            }
+        });
+    });
+
+     function DataBinding(e) {
+        console.log('Data Binding event calls start at Page load');
+        mSABindingCount = parseInt(mSABindingCount) + 1;
+        console.log('MSA binding count ' + mSABindingCount);
+        console.log('Data Binding event calls end at Page load');
+
+    }
+    function DataBound(e) {
+        console.log('mSABindingCount' + mSABindingCount);
+        var grid = this;
+        if (mSABindingCount > 1) {
+            console.log('Data bound event calls at Page load');
+            grid.tbody.find("tr[role='row']").each(function () {
+                $(this).find("[id^='DocApproval_']").kendoSwitch({
+                    change: function (e) {
+                        console.log(" DocApproval " + e.sender.element[0].id);
+                        console.log(" DocApproval checked " + e.sender.element[0].checked);
+                        var fileId = e.sender.element[0].id.replace("DocApproval_", "");
+                        var approvalStatus = e.sender.element[0].checked == true ? "true" : "false";
+                        $.ajax({
+                            url: "ProviderDirectory_ApproveMSA?fileId=" + fileId + "&approvalStatus=" + approvalStatus,
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+                                $('#msa').data('kendoGrid').dataSource.read().then(function () {
+                                    $('#msa').data('kendoGrid').refresh();
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        $('#DepthPermission').data('kendoGrid').dataSource.read();
+
+        $('#DepthPermission').data('kendoGrid').refresh();
+    }
+
+    kendo.syncReady(
+        function () {
+            $("[id^='DocApproval_']").kendoSwitch({
+                change: function (e) {
+                    console.log(" DocApproval " + e.sender.element[0].id);
+                    console.log(" DocApproval checked " + e.sender.element[0].checked);
+                    var fileId = e.sender.element[0].id.replace("DocApproval_", "");
+                    var approvalStatus = e.sender.element[0].checked == true ? "true" : "false";
+                    $.ajax({
+                        url: "ProviderDirectory_ApproveMSA?fileId=" + fileId + "&approvalStatus=" + approvalStatus,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            $('#msa').data('kendoGrid').dataSource.read().then(function () {
+                                $('#msa').data('kendoGrid').refresh();
+                            });
+                        }
+                    });
+                }
+            });
+
+            ///Depth Permission
+            $("[id^='Permission_']").kendoSwitch({
+                change: function (e) {
+                    var dataItem = grid.dataItem(this.element.closest("tr"));
+
+                    var Rigid = dataItem.RigId;
+                    var Wellid = dataItem.WellId;
+                    var Sertenant = '@Model.CompanyId';
+                    var DepthPermission = e.sender.element[0].checked == true ? "true" : "false";
+                   
+
+                    $.ajax({
+                        url: "/ProviderDirectory/SaveRigsDepth_Permission?Rigid=" + dataItem.RigId + "&Wellid=" + Wellid + "&Sertenant=" + Sertenant + "&DepthPermission=" + DepthPermission,
+                        type: "POST",
+                        async: false,
+                        dataType: "Json",
+                        success: function (Response) {
+                            $('#DepthPermission').data('kendoGrid').dataSource.read().then(function () {
+                                $('#DepthPermission').data('kendoGrid').refresh();
+                            });
+                        }
+                    });
+                }
+            });
+
+
+        }
+    );
+    var videoTemplate = kendo.template($("#templateProvider").html());
+    function ratingChange(e) {
+        var provId = e.sender.element.data("prov");
+        $.ajax({
+            url: "ProviderDirectory_Rate?provider=" + provId + "&rate=" + e.newValue,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+            }
+        });
+    }
+    function showLocation(e) {
+        var city = "@Model.City";
+        var state = "@Model.State";
+        var zip = "@Model.Zip";
+        var address1 = "@Model.Address1";
+        var address2 = "@Model.Address2";
+        var compName = "@Model.Name";
+        $.ajax({
+            url: "https://nominatim.openstreetmap.org/search?city=" + city + "&state=" + state + "&street=" + address1 + " "
+                + address2 + "&postalcode=" + zip + "&format=geocodejson",
+            type: 'GET',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                var locationLat = 0;
+                var locationLng = 0;
+                var locationLabel = "";
+                for (var i = 0; i < data.features.length; i++) {
+                    var feature = data.features[i];
+                    var label = feature.properties.geocoding.label;
+                    if (label.indexOf(city) > 0 && label.indexOf(zip) > 0) {
+                        var coordinates = feature.geometry.coordinates;
+                        var locationLat = coordinates[1];
+                        var locationLng = coordinates[0];
+                        locationLabel = label;
+                        break;
+                    }
+                }
+               var map = $("#locationmap").data("kendoMap");
+                map.zoom(15);
+                if (locationLat != 0 && locationLng != 0) {
+                    var markerLocation = new kendo.dataviz.map.Location(locationLat, locationLng);
+                    var cLocation = new kendo.dataviz.map.Location(locationLat, locationLng-0.02);
+                    map.center(cLocation);
+                    map.markers.clear();
+                    map.markers.add({
+                        location: markerLocation,
+                        shape: "pinTarget",
+                        tooltip: {
+                            content: locationLabel
+                        }
+                    });
+                }
+                var wnd = $("#MapLocation").data("kendoWindow");
+                wnd.title(compName).center().open();
+            }
+        });
+    }
+    function showCallWindow(phone) {
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/Communication/ManageCall/', { phone: phone }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            }
+        });
+    }
+    function showVideoProfile(userName, receiver, contactUserID) {
+        var url = '@Url.Action("GenerateRoomName", "Token")';
+        $.getJSON(url, function (data) {
+            videoRoom = data;
+            chatHub.invoke("SendVideoNotification", '@senderUser', receiver, videoRoom);
+            openVideoPoupuProfile(userName);
+
+            //Phase II Changes - 03/11/2021
+            //var callMessage = 'Video Call From ' + '@senderUser';
+            //SaveCommunicationNotification(contactUserID, callMessage,'Video Call');
+        });
+
+    }
+    function openVideoPoupuProfile(userName) {
+        joinRoom(videoRoom);
+        var title = "Calling: " + userName;
+        var dataItem = "";
+        var wnd = $("#VideoDetailsOperatingCompany").data("kendoWindow");
+        wnd.title(title);
+        wnd.content(videoTemplate(dataItem));
+        wnd.center().open();
+    }
+    //Phase II Changes
+    //Message Type - Chat/Video Call
+    function SaveCommunicationNotification(receiver, msg, msgType) {
+        var posturl = 'Communication/SaveMessageNotification?toUser=' + receiver + "&message=" + msg + "&type=1" + "&messageType=" + msgType;
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+</script>
+<style>
+    #uploads-1 {
+        border-radius: 5px !important;
+    }
+
+    .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+        color: white !important;
+    }
+
+    #PdfFile {
+        width: auto !important;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .content {
+        overflow: auto;
+    }
+
+    .providers-counts {
+        color: #ffffff;
+        width: 60%;
+        display: inline-block;
+    }
+
+    .k-dropdown {
+        display: none !important;
+    }
+
+    .providers-counts .row {
+        height: 100px;
+        padding-left: 10px;
+    }
+
+    .providers-right {
+        color: #ffffff;
+        width: 28%;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .provider-sec {
+        background-color: #fff;
+        color: #000;
+        border: 1px solid blue;
+        border-radius: 5px;
+        height: 70px;
+        width: 250px;
+    }
+
+    .provider-rating {
+        height: 50px;
+        margin-top: 57px;
+    }
+
+        .provider-rating span {
+            display: block;
+            text-align: right;
+        }
+
+    .provider-user span {
+        display: inline-block;
+        text-align: right;
+    }
+
+    .provider-user {
+        min-width: 350px !important;
+        width: auto !important;
+        height: 95px;
+        float: right;
+        display: block;
+        background-color: #fff;
+        border-radius: 10px;
+        border: 4px #007BFF solid;
+        margin-top: 40px;
+    }
+
+    .providers-counts .blockstyle1 {
+        height: 48px;
+        position: relative;
+        padding-left: 5px;
+        margin-right: 20px;
+        float: left;
+        width: 150px;
+    }
+
+    .providers-counts .blockstylesite {
+        height: 48px;
+        position: relative;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-right: 20px;
+        float: left;
+        width: 215px;
+    }
+
+    .providers-counts .blockstyle {
+        height: 80px;
+        width: auto;
+        color: #000;
+        min-width: 157px;
+        max-width: 170px;
+        margin: 10px 5px 0 5px;
+        background-color: #fff;
+        border: 4px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+        justify-content: space-between;
+        float: left;
+    }
+
+    .inner > label {
+        color: #000;
+        display: block;
+        text-align: left;
+    }
+
+    .inner {
+        color: #000;
+        font-size: 14px;
+        margin: inherit;
+    }
+
+    .blockstyle1 i, .blockstylesite i {
+        font-size: 20px;
+    }
+
+    .blockstyle1 .fa-phone {
+        margin-right: 5px;
+    }
+
+    .blockstyle1 span {
+        margin-left: 15px;
+        display: inline-block;
+        word-break: break-all;
+    }
+
+    .blockstylesite span {
+        margin-left: 5px;
+        display: inline-block;
+    }
+
+    .providers-counts .blockstyle1 span, .providers-counts .blockstylesite span {
+        color: #fff;
+        text-decoration: underline;
+        font-size: 13px;
+    }
+
+    .providers-bottom {
+        margin-top: 25px;
+    }
+
+    .providers-bottom-left {
+        width: 40%;
+        display: inline-block;
+        padding-right: 10px;
+    }
+
+    .providers-bottom-right {
+        width: 59%;
+        display: inline-block;
+        padding-left: 10px;
+        float: right;
+    }
+
+    #curactivity, #upactivity, #msa, #insurance, #DepthPermission {
+        margin-bottom: 10px;
+    }
+
+    .providers-right {
+        float: right;
+    }
+
+    .operator-rating {
+        float: right;
+        color: yellow;
+        border: 1px solid blue;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+        .operator-rating i {
+            width: 25px;
+        }
+
+    .provider-userphoto {
+        width: 65px;
+        border-radius: 50px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .user-contacts {
+        float: left;
+        margin-left: 10px;
+    }
+
+    .user-contacts, .user-call {
+        width: 50px;
+        border-right: 2px #f1f2f8 solid;
+        display: inline-block;
+        height: 87px;
+        padding-right: 25px;
+        padding-left: 10px;
+    }
+
+    .user-photoname {
+        display: inline-block;
+        color: #000;
+        float: left;
+        margin-top: 12px;
+        margin-left: 10px;
+    }
+
+    .user-call {
+        float: left;
+    }
+
+        .user-call .fa-circle {
+            color: #77BD27;
+            margin-top: 35px;
+            margin-left: 10px;
+            font-size: 20px;
+        }
+
+    .user-contacts .fa-phone {
+        color: #3639A4;
+        height: 25px;
+        margin-top: 17px;
+        font-size: 20px;
+    }
+
+    .user-contacts .fa-video-camera {
+        color: #007BFF;
+        height: 25px;
+        font-size: 20px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .greenpecstatus {
+        color: limegreen;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    .yellowpecstatus {
+        color: orange;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    .redpecstatus {
+        color: red;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    .provider-name {
+        text-decoration: underline;
+        font-weight: 900;
+        font-size: 22px;
+        font-family: Roboto;
+    }
+
+    .provider-contacts {
+        width: 810px;
+        display: inline-block;
+        margin-top: 40px;
+    }
+
+    .provider-total {
+        font-size: 14px;
+    }
+
+    .provider-totalval {
+        color: #007bff;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 16px !important;
+    }
+
+    .provider-usercard {
+        display: inline-block;
+    }
+
+    .provider-jobitle {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .provider-location {
+        position: absolute;
+    }
+
+    .innerlocation {
+        width: 150px;
+    }
+
+    .provider-fullname {
+        font-weight: 900 !important;
+        font-size: 18px;
+    }
+
+    .k-rating-label {
+        display: none !important;
+    }
+
+    .k-rating-container .k-rating-item .k-icon {
+        font-size: 20px;
+        color: yellow;
+    }
+
+    .k-rating-container .k-rating-item {
+        padding: 0.1rem 0.3rem;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .linkstyle {
+        text-decoration: underline !important;
+    }
+
+    .k-i-marker-pin-target {
+        font-size: 40px !important;
+    }
+
+    .uploadview, .docview {
+        margin-bottom: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+</style>

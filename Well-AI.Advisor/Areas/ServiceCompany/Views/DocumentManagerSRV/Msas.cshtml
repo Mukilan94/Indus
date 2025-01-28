@@ -1,0 +1,567 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadFileOperatorModel
+@{
+    ViewData["Title"] = "Msas";
+    Layout = null;
+
+    var operatordata = (List<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>)ViewData["operators"];
+}
+
+<style>
+    .k-alert {
+        width: 300px !important;
+    }
+
+        .k-alert .k-content {
+            max-height: 100px;
+            overflow: auto;
+        }
+    #uploaddocv{
+        margin-top:20px !important;
+    }
+    .k-window-content, .k-prompt-container {
+        overflow: unset !important;
+    }
+    .btn-primary {
+        background-color: #007bff !important;
+        border-color: #367fa9 !important;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+    /*.k-window {
+        min-height: 136px !important;
+        width: 430px !important;
+    }*/
+    .k-grid-header .k-header {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 15px;
+    }
+
+    .k-pager-numbers {
+        padding-top: 15px;
+    }
+
+    #Upload > span {
+        padding-right: 10px;
+    }
+
+    #uploaddocs {
+        margin-top: 10px;
+    }
+
+    .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+        border-radius: 10px;
+    }
+
+    .k-dropzone {
+        height: 38px !important;
+    }
+
+    #OperatorId, #IsActive, .maskactive {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+
+    .k-upload .k-dropzone {
+        background-color: #fff;
+    }
+
+    /*.linkstyle {
+        margin-left: 40%;
+    }*/
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-switch-off .k-switch-container, .k-switch-off .k-switch-container:hover {
+        background-color: #fff;
+        border: 2px solid #007BFF;
+    }
+
+    .k-switch-off .k-switch-handle, .k-switch-off .k-switch-handle:hover {
+        background-color: #007BFF !important;
+    }
+
+    .k-switch {
+        width: 90px;
+    }
+
+    .k-datetimepicker {
+        height: 30px;
+    }
+
+    .secrow {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .lblExpireDate {
+        padding-top: 5px;
+    }
+
+    #ExpireDate_validationMessage {
+        display: block;
+    }
+
+    .k-button.k-primary {
+        color: #fff !important;
+        /*mrgin-left: -320%; *//* button margin left */
+    }
+
+    #PdfFile {
+        width: auto !important;
+    }
+
+    .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+        color: white !important;
+    }
+    .k-upload {
+        width: 50%;
+       
+        /*Upload button width  */
+    }
+
+    .k-dropdown {
+        margin-left: -50%; /*  Select operator margin letf  */
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+
+    function RefreshGrid() {
+        var IntTime = 300000;
+        setInterval(function () {
+            $("#uploaddocv").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    $(function () {
+        $("form").kendoValidator();
+    });
+
+    function OnSaveGrid(e) {
+        setTimeout(function () {
+            $('#uploaddocv').data('kendoGrid').dataSource.read().then(function () {
+                $('#uploaddocv').data('kendoGrid').refresh();
+            });
+            location.reload();
+        }, 2000);
+
+    }
+
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content          
+        }).data("kendoAlert").open();
+    }
+
+    //function onClick() {
+    //    var Vendor = $("#ddlOperators").data("kendoDropDownList").value();
+    //    var FileName = $("#filesv").data("kendoUpload");
+    //    files = FileName.getFiles();
+    //    console.log(files);
+    //    if (files.length > 0) {
+    //        sessionStorage.setItem("FileName", files[0].name);
+
+    //        $.ajax({
+    //            url: "DocumentManagerSRV/GetMSAfile_Validation?Vendor=" + Vendor + "&FileName=" + files[0].name,
+    //            type: 'GET',
+    //            async: false,
+    //            success: function (Response) {
+    //                if (Response.Status == "True") {
+    //                    $('#WindowContent').html("The Following Files Already Exist:" + files[0].name + " " + "Please rename your files or delete the duplicate from the server before re - uploading.")
+    //                    $('#WindowContent').css('color', 'Red')
+    //                    var wnd = $("#MSAupload").data("kendoWindow");
+    //                    wnd.center().open();
+    //                    wnd.title("Alert:Unable to Upload MSA Document")
+
+    //                    $("#myForm").submit(function (e) {
+    //                        e.preventDefault();
+    //                    });
+    //                }
+    //                else if (Response.Status1 == "True") {
+    //                    $('#MSAuploadContant').html("Do you want replace the existing MSA Document ?")
+    //                    $('#MSAuploadContant').css('color', 'Red')
+    //                    var wnd = $("#MSAuploadForOperator").data("kendoWindow");
+    //                    wnd.center().open();
+    //                    wnd.title("Alert:Replace MSA Document")
+
+    //                    $("#myForm").submit(function (e) {
+    //                        e.preventDefault();
+    //                    });
+    //                }
+    //            }
+    //        });
+    //    } else {
+    //        var fileNotSelected = false;
+    //        var validator = $("#myForm").kendoValidator({
+    //            rules: {
+    //                upload: function (input) {
+    //                    if (input[0].type == "file") {
+    //                        fileNotSelected = true;
+    //                        var len = input.closest(".k-upload").find(".k-file").length;
+
+    //                        return len > 0;
+    //                    }
+
+    //                    return true;
+    //                }
+    //            }
+    //        }).data("kendoValidator");
+    //        $("#myForm").submit(function (e) {
+    //            $("#filesv").removeAttr("disabled");
+    //            if (!validator.validate()) {
+    //                if (fileNotSelected) {
+    //                    planalert('please select a file', 'Information');
+    //                    fileNotSelected = false;
+    //                }
+    //                e.preventDefault()
+    //            }
+    //        });
+    //    }
+
+    //}
+
+    function onClick() {
+        debugger
+        var Vendor = $("#ddlOperators").data("kendoDropDownList").value();
+        var FileName = $("#filesv").data("kendoUpload");
+        files = FileName.getFiles();
+        console.log(files);
+        if (files.length > 0) {
+            sessionStorage.setItem("FileName", files[0].name);
+
+            $.ajax({
+                url: "DocumentManagerSRV/GetMSAfile_Validation?Vendor=" + Vendor + "&FileName=" + files[0].name,
+                type: 'GET',
+                async: false,
+                success: function (Response) {
+                    if (Response.Status == "True") {
+                        $('#WindowContent').html("The Following Files Already Exist:" + files[0].name + " " + "Please rename your files or delete the duplicate from the server before re - uploading.")
+                        $('#WindowContent').css('color', 'Red')
+                        var wnd = $("#MSAupload").data("kendoWindow");
+                        wnd.center().open();
+                        wnd.title("Alert:Unable to Upload MSA Document")
+
+                        $("#myForm").submit(function (e) {
+                            e.preventDefault();
+                        });
+                    }
+                    else if (Response.Status1 == "True") {
+                        $('#MSAuploadContant').html("Do you want replace the existing MSA Document ?")
+                        $('#MSAuploadContant').css('color', 'Red')
+                        var wnd = $("#MSAuploadForOperator").data("kendoWindow").refresh();
+                        wnd.center().open();
+                        wnd.title("Alert:Replace MSA Document")
+
+                        $("#myForm").submit(function (e) {
+                            e.preventDefault();
+                        });
+                    }
+                }
+            });
+        } else {
+            var fileNotSelected = false;
+            var validator = $("#myForm").kendoValidator({
+                rules: {
+                    upload: function (input) {
+                        if (input[0].type == "file") {
+                            fileNotSelected = true;
+                            var len = input.closest(".k-upload").find(".k-file").length;
+
+                            return len > 0;
+                        }
+
+                        return true;
+                    }
+                }
+            }).data("kendoValidator");
+            $("#myForm").submit(function (e) {
+                $("#filesv").removeAttr("disabled");
+                if (!validator.validate()) {
+                    if (fileNotSelected) {
+                        planalert('please select a file', 'Information');
+                        fileNotSelected = false;
+                    }
+                    e.preventDefault()
+                }
+            });
+        }
+
+    }
+
+
+
+    function isactiveChangemsa(e) {
+        if (e.checked) {
+            $("#ActiveStatus").data("kendoMaskedTextBox").value("true");
+            $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrapmsa .k-switch-label-on").show();
+            $(".switchwrapmsa .k-switch-label-off").hide();
+        }
+        else {
+            $("#ActiveStatus").data("kendoMaskedTextBox").value("false");
+            $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrapmsa .k-switch-label-on").hide();
+            $(".switchwrapmsa .k-switch-label-off").show();
+        }
+    }
+    $(document).ready(function () {
+        $("#ActiveStatus").data("kendoMaskedTextBox").value("false");
+        $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+        $(".switchwrapmsa .k-switch-label-on").hide();
+        $(".switchwrapmsa .k-switch-label-off").show();
+    });
+
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                $.ajax({
+                    url: "DocumentManagerSRV/MSAs_Destroy?fileId=" + dataItem.FileId + "&well=" + dataItem.WellName,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.FileApproved == true) {
+                            $('#WindowContent').html("This File " + "<b>" + data.FileName + "</b>" + " is being used by " + "<b>" + data.VendorName + "</b>" + ".")
+                            //$('#WindowContent').css('color', 'Red')
+                            var wnd = $("#MSAupload").data("kendoWindow");
+                            wnd.center().open();
+                            wnd.title("Alert:Unable to delete MSA Document")
+                        }
+                        setTimeout(function () {
+                            $('#uploaddocv').data('kendoGrid').dataSource.read().then(function () {
+                                $('#uploaddocv').data('kendoGrid').refresh();
+                            });
+                        });
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    function onDataBound() {
+        //var grid = this
+        //grid.element.off('dblclick');
+        //grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+        //    grid.editRow($(e.target).closest('tr'));
+        //})
+    }
+
+    //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewPdfInPdfViewer(MsaId, TenId, FileName) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(FileName);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/DocumentManagerSRV/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },
+                download: {
+                    url: "/DocumentManagerSRV/DownloadUploadFile?fileId=" + MsaId + "&TenId=" + TenId,
+                }
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+
+
+    function FormSubmit_Mass() {
+      //  debugger;
+        document.getElementById('myForm').submit();
+    }
+
+    function Cancel() {
+        $("#myForm").submit(function (e) {
+            e.preventDefault();
+        });
+        var wnd = $("#MSAuploadForOperator").data("kendoWindow");
+        wnd.close();
+    }
+
+</script>
+<section>
+    @using (Html.BeginForm("UploadMsas", "DocumentManagerSRV", FormMethod.Post, new { @id = "myForm", @name = "myForm" }))
+    {
+    <div class="row">
+        <span class="k-invalid-msg" data-for="filesv"></span>
+
+        <div class="col-sm-5">
+            @(Html.Kendo().Upload()
+                        .Name("filesv")
+                        .HtmlAttributes(new { aria_label = "files" })
+                            .Validation(validation => validation.MinFileSize(0)
+               ))
+        </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().DropDownList()
+                            .Name("ddlOperators")
+                            .OptionLabel("Select Operator")
+                            .DataValueField("CompanyId")
+                            .DataTextField("Name")
+                            .Events(e => e.Change("operatorChange"))
+                            .BindTo(operatordata)
+                            .HtmlAttributes(new { @class = "ddloperator" })
+                    )
+                    @Html.EditorFor(x => x.OperatorId)
+                    @Html.ValidationMessageFor(model => model.OperatorId)
+                    @Html.ValidationMessage("Error")
+                    @Html.ValidationSummary(true)
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-2">
+            <button id="Upload" onclick="onClick()" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="fa fa-floppy-o"></span>Upload</button>
+        </div>
+
+
+    </div>
+        @*<div class="row secrow">
+                <div class="col-sm-2">
+                    @Html.LabelFor(model => model.ExpireDate, "Expire Date", new { @class = "lblExpireDate" })
+                </div>
+                <div class="col-sm-3">
+                    @(Html.Kendo().DatePickerFor(model => model.ExpireDate)
+                    .Format("MM/dd/yyyy")
+                    .Min(DateTime.Today)
+                    .DateInput()
+                    .ParseFormats(new string[] { "MM/dd/yyyy" })
+                    .HtmlAttributes(new { required = "required", validationmessage = "Please select Date of Expiration" })
+                )
+                    @Html.ValidationMessageFor(model => model.ExpireDate)
+                </div>
+                <div class="col-sm-4 switchwrapmsa">
+                    <div class="maskactive">
+                        @Html.Kendo().MaskedTextBoxFor(model => model.ActiveStatus)
+                    </div>
+                    @(Html.Kendo().Switch()
+                          .Name("switchactive").Enabled(true)
+                          .Messages(c => c.Checked("Active").Unchecked("Inactive"))
+                          .Events(ev => ev.Change("isactiveChangemsa"))
+                )
+                    @Html.ValidationMessageFor(model => model.ActiveStatus)
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="col-sm-12">
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.UploadsGridFileModel>()
+                    .Name("uploaddocv")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.WellName).Title("Operator").Width(20);
+                        columns.Bound(p => p.FileName).Title("File").Width(50);
+                        columns.Bound(p => p.Date).Format("{0: MM/dd/yyyy}").Width(8);
+                        columns.Bound(p => p.FileId).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                           "<a href='" + @Url.Action("DownloadUploadFile", "DocumentManagerSRV", new { fileId = "#=FileId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></ a>" +
+                           "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=FileId#\",\"#=VendorId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                           "#}else{#" +
+                            "<a href='" + @Url.Action("DownloadUploadFile", "DocumentManagerSRV", new { fileId = "#=FileId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></ a>" +
+                            "#} #"
+                           ).Width(5);                      
+                        columns.Command(command => {
+                            command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete"); }).Title("Action").Width(5);
+                    })
+                    .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                    .Scrollable(scrollable => scrollable.Virtual(true))
+                    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditMSA").Window(w => w.Title("Edit MSA").Width(450)))
+                    .ToolBar(toolbar =>
+                    {
+                        toolbar.Search();
+                    })
+                    .Search(search =>
+                    {
+                        search.Field(p => p.WellName);
+                        search.Field(p => p.FileName);
+                    })
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(5)
+                            .Batch(false)
+                            .Model(model => model.Id(p => p.FileId))
+                            .Read(read => read.Action("Msas_Read", "DocumentManagerSRV"))
+                            .Update(u => u.Action("Msas_Update","DocumentManagerSRV"))
+                    )
+                    .Events(e => e.Save("OnSaveGrid").DataBound("onDataBound"))
+            )
+            </div>
+        </div>
+    }
+</section>
+@(Html.Kendo().Window().Name("MSAupload")
+    .Title("Alert : Unable to Upload MSA Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="WindowContent"></div>
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(500)
+    .Draggable(true)
+)
+@(Html.Kendo().Window().Name("MSAuploadForOperator")
+    .Title("Alert : Unable to Upload MSA Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="MSAuploadContant"></div>
+        <div class="text-center footer">
+            <button id="UpgradeteBtn" class="k-button k-primary" style="width:100px !important; margin:5px;" onclick="FormSubmit_Mass()">Yes</button>
+            <button id="ReturBtn" class="k-button k-cancel-button" style="width:100px !important; margin:5px;background-color:black;color:white !important;" onclick="Cancel()">No</button>
+        </div>
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(400)
+    .Height(100)
+    .Draggable(true)
+)
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)

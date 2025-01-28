@@ -1,0 +1,86 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.OperatingCompany.Models.UserAction
+@{
+    ViewData["Title"] = "Add Permission";
+    var btnText = Model == null ? "Add" : "Update";
+}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-12">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.HiddenFor(x => x.Id, new { @id = "txtId" })
+                @Html.HiddenFor(x => x.Title)
+                @Html.LabelFor(model => model.Title, "Permission")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Title, new { @Class = "k-textbox", @id = "txtPermission" })
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+        </div>
+    </div>
+    <div class="k-edit-buttons k-state-default">
+        <button id="AddPermission" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>@btnText</button>
+        <button id="ClosePermission" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+    </div>
+</div>
+<style type="text/css">
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+</style>
+<style>
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .k-i-close {
+        display: block !important;
+    }
+
+    .k-button.k-primary {
+        background-color: #007bff !important;
+    }
+</style>
+<script>
+    $("#AddPermission").click(function () {
+        SavePermission();
+    });
+    $("#ClosePermission").click(function () {
+        var wnd = $("#AddPermissionWindow").data("kendoWindow");
+        wnd.close();
+    });
+
+
+    function SavePermission() {
+        var permissionName = $("#txtPermission").val();
+        var permissionId = $("#txtId").val();
+
+        var permission = {
+            "Id": permissionId,
+            "Title": permissionName
+        };
+        var permissionJSON = JSON.stringify(permission);
+        $.ajax({
+            url: "/Customer/SavePermission",
+            type: 'POST',
+            dataType: 'json',
+            data: permissionJSON,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                var wnd = $("#AddPermissionWindow").data("kendoWindow");;
+                wnd.close();
+                setTimeout(function () {
+                    window.location.reload();
+                },3000);
+            }
+        });
+    }
+
+
+</script>

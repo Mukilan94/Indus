@@ -1,0 +1,1068 @@
+﻿@using System.Security.Claims;
+@{
+    ViewData["Title0"] = "";
+    ViewData["Title"] = "Activity Advisor";
+
+    var wellsdata = (List<WellAI.Advisor.Model.OperatingCompany.Models.RigsModel>)ViewData["wells"];
+    var userIdentity = (ClaimsIdentity)User.Identity;
+    var senderUser = userIdentity.Name;    
+}
+
+@model WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigDataModel
+
+<section class="content-header">
+    <style>
+        .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+            color: white !important;
+        }
+        .StageChartStyle
+        {
+            height:229px !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+            display: block !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+            width: unset !important;
+            height: calc(1*(2px + 0.75rem + 1.5em));
+            box-sizing: border-box;
+            border-color: inherit;
+            margin: 0 0.375rem;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+            margin: 0;
+            border-width: 0;
+            width: unset !important;
+            height: unset !important;
+        }
+
+        .k-pager-numbers {
+            display: contents !important;
+        }
+
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            background-color: #fff;
+            color: #000;
+        }
+        .provider-user span {
+            display: inline-block;
+            text-align: right;
+        }
+
+        .provider-user {
+            width: 100%;
+            height: 95px;
+            float: right;
+            display: block;
+            background-color: #fff;
+            border-radius: 10px;
+            border: 4px #007BFF solid;
+            margin-bottom: 40px;
+        }
+        .provider-userphoto {
+            width: 65px;
+            border-radius: 50px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .provider-usercard {
+            display: inline-block;
+        }
+
+        .user-contacts {
+            float: left;
+            margin-left: 10px;
+        }
+
+        .user-contacts, .user-call {
+            width: 50px;
+            border-right: 2px #f1f2f8 solid;
+            display: inline-block;
+            height: 87px;
+            padding-right: 25px;
+            padding-left: 10px;
+        }
+
+        .k-grid table {
+            margin: 0;
+            width: 100;
+            max-width: none;
+            border-width: 0;
+            border-color: inherit;
+            
+            outline: 0;
+        }
+
+        .user-contacts, .user-call {
+            width: 50px;
+            border-right: 2px #f1f2f8 solid;
+            display: inline-block;
+            height: 91px;
+            padding-right: 25px;
+            padding-left: 10px;
+        }
+
+        .user-photoname {
+            display: inline-block;
+            color: #000;
+            float: left;
+            margin-top: 4px;
+            margin-left: 10px
+        }
+
+        .user-call {
+            float: left;
+        }
+
+
+        .user-contacts .fa-phone {
+            color: #3639A4;
+            height: 28px;
+            margin-top: 10px;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+
+        .user-contacts .fa-video-camera {
+            color: #007BFF;
+            height: 26px;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .user-contacts .fa-users {
+            color: #F4AF00;
+            height: 25px;
+        }
+
+        .k-navigator, .k-zoom-control {
+            display: none;
+        }
+
+        .btnNotes, .btnNotes:hover, .btnActivity, .btnActivity:hover {
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+            .btnNotes .fa, .btnActivity .fa {
+                color: #007BFF;
+                padding-right: 5px;
+            }
+
+        .btnMSAGreen, .btnMSAGreen:hover {
+            background-color: #77BD27;
+            color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btnMSARed, .btnMSARed:hover {
+            background-color: #FF6344;
+            color: #fff;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+            .btnMSARed .fa, .btnMSAGreen .fa {
+                padding-left: 10px;
+            }
+
+        .k-i-marker-pin-target {
+            color: #FF6344 !important;
+        }
+
+        #locationmap {
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+        }
+        .km-widget.km-scroll-wrapper{
+            border-radius:6px !important;
+        }
+        
+        .wellslist {
+            float: right;
+        }
+        #chartStage {
+            margin-top: 15px;
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+            width: 100% !important;
+        }
+            #chartStage > svg > defs {
+                display: none;
+            }
+                #chartStage > svg {
+                border-radius: 5px;
+                width: 100% !important;
+                /*margin-top: 1px;*/
+            }    
+
+            #chartdepth {
+                margin-top: 15px;
+                border: 4px solid #007BFF;
+                border-radius: 10px;
+            }
+
+            #chartdepth > svg {
+                border-radius: 5px;
+                width: 100% !important;
+                margin-left: 0px;
+            }
+			
+
+        .depthlabel, .contactlabel, .servlabel, .submprop, .curserv {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        #kdef9, #kdef10 {
+            display: none;
+        }
+        .contactdescription {
+            color: #82909E;
+        }
+
+        #depthgrid {
+            margin-bottom: 10px;
+            width: 100%;
+            min-width: 100%;
+        }
+
+        .operName {
+            display: inline-block;
+            vertical-align: sub;
+            width: 28%;
+            text-align: right !important;
+        }
+
+        .k-pager-numbers-wrap .k-pager-numbers {
+            margin-bottom: 0px !important;
+        }
+
+        .wellslist .k-dropdown, .wellslist .k-dropdowntree {
+            width: 17em;
+        }
+        .user-call .fa-circle {
+            color: #77BD27;
+            margin-top: 35px;
+            margin-left: 10px;
+            font-size: 15px;
+        }
+      
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-8 depthlabel">Staging Chart</div>
+                <div class="col-sm-4">
+                    <div class="k-edit-label">
+                        @Html.Label("Well")
+                    </div>
+                    <div class="k-edit-field">
+                        @(Html.Kendo().DropDownList()
+                        .Name("filterwells")
+                        .DataValueField("WellId")
+                        .DataTextField("Category")
+                        .HtmlAttributes(new { @class = "wellslist" })
+                        .BindTo(wellsdata)
+                        .Events(e =>
+                        {
+                            e.Change("wellChange");
+                        })
+                        )
+                    </div>                       
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12 contactlabel">Contact Information</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 contactdescription">Online status, access communication panel, and rig location</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div id="chartdepth"></div>
+            <div id="chartStage"></div>
+
+            @*@(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigData>()
+                        .Name("chartdepth")
+                    )
+            @(Html.Kendo().Chart<WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigData>()
+                        .Name("chartStage")
+                    )*@
+        </div>
+
+        <div class="col-sm-6" style="margin-top:22px;">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="provider-user">
+                        <div class="user-call col-sm-1">
+                            <i class="fa fa-circle"></i>
+                        </div>
+                        <div class="user-contacts col-sm-1">
+                            <i class="fa fa-phone" onclick="showCallWindow(@Model.Phone);"></i>
+                            <i class="fa fa-video-camera" onclick="showVideoRigDataSRV('@Model.OperatorName');"></i>
+
+                        </div>
+                        <div class="user-photoname col-sm-1" style="margin-left:-10px !important;margin-right:50px !important;margin-top:10px !important">
+                            <img class="provider-userphoto" src="~/img/nophotouser.png">
+                        </div>
+                        <div class="provider-usercard col-sm-3" style="margin-top:10px !important">
+                            <div class="provider-fullname" style="color:black !important">@Model.PrimaryContact</div>
+
+                            <div class="provider-jobitle">@(@Model.User == null ? "" : @Model.User.JobTitle)</div>
+                        </div>
+
+                    </div>
+
+                    <div id="DivCurrentStageAndLastCasingString">
+                            <div class="provider-user">
+                                <div class="user-photoname">
+                                    <div>
+                                        Current Stage : <span id="lblCurrentStage"></span>
+                                    </div>
+                                    <br />
+                                    <div>
+                                        Last Casing String : <span id="lblLastCasingString"></span>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    @(Html.Kendo().Map()
+                       .Name("locationmap")
+                       .Zoom(8)
+                       .HtmlAttributes(new { style = "height:95px" })
+                       .Layers(layers =>
+                       {
+                           layers.Add()
+                               .Type(MapLayerType.Tile)
+                               .UrlTemplate("http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png")
+                               .Subdomains("a", "b", "c");
+
+                       })
+                    )
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.InDepthRigDataGridModel>()
+                           .Name("depthgrid")
+                           .HtmlAttributes(new { @class = "ra-section" })
+                           .Columns(columns =>
+                           {
+                               columns.Bound(p => p.Name).Title("Upcoming Services").Width(350);
+                               columns.Bound(p => p.StageType).Title("STAGE").Width(150);
+                               columns.Bound(p => p.Depth).Format("{0:n0}ft").Width(90);
+                               columns.Bound(p => p.Day).Width(50);
+                               columns.Bound(p => p.IsBiddable).Title("RFP").Filterable(false).ClientTemplate("#if (IsBiddable == true) { #" +
+                               "<a href='javaScript:void(0)' onclick='newRequest(\"#=TaskId#\",\"#=Name#\")'></a>   <a href='javaScript:void(0)' onclick='customerCallEvent(\"#=Name#\");'><i class='fa fa-calendar-plus-o' style='font-size:15px;'></i></a>" +
+                               "# } else { #" +
+                               "<a href='javaScript:void(0)' onclick='customerCallEvent(\"#=Name#\");'><i class='fa fa-calendar-plus-o' style='font-size:15px;'></i></a>" +
+                                "# } #"
+                                ).Width(100);
+
+                           })
+                           .Sortable(s => s.Enabled(true))
+                           .Pageable(p =>
+                             p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                         )
+                         .Scrollable(scrollable => scrollable.Virtual(true))
+                           .Pageable(p => p.ButtonCount(4))
+                           .DataSource(dataSource => dataSource
+                                   .Ajax()
+                                   .PageSize(10)
+                                   .Sort(sort => sort.Add(model => model.Depth))
+                                   .Read(read => read.Action("GetGridData", "InDepthRigDataSrv").Data("onChartRead"))
+                           ))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidViewModel>()
+                             .Name("depthSubmittedProposal")
+                             .HtmlAttributes(new { @class = "ra-section" })
+                             .Columns(columns =>
+                             {
+                                 columns.Bound(p => p.Subject).Filterable(false).ClientTemplate("<a href='" + @Url.Action("AuctionBidContent", "ProjectAuctionsSRV", new { id = "#=ProposalId#" }) + "' class='linkstyle'>#=Subject#</a>").Title("Submitted Proposals");
+                             })
+                             .Sortable(s => s.Enabled(true))
+                              .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                            .Scrollable(scrollable => scrollable.Virtual(true))
+                             .Pageable(p => p.ButtonCount(4))
+                             .DataSource(dataSource => dataSource
+                                     .Ajax()
+                                     .PageSize(5)
+                                     .Sort(sort => sort.Add(model => model.Subject))
+                                     .Read(read => read.Action("GetInDepthSubmittedProposal", "InDepthRigDataSrv").Data("onChartRead"))
+                             ))
+                </div>
+                <div class="col-sm-6">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>()
+                          .Name("depthProject")
+                          .HtmlAttributes(new { @class = "ra-section" })
+                          .Columns(columns =>
+                          {
+                              columns.Bound(p => p.Title).ClientTemplate("<a href='" + @Url.Action("ProjectDetails", "UpcomingProjectsSRV", new { id = "#=ProjectId#" }) + "' class='linkstyle'>#=Title#</a>").Filterable(false).Title("Current Services");
+                          })
+                          .Sortable(s => s.Enabled(true))
+                           .Pageable(p =>
+                              p.Info(true)
+                             .Numeric(false)
+                                 .PreviousNext(false)
+                            )
+                            .Scrollable(scrollable => scrollable.Virtual(true))
+                          .Pageable(p => p.ButtonCount(4))
+                          .DataSource(dataSource => dataSource
+                                  .Ajax()
+                                  .PageSize(5)
+                                  .Sort(sort => sort.Add(model => model.Title))
+                                  .Read(read => read.Action("GetInDepthProjectData", "InDepthRigDataSrv").Data("onChartRead"))
+                          )
+                    )
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+@(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+    .Events(ev => ev.Close("onCallWindowClose"))
+.Modal(true)
+.Draggable(true)
+.Width(300)
+    )
+@(Html.Kendo().Window().Name("VideoDetails")
+    .Title("Video Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+    {
+        e.Close("onClose");
+    })
+    .Modal(true)
+    .Draggable(true).Width(1000)
+)
+<div style="display:none" id="callEventScheduler">
+    <section class="content col-12">
+        @(Html.Kendo().Scheduler<WellAI.Advisor.Model.OperatingCompany.Models.ActivityViewModel>()
+    .Name("scheduler")
+    .Mobile(MobileMode.Auto)
+    .Date(DateTime.Now)
+    .Height(800)
+    .Events(e =>
+    {
+        e.Edit("scheduler_add");
+        
+    })
+    .MinorTickCount(1)
+    .Views(views =>
+    {
+        views.DayView();
+        views.WeekView();
+        views.MonthView(month =>
+        {
+            month.Selected(true);
+            month.EventsPerDay(4);
+            month.AdaptiveSlotHeight(true);
+            month.EventSpacing(5);
+            month.EventHeight(60);
+        });
+        views.AgendaView();
+    })
+    .DataSource(dataSource => dataSource
+    .Model(m =>
+    {
+        m.Id(f => f.ProjectId);
+        m.Field(f=>f.Title).DefaultValue("No title");
+        m.Field(f=>f.ProjectStatus).DefaultValue(1);
+        m.Field(f=>f.ProjectStatusName);
+        m.Field(f=>f.Description).DefaultValue("No Description");
+        m.Field(f=>f.Start);
+        m.Field(f=>f.End);
+        m.Field(f=>f.RecurrenceID);
+        m.Field(f=>f.RecurrenceRule);
+        m.Field(f=>f.RecurrenceException);
+        m.Field(f=>f.IsAllDay);
+        m.Field(f=>f.StartTimezone);
+        m.Field(f=>f.EndTimezone);
+    })
+    .Create("Create", "ActivityViewSRV")
+    )
+    )
+    </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <div class="videoleftpart">
+            <div id="remote-media"></div>
+        </div>
+        <div class="videorightpart">
+            <div id="local-media"></div>
+        </div>
+        <div class="text-center">
+            <button type="button" class="k-button k-button-icontext k-grid-cancel" onclick="windowClose();"><span class="k-icon k-i-cancel"></span>End Call</button>
+        </div>
+    </div>
+</script>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(window).resize(function () {
+            $("#chartdepth").data("kendoChart").refresh();
+        });
+
+        var videoRoom = 'WellAI';
+
+        $(document).ready(function () {
+            $(".k-scheduler-cancel").click(function () {
+                $("#scheduler").data("kendoScheduler").close();
+            });
+            console.log('ReceiveVideoNotification at Indepthrig data');
+        chatHub.on('ReceiveVideoNotification', function (sender, receiver, roomName) {
+            if (sender === '@senderUser' && roomName==='Close') {
+                windowClose();
+
+            }
+        });
+
+            document.getElementById("DivCurrentStageAndLastCasingString").style.display = "none";
+
+    });
+        function showCallWindow(phone) {
+            $("#wndCall").empty();
+            $("#wndCall").text("Calling....");
+            var wnd = $("#Call").data("kendoWindow");
+            wnd.content();
+            wnd.center().open();
+
+            $('#wndCall').load('/Communication/ManageCall/', { phone: phone }, function (response, status, xhr) {
+                if (status == "error") {
+                    try {
+                        var msge = $.parseJSON(response);
+                    } catch (e) {
+                        //Phase II Changes - Alert
+                        rigalert("Error parsing server response", "Error");
+                    }
+                }
+            });
+        }
+
+
+        //Phase II Changes - Alert
+        function rigalert(content, alerttitle) {
+            $("<div></div>").kendoAlert({
+                title: alerttitle,
+                content: content
+            }).data("kendoAlert").open();
+        }
+
+function showVideoRigDataSRV(userName, receiver, contactUserID) {
+
+            var url = '@Url.Action("GenerateRoomName", "Token")';
+            $.getJSON(url, function (data) {
+                videoRoom = data;
+                chatHub.invoke("SendVideoNotification", '@senderUser', receiver, videoRoom);
+                openVideoPoupuRigDataSRV(userName);
+            });
+            //Phase II Changes - 03/11/2021
+	        var callMessage = 'Video Call From ' + '@senderUser';
+            SaveCommunicationNotification(contactUserID, callMessage,'Video Call');
+        }
+
+        function openVideoPoupuRigDataSRV(userName) {
+            joinRoom(videoRoom);
+            var title = "Calling: " + userName;
+            var dataItem = "";
+            var wnd = $("#VideoDetails").data("kendoWindow");
+
+            wnd.title(title);
+            wnd.content(videoTemplate(dataItem));
+            wnd.center().open();
+        }
+        $(document).ready(function () {
+
+            var ChartWellid = sessionStorage.getItem("WellIdValue");
+            if (sessionStorage.getItem("WellIdValue") != "" || sessionStorage.getItem("WellIdValue") != null) {
+                var ddlWells = $("#filterwells").data("kendoDropDownList");
+                ddlWells.value(ChartWellid);
+                ddlWells.trigger("change");
+                Cookies.set('indepthrigdatagetwellbyrigsidcookiessrv', ChartWellid);
+            }
+            else {
+                 var initWellId = "@Model.InitWellId";
+            var ddlWells = $("#filterwells").data("kendoDropDownList");
+            ddlWells.value(initWellId);
+            ddlWells.trigger("change");
+            }
+
+            showLocation();
+        });
+        function customerCallEvent(taskName) {
+            $("#scheduler").data("kendoScheduler").addEvent({
+                title: taskName,
+            });
+        }
+        function scheduler_add(e) {
+            $('.k-window-title').text("Schedule Task");
+        }
+        function dataBound(e) {
+
+            var wid = $("#filterwells").data("kendoDropDownList").value();
+            Cookies.set('indepthrigdatagetwellbyrigsidcookiessrv', wid);
+
+            var depthChart = $("#chartdepth").data("kendoChart");
+            depthChart.dataSource.read();
+
+            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+            griddepthgrid.dataSource.read();
+
+            var griddepthProject = $("#depthProject").data("kendoGrid");
+            griddepthProject.dataSource.read();
+
+            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+            griddepthSubmittedProposal.dataSource.read();
+
+            sessionStorage.clear();
+
+        }
+        function filterdropChange(e) {
+            var result = $("#filterdrop").val();
+
+            var myWindow = $("#window");
+            myWindow.data("kendoWindow").close();
+        }
+
+        function wellChange() {
+            var value = this.value();
+            Cookies.set('indepthrigdatagetwellbyrigsidcookiessrv', value);
+
+            loadCasingString(value);
+            GetAuthorizedVendorPermission(value);
+
+            var griddepthgrid = $("#depthgrid").data("kendoGrid");
+            griddepthgrid.dataSource.read();
+
+            var griddepthProject = $("#depthProject").data("kendoGrid");
+            griddepthProject.dataSource.read();
+
+            var griddepthSubmittedProposal = $("#depthSubmittedProposal").data("kendoGrid");
+            griddepthSubmittedProposal.dataSource.read();
+
+            if (value != null && value !== "") {
+                $.ajax({
+                    url: "/InDepthRigDataSrv/GetDepthPermission?WellId=" + value,
+                    type: "GET",
+                    async: false,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result == "true") {
+                            loadDepthChart(value);
+                            document.getElementById("chartStage").style.display = "none";
+                            document.getElementById("chartdepth").style.display = "block";
+                            $("#chartdepth").data("kendoChart").refresh();
+                            $(".depthlabel").text("Depth Time Chart");
+                        }
+                        else {
+                            loadStageChart(value);
+                            document.getElementById("chartdepth").style.display = "none";
+                            document.getElementById("chartStage").style.display = "block";
+                            $("#chartStage").data("kendoChart").refresh();
+                            $(".depthlabel").text("Staging Chart");
+                        }
+                    }
+                });
+            }
+            else {
+                loadStageChart(value);
+                document.getElementById("chartdepth").style.display = "none";
+            }
+
+            sessionStorage.clear();
+
+        }
+
+
+        //LoadDepatchChart function
+        function loadDepthChart(wellId) {
+            var dayvalsataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "/InDepthRigDataSrv/GetChartAction_V1",
+                        dataType: "json",
+                        data: {
+                            wellId: wellId,
+                        }
+                    }
+                }
+            });
+
+            $("#chartdepth").kendoChart({
+                title: {
+                    text: ""
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: "#fff",
+                    height: "550",
+                    margin: 2,
+                },
+                dataSource: dayvalsataSource,
+                seriesColors: ["#007BFF", "#43BCCD"],
+                plotArea: {
+                    padding: {
+                        bottom: 10
+                    }
+                },
+                series: [{
+                    type: "scatterLine",
+                    name: "Depth",
+                    xField: "Day",
+                    yField: "Value",
+                    markers: {
+                        visible: true,
+                        size: 5
+                    },
+                }],
+                pannable: {
+                    key: "shift"
+                },
+                xAxis: {
+                    name: "DateAxis",
+                    min: 0,
+                    max: 31,
+                    majorUnit: 1,
+                    majorGridLines: false,
+                    minorGridLines: false,
+                    labels: {
+                        margin: {
+                            bottom: 10,
+                            right: 10
+                        }
+                    }
+                },
+                yAxes: [{
+                    name: "DepthAxis",
+                    min: 0,
+                    max: 32500,
+                    minorUnit:750,
+                    majorUnit:1500,
+                    reverse: true,
+                    axisCrossingValue: [32500],
+                    majorGridLines: false,
+                    minorGridLines: true,
+                }],
+                tooltip: {
+                    visible: true,
+                    template: "Day : #= dataItem.Day # / Depth : #= dataItem.Value #"
+                },
+                render: renderChart,
+            });
+        }
+
+
+
+        //Load Stage Chart
+        function loadStageChart(wellId) {
+            var dayvalsataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "/InDepthRigDataSrv/GetStagingChart_Data",
+                        dataType: "json",
+                        data: {
+                            wellId: wellId,
+                        }
+                    }
+                }
+            });
+
+            $("#chartStage").kendoChart({
+                title: {
+                    text: ""
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: "#fff",
+                    height: "550",
+                    margin:10
+                },
+                dataSource: dayvalsataSource,
+                seriesDefaults: {
+                    type: "scatterLine"
+                },
+                seriesColors: ["#007BFF", "#43BCCD"],
+                series: [{
+                    type: "scatterLine",
+                    xField: "Day",
+                    yField: "Stage",
+                    style: "smooth",
+                    width: 6,
+                    markers: {
+                        visible: true,
+                        size: 10
+                    },
+                }],
+                plotArea: {
+                    padding: {
+                        bottom: 20,
+                        left:20
+                    }
+                },
+                xAxis: {
+                    name: "DateAxis",
+                    min: 0,
+                    max: 31,
+                    majorUnit: 1,
+                    majorGridLines: false,
+                    minorGridLines: false,
+                },
+                yAxes: [{
+                    name: "StageAxis",
+                    min: 1,
+                    max: 7,
+                    majorUnit: 1,
+                    reverse: true,
+                    axisCrossingValue: [7],
+                    majorGridLines: false,
+                    minorGridLines: true,
+                    labels: {
+                        visual: function (e) {
+                            var axisCaption = "";
+                            if (e.value == 1) {
+                                axisCaption = "1 : Mob";
+                            }
+                            else if (e.value == 2) {
+                                axisCaption = "2 : Surface";
+                            }
+                            else if (e.value == 3) {
+                                axisCaption = "3 : 1st intermediate";
+                            }
+                            else if (e.value == 4) {
+                                axisCaption = "4 : 2nd intermediate";
+                            }
+                            else if (e.value == 5) {
+                                axisCaption = "5 : Production";
+                            }
+                            else if (e.value == 6) {
+                                axisCaption = "6 : Demob";
+                            }
+                            else if (e.value == 7) {
+                                axisCaption = "7 : Miscellaneous";
+                            }
+
+                            return new kendo.drawing.Text(axisCaption, e.rect.origin);
+                        }
+                    }
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "N0"
+                }
+            });
+        }
+
+        function onChartRead(e) {
+            displayLoading("#filterwells", true);
+            var ddlWellValue = $("#filterwells").val();
+
+            return {
+                wellId: ddlWellValue
+            };
+        }
+        function displayLoading(target, bool) {
+            var element = $(target);
+            kendo.ui.progress(element, bool);
+        }
+        function renderChart(e) {
+            var el = e.sender.element;
+            el.find("path[stroke='#007BFF']")
+                .attr("stroke-width", 7);
+            el.find("circle[stroke='#007BFF']")
+                .attr("stroke-width", 4).attr("r", 5);
+
+            //lines
+            var depthAxis = e.sender.getAxis("DepthAxis");
+            var depthSlot = depthAxis.slot(1);
+
+            $("circle[stroke='#007BFF']").each(function () {
+                var cx = $(this).attr("cx");
+                var cy = $(this).attr("cy");
+
+                var line = new kendo.drawing.Path({
+                    stroke: {
+                        color: "#FF0000",
+                        width: 0.5
+                    }
+                });
+                line.moveTo(depthSlot.origin.x, cy).lineTo([cx - 5, cy]);
+
+                e.sender.surface.draw(line);
+            });
+        }
+
+        function showLocation(newmodel) {
+            var city = "@Model.City";
+            var state = "@Model.State";
+
+            var zip ="@Model.Zip";
+            var address1 = "@Model.Address1";
+            var address2 = "@Model.Address2";
+
+            if (newmodel != null) {
+                city = newmodel.City;
+                state = newmodel.State;
+                zip = newmodel.Zip;
+                address1 = newmodel.Address1;
+                address2 = newmodel.Address2;
+            }
+
+            $.ajax({
+                url: "https://nominatim.openstreetmap.org/search?city=" + city + "&state=" + state + "&street=" + address1 + " "
+                    + address2 + "&postalcode=" + zip + "&format=geocodejson",
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    var locationLat = "";
+                    var locationLng = "";
+                    var coordinates = [];
+                    for (var i = 0; i < data.features.length; i++) {
+                        var feature = data.features[i];
+                        var label = feature.properties.geocoding.label;
+                        if (label.city != "" && label.zip !== "") {
+                            var coordinates = feature.geometry.coordinates;
+                            var locationLat = coordinates[1];
+                            var locationLng = coordinates[0];
+                            break;
+                        }
+                    }
+
+                    var map = $("#locationmap").data("kendoMap");
+
+                    var centerLat = 30.268107;
+                    var centerLng = -97.744821;
+                    if (locationLat != "" && locationLng != "") {
+                        centerLat = locationLat;
+                        centerLng = locationLng;
+                    }
+                    var centerLocation = new kendo.dataviz.map.Location(centerLat, centerLng);
+                    map.center(centerLocation);
+                    var LoctionMark = label;
+
+
+                    if (locationLat != "" && locationLng != "") {
+                        var markerLocation = new kendo.dataviz.map.Location(locationLat, locationLng);
+                        if (map.markers.items.length == 0) {
+
+                            map.markers.add({
+                                location: markerLocation,
+                                shape: "pinTarget",
+                                tooltip: {
+                                    content: LoctionMark,
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function loadCasingString(wellId) {
+            //alert(wellId);
+            $("#lblLastCasingString").text("");
+            $("#lblCurrentStage").text("");
+            $.ajax({
+                    url: "/InDepthRigDataSrv/GetCasingStringAndCurrentStage?WellId=" + wellId,
+                    type: "GET",
+                    async: false,
+                    dataType: "json",
+                    success: function (result) {
+                        var data = JSON.parse(JSON.stringify(result))
+                        console.log("Stage  " + data.Stage);
+                        console.log("Casing String " + data.Task);
+                        $("#lblLastCasingString").text(data.Task)
+                        $("#lblCurrentStage").text(data.Stage)
+                    }
+                });
+                return "";
+
+        }
+
+
+        function GetAuthorizedVendorPermission(wellId)
+        {
+            $.ajax({
+                url: "/InDepthRigDataSrv/GetAuthorizedVendorPermission?WellId=" + wellId,
+                type: "GET",
+                async: false,
+                dataType: "json",
+                success: function (Response)
+                {
+                    if (Response == "true") {
+                        document.getElementById("DivCurrentStageAndLastCasingString").style.display = "block";
+                        $("#locationmap").addClass("StageChartStyle");
+                    }
+                    else
+                    {
+                        document.getElementById("DivCurrentStageAndLastCasingString").style.display = "none";
+                        $("#locationmap").removeClass("StageChartStyle");
+
+                    }
+                }
+            });
+        }
+
+
+    </script>
+}

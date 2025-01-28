@@ -1,0 +1,167 @@
+﻿@{
+    Layout = null;
+}
+<section class="content-header">
+    <style>
+        .row {
+            height: 38px !important;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+        .k-i-close {
+            display: block !important;
+        }
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section>
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.WellMasterDataViewModel>
+    ()
+    .Name("welldatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.wellId).Title("Well ID").Filterable(false).Width(350);
+        columns.Bound(p => p.wellName).Title("Well").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).ClientTemplate("<p><span style='background-color:#=chartColor#;font-weight:bold;width:20px;height:13px;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>  #=wellName#</p>").Width(200);
+        
+        columns.Bound(p => p.basin).Title("Basin").Width(100).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.county).Title("County/Parish").Width(120).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.wellType).Title("Design").Width(150).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.rigName).Title("Rig").Width(150).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.ChecklistTemplateName).Title("Template").Width(150).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.taskCount).Title("Jobs").Width(100).Filterable(false);
+        columns.Bound(p => p.minSchdDate).Hidden();
+        columns.Bound(p => p.maxSchdDate).Hidden();
+        columns.Bound(p => p.OldPredictionForUpdate).Title("Predict").Width(60).Filterable(false).ClientTemplate("#if (OldPredictionForUpdate == true) { #" +
+                        "<span class='text-success k-icon k-i-check'></span>" +
+                        "# } else { #" +
+                        "<span class='text-danger k-icon k-i-close'></span>" +
+                        "# } #");
+
+        columns.Bound(p => p.chartColor).Hidden();
+        columns.Command(command =>
+        {  
+            command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;color:black;'></i>").Click("customDelete");
+        }).Title("Action").Width(70);
+    })
+    .Sortable()
+    .Pageable(p =>p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false))
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar => toolbar.Create().Text("Add New Well"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditWell").Window(w => w.Title("Edit Well Details").Width(1000)))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.wellId)).ServerOperation(true)
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("WellData_Create", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Read(read => read.Action("GetWellData", "Customer", new { tenantId = ViewBag.TenantId }))
+    .Update(update => update.Action("WellData_Update", "Customer", new { tenantId = ViewBag.TenantId }))
+    )
+    .Events(e =>
+    {
+        e.Save("onGridSave").Edit("RenameWindow").DataBound("OnDataBound");
+    })
+    )
+</section>
+
+
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add Well")
+    .Visible(false)
+    .Modal(true)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1000)
+    .Events(events => events.Close("close"))
+)
+@(Html.Kendo().Window().Name("Details")
+    .Title("Well Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(300)
+)
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+    </div>
+</script>
+<script type="text/javascript">
+
+    //DWOP
+    function FilterByWellDesign() {
+        var typeId = $("#wellTypeId").data("kendoDropDownList")
+
+        return {
+            wellDesign: typeId.value()
+        };
+    }
+   
+
+    var detailsTemplate = kendo.template($("#template").html());
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+    function alertbox(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content,
+            innerWidth: "400px"
+
+        }).data("kendoAlert").open();
+    }
+ 
+</script>

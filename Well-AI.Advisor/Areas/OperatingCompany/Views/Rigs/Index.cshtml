@@ -1,0 +1,468 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.WellsCountModel
+@{
+    ViewData["Title0"] = "Registration";
+    ViewData["Title"] = "Rig Register";
+}
+<section class="content-header">
+    <style>
+        .k-window{
+            width:550px !important;
+        }
+        .k-icon {
+            padding-left: 5px !important;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-delete, .k-grid-delete:hover, .k-grid-delete:active {
+            background-color: #fff;
+            border-radius: 10px;
+            border: 1px solid #007BFF;
+        }
+
+        .k-grid-delete {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-i-close {
+            padding-left: 5px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .blockstyle {
+            height: 75px;
+            width: auto;
+            min-width: 130px;
+            display: inline-block;
+            margin: 10px 5px 0 5px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        .topblocks {
+            margin-left: -22px;
+        }
+
+        .Wells-total {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .Wells-totalval {
+            color: #007bff;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 20px !important;
+        }
+
+        #rigdatamaster {
+            margin-top: 20px;
+        }
+
+        .toptitle {
+            color: #fff;
+        }
+
+        .Wells-toptitle {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .Wells-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+
+        .inner > label {
+            color: #000;
+            display: block;
+            text-align: left;
+        }
+
+        .inner {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .small-box {
+            box-shadow: none;
+        }
+
+        #StatusButton {
+            border-color: #011627;
+            color: #ffffff;
+            background-color: #007bff;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-button.k-button-icontext.k-grid-Delete {
+            display: contents !important;
+        }
+    
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row toptitle col-12">
+        <h4 class="Wells-toptitle">At a Glance</h4>
+        <span class="Wells-topdescription">Click on any of key metrics to open the related screen</span>
+    </div>
+    <div class="row topblocks col-12">
+
+        <div class="blockstyle" id="DrillingPlanCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Plans</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="DrillingPlanCounts">@Model.DrillingPlanCounts</a></span>
+        </div>
+
+        <div class="blockstyle" id="WellCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Wells</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="WellCounts1">@Model.WellCounts</a></span>
+        </div>
+        <!-- ./col -->
+        <div class="blockstyle" id="RigCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Rigs</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="RigCounts1">@Model.RigCounts</a></span>
+        </div>
+        <div class="blockstyle" id="PadCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Pads</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="PadCounts1">@Model.PadCounts</a></span>
+        </div>
+    </div>
+    @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.Rig_register>
+    ()
+    .Name("rigdatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Rig_id).Hidden();
+        columns.Bound(p => p.Rig_Name).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Title("Rig").Width(800);
+
+        columns.Bound(p => p.isActive).Title("Rigs Status").Width(80).Filterable(false).ClientTemplate("#if (isActive == true) { #" +
+                       "<span class='text-success k-icon k-i-check'></span>" +
+                       "# } else { #" +
+                       "<span class='text-danger k-icon k-i-close'></span>" +
+                       "# } #");
+        columns.Command(command => { //command.Edit().Text("");
+            command.Custom("Delete").Text("<button class='btn btn-primary'>Enable / Disable</button>").Click("customDelete");
+        }).Width(100).Title("Action");
+    })
+    .Sortable()
+     .Pageable(p =>
+        p.Info(true)
+         .Numeric(false)
+         .PreviousNext(false)
+    )
+     .Scrollable(scrollable => scrollable.Virtual(true))
+    //.ToolBar(toolbar => toolbar.Create().Text("Add New Rig").HtmlAttributes(new { id = "btnCreateRig"}))
+    .ToolBar(toolbar => toolbar.Create().Text("Add New Rig").HtmlAttributes(new { id = "btnCreateRig", onclick = "CreateRig()"}))
+  //.Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditRig").Window(w => w.Title("Edit Rig Details").HtmlAttributes(new { id = "popupEditRig"}).Visible(false).Width(700)))
+  .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditRig").Window(w => w.Title("Edit Rig Details").Width(700)))
+
+   .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+    .Pageable()
+    //.Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.Rig_id))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("RigData_Create", "Rigs"))
+    .Read(read => read.Action("GetRigMasterRead", "Rigs"))
+    .Update(update => update.Action("RigData_Update", "Rigs"))
+    )
+    .Events(e =>
+    {
+        e.Save("onGridSave").Edit("RenameWindow").DataBound("onDataBound");
+    })
+    )
+</section>
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add Rig")
+    .Visible(false)
+    .Modal(true)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+)
+@(Html.Kendo().Window().Name("Details")
+    .Title("Rig Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(300)
+)
+@(Html.Kendo().Window().Name("DepthRigValidation")
+    .Title("Alert : Unable to Disable the Rig")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                                                                                                                                                                                       <div id="WindowContent"></div>
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(500)
+    .Draggable(true)
+)
+    
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+    </div>
+</script>
+<script>
+    //Phase II changes - 02/17/2021
+    var refreshInterval = setInterval(RefreshGrid, 50000);
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 600000);
+        RefreshGrid();
+        //Phase II changes - 02/17/2021
+    });
+    function CountsRefresh() {
+        $.ajax({
+            url: '/Rigs/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('WellCounts1').innerHTML = ResponseData.WellCounts;
+                document.getElementById('RigCounts1').innerHTML = ResponseData.RigCounts;
+                document.getElementById('PadCounts1').innerHTML = ResponseData.PadCounts;
+                document.getElementById("DrillingPlanCounts") = ResponseData.DrillingPlanCounts;
+            }
+        });
+        setInterval(CountsRefresh, 300000);
+    }
+    function RefreshGrid() {
+      $("#rigdatamaster").data("kendoGrid").dataSource.read();
+    }
+    function clearRefreshInterval() {
+        //clearInterval(refreshInterval);
+    }
+    $(document).ready(function () {
+        var grid = $("#rigdatamaster").data("kendoGrid");
+        grid.dataSource.read();
+        var GridObject = $("#rigdatamaster").data("kendoGrid");
+        var URL = "/rigs/GetRigMasterRead";
+        $("#RigCounts").click(function () {
+            GridObject.dataSource.transport.options.read.url = URL;
+            GridObject.dataSource.read();
+            GridObject.dataSource.filter({});
+        });
+        $("#WellCounts").click(function () {
+            window.location.href = "/welldata";
+        });
+        $("#PadCounts").click(function () {
+            window.location.href = "/pad";
+        });
+
+        $("#DrillingPlanCounts").click(function () {
+            window.location.href = "/DrillingPlan/Index";
+        });
+    });
+    function onDataBound() {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function onGridSave(e) {
+        setTimeout(function () {
+            $('#rigdatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#rigdatamaster').data('kendoGrid').refresh();
+            });
+        }, 17000);
+    }
+    function sync_handler(e) {
+        $("#welldatamaster").data("kendoGrid").dataSource.read();
+    }
+    var e_obj = null;
+function RenameWindow(e) {
+        e_obj = e;
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Rig");
+            e.container.data("kendoWindow").close();
+        }
+        clearRefreshInterval();
+        $.ajax({
+        url: "/Rigs/RigCount_Check",
+        type: "GET",
+        async: false,
+        dataType: "json",
+        contentType: "application/json; chartset=uft-8",
+        success: function(response) {
+            if (response[0].CurrentCount >= response[0].SubscriptionCount) {
+                if (e.model.isNew()) {
+                     e.container.data("kendoWindow").close();
+                 }
+              //  planalert("you have reached limit. should be update your package. ", "Alert!");
+                 $('.k-button').click(function () {
+               document.location = '@Url.Action("Index","ProductSubscription")';
+    });
+            }
+            else
+            {
+                   if (e.model.isNew()) {
+                       e.container.data("kendoWindow").open();
+              e.container.data("kendoWindow").title("New Rig");
+        }
+            }
+        },
+    });
+    }
+    function DataBound(e) {
+        var grid = this;
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+    }
+    function planalert(content, alerttitle) {
+    $("<div></div>").kendoAlert({
+        title: alerttitle,
+        content: content
+    }).data("kendoAlert").open();
+}
+function CreateRig() {
+    console.log("The create button handler");
+    $.ajax({
+        url: "/Rigs/RigCount_Check",
+        type: "GET",
+        async: false,
+        dataType: "json",
+        contentType: "application/json; chartset=uft-8",
+        success: function(response) {
+            if (response[0].CurrentCount >= response[0].SubscriptionCount) {
+                 planalert("you have reached limit. should be update your package. ", "Alert!");
+                return true;
+            }
+            else
+            {
+                if(e_obj!=null)
+                {
+                    if (e_obj.model.isNew()) {
+                        e_obj.container.data("kendoWindow").open();
+                        e_obj.container.data("kendoWindow").title("New Rig");
+                                               }
+                }
+            }
+        },
+    });
+
+    }
+</script>
+
+<script type="text/javascript">
+    var detailsTemplate = kendo.template($("#template").html());
+    function showDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+    function Create(e) 
+    {
+        debugger;
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        kendo.confirm("Are you sure you want to Change RIG Status?")
+            .done(function () {
+                $.ajax({
+                    url: "Rigs/RigData_Destroy?RigId=" + dataItem.Rig_id,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.DepthPermission == true) {
+                            $('#DepthRigValidation').html("This Rig " + "<b>" + data.RigName + "</b>" + "  is being used by " + "<b>" + data.Vendor + "</b>")
+                            $('#DepthRigValidation').css('color', 'Red')
+                            var wnd = $("#DepthRigValidation").data("kendoWindow");
+                            wnd.center().open();
+                        }
+                        else {
+                            var grid = $("#rigdatamaster").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+</script>							

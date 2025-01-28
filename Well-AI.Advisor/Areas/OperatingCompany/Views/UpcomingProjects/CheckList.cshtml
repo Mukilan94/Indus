@@ -1,0 +1,303 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.ProjectViewModel
+@{
+    ViewData["Title0"] = "Services";
+    ViewData["Title"] = "DrillPlan";
+}
+<section class="content-header">
+    <style>
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+        .row {
+            margin-top: 5px;
+        }
+        .buttons {
+            margin-bottom: 10px;
+            margin-right: 20px;
+            display: block;
+            width: 100%;
+            text-align: right;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+            padding-top: 5px;
+            margin-top: 0px;
+            height: 35px;
+        }
+        .k-pager-numbers {
+            padding-top: 17px;
+        }
+    </style>
+    <script type="text/javascript">
+        function FormatTimeFromTimeSpan(value) {
+            var Hours = value.Value.Hours;
+            var Minutes = value.Value.Minutes;
+            var Milliseconds = value.Value.Milliseconds;
+            if (Hours.toString().length == 1) {
+                var Hour = "0" + Hours;
+            }
+            else {
+                var Hour = Hours;
+            }
+            if (Minutes.toString().length == 1) {
+                var Minute = "0" + Minutes;
+            }
+            else {
+                var Minute = Minutes;
+            }
+            if (Milliseconds.toString().length == 1) {
+                var Millisecond = "0" + Milliseconds;
+            }
+            else {
+                var Millisecond = Milliseconds;
+            }
+            var Time = Hour + ":" + Minute + ":" + Millisecond;
+            return kendo.toString(Time);
+        }
+        $(document).ready(function () {
+            var initWellId = "@Model.WellId";
+            var ddlWells = $("#filterwellslayout").data("kendoDropDownList");
+            ddlWells.value(initWellId);
+            ddlWells.enable(false);
+        });
+        function closeCheckList() {
+            var url = '@Url.Action("ProjectDetails", "UpcomingProjects", new { id = Model.ProjectId })';
+            window.location.href = url;
+        }
+        function handleCheckClick(cb) {
+            var grid = $('#vendors').data('kendoGrid');
+            var id = grid.dataItem($(cb).closest("tr")).WellTaskId;
+             var ids = $("#CheckIds").val()
+            if (cb.checked) {// add id
+                var newval = ids + ";" + id;
+                $("#CheckIds").val(newval);
+            }
+            else {//remove id
+                var newval = ids.replace(id, "").replace(";;","");
+                $("#CheckIds").val(newval);
+            }
+            $("#CheckIds").trigger("change");
+        }
+        function onCheckedChange(args) {
+            var selectedIds = args.sender.selectedKeyNames().join(";");
+            $("#CheckIds").val(selectedIds);
+            $("#CheckIds").trigger("change");
+        }
+        function renderTimeSpan() {
+            var grid = $('#vendors').data('kendoGrid');
+            var rows = grid.items();
+            $(rows).each(function (e) {
+                var row = this;
+                var dataItem = grid.dataItem(row);
+                if (dataItem.CheckListStatus === 1) {
+                    grid.select(row);
+                }
+            });
+        }
+    </script>
+</section>
+<section class="content">
+    @using (Html.BeginForm("UpdateUpcommingProjectCheckList", "UpcomingProjects", FormMethod.Post))
+    {
+        @if (Model.ProjectId != null)
+        {
+            <div class="row k-window-titlebar">
+                <h5 class="col-md-12" style=" text-align: left"> @Model.ProjectCode (@Model.Title)</h5>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.Job)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.Job)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.DateAwared)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.DateAwared)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorCompanyName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorCompanyName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.WellName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.WellName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorUserName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorUserName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorMobile)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorMobile)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-2">
+                    @Html.LabelFor(model => model.ProjectStatus)
+                </div>
+                <div class="col-sm-5">
+                    @Html.HiddenFor(x => x.WellId)
+                    @Html.HiddenFor(x => x.ProjectId)
+                    @Html.HiddenFor(x => x.CheckIds)
+                    @Html.DisplayFor(model => model.ProjectStatusName)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ExpectedStartDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ExpectedStartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ExpectedEndDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ExpectedEndDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ActualStartDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ActualStartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ActualEndDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ActualEndDate)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+        }
+        else
+        {
+            Model.WellId = Context.Request.Cookies["wellfilterlayout"];
+            @Html.HiddenFor(m => m.WellId)
+            @Html.HiddenFor(x => x.CheckIds)
+        }
+        <div class="row">
+            <div class="buttons">
+                @*@Html.Kendo().Button().Name("Primary").Content("Update").HtmlAttributes(new { @class = "k-button k-primary", type = "submit" })*@
+                <button type="button" class="k-button" onclick="closeCheckList();">Back</button>
+            </div>
+        </div>
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.WellCheckListDetailModel>()
+                        .Name("vendors")
+                        .HtmlAttributes(new { @class = "ra-section" })
+                        .Columns(columns =>
+                        {
+                            //columns.Select().Width(50).Title("Complete");
+                            columns.Bound(p => p.WellTaskId).Hidden();
+                            columns.Bound(p => p.WellTaskName).Title("Task");
+                            columns.Bound(p => p.Depth);
+                            columns.Bound(p => p.Day);
+                            columns.Bound(p => p.Time).Format("{0:hh:mm:ss}").ClientTemplate("#=FormatTimeFromTimeSpan(data.Time)#");
+                            columns.Bound(p => p.ServiceDuration);
+                            columns.Bound(p => p.CompletedDate).Title("Date").Format("{0: MM/dd/yyyy}").Width("150px");
+                            columns.Bound(p => p.Type).ClientTemplate(
+                                "# if (Type == 1) { #" +"Task" +
+                                "# } else if (Type == 2){ #" + "Service" +
+                                "# } else if (Type == 3){ #" + "Special" +
+                                "# } else if (Type == 4){ #" + "Supply" +
+                                "# } else { #" +  "Others" +
+                                "# } #"
+                                );
+                            columns.Bound(p => p.IsBiddable);
+                        })
+                          .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                          )
+                        .Scrollable(scrollable => scrollable.Virtual(true))
+                        .PersistSelection()
+                        .Sortable()
+                        .ToolBar(toolbar =>
+                        {
+                            toolbar.Search();
+                        })
+                         .Search(search =>
+                         {
+                             search.Field(p => p.WellTaskName);
+                         })
+                        .Events(ev => ev.Change("onCheckedChange"))
+                       .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(20)
+                                .Batch(false)
+                                .Sort(sort => {
+                                    sort.Add("Depth").Ascending();
+                                    sort.Add("Day").Ascending();
+                                    sort.Add("Time").Ascending();
+                                })
+                                .Model(model => model.Id(p => p.WellTaskId))
+                                .Read(read => read.Action("CheckList_Read", "UpcomingProjects", new { wellId = Model.WellId }))
+                        )
+            .Events(ev => ev.DataBound("renderTimeSpan"))
+
+        )
+    }
+</section>

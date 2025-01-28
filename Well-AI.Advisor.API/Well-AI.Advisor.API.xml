@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Well-AI.Advisor.API</name>
+    </assembly>
+    <members>
+        <member name="M:Well_AI.Advisor.API.Controllers.AttachmentController.GetAttchment">
+            <summary>
+            Get List of Attachment
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Well_AI.Advisor.API.Controllers.BharunController.GetBharuns">
+            <summary>
+            Get List of Bharun
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Well_AI.Advisor.API.Controllers.DrillingConnectionController.CreateDrillingConnection(System.Collections.Generic.List{WellAI.Advisor.API.Models.Dtos.DrillingConnectionDto})">
+            <summary>
+            Insert DrillingConnection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Well_AI.Advisor.API.Controllers.DrillingDepthBasedController.CreateDrillingDepthBased(System.Collections.Generic.List{WellAI.Advisor.API.Models.Dtos.DRILLINGDEPTHBASEDDto})">
+            <summary>
+            Insert DrillingDepthBased
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Well_AI.Advisor.API.Controllers.GeneralTimeBasedController.CreateGeneralTimeBased(System.Collections.Generic.List{WellAI.Advisor.API.Models.Dtos.GeneralTimeBasedDto})">
+            <summary>
+            Insert GeneralTimeBased
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:WellAI.Advisor.API.Models.UserProfile">
+            <summary>
+            Service Company User Profile for Dispatch
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,93 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.TechnicianViewModel
+@using Kendo.Mvc.UI
+<style>
+    .row {
+        margin-right: 0px;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TechName)
+                @Html.HiddenFor(m => m.ProjectId, new { @class = "setProjectId" })
+
+                @Html.HiddenFor(m => m.Id)
+            </div>
+            <div class="col-sm-8">
+                @(Html.Kendo().DropDownListFor(m=>m.TechUserId)
+            .DataTextField("TechName")
+            .DataValueField("TechUserId")
+            .DataSource(source => {
+                source.Read(read =>
+                {
+                    read.Action("GetTechnicianByTenantid", "UpcomingProjectsSRV");
+                });
+            }).HtmlAttributes(new { style = "width:19.4em;",required="required",validationmessage="Please select the name" }))
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TechAssignStartDate)
+            </div>
+            <div class="col-sm-8">
+                @(Html.Kendo().DateTimePickerFor(model => model.TechAssignStartDate)
+                    .Format("MM/dd/yyyy HH:mm")
+                    .TimeFormat("HH:mm")
+                    .ParseFormats(new string[] { "MM/dd/yyyy", "HH:mm" })
+                    .HtmlAttributes(new { required = "required", validationmessage = "Please Select Date And Time" })
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.ServiceVehicleId)
+            </div>
+            <div class="col-sm-8">
+                @(Html.Kendo().DropDownListFor(m=>m.ServiceVehicleId)
+            .DataTextField("VehicleName")
+            .DataValueField("Id")
+            .DataSource(source => {
+                source.Read(read =>
+                {
+                    read.Action("GetVehicleByTenantid", "UpcomingProjectsSRV");
+                });
+            }).HtmlAttributes(new { style= "width:19.4em;", required = "required", validationmessage = "Please select the VehicleName" }))
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TechAssignEndDate)
+            </div>
+            <div class="col-sm-8">
+                @(Html.Kendo().DateTimePickerFor(model => model.TechAssignEndDate)
+                    .Format("MM/dd/yyyy HH:mm")
+                    .TimeFormat("HH:mm")
+                    .ParseFormats(new string[] { "MM/dd/yyyy", "hh:mm tt" })
+                    .HtmlAttributes(new { required = "required", validationmessage = "Please select Date And Time" })
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-left:0px;margin-right:0px;">
+    <div class="form-group">
+        <label for="Description">@Html.LabelFor(model => model.Notes)</label>
+        @(Html.Kendo().EditorFor(model => model.Notes)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "height:100px", required = "required" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+    </div>
+</div>

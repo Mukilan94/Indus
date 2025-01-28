@@ -1,0 +1,210 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Manage Permissions";
+}
+@model System.Data.DataTable
+
+<section class="content-header">
+</section>
+<section class="content">
+    @(Html.Kendo().Grid<dynamic>
+    ()
+    .Name("userpermissions")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Command(command => { command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete");}).Width(80);
+        foreach (System.Data.DataColumn column in Model.Columns)
+        {
+            var c = columns.Bound(column.ColumnName);
+            if (column.ColumnName == "Id")
+            {
+                c.Hidden();
+            }
+            else if(column.ColumnName == "Title")
+            {
+                c.Width(150).Locked(true).Lockable(false);
+            }
+            else
+            {
+                c.Editable("returnFalse").ClientTemplate("#=getComponentPermission(data,'"+column.ColumnName+"')#")
+                .Width(100).HtmlAttributes(new { style = "text-align: center", title = "" + column.ColumnName + "" })
+                .ClientHeaderTemplate("<span class='verticalText'>" + column.ColumnName + "</span>");
+            }
+        }
+    })
+    .Pageable(p =>
+        p.Info(true)
+         .Numeric(false)
+         .PreviousNext(false)
+    )
+    .Groupable(false)
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Sortable(s => s.Enabled(false))
+    .ToolBar(toolbar =>
+    {
+        toolbar.Create().Text("Add new Permission");
+        toolbar.Save().Text("Save changes").HtmlAttributes(new {onclick="savechanges()"});
+        
+    })
+    .Editable(editable => editable.Mode(GridEditMode.InCell))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Batch(true)
+        .ServerOperation(false)
+        .Model(model => model.Id("Id"))
+        .Create(update => update.Action("ManagePermissions_Create", "ManagePermissionsSRV").Data("additionalData"))
+        .Read(read => read.Action("ManagePermissions_Read", "ManagePermissionsSRV"))
+        .Update(update => update.Action("ManagePermissions_Update", "ManagePermissionsSRV").Data("additionalData"))
+        .Events(ev => ev.RequestEnd("refreshSummary"))
+        )
+    )
+    <script>
+
+
+        $(document).ready(function () {
+            $.extend(true, kendo.ui.validator, {
+                rules: { // custom rules
+                    productnamevalidation: function (input, params) {
+                        if (input.id = "Title" && input.val() == "") {
+                            input.attr("required", true);
+                            return false;
+                        }
+
+                        return true;
+                    }
+                },
+                messages: { //custom rules messages
+                    productnamevalidation: function (input) {
+                        input.attr("required", true);
+                        return false;
+                    }
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            RefreshGrid();
+        });
+
+        function RefreshGrid() {
+          
+        }
+        var isChange = false;
+        function refreshSummary() {
+            if (isChange) {
+                $("#userpermissions").data("kendoGrid").dataSource.read();
+                isChange = false;
+            }
+        }
+        function SaveChanges() {
+            
+        }
+        function returnFalse() {
+            return false;
+        }
+        function additionalData() {
+            isChange = true;
+            var grid = $("#userpermissions").data("kendoGrid");
+
+            return {
+                data: JSON.stringify(grid.dataSource.view())
+            };
+        }
+        function getComponentPermission(data, componentName) {
+            var checkedexpressions = data[componentName] ? "checked='checked'" : "''";
+            return "<input class='chkbx' type='checkbox' " + checkedexpressions + " />";
+        }
+        function customDelete(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            kendo.confirm("Are you sure want to delete this permission?")
+                .done(function () {
+                    $.ajax({
+                        url: "ManagePermissionsSRV/ManagePermissions_Destroy?permissionId=" + parseInt(dataItem.Id),
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            var grid = $("#userpermissions").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    });
+
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+
+        $(document).ready(function () {
+            $("#userpermissions .k-grid-content").on("change", "input.chkbx", function (e) {
+                var grid = $("#userpermissions").data("kendoGrid"),
+                    dataItem = grid.dataItem($(e.target).closest("tr"));
+                var td = $(e.target).closest("td");
+                var compName = td.attr("title");
+                $(e.target).closest("td").prepend("<span class='k-dirty'></span>");
+                dataItem[compName] = this.checked;
+                dataItem.dirty = true;
+            });
+        });
+    </script>
+    <style>
+        .k-grid-content {
+            height: auto !important;
+        }
+        #userpermissions .k-grid-header .k-header .verticalText {
+            display: inline-block;
+            white-space: nowrap;
+            text-align: center;
+ 
+        }
+
+        #userpermissions .k-grid-header .k-header {
+           
+            text-align: center;
+        }
+
+        #apply {
+            margin-left: 20px;
+        }
+
+        .k-grid .k-button:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-grid-save-changes, .k-grid-cancel-changes{
+            border-color:#007bff;
+            color:#fff;
+            background-color:#007bff;
+        }
+        .k-grid-save-changes:hover, .k-grid-cancel-changes:hover{
+            border-color:#0062cc;
+            color:#fff;
+            background-color:#0069d9;
+        }
+        input[type=checkbox], input[type=radio] {
+            box-sizing: border-box;
+            padding: 0;
+            width: 17px;
+            height: 17px;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+        .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+        .k-tooltip {
+            border-color: #f31700 !important;
+            color: #ffffff !important;
+            background-color: #f31700 !important;
+        }
+    </style>
+</section>

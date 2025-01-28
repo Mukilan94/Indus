@@ -1,0 +1,10 @@
+﻿@model WellAI.Advisor.Model.Administration.WellTypeModel
+@using Kendo.Mvc.UI
+    <div class="row">
+        <div class="col-md-12 errors"></div>
+        @Html.HiddenFor(x => x.WellTypeId)
+    </div>
+<div class="row">
+    <div class="col-md-4">Well Type</div>
+    <div class="col-md-8">@Html.TextBoxFor(x=>x.WellTypeName,new { style = "100%" })</div>
+</div>

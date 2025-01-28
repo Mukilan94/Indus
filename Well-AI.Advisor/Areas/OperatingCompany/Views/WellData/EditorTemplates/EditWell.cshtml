@@ -1,0 +1,430 @@
+﻿@using System.Collections.Generic;
+@model WellAI.Advisor.Model.OperatingCompany.Models.WellMasterDataViewModel
+@{
+    ViewData["Title"] = "Edit Well";
+    var wellTypes = (List<WellAI.Advisor.Model.OperatingCompany.Models.WellTypeModel>)ViewData["wellTypes"];
+    var riglist = (List<WellAI.Advisor.Model.OperatingCompany.Models.RigList>)ViewData["riglist"];
+    var padlist = (List<WellAI.Advisor.Model.OperatingCompany.Models.PadList>)ViewData["padlist"];
+    var batchlist = (List<WellAI.Advisor.Model.OperatingCompany.Models.BatchDillingType>)ViewData["batchlist"];
+    var BasinType = (List<WellAI.Advisor.Model.OperatingCompany.Models.BasinTypeModel>)ViewData["BasinType_Names"];
+
+}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.numAPI, "API Number")
+            </div>
+            <div class="k-edit-field">
+
+                @(Html.Kendo().AutoCompleteFor(model=>model.numAPI)
+                      .DataTextField("api_number")
+                      .Filter("contains")
+                      .MinLength(5)
+                      .HtmlAttributes(new { style = "width:100%" })
+                      .DataSource(source => {
+                          source
+                              .Read(read =>
+                              {
+                                  read.Action("GetWellDetailsByApiNumber", "WellData")
+                                  .Data("onFilter");
+                              })
+                              .ServerFiltering(true);
+                      })
+                      .FooterTemplate("Total #: instance.dataSource.total() # items found")
+                      .HtmlAttributes(new { style = "width:100%;" })
+                      .Height(400)
+                      .Template("#= api_number # |  #= name # ")
+                        .Events(e =>
+                        {
+                            e.Select("onApiNumSelect").Change("onApiNumChange");
+                        })
+                    )
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.wellName, "Well Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.wellName, new { @readonly = "readonly", @Class = "k-textbox"})
+                @Html.ValidationMessageFor(model => model.wellName)
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.state, "State")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.state, new { @readonly = "readonly", @Class = "k-textbox", required = "required", validationmessage = "State field is required" })
+                @Html.ValidationMessageFor(model => model.state)
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.county, "County/Parish")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.county, new { @readonly = "readonly", @Class = "k-textbox", required = "required", validationmessage = "County/Parish field is required" })
+                @Html.ValidationMessageFor(model => model.county)
+            </div>
+        </div>
+
+        @*<div class="col-md-6">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.numAPI, "API Number")
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.numAPI, new { @Class = "k-textbox", required = "required", validationmessage = "API Number is Required" })
+                </div>
+            </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.latitude, "Latitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.latitude, new { @readonly = "readonly", @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.latitude)
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.longitude, "Longitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.longitude, new { @readonly = "readonly", @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.longitude)
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.fieldName, "Field Name")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.fieldName, new { @Class = "k-textbox", required = "required", validationmessage = "Field Name is Required" })
+                @Html.ValidationMessageFor(model => model.fieldName)
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.numAFE, "AFE Number")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.numAFE, new { @Class = "k-textbox", required = "required", validationmessage = "AFE Number is Required" })
+                @Html.ValidationMessageFor(model => model.numAFE)
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.wellType, "Well Design")
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(model => model.wellTypeId)
+                          .DataTextField("wellTypeName")
+                          .DataValueField("wellTypeId")
+                          .BindTo(wellTypes)
+                          .HtmlAttributes(new { required = "required", validationmessage = "Well Design is required" })
+                )
+                <div @*class="k-edit-field"*@ style="visibility:hidden">
+                    @Html.TextBoxFor(model => model.wellType, new { @Class = "k-textbox" })
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.ChecklistTemplateId, "Template")
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(m => m.ChecklistTemplateId)
+                          //.Name("ChecklistTemplateId")
+                          .DataTextField("ChecklistTemplateName")
+                          .DataValueField("ChecklistTemplateId")
+                          .OptionLabel("Default Template")
+                          .AutoBind(false)
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetChecklistTemplateForDesign", "WellData").Data("FilterByWellDesign");
+                              }).ServerFiltering(true);
+                          }).CascadeFrom("wellTypeId")
+                         .HtmlAttributes(new { /*required = "required", validationmessage = "Template is required"*/ })
+                )
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.padID, "Pad")
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(model => model.padID)
+                          .DataTextField("Pad_Name")
+                          .DataValueField("Pad_Id")
+                          .BindTo(padlist)
+                   .HtmlAttributes(new { required = "required", validationmessage = "Pad Name is required" })
+                )
+            </div>          
+        </div>
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.rigName, "Assigned Rig")
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(model => model.rigID)
+                          .DataTextField("Rig_Name")
+                          .DataValueField("Rig_Id")
+                          .BindTo(riglist)
+                   .HtmlAttributes(new { required = "required", validationmessage = "Rig Name  is required" })
+                )
+            </div>            
+        </div>
+    </div>
+
+    @*<div class="row">
+
+            <div class="col-6">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.RigRelease, "Rig Release")
+                </div>
+                <div class="k-edit-field">
+                    @(Html.Kendo().DateTimePickerFor(m => m.RigRelease)
+                        .DateInput()
+                            .Value(DateTime.Now)
+                            .Min(DateTime.Now)
+                            .ParseFormats(new string[] { "MM/dd/yyyy", "hh:mm tt" })
+                            .HtmlAttributes(new { style = "width:100%" })
+                    )
+                </div>
+            </div>
+
+        </div>*@
+    @*<div class="row">
+            <div class="col-md-6">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Prediction, "Prediction")
+                    @Html.HiddenFor(m => m.OldPredictionForUpdate)
+                </div>
+                <div class="k-edit-field">
+                    <div style="width:20px">
+                        @(Html.Kendo().SwitchFor(m=>m.Prediction))
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Prediction)
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.chartColor)
+                </div>
+                <div class="k-edit-field">
+                    <input type="color" id="chartColor" name="chartColor2" value="#22cc22" data-role="colorpicker">
+                </div>
+            </div>
+        </div>*@
+    <div class="row" style="display:none;">
+        <div class="col-md-3">
+            <div class="k-edit-field">
+                @Html.RadioButtonFor(m => m.batchFlag, "true", new
+                {
+                    id = "CompleteDrillType",
+                onclick = "CompleteDrillTypeSelected()"
+                })
+                @Html.Label("Complete", "Complete")
+            </div>
+        </div>
+        <div class="col-md-6">
+            @Html.RadioButtonFor(m => m.batchFlag, "false", new
+            {
+                id = "BatchDrillType",
+                onclick = "BatchDrillTypeSelected()"
+                })
+            @Html.Label("BatchDrill", "Batch Drill")
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(model => model.batchDrillingTypeId)
+                        .DataTextField("BatchDrillingType")
+                        .DataValueField("BatchDrillingType_Id")
+                       .BindTo(batchlist)
+               )
+                <div style="visibility:hidden">
+                    @Html.TextBoxFor(model => model.batchDrillingTypeId, new { @Class = "k-textbox", @id = "HideTxtBox" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="display:none;">
+        <div class="col-6" style="    padding-top: 22px;">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.casing_string, "Casing Strings")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.casingString, new { @Class = "k-textbox" })
+            </div>
+        </div>
+    </div>
+   
+    <div class="row">
+        @*DWOP*@
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Basin_ID, "Basin")
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().DropDownListFor(model => model.Basin_ID)
+                          .DataTextField("BasinType_name")
+                          .DataValueField("Basin_ID")
+                          .BindTo(BasinType)
+                   .HtmlAttributes(new { required = "required", validationmessage = "Basin Name is required" })
+                )
+            </div>
+            <div @*class="k-edit-field"*@ style="visibility:hidden">
+                @Html.TextBoxFor(model => model.Basin_ID, new { @Class = "k-textbox" })
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.chartColor)
+            </div>
+            <div class="k-edit-field">
+                <input type="color" id="chartColor" name="chartColor2" value="#22cc22" data-role="colorpicker">
+            </div>
+        </div>
+        <div style="visibility:hidden">
+            @Html.TextBoxFor(model => model.Router_WellId, new { @Class = "k-textbox",id="hdnRouterWellId" })
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        //DWOP
+
+
+        function change() {
+            if (this.value() != undefined && this.value() != '') {
+                $('#chkPrediction').removeAttr("disabled");
+            } else {
+                $('#chkPrediction').prop("disabled", true);
+            }
+        }
+
+        //Phase II changes - 02/17/2021
+        $(".k-grid-update").click(function (e) {
+            refreshInterval = setInterval(RefreshGrid, 150000);
+        });
+        $(".k-grid-cancel").click(function (e) {
+            refreshInterval = setInterval(RefreshGrid, 150000);
+        });
+
+
+    </script>
+
+    <script type="text/javascript">
+        function OnChange(e) {
+            var dataItem = this.dataItem(e.item);
+            $("#wellType").val(dataItem.wellTypeName);
+        }
+
+        //DWOP
+        function FilterWells() {
+            // var dropDown = $("#count").data("kendoDropDownList");
+            return {
+                apiNumber: $("#numAPI").val()
+            };
+        }
+        function CompleteDrillTypeSelected() {
+            $('#HideTxtBox').removeAttr('required');
+            $("#batchDrillingTypeId").data("kendoDropDownList").enable(false);
+            $("#batchDrillingTypeId").prop('disabled', true);
+            $("#batchDrillingTypeId").data("kendoDropDownList").value(-1);
+        }
+        function BatchDrillTypeSelected() {
+
+            $("#batchDrillingTypeId").data("kendoDropDownList").enable(true);
+            $("#batchDrillingTypeId").prop('disabled', false);
+        }
+
+    </script>
+
+    <style>
+        /* .k-nodata{
+            display:block !important;
+        }*/
+        .k-list .k-item,
+        .k-list-optionlabel {
+            padding: 0px !important;
+            padding-left: 5px !important;
+            min-height: 2.5em !important;
+            line-height: 1.5em;
+            white-space: normal;
+        }
+
+        #numAPI-list {
+            width: 280px !important;
+        }
+        /* .row {
+            height: 38px !important;
+        }*/
+
+        .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .k-multiselect {
+            width: 300px !important;
+            height: 100px;
+            overflow: auto;
+            margin-left: -10px;
+        }
+
+        .k-datepicker .k-picker-wrap .k-select {
+            border: 0px;
+            background-color: #fff;
+            color: #000;
+        }
+
+        #SelectedRoles {
+            height: 0px;
+            visibility: hidden;
+            width: 0px !important;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-edit-field {
+            height: 20px;
+        }
+
+        .k-grid-cancel {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff
+        }
+
+        #IsPrimary {
+            vertical-align: bottom;
+        }
+    </style>

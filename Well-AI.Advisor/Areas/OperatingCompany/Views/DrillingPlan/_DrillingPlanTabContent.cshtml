@@ -1,0 +1,477 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.DrillPlanWellViewModel
+@{
+    ViewData["Tittle"] = "Drilling Plan";
+    var StageList = (List<WellAI.Advisor.Model.OperatingCompany.Models.Stagelist>)ViewBag.StageList;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @*<div class="col-12">
+            <div class="text-center">
+                <h3 id="plantitle">Drilling Operation Time Forecast</h3>
+            </div>
+        </div>*@
+        @*<hr />*@
+        <div class="row">
+            <div class="col-4">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.RigRealese, "Rig Release Previous")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DateTimePickerFor(m => m.RigRealese)
+                     .Format("MM/dd/yyyy HH:mm")
+                     .TimeFormat("HH:mm")
+                      .Events(e =>
+                      {
+                          e.Change("OnRigReleaseDateChange");
+                      })
+                     .HtmlAttributes(new { style = "width: 100%", id = "RegRelease_" + Model.Wellid })
+                      )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.LastBOPTest, "Last BOP Test")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DatePickerFor(m => m.LastBOPTest)
+                      .Format("MM/dd/yyyy")
+                       .Events(e =>
+                      {
+                          e.Change("OnLastBopTestDateChange");
+                      })
+                      .HtmlAttributes(new { style = "width: 100%", id = "LastBopTest_" + Model.Wellid })                                                                         )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.PlannedTD, "Planned TD")
+                </div>
+                <div class="Textfield">
+                    @Html.TextBoxFor(m => m.PlannedTD, new { id = "PlannedTD_" + Model.Wellid, @onchange = "onPlannedTDTextChange();" })
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <button type="button" class="btn btn-primary" id="btnPrintPlan">Print Plan</button>
+                    <button id="btnSave_@Model.Wellid" onclick="SaveDrillPlanDetails('@Model.Wellid','@Model.TenantId',false)" class="btn btn-primary pull-right btnSave">Save Details</button>
+                    @*<input type="button" id="AddButton" value="Add New" class="btn btn-primary pull-right" />*@
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.SPUDWell, "Spud Well")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DateTimePickerFor(m => m.SPUDWell)
+                        .Format("MM/dd/yyyy HH:mm")
+                        .TimeFormat("HH:mm")
+                         .Events(e =>
+                      {
+                          e.Change("OnSPUDWellDateChange");
+                      })
+                      .HtmlAttributes(new { style = "width: 100%", id = "SpudWell_" + Model.Wellid })
+                     )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.NextBOPTest, "Next BOP Test")
+                </div>
+                <div class="Textfield">
+                    @(Html.Kendo().DatePickerFor(m => m.NextBOPTest)
+                     .Format("MM/dd/yyyy")
+                     .Events(e =>
+                      {
+                          e.Change("OnNextBOPTestDateChange");
+                      })
+                     .HtmlAttributes(new { style = "width: 100%", id = "NextBopTest_" + Model.Wellid })
+                     )
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="Labelfield">
+                    @Html.LabelFor(model => model.Rigname, "Rig")
+                </div>
+                <div class="Textfield">
+                    @Html.HiddenFor(m => m.RigId)
+                    @Html.HiddenFor(m => m.Wellid)
+                    @Html.DisplayFor(m => m.Rigname, new { id = "RigName_" + Model.Wellid })
+                </div>
+            </div>
+
+            <div class="col-2">
+                <div>
+                    <button type="button" style="width:214px !important;" class="btn btn-primary pull-right" id="btnImportChanges_@Model.Wellid"  onclick="ImportChanges('@Model.DrillPlanWellsId', '@Model.TenantId', '@Model.Wellid')">Import Changes</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="display:contents;">
+                <div>
+                    <button id="ShowAllTasks;@Model.Wellid" @*onclick="StageFilter(null, '@Model.Wellid')"*@ class="btn btn-primary Stagebtn ActiveStagebtn">Show All Tasks</button>
+                </div>
+                <div id="divStage_@Model.Wellid">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.PlannedTasksModel>()
+                 .Name("DrillPlan_" + Model.Wellid)
+                 .HtmlAttributes(new { style = "width: 100%;margin:10px;" })
+                 .Columns(columns =>
+                 {
+                     columns.Bound(p => p.TaskOrder).Hidden(true);
+                     columns.Bound(p => p.StageTypeName).Hidden(true);
+                     columns.Bound(p => p.TaskName).Width(250).Title("Operation").Filterable(ftb=>ftb.Operators(op=>op.ForString(s=>s.Clear().Contains("Contains"))).Extra(false));
+                     columns.Bound(p => p.TaskId).Hidden(true);
+                     //columns.Bound(p => p.DrillPlanDetailsId).Hidden(true);
+                     //columns.Bound(p => p.PlanStart).Format("{0:MM/dd/yyyy}").Width(150).Title("Plan Start").Hidden(false);
+                     columns.Group(group => group
+                           .Title("Plan Start")
+                           .Columns(info =>
+                           {
+                               info.Bound(c => c.PlanStart).Width(80).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                               info.Bound(c => c.PlanStart).Width(50).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                           }).HtmlAttributes(new { style = "text-align: center;" })
+                      );
+                     columns.Group(group => group
+                            .Title("Operation Time")
+                            .Columns(info =>
+                            {
+                                info.Bound(c => c.OperationHours).Width(50).Title("Hours").Filterable(false).HtmlAttributes(new { style = "text-align: center;" }).ClientTemplate("#=getDisplayHours(OperationHours)#");
+                                info.Bound(c => c.OperationDays).Width(50).Title("Days").Filterable(false).HtmlAttributes(new { style = "text-align: center;" });
+                            })
+                       );
+                     columns.Group(group => group
+                          .Title("Accum")
+                          .Columns(info =>
+                          {
+                              info.Bound(c => c.AccumulatedDays).Width(50).Title("Days").Filterable(false).HtmlAttributes(new { style = "text-align: center;" });
+                          })
+                     );
+                     columns.Group(group => group
+                          .Title("Finished Time")
+                          .Columns(info =>
+                          {
+                              info.Bound(c => c.PlanFinishedDate).Width(80).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                              info.Bound(c => c.PlanFinishedDate).Width(50).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                          })
+                     );
+                     //columns.Bound(p => p.End).Title("Plan End").Hidden(true);
+                     //columns.ForeignKey(p => p.EmployeeId,
+                     //  (System.Collections.IEnumerable)ViewData["employeeList"], "EmployeeId", "EmployeeName").Title("employee").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(100);
+                     columns.Bound(p => p.EmployeeName).Width(150).Title("Employee").Filterable(ftb => ftb.Multi(true).Search(true));
+                     columns.Command(command =>
+                     {
+                         command.Custom("Delete").Text("<i class='fa fa-trash' data-toggle='tooltip' title='Delete'  style ='font-size:18px;color:black;'></i>").Click("customDelete");
+                         command.Custom("down").Text("<i class='fa fa-arrow-down' data-toggle='tooltip' title='Move Down' style='font-size:18px;color:black;'></i>").Click("moveDown");
+                         command.Custom("up").Text("<i class='fa fa-arrow-up' data-toggle='tooltip' title='Move Up' style='font-size:18px;color:black;'></i>").Click("moveUp");
+
+                     }).Title("Actions").Width(60);
+                 })
+                 .ToolBar(toolBar =>
+                 {
+                     toolBar.Custom().Text("Add Tasks").HtmlAttributes(new { id = "addTasks", onclick = "LoadTasksPopup('" + Model.Wellid + "');" });
+                 })
+                //.Events(ev => ev.Save("TaskInlineUpdate"))
+                //.Groupable(false)
+                // .Editable(editable => editable.Mode(GridEditMode.PopUp).CreateAt(GridInsertRowPosition.Bottom).TemplateName("EditTask").Window(w => w.Title("Edit Task Details").Width(800)))
+                 .Editable(editable => editable.Mode(GridEditMode.PopUp).CreateAt(GridInsertRowPosition.Bottom).TemplateName("EditTask").Window(w => w.Title("Edit Task Details").Width(800).Height(600)))
+                 .ToolBar(toolbar => toolbar.Create().Text("New Task"))
+                 .Scrollable(scrollable => scrollable.Enabled(true))
+                 .Filterable()
+                 .Reorderable(r => r.Columns(true))
+                 .Resizable(r => r.Columns(true))
+                 .DataSource(dataSource => dataSource
+                 .Ajax()
+                 .Sort(sort =>
+                 {
+                     sort.Add("TaskOrder").Ascending();
+                 })
+                 .Model(model => model.Id(p => p.TaskId))
+                 .Read(read => read.Action("DrillingPlanDetail_Read", "DrillingPlan", new { wellId = Model.Wellid , drillPlanId = Model.DrillPlanId}))
+                 .Create(update => update.Action("Task_Create", "DrillingPlan"))
+                 .Update(update => update.Action("Task_Update", "DrillingPlan"))
+                 )
+                 .Events(e =>
+                 {
+                     e.Edit("DrillplanGridEdit");
+                     e.DataBound("DrillplanDataBound");
+                     e.Save("OnDrillplanSaveChanges");
+                 })
+                )
+        </div>
+
+
+        <div class="row" style="display:none;">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.PlannedTasksModel>()
+                 .Name("DrillPlan1_" + Model.Wellid)
+                 .HtmlAttributes(new { style = "width: 100%;margin:10px;" })
+                 .Columns(columns =>
+                 {
+                     columns.Bound(p => p.TaskOrder).Hidden(true);
+                     columns.Bound(p => p.StageTypeName).Hidden(true);
+                     columns.Bound(p => p.TaskName).Width(250).Title("Operation");
+                     columns.Bound(p => p.TaskId).Hidden(true);
+                     columns.Group(group => group
+                           .Title("Plan Start")
+                           .Columns(info =>
+                           {
+                               info.Bound(c => c.PlanStart).Width(80).Format("{0:MM/dd/yyyy}").Title("Date").Filterable(false);
+                               info.Bound(c => c.PlanStart).Width(50).Format("{0:HH:mm}").Title("Time").Filterable(false);
+                           }).HtmlAttributes(new { style = "text-align: center;" })
+                      );
+                     columns.Group(group => group
+                            .Title("Operation Time")
+                            .Columns(info =>
+                            {
+                                info.Bound(c => c.OperationHours).Width(50).Title("Hours").Filterable(false).HtmlAttributes(new { style = "text-align: center;" }).ClientTemplate("#=getDisplayHours(OperationHours)#");
+                                info.Bound(c => c.OperationDays).Width(50).Title("Days").Filterable(false).HtmlAttributes(new { style = "text-align: center;" });
+                            })
+                       );
+                     columns.Group(group => group
+                          .Title("Accum")
+                          .Columns(info =>
+                          {
+                              info.Bound(c => c.AccumulatedDays).Width(50).Title("Days").Filterable(false).HtmlAttributes(new { style = "text-align: center;" });
+                          })
+                     );
+                     columns.Group(group => group
+                          .Title("Finished Time")
+                          .Columns(info =>
+                          {
+                              info.Bound(c => c.PlanFinishedDate).Width(80).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(false);
+                              info.Bound(c => c.PlanFinishedDate).Width(50).Title("Time").Format("{0:HH:mm}").Filterable(false);
+                          })
+                     );                    
+                     columns.Bound(p => p.EmployeeName).Width(150).Title("Employee").Filterable(true);                   
+                 })                
+                 .DataSource(dataSource => dataSource
+                 .Ajax()
+                 )
+                )
+        </div>
+
+    </div>
+</div>
+
+@(Html.Kendo().Window().Name("AddTaskList")
+    .Title("Add Tasks")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+)
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add Task")
+    .Visible(false)
+    .Modal(true)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1000)
+)
+<script>
+
+    $(document).ready(function () {
+        sessionStorage.setItem("wellId", '@Model.Wellid');
+        sessionStorage.setItem("tenantId", '@Model.TenantId');
+        $('[data-toggle="tooltip"]').tooltip();
+        var grid = $("#DrillPlan_" + '@Model.Wellid').data("kendoGrid");
+        var Gridid = "#DrillPlan_" + '@Model.Wellid';
+        grid.table.kendoSortable({
+            filter: ">tbody >tr",
+            hint: $.noop,
+            cursor: "move",
+            autoScroll: true,
+            placeholder: function (element) {
+                return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+            },
+            container: Gridid + " tbody",
+            change: function (e) {
+                var benchMarkTasks = [];
+                var prespudTasks = [];
+                var skip = grid.dataSource.skip(),
+                    oldIndex = e.oldIndex,
+                    newIndex = e.newIndex,
+                    data = grid.dataSource.data(),
+                    dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+                if (dataItem != undefined) {
+                    dataItem.IsRowModified = true;
+                }
+
+                $.each(grid.dataSource._data, function (index, value) {
+                    if (value.IsBenchMark === true)
+                    {
+                        benchMarkTasks.push({ Task: value, Index: index });
+                    } else if (value.IsPreSpud === true)
+                    {
+                        prespudTasks.push({ Task: value, Index: index })
+                    }
+                });
+
+                //var LastItem = grid.dataSource._data[newIndex];
+                if (dataItem.IsPreSpud) {
+                    var Taskcount = parseInt(prespudTasks.length) - parseInt(1);
+                    if (prespudTasks[Taskcount].Index >= newIndex) {
+                        return true;
+                    }
+                    else
+                    {
+                        kendo.confirm("Are you sure you want to move this Task into Bench Mark ?")
+                            .done(function () {
+                                dataItem.IsPreSpud = false;
+                                grid.dataSource.remove(dataItem);
+                                grid.dataSource.insert(newIndex, dataItem);
+                             })
+                            .fail(function () {
+                               $("#DrillPlan_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                 $("#DrillPlan_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                });
+                            });
+                    }
+                }
+                else
+                {
+                    for (var i = 0; benchMarkTasks.length > i; i++)
+                    {
+                        @*if (benchMarkTasks.length > 1)
+                        {
+                            if (benchMarkTasks[i].Index < newIndex && benchMarkTasks[i + 1].Index > newIndex) {
+                                return true;
+                            }
+                            else {
+                                kendo.confirm("Are you sure you want to move Bench Mark into Pre-Spud Tasks or other bench mark task ?")
+                                    .done(function () {
+                                        if (prespudTasks[parseInt(prespudTasks.length) - 1] >= newIndex) {
+                                            dataItem.IsPreSpud = true;
+                                            dataItem.IsBenchMark = false;
+                                            grid.dataSource.remove(dataItem);
+                                            grid.dataSource.insert(newIndex, dataItem);
+                                        } else {
+                                            grid.dataSource.remove(dataItem);
+                                            grid.dataSource.insert(newIndex, dataItem);
+                                        }
+                                     })
+                                    .fail(function () {
+                                       $("#DrillPlan_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                         $("#DrillPlan_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                        });
+                                    });
+                                break;
+                            }
+                        } else {*@
+                            if (benchMarkTasks[i].Index < newIndex) {
+                                return true;
+                            }
+                            else {
+                                kendo.confirm("Are you sure you want to move Bench Mark into Pre-Spud Tasks ?")
+                                    .done(function () {
+                                        dataItem.IsPreSpud = true;
+                                        dataItem.IsBenchMark = false;
+                                        grid.dataSource.remove(dataItem);
+                                        grid.dataSource.insert(newIndex, dataItem);
+                                     })
+                                    .fail(function () {
+                                       $("#DrillPlan_" + '@Model.Wellid').data("kendoGrid").dataSource.read().then(function () {
+                                         $("#DrillPlan_" + '@Model.Wellid').data('kendoGrid').refresh();
+                                        });
+                                    });
+
+                                break;
+                            }
+                       //}
+                    }
+                }
+
+                grid.dataSource.remove(dataItem);
+                grid.dataSource.insert(newIndex, dataItem);
+            }
+        });
+    });
+
+    $('#btnPrintPlan').click(function () {
+        printPlan('@Model.Wellid', '@Model.WellName', '@Model.DrillPlanName', '@Model.Rigname');
+    });       
+
+    function getDisplayHours(data) {
+        var colValue = data;
+        //alert("colValue" + colValue);
+        if (colValue != "" && colValue !== 0) {
+            var hoursArray = colValue.toString().split(".");
+            //alert('hoursArray.length'+hoursArray.length);
+            var result = hoursArray[0].toString() + ".";
+            var minutes = "";
+            if (hoursArray.length == 1) {
+                minutes = "00";
+            } else {
+                //alert('hoursArray1 value' + hoursArray[1].toString());
+                minutes = hoursArray[1].toString();
+                if (minutes == "3" || minutes == "0") {
+                    minutes = minutes.toString() + "0";
+                }
+            }
+            //alert(hoursArray[1]);
+
+            minutes = minutes.toString() == "15" ? "25" : minutes == "30" ? "50" : minutes == "45" ? "75" : "00";
+
+           // alert('hoursArray[0].toString()'+hoursArray[0].toString());
+            //alert('minutes.toString()'+minutes.toString());
+            return hoursArray[0].toString() + "." + minutes.toString();
+        }
+        return "00.00";
+    }
+
+</script>
+<script id="templateddl" type="text/kendo-tmpl">
+     @(Html.Kendo().DropDownList()
+        .Name("Employee")
+        .DataValueField("EmployeeId")
+        .DataTextField("EmployeeName")
+        .BindTo((System.Collections.IEnumerable)ViewData["employeeList"])
+        .ToClientTemplate()
+)
+</script>
+@*<script type="text/x-kendo-template" id="toolbar-template">
+    <button type="button" class="k-button" id="printGrid">Print Grid</button>
+</script>*@
+<style type="text/css">
+
+    .RowChange{
+        background-color:green !important;
+    }
+    .k-window-content {
+        overflow-x: hidden !important;
+    }
+    .k-grid-content {
+        height: 300px !important;
+    }
+    .k-content {
+        overflow-x: hidden !important;
+    }
+    .k-grid tbody tr {
+        cursor: move;
+    }
+</style>
+@(Html.Kendo().Window().Name("AddTaskListWindow")
+    .Title("Tasks")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+
+)

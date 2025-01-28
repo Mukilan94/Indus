@@ -1,0 +1,76 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+
+<div class="row login-row">
+    <div class="col-md-3 login-logo"></div>
+    <div class="col-md-6" style="padding-top:6.5%;">
+
+        <div class="blockstyle">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <section>
+                        <div class="col-md-9" style="padding-left:10%;">
+                            @{
+                                if (@Model.Type == "1")
+                                {
+                                    <span class="dashboard-total">
+                                        Please check your email for a verification link to confirm your registered email address and activate your account.
+                                        Then please call our representatives to assist you with registration for your organization.
+                                        If you do not verify your registration, then it will be removed after 24 hours.
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="dashboard-total">
+                                        Please check your email for a verification link to confirm your registered email address and activate your account and
+                                        set your primary account password.
+                                        If you do not verify your registration, then it will be removed after 24 hours.
+                                    </span>
+                                }
+                            }
+                        </div>
+                        <div class="col-md-3 float-right">
+                            <div class="k-edit-buttons k-state-default">
+                                <button type="button" role="button" onclick="location.href='/Identity/Account/login'" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Login</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+<link href="~/css/common.css" rel="stylesheet" />
+
+<style>
+    .blockstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-total {
+        width: 80px;
+    }
+     .k-edit-buttons{
+            border-style:none;
+        }
+</style>

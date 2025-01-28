@@ -1,0 +1,705 @@
+﻿@{
+    ViewData["Title"] = "Vendors";
+    Layout = null;
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.ProviderDirectoryModel
+
+<section class="content-header">
+    <script>
+
+        function error(args) {
+            if (args.errors) {
+                console.log('Admin Provider Directory args.errors - ' + args.errors);
+                var grid = $('#providers').data("kendoGrid");
+                grid.one("dataBinding", function (e) {
+                    e.preventDefault();                   
+                });
+            }
+        }
+
+
+        function OnGridSave(e) {
+            setTimeout(function () {
+                $('#providers').data('kendoGrid').dataSource.read().then(function () {
+                    $('#providers').data('kendoGrid').refresh();
+                });
+            }, 1600);
+        }
+        function RenameWindow(e) {
+            if (e.model.isNew()) {
+                e.container.data("kendoWindow").title("New service company");
+            }
+        }
+        function showdelete(e) {
+            e.preventDefault();
+            alert('Are you sure to remove service company from this list?')
+        }
+        function customDelete(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            kendo.confirm("Are you sure you want to delete this item?")
+                .done(function () {
+                    $.ajax({
+                        url: '/Customer/ProviderDirectory_Destroy?companyId=' + dataItem.ProviderId,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            var grid = $("#providers").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    });
+
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+
+        function companyChange(e) {
+            var ddlcompany = $("#ddlCompany").val();
+            $("#CompanyId").data("kendoMaskedTextBox").value(ddlcompany);
+            $("#CompanyId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function approvalChange(e) {
+            var ddlapproval = $("#ddlApproval").val();
+            $("#ApprovalId").data("kendoMaskedTextBox").value(ddlapproval);
+            $("#ApprovalId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function statusChange(e) {
+            var ddlstatus = $("#ddlStatus").val();
+            $("#StatusId").data("kendoMaskedTextBox").value(ddlstatus);
+            $("#StatusId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function pecChange(e) {
+            var ddlpec = $("#ddlPEC").val();
+            $("#PecStatusId").data("kendoMaskedTextBox").value(ddlpec);
+            $("#PecStatusId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function msaChange(e) {
+            var ddlmsa = $("#ddlMSA").val();
+            $("#MSADocumentId").data("kendoMaskedTextBox").value(ddlmsa);
+            $("#MSADocumentId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function InsuranceChange(e) {
+            var InsuranceId = $("#Insurance").val();
+            $("#InsuranceId").data("kendoMaskedTextBox").value(InsuranceId);
+            $("#InsuranceId").data("kendoMaskedTextBox").trigger("change");
+        }
+        function preferredChange(e) {
+            if (e.checked) {
+                $("#Preferred").data("kendoMaskedTextBox").value("true");
+                $("#Preferred").data("kendoMaskedTextBox").trigger("change");
+                $(".prefswitch .k-switch-label-on").show();
+                $(".prefswitch .k-switch-label-off").hide();
+            }
+            else {
+                $("#Preferred").data("kendoMaskedTextBox").value("false");
+                $("#Preferred").data("kendoMaskedTextBox").trigger("change");
+                $(".prefswitch .k-switch-label-on").hide();
+                $(".prefswitch .k-switch-label-off").show();
+            }
+        }
+        function secondaryChange(e) {
+            if (e.checked) {
+                $("#Secondary").data("kendoMaskedTextBox").value("true");
+                $("#Secondary").data("kendoMaskedTextBox").trigger("change");
+                $(".secswitch .k-switch-label-on").show();
+                $(".secswitch .k-switch-label-off").hide();
+            }
+            else {
+                $("#Secondary").data("kendoMaskedTextBox").value("false");
+                $("#Secondary").data("kendoMaskedTextBox").trigger("change");
+                $(".secswitch .k-switch-label-on").hide();
+                $(".secswitch .k-switch-label-off").show();
+            }
+        }
+        function onRequestEnd(e) {
+            if (e.type == "update" || e.type == "create") {
+                $("#provdirbtn").click();
+            }
+        }
+        function setVisible(dataItem) {
+            var permission = '@ViewData["fieldPermission"]';
+            console.log('permission s' + permission);
+            if (permission == 'False' || permission == 'false') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        $(document).ready(function () {
+            $("a[data-form-method='post']").click(function (event) {
+                event.preventDefault();
+                var element = $(this);
+                var action = element.attr("href");
+                element.closest("form").each(function () {
+                    var form = $(this);
+                    form.attr("action", action);
+                    form.submit();
+                });
+            });
+        });
+        function showLocation(city, zip, address1, address2, state) {
+            $.ajax({
+                url: "https://nominatim.openstreetmap.org/search?city=" + city + "&state=" + state + "&street=" + address1 + " "
+                    + address2 + "&postalcode=" + zip + "&format=geocodejson",
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    var locationLat = "";
+                    var locationLng = "";
+                    for (var i = 0; i < data.features.length; i++) {
+                        var feature = data.features[i];
+                        var label = feature.properties.geocoding.label;
+                        if (label.indexOf(city) > 0 && label.indexOf(zip) > 0) {
+                            var coordinates = feature.geometry.coordinates;
+                            var locationLat = coordinates[1];
+                            var locationLng = coordinates[0];
+                            break;
+                        }
+                    }
+                    var map = $("#locationmap").data("kendoMap");
+                    var centerLat = 30.268107;
+                    var centerLng = -97.744821;
+                    if (locationLat != "" && locationLng != "") {
+                        centerLat = locationLat;
+                        centerLng = locationLng - 20;
+                    }
+                    var centerLocation = new kendo.dataviz.map.Location(centerLat, centerLng);
+                    map.center(centerLocation);
+                    if (locationLat != "" && locationLng != "") {
+                        var markerLocation = new kendo.dataviz.map.Location(locationLat, locationLng);
+                        if (map.markers.items.length == 0) {
+                            map.markers.add({ location: markerLocation })
+                        }
+                    }
+                    var wnd = $("#MapLocation").data("kendoWindow");
+                    wnd.center().open();
+                }
+            });
+        }
+        function additionalInfo(e) {
+            var that = $(this);
+            return {
+                companyId: "1"
+            }
+        }
+        function onDataBound(e) {
+            var grid = this; 
+            grid.element.off('dblclick');           
+            var grid = this;
+            grid.table.find("tr").each(function () {
+                var dataItem = grid.dataItem(this);
+                var type = dataItem.Discontinued ? 'success' : 'error';
+                var text = dataItem.Discontinued ? 'available' : 'not available';
+                $(this).find('script').each(function () {
+                    eval($(this).html());
+                });
+                $(this).find(".badgeTemplate").kendoBadge({
+                    type: type,
+                    value: text,
+                });
+                kendo.bind($(this), dataItem);
+            });
+
+            ounter = 1;
+            var columns = e.sender.columns;
+            var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "PreferredStatus" + "]").index();
+            var InsurencecolumnIndex = this.wrapper.find(".k-grid-header [data-field=" + "InsuranceExpire" + "]").index();
+            var rows = e.sender.tbody.children();
+            for (var j = 0; j < rows.length; j++) {
+                var row = $(rows[j]);
+                var dataItem = e.sender.dataItem(row);
+                var units = dataItem.get("PreferredStatus");
+                var ExpireDate = dataItem.get("InsuranceExpire");
+                //var diffDays = "";
+                if (ExpireDate != null) {
+                    var ExpirationDate = ExpireDate;
+                    var CurrentDate = new Date();
+
+                    var diffDays = parseInt((ExpirationDate - CurrentDate) / (1000 * 60 * 60 * 24), 10);
+                    if (diffDays <= 7) {
+                        var cell = row.children().eq(InsurencecolumnIndex);
+                        cell.addClass("ExpireDateHighlight");
+                    }
+                }
+                var cell = row.children().eq(columnIndex);
+                cell.addClass(templateFunction(units));
+            }
+        }
+
+        function templateFunction(units) {
+            switch (units) {
+                case "Preferred":
+                    return "Preferred";
+                case "Authorized":
+                    return "Authorized";
+                case "pending Review":
+                    return "pending";
+            }
+        }
+
+
+        $(document).ready(function () {
+            RefreshGrid();
+        });
+        function RefreshGrid() {
+            var IntTime = 300000;
+            setInterval(function () {
+                $("#providers").data("kendoGrid").dataSource.read();
+            },IntTime);
+        }
+    </script>
+
+</section>
+<div class="providers-bottom">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.ProviderProfile>()
+.Name("providers")
+.HtmlAttributes(new { @class = "ra-section" })
+.Columns(columns =>
+{
+    columns.Bound(p => p.ProviderId);
+    columns.Bound(p => p.PreferredStatus).Width(180).Title("Provider Status");
+    columns.Bound(p => p.Name).Width(200).ClientTemplate("<a href='" + @Url.Action("ProviderProfile", "Customer") + "?id=#=ProviderId#' class='linkstyle'>#= Name#</a>");
+    //columns.Bound(p => p.Approval);
+    columns.Bound(p => p.Rating).Width(120).Title("Rating").ClientTemplate(Html.Kendo().Rating()
+                .Name("rating_#=ProviderId#")
+                .Min(1)
+                .Max(5)
+                .Label(false)
+                .Readonly(true)
+                .HtmlAttributes(new {data_bind = "value:Rating" ,@class="Rating"})
+                .ToClientTemplate().Value
+            );
+    //columns.Bound(p => p.Status);
+    columns.Bound(p => p.PecStatus).ClientTemplate("<span class=#=PecStatus=='Good' ? 'greenpecstatus' : PecStatus=='Average' ? 'yellowpecstatus' : 'redpecstatus' #><i class='fa fa-circle'></i></span>").Hidden(true);
+    columns.Bound(p => p.MSADocument).ClientTemplate("<a href='" + @Url.Action("DownloadForServiceCompany", "Customer", new { fileId = "#=MSADocumentId#" }) + "' class='linkstyle'>#=MSADocument#</a>");
+    columns.Bound(p => p.InsuranceDocument).ClientTemplate("<a href='" + @Url.Action("InsurenceDownload", "Customer", new { tenId = "#=CompanyId#", fileId = "#=InsuranceId#" }) + "' class='linkstyle'> #if (InsuranceDocument == null) {# #=''# #} else {# #=InsuranceDocument# #}# </a>");
+    columns.Bound(p => p.InsuranceExpire).Width(120).Title("Ins. Expire").Format("{0: MM/dd/yyyy}");
+    columns.Bound(p => p.Website).Width(220).ClientTemplate("<a href='#=Website#' target='_blank' class='linkstyle'>#=Website#</a>");
+    columns.Command(command =>
+    {
+        command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;color:black;'></i>").Click("customDelete")/*.Visible("setVisible")*/;
+    }).Title("Action").Width(70);
+})
+.Pageable(p =>
+            p.Info(true)
+             .Numeric(false)
+             .PreviousNext(false)
+        )
+         .Scrollable(scrollable => scrollable.Virtual(true))
+         .Selectable()
+.Sortable(s => s.Enabled(true))
+.Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditProvider").Window(w => w.Title("Edit Provider").Width(500)))
+.DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(10)
+            .ServerOperation(true)
+            .Model(model => model.Id(p => p.ProviderId))
+            .Events(events =>
+            {
+                events.RequestEnd("onRequestEnd");
+            })
+            .Read(read => read.Action("ProviderDirectory_Read", "Customer", new { pending = "true", expire = "true" }))
+            .Update(update => update.Action("ProviderDirectory_Update", "Customer"))
+            .Events(events => events.Error("error"))
+            )
+            .Events(e => {
+                e.DataBound("onDataBound");
+                e.Save("OnGridSave");
+            })
+           )
+</div>
+
+
+<script id="AddVendorTemplate" type="text/x-kendo-template">
+    <div class="refreshBtnContainer">
+        <a href="\\#" class="providerbutton" title="Add Provider">+ Add Provider</a>
+    </div>
+</script>
+<script type="text/javascript">
+     function returnFalse() {
+            return false;
+        }
+    var selectedVendor = [];
+    var ContactList = [];
+    $(function () {
+        var grid = $("#providers");
+        grid.find(".k-grid-toolbar").on("click", ".providerbutton", function (e) {
+            openProviderDirectory();
+        });
+        function openProviderDirectory() {
+            var wnd = $("#AddProvider").data("kendoWindow");
+            wnd.center().open();
+            $('#vendors').data('kendoGrid').dataSource.read().then(function () {
+                $('#vendors').data('kendoGrid').clearSelection();
+            });
+        }
+    });
+    function saveProvider()
+    {
+        var posturl = '@Url.Action("SaveProvider", "Customer")';
+        var obj = JSON.stringify(selectedVendor);
+        var i = 0;
+        console.log(obj);
+        if (selectedVendor.length > 0) {
+            for (i = 0; i <= selectedVendor.length - 1; i++) {
+                $.ajax({
+                    url: posturl,
+                    type: 'POST',
+                    data: JSON.stringify(selectedVendor[i]),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data) {
+                            var grid = $("#providers").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    }
+                });
+            }
+        $.ajax({
+            url: "/Communication/SaveClientContact?clients=" + ContactList,
+            type: 'POST',
+            data: JSON.stringify(ContactList),
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    var grid = $("#users").data("kendoGrid");
+                    grid.dataSource.read();
+                    $('#clientContacts').html('');
+                    $('#clientContacts').html(data);
+                    selectedClientContact = [];
+                    closeClientContact();
+                }
+            }
+        });
+            closeProvider();
+        }
+        else {
+            //Phase II Changes - Alert
+            provideralert("Please Select Provider", "Alert");
+            return false;
+        }
+        window.location.reload();
+    }
+
+    //Phase II Changes - Alert
+    function provideralert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function closeProvider() {
+        var wnd = $("#AddProvider").data("kendoWindow");
+        $('#vendors').data('kendoGrid').dataSource.read().then(function () {
+            $('#vendors').data('kendoGrid').clear();
+        });
+        wnd.close();
+    }
+   function onChange(e) {
+        var selectedRows = this.select();
+         selectedVendor = [];
+        for (var i = 0; i < selectedRows.length; i++) {
+            var dataItem = this.dataItem(selectedRows[i]);
+            var vendor =
+            {
+                CompanyId: dataItem.ID,
+                TenantId: dataItem.TenantId,
+                Secondary: false,
+            };
+            selectedVendor.push(vendor);
+        }
+       ContactList = [];
+        for (var i = 0; i < selectedVendor.length; i++) {
+            var TenantID = selectedVendor[i].TenantId;
+            $.ajax({
+                url: "/Communication/Contacts_Read?Tenantid=" + TenantID,
+                type: "Get",
+                dataType: "Json",
+                async: false,
+                success: function (response) {
+                    if (response != null) {
+                        var ContList = response.Data;
+                        for (var i = 0; i < ContList.length; i++) {
+                            var UserId = ContList[i].UserId;
+                            var TenantId = ContList[i].TenantId;
+                            var ContactId = ContList[i].ContactId;
+                            var Contacts = {
+                                UserId: UserId,
+                                TenantId: TenantId,
+                                ContactId: ContactId
+                            };
+                            ContactList.push(Contacts);
+                        }
+                    }
+                }
+            });
+        }
+    }
+    function showCallWindow(phone) {
+        console.log("Calling : " + phone);
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/CommunicationAdmin/ManageCall/', { phone: phone }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .ExpireDateHighlight {    
+        background-color: #ff6344 !important;
+        color: white !important;
+    }
+
+    .Authorized {
+        background-color: #77BD27;
+        border-color: white !important;
+        border-width: 2px !important;
+        color: white;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+    }
+
+    .pending {
+        background-color: #F4AF00;
+        border-color: white !important;
+        border-width: 2px !important;
+        color: white;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+    }
+
+    .Preferred {
+        background-color: #007BFF;
+        border-color: white !important;
+        border-width: 2px !important;
+        color: white;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+    }
+
+    #PdfFile {
+        width: auto !important;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+    .k-window {
+        border-radius: 5px !important;
+    }
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-grid-Delete .k-grid-Delete:hover {
+        background-color: #fff !important;
+    }
+    .k-grid-Delete{
+        border-radius: 10px !important;
+    }
+    .buttons {
+        padding-bottom:20px;
+    }
+    .k-pager-numbers {
+        padding-top:17px;
+    }
+    .providers-counts {
+        color: #ffffff;
+        width: 60%;
+        display: inline-block;
+        margin-bottom: 50px;
+    }
+    .providers-counts .rowcounts{
+        height:100px;
+        margin-left:-20px;
+    }
+    .providers-counts{
+        float:left;
+    }
+    .providers-right{
+        color:#ffffff;
+        width:28%;
+        display:inline-block;
+        float:right;
+        margin-right:20px;
+        margin-top:10px;
+    }
+    .providers-bottom{
+        float:left;
+        width:100%;
+    }
+    .providers-pref{
+        margin-bottom:10px;
+    }
+    .k-rating-container .k-rating-item {
+        padding: 4px 0;
+    }
+        .k-rating-container .k-rating-item .k-icon {
+            font-size: 16px;
+        }
+    .providers-pref, .providers-sec {
+        background-color: #fff;
+        color: #000;
+        border: 4px solid #007BFF !important;
+        border-radius: 10px;
+        height: 100px;
+        width: 330px;
+    }
+    .providers-sec{
+        margin-bottom:25px;
+    }
+    .inner {
+        padding-top:10px;
+    }
+    .providers-counts .blockstyle {
+        height: 75px;
+        background-color: #fff;
+        color: #000;
+        border: 4px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 20px;
+        float: left;
+        width: auto;
+        justify-content: space-between;
+    }
+    .linkstyle{
+        text-decoration:underline !important;
+    }
+    .greenpecstatus{
+        color:limegreen;
+        margin-left:30%;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    .redpecstatus{
+        color:red;
+        margin-left:30%;
+    }
+    .yellowpecstatus{
+        color:orange;
+        margin-left:30%;
+    }
+    .rowtitle{
+        display:inline-block;
+        margin-bottom:10px;
+        margin-left:5px;
+    }
+    .providertitle {
+        font-family: Roboto;
+        margin-bottom: 0px;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .providerdescription {
+        color: #f1f2f8;
+        font-weight: 300;
+        letter-spacing: .75px;
+        font-size: 10pX;
+        width: 100%;
+    }
+    .providers-total {
+        color: #000;
+        font-size: 14px;
+    }
+    .providers-totalval {
+        color: #007bff;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 20px !important;
+    }
+    .provider1-img {
+        background-image: url( @Url.Content("/img/prov1.jpg") );
+        background-size:cover;
+        width: 59px;
+        height: 59px;
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+        margin-top: 15px;
+    }
+    .provider2-img {
+        background-image: url( @Url.Content("/img/prov2.jpg") );
+        background-size:cover;
+        width: 59px;
+        height: 59px;
+        display: inline-block;
+        float: left;
+        margin-left: 15px;
+        margin-top: 15px;
+    }
+    .provider-title{
+        float:left;
+        list-style:none;
+        margin-top:10px;
+        margin-left:10px;
+    }
+    .provider-title span{
+        display:block;
+        font-weight:bold;
+    }
+    .provider-title i{
+        width:20px;
+    }
+    .provider-satus{
+        font-weight:600;
+        font-size:14px;
+    }
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+    .k-grid-Delete, .k-grid-Delete:hover, .k-grid-edit, .k-grid-edit:hover {
+        background-color: transparent !important;
+    }
+    .k-grid-Delete:focus, .k-grid-edit:focus{
+        box-shadow:none !important;
+    }
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+    .k-datepicker .k-picker-wrap .k-select {
+        border: 0px;
+        background-color: #fff;
+        color: #000;
+    }
+    #InsuranceStart .k-textbox .k-icon, #InsuranceExpire .k-textbox .k-icon {
+        color: #000;
+    }
+    .k-i-calendar {
+        margin-left: -10px !important;
+    }
+    .k-datepicker {
+        padding: 0;
+    }
+    .k-switch{
+        width:5em !important;
+    }
+    .fa-map-marker{
+        cursor:pointer;
+    }
+</style>

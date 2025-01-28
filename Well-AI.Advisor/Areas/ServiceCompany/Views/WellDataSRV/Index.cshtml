@@ -1,0 +1,75 @@
+﻿@{
+    
+    ViewData["Title"] = "Rigs";
+}
+
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.WellDataServiceCompanyViewModel>
+    ()
+    .Name("welldatasrvmaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.operatingCompanyName).Title("Company").Width(20).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.projectID).Title("Project ID").Width(20).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.projectTitle).Title("Title").Width(20).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.projectStartDate).Title("Start Date").Width(20).Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.projectEndDate).Title("End Date").Width(20).Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.wellId).Hidden();
+        columns.Bound(p => p.wellName).Title("Well Name").Width(10)
+        .ClientTemplate("<a href='" + @Url.Action("GetWellRIGData", "WellData", new { ctype = "srv", wellId = "#=wellId#" }) + "' class='linkstyle'>#=wellName#</a>").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.county).Title("County").Width(10).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        columns.Bound(p => p.wellType).Title("Well Type").Width(10).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+    })
+    .Pageable(p =>
+              p.Info(true)
+              .Numeric(false)
+              .PreviousNext(false)
+            )
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Sortable()
+    .Selectable()
+     .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.projectID))
+    .PageSize(10)
+    .Batch(false)
+    .Read(read => read.Action("GetWellMasterRead", "WellDataSRV"))
+    )
+    )
+</section>
+<script type="text/javascript">
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#welldatasrvmaster").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+
+</script>
+<style>
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    .k-i-filter-clear {
+        color: #007bff !important;
+    }
+
+</style>

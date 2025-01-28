@@ -1,0 +1,5 @@
+﻿@(Html.Kendo().DropDownListFor(m => m)
+            .DataValueField("VendorId")
+            .DataTextField("VendorName")
+            .BindTo((System.Collections.IEnumerable)ViewData["vendores"])
+)

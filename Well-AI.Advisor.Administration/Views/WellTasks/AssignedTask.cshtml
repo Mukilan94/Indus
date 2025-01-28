@@ -1,0 +1,218 @@
+﻿
+@{
+    ViewData["Title"] = "Assigned Task";
+}
+<style>
+    .wrapper {
+        background: #151d32 !important;
+    }
+
+    .text-center {
+        text-align: center !important;
+        font-weight: 600;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .k-listbox {
+        width: 100% !important;
+        height: 350px;
+        text-align: left;
+    }
+
+    .content {
+        margin: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+        padding-top: 5px;
+        margin-top: 0px;
+        height: 35px;
+    }
+
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    .k-button {
+        width: 130px;
+    }
+
+    #appendto {
+        margin-top: 5px;
+        height: 15px;
+    }
+
+        #appendto .k-i-error {
+            padding-right: 8px;
+        }
+    .row {
+        padding-top: 3px;
+    }
+
+    #PageHeading {
+        font-size: 16px;
+        margin: 15px;
+    }
+</style>
+<div class="row">
+    <div id="PageHeading" class="col-md-6"><strong>Assign Tasks</strong></div>
+</div>
+<section class="content">
+
+    <div id="loadingId">
+        <div class="row k-window-titlebar">
+            <h5 class="col-md-12" style=" text-align: left"> Well Services</h5>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 text-center">Unassign Task</div>
+                    <div class="col-md-12 col-sm-12">
+                        @(Html.Kendo().ListBox()
+                    .Name("UnassignTask")
+                    .ConnectWith("AssignedTask")
+                    .DataValueField("Value")
+                    .DataTextField("Text")
+                    .HtmlAttributes(new { style="100%"})
+                    .BindTo(ViewBag.UnassignTask)
+                    )
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 text-center">Action</div>
+                    <div class="col-md-12 col-sm-12">
+                        <button id="transfer-right" class="k-button k-button-icontext alert-success k-grid-update">Assigned </button>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12" style="margin-top:5px;">
+                        <button id="transfer-left" class="k-button k-button-icontext alert-warning k-grid-update">Remove</button>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 text-center">Assigned Task</div>
+                    <div class="col-md-12 col-sm-12">
+                        @(Html.Kendo().ListBox()
+                    .Name("AssignedTask")
+                    .ConnectWith("UnassignTask")
+                    .DataValueField("Value")
+                    .DataTextField("Text")
+                    .HtmlAttributes(new { style="100%"})
+                    .BindTo(ViewBag.AssignedTask))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="k-edit-buttons k-state-default">
+            <button id="save-right" class="k-button k-button-icontext k-primary k-grid-update">Save</button>
+            <button id="btnCancel" class="k-button k-button-icontext k-grid-cancel">Cancel</button>
+        </div>
+
+        <div class="row">
+            <div id="appendto"></div>
+            <span id="staticNotification"></span>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+
+        var notification = $("#staticNotification").kendoNotification({
+            autoHideAfter: 4000, appendTo: "#appendto",
+            animation: {
+                open: {
+                    effects: "fade:in"
+                },
+                close: {
+                    effects: "none"
+                }
+            }
+        }).data("kendoNotification");
+
+
+        var UnassignTask = $("#UnassignTask").data("kendoListBox");
+
+        var AssignedTask = $("#AssignedTask").data("kendoListBox");
+        $("#transfer-left").click(function () {
+            if (AssignedTask.select().length > 0) {
+                UnassignTask.add(AssignedTask.dataItem(AssignedTask.select()));
+                AssignedTask.remove(AssignedTask.select());
+            }
+            else {
+                showMessage("Right Services should have selected!");
+            }
+        })
+
+        $("#transfer-right").click(function () {
+
+            if (UnassignTask.select().length > 0) {
+                AssignedTask.add(UnassignTask.dataItem(UnassignTask.select()));
+                UnassignTask.remove(UnassignTask.select());
+            }
+            else {
+                showMessage("Left Services should have selected!");
+            }
+        })
+
+        $("#save-right").click(function ()
+        {
+            var wellType = "@ViewBag.WellType";
+            var taskId = [];
+            $.each(AssignedTask.dataSource._data, function (key, value) {
+                taskId.push(value.Value);
+            });
+            var dataObject = {
+                'WellTypeId': wellType,
+                "TaskId": taskId
+            }
+            displayLoading("#loadingId", true);
+
+            $.ajax({
+                url: "/WellTasks/AddWellTasks",
+                type: 'POST',
+                cache: false,
+                data: JSON.stringify(dataObject),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data) {
+                        displayLoading("#loadingId", false);
+                    }
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    displayLoading("#loadingId", false);
+                }
+            });
+        })
+
+        $("#btnCancel").click(function () {
+            window.location.href = "/Welltasks/WellTask";
+        })
+
+        function showMessage(message) {
+            notification.hide();
+            notification.error(message);
+        }
+
+        function displayLoading(target, bool) {
+            var element = $(target);
+            kendo.ui.progress(element, bool);
+        }
+    });
+</script>
+

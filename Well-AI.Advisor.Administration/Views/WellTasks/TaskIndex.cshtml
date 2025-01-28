@@ -1,0 +1,573 @@
+﻿@{
+    ViewData["Title"] = "TaskIndex";
+
+
+}
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+        #TasksGrid{
+            height:650px !important;
+        }
+        .k-grid-content {
+            height: 530px !important
+        }
+        .k-action-buttons .k-button:last-child {
+            background-color: black !important;
+        }
+        #TasksDuplicate {
+            min-height: 90px !important;
+            height: auto !important;
+        }
+        .k-i-close {
+            color: black !important;
+        }
+
+        .k-edit-field {
+            width: auto !important;
+        }
+
+        li .k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+      
+        .row {
+            padding-top: 3px;
+        }
+
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-grid .k-grid-details, .k-grid .k-grid-tdetails, .k-grid .k-grid-bdetails, .k-grid .k-grid-edit, .k-grid .k-grid-delete {
+            background-color: none !important;
+        }
+
+        #Days {
+            width: 50px !important;
+        }
+
+        #Hours {
+            width: 50px !important;
+        }
+
+        #Minutes {
+            width: 50px !important;
+        }
+
+        .k-label-bottom {
+            display: inline-block;
+            padding-top: 15px;
+            font-size: smaller;
+        }
+
+        .k-action-buttons .k-primary {
+            background-color: #007BFD !important;
+        }
+
+        .k-clear-selected {
+            background-color: black !important;
+        }
+
+        #TaskList {
+            overflow-y: scroll !important;
+        }
+    </style>
+</section>
+<section class="content">
+    @using (Html.BeginForm("ImportTasks", "WellTasks", FormMethod.Post, new { @id = "formTasks", @name = "formTasks" }))
+    {
+        <div class="row">
+            <div id="PageHeading" class="col-md-6"><strong>Tasks</strong></div>
+        </div>
+        <div class="row" style="padding-bottom:20px !important;">
+            <div class="col-sm-5" style="padding-left:16px !important;">
+                @(Html.Kendo().Upload()
+                    .Name("filesv")
+                   .Async(a => a
+                            .Save("ImportTasks", "WellTasks")
+                            .AutoUpload(false)
+                        )
+                   .Messages(
+                    m=>m.Select("Select a file")
+                        .UploadSelectedFiles("Import")
+                        .HeaderStatusUploaded("Import completed")
+                        .HeaderStatusUploading("Importing file, please wait...")
+                        .StatusFailed("File processing failed")
+                        .StatusUploaded("File is importing")
+                        .StatusUploading("On-process...")
+                        .UploadSuccess("File imported successfully")
+                    )
+                    .Events(e => e.Select("OnSelect").Success("FileUploadSuccess"))
+                    .HtmlAttributes(new { aria_label = "files" })
+                        .Validation(validation => validation.MinFileSize(0).AllowedExtensions(new string[] {  ".xlsx",".xls" })
+                    ))
+                <div class="demo-hint">You can only import <strong>XLS</strong>,<strong>XLSX</strong> files.</div>
+            </div>
+            <span class="k-invalid-msg" data-for="filesv"></span>
+            @*<span class="k-label-bottom">(xlsx)</span>*@
+            @*<div class="col-sm-2">
+                    <button id="btnImport" type="submit" onclick="onbtnImportClick()" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="fa fa-floppy-o"></span>Import</button>
+                </div>*@
+        </div>
+        <div class="auction-bottom">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.TaskModel>()
+            .Name("TasksGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.Name).Width(250).Filterable(ftb => ftb.Multi(true).Search(true));
+                columns.Bound(p => p.Description).Width(300).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.StageTypeName).Title("Stage").Filterable(ftb => ftb.Multi(true).Search(true)).Width(150);
+                columns.Bound(p => p.CategoryName).Title("Category").Filterable(ftb => ftb.Multi(true).Search(true)).Width(200);
+                columns.Bound(p => p.IsActive).Hidden().Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+                columns.Bound(p => p.Day).Width(100).Filterable(ftb => ftb.Multi(true).Search(true));
+                columns.Bound(p => p.ScheduleTime).ClientTemplate("#= ScheduleTime != null ? ScheduleTime.split(':')[0] : '' ##= ScheduleTime != null ? ':' : ''##= ScheduleTime != null ? ScheduleTime.split(':')[1] : '' #").Format("{0:HH:mm}").Width(100).Filterable(false);
+                columns.Bound(p => p.ServiceDuration).Width(120).Filterable(false);
+                columns.Bound(p => p.Depth).Width(100).Filterable(ftb => ftb.Multi(true).Search(true));
+                columns.Bound(p => p.LeadTime).Width(100).Filterable(false);
+                columns.Bound(p => p.SeletedDependency).Hidden(true);
+                columns.Bound(p => p.IsActiveCategory).Hidden(true);
+                columns.Command(command =>
+                {
+                    command.Destroy().Template("<i class='fa fa-trash k-grid-delete' style='font-size:20px;'></i>");
+                }).Title("Action").Width(80);
+            })
+            .ToolBar(toolbar => toolbar.Create().Text("Add Task"))
+            .Filterable()
+            //.Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditTask").Window(w => w.Title("Edit Tasks").Width(600)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(15)
+                 .Sort(sort =>
+                        {
+                            sort.Add("Name").Ascending();
+                        })
+                .Read(read => read.Action("Task_Read", "WellTasks"))
+                .Model(model => model.Id(p => p.TaskId))              
+                .Create(update => update.Action("Task_Create", "WellTasks"))
+                .Update(update => update.Action("Task_Update", "WellTasks"))
+                .Destroy(update => update.Action("Task_Destroy", "WellTasks"))
+                .Events(events => events.Error("error"))
+            ).Events(e =>
+            {
+                e.Save("OnGrigSave");
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+            })
+            )
+
+        </div>
+    }
+</section>
+@*DWOP*@
+
+@(Html.Kendo().Window().Name("TaskList")
+    .Title("Duplicate Tasks List")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                     <div>
+                        <table id="TableTasks" style="min-height:351px;height:auto;">
+                            <thead style="border-style: solid;background-color: darkgray; height:55px;">
+                                <tr style=" border-style: solid;height:0px !important">
+                                     <th class="col-1">S.No</th>
+                                    <th class="col-2">Task Name</th>
+                                    <th class="col-3">Task Description</th>
+                                    <th class="col-2">Category</th>
+                                    <th class="col-1">Day</th>
+                                    <th class="col-1">Stage</th>
+                                    <th class="col-1">Duration</th>
+                                    <th class="col-1">Depth</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody" style=" border-style: solid;">
+
+                            </tbody>
+                        </table>
+                    </div>
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(1100)
+    .Height(500)
+    .Draggable(true)
+)
+@(Html.Kendo().Window().Name("TasksDuplicate")
+    .Title("Service Tasks")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+
+                <div id="TasksDuplicateContant" style="float:left;"></div>
+                <div><a href="#" id="showTasks" onclick="showTasks()">View Tasks.</a></div>
+
+        <div class="text-center footer" style="margin-left: -26px !important; ">
+            <button id="ReturBtn"  class="k-button k-cancel-button pull-right" onclick="Cancel()">Cancel</button>
+        </div>
+
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(300)
+   // .Height(120)
+    .Draggable(true)
+)
+
+<script type="text/javascript">
+    var services;
+    var TasksList = [];
+
+    function Cancel() {
+        var wnd = $("#TasksDuplicate").data("kendoWindow");
+        wnd.close();
+    }
+
+    function alertbox(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function OnSelect(e) {
+        var FileLenth = e.files.length;
+        if (FileLenth > 1) {
+            alertbox("Please Import one file at a time", "File Empty");
+            return false;
+        }
+    }
+    //DWOP
+    function FileUploadSuccess(e) {
+        $('#TasksGrid').data('kendoGrid').dataSource.read().then(function () {
+            $('#TasksGrid').data('kendoGrid').refresh();
+        });
+
+        console.log('u-pload success' + e);
+        services = e.response.Value;
+        if (services) {
+
+            $('#TasksDuplicateContant').html("Some tasks is duplicate. ")
+            // $('#WindowContent').css('color', 'Red')
+            var wnd = $("#TasksDuplicate").data("kendoWindow");
+            wnd.center().open();
+            //alertbox("Some tasks is duplicate " + "<a href='javascript:void(0)'  onclick='showTasks()'>Show duplicated tasks</a>", "Service Tasks");
+            return false;
+        }
+    }
+
+    $(document).ready(function () {
+        $("#showTasks").click(function () {
+            $('#tbody').empty();
+            //var ul = document.getElementById("Tasklist");
+            //ul.replaceChildren();
+            var wnd = $("#TasksDuplicate").data("kendoWindow");
+            wnd.center().close();
+
+            //TasksList = services.split(";");
+            var Count = 0;
+            services.forEach(function (value) {
+                Count += 1;
+                var table = "<tr style='height:80px;'><td style='text-align:center;'>" + Count + "</td><td >" + value.Name + "</td><td >" + value.Description + "</td><td style='text-align:center;'>" + value.CategoryName + "</td><td style='text-align:center;'>" + value.Day + "</td><td> " + value.StageType + "</td><td style='text-align:center;'>" + value.ServiceDuration + "</td><td style='text-align:center;'>" + value.Depth + "</td></tr>";
+                $("#TableTasks").append(table);
+            });
+
+            var wnd = $("#TaskList").data("kendoWindow");
+            wnd.center().open();
+        });
+    });
+
+
+    function onbtnImportClick() {
+        var fileNotSelected = false;
+        var fileLength = 0;
+        var validator = $("#formTasks").kendoValidator({
+            rules: {
+                upload: function (input) {
+                    fileLength = 0;
+                    if (input[0].type == "file") {
+                        fileNotSelected = true;
+                        var len = input.closest(".k-upload").find(".k-file").length;
+                        fileLength = len;
+                        return len > 0;
+                    }
+                    return true;
+                }
+            }
+        }).data("kendoValidator");
+
+
+        $("#formTasks").submit(function (e) {
+            $("#filesv").removeAttr("disabled");
+            if (!validator.validate()) {
+                if (fileNotSelected) {
+                    alertbox("Please select a file", "File Empty");
+                    //kendo.alert()
+                    fileNotSelected = false;
+                }
+                e.preventDefault()
+            }
+
+            //if (parseInt(fileLength)>1) {
+            //        alertbox("Please Import one file at a time", "File Empty");
+            //        e.preventDefault()
+            //}
+        });
+    }
+    function ServicedaysDataBound(e) {
+        var selectedFooType = $("#ServiceDurationDays").data("kendoMultiColumnComboBox").value();
+        if (selectedFooType == "") {
+            this.select(0);
+            this.trigger('change');
+        }
+    }
+    function ServiceHoursDataBound(e) {
+        var selectedFooType = $("#ServiceDurationHours").data("kendoMultiColumnComboBox").value();
+        if (selectedFooType == "") {
+            this.select(0);
+            this.trigger('change');
+        }
+    }
+
+    function ServiceMinutesDataBound(e) {
+        var selectedFooType = $("#ServiceDurationMinutes").data("kendoMultiColumnComboBox").value();
+        if (selectedFooType == "") {
+            this.select(0);
+            this.trigger('change');
+        }
+    }
+
+    function SchedulerTime(e) {
+        var ScheduleTimeValue = $("#ScheduleTimePicker").val();
+        $("#ScheduleTime").data("kendoMaskedTextBox").value(ScheduleTimeValue);
+        $("#ScheduleTime").data("kendoMaskedTextBox").trigger("change");
+    }
+
+
+    $(document).ready(function () {
+        //SelectedSpecialService(0);
+        $("#ServiceDurationDays").val("00");
+    });
+
+    function OnGrigSave(e) {
+        setTimeout(function () {
+                $('#TasksGrid').data('kendoGrid').dataSource.read().then(function () {
+                    $('#TasksGrid').data('kendoGrid').refresh();
+                });
+            }, 2000);
+    }
+
+    function gridEdit(e) {
+        var ScheduleTimeValue = $("#ScheduleTime").val();
+        $("#ScheduleTimePicker").data("kendoTimePicker").value(ScheduleTimeValue);
+
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Task");
+            $('.k-grid-update').text("Save");
+            $("#IsActive").prop('checked', true).trigger("change");         
+            $("#ServiceDurationDays").val("00");
+        } else {
+            if (e.model.ServiceCategoryId === e.model.ParentId) {
+                $('.k-dropdown').addClass("k-state-disabled").css("pointer-events", "none");
+            }
+            var value = $("#ServiceDurationDays").val();
+            if (e.model.ServiceDuration == null || e.model.ServiceDuration == "") {
+                $("#ServiceDurationDays").val("00");
+            }
+        }
+        if (e.model.SeletedDependency !== null && e.model.SeletedDependency !== undefined) {
+            let arr = e.model.SeletedDependency.split(',')
+            if (arr != null && arr != undefined) {
+               BindDependency(e.model.TaskId, arr);
+            }
+            else {
+                BindDependency(e.model.TaskId, []);
+            }
+        }
+        else {
+            let arr = e.model.SeletedDependency
+            if (arr != null && arr != undefined) {
+                if (arr.length > 0) {
+                    if (arr[0] = !"") {
+                        BindDependency(e.model.TaskId, arr);
+                    }
+                }
+            }else {
+                BindDependency(e.model.TaskId, []);
+            }                        
+        }
+
+        // $(".k-grid-update").click(function () {
+        //setTimeout(function () {
+        //$('#TasksGrid').data('kendoGrid').dataSource.read().then(function () {
+        // $('#TasksGrid').data('kendoGrid').refresh();
+        //});
+        //}, 2000);
+        //});
+    }
+    function BindDependency(id, selectedDependency) {
+        //alert(selectedDependency);
+        $("#Dependency").kendoMultiSelect({
+            placeholder: "Services Dependency...",
+            dataTextField: "Name",
+            dataValueField: "TaskId",
+            filter: "startswith",
+            minLength: 3,
+            autoBind: true,
+            dataSource: {
+                type: "json",
+                //serverFiltering: true,
+                transport: {
+                    read: {
+                        url: "/welltasks/GetTaskDependencyList?id=" + id,
+                    }
+                }
+            },
+            value: selectedDependency,
+            change: multiChangeTasks
+        });
+    }
+    function DataBound(e) {
+        var grid = this;
+
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+
+        });
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            //DWOP
+            var model = grid.dataItem(this);
+            //if (model.IsActiveCategory == true)
+                grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#TasksGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function multiChangeTasks(e) {
+        var multiselect = $("#Dependency").data("kendoMultiSelect");
+        var selectedData = "";
+        var items = multiselect.value();
+        for (var i = 0; i < items.length; i++) {
+            selectedData += items[i] + ";";
+        }
+        $("#SeletedDependency").val(selectedData);
+        $("#SeletedDependency").trigger("change");
+    }
+
+    function setSelectedTasks(e) {
+        var row = $(event.srcElement).closest("tr");
+        var grid = $(event.srcElement).closest("[data-role=grid]").data("kendoGrid");
+        var dataItem = grid.dataItem(row);
+    }
+    function SelectedSpecialService(service) {
+
+        if (service == 1 || service == 0) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = "diabled";
+            document.getElementById("Duration").disabled = true;
+            document.getElementById("depth").disabled = false;
+            document.getElementById("LeadTime").disabled = false;
+            document.getElementById("Dependancy").disabled = true;
+        }
+        else if (service == 2) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = false;
+            document.getElementById("Duration").disabled = false;
+            document.getElementById("depth").disabled = false;
+            document.getElementById("LeadTime").disabled = false;
+            document.getElementById("Dependancy").disabled = false;
+        }
+        else if (service == 3) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = false;
+            document.getElementById("Duration").disabled = false;
+            document.getElementById("depth").disabled = false;
+            document.getElementById("LeadTime").disabled = false;
+            document.getElementById("Dependancy").disabled = false;
+        }
+        else if (service == 4) {
+            document.getElementById("name").disabled = false;
+            document.getElementById("Day").disabled = false;
+            document.getElementById("ScheduleTimePicker").disabled = "diabled";
+            document.getElementById("Duration").disabled = true;
+            document.getElementById("depth").disabled = false;
+            document.getElementById("LeadTime").disabled = false;
+            document.getElementById("Dependancy").disabled = true;
+        }
+    }
+
+</script>

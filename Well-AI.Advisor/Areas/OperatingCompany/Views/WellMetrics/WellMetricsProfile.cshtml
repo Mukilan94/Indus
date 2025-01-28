@@ -1,0 +1,258 @@
+﻿@{
+    ViewData["Title"] = "Well Metrics";
+    ViewData["Title2"] = "Well Metrics Profile";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.Well
+<section class="content-header">
+    <style>
+        #gauge-container {
+            background: transparent;
+            width: 254px;
+            height: 254px;
+            text-align: center;
+            margin: 0 auto 30px auto;
+        }
+        #gauge, #gauge2, #gauge3, #gauge4 {
+            width: 180px;
+            height: 210px;
+            margin: -40px auto 0;
+        }
+        .k-arcgauge-label {
+            color: #ffffff;
+            font-size: 35px;
+        }
+        .chart {
+            width: 180px;
+            display: inline-block;
+            margin-right: 90px;
+            position: relative;
+        }
+        .labelchart {
+            color: #ffffff;
+            font-size: 20px;
+            display: block;
+            text-align:center;
+        }
+        .leftpart{
+            width:550px;
+            margin-left:30px;
+            display:inline-block;
+            float:left;
+        }
+        .centerpart {
+            position: relative;
+            width: 200px;
+            display: inline-block;
+            color:#fff;
+        }
+        .rightpart {
+            position: relative;
+            width: 110px;
+            display: inline-block;
+            color: #fff;
+            margin-left:20px;
+            vertical-align:top;
+        }
+        .rightpart .block {
+            display: block;
+            width: 100%;
+            height: 85px;
+            margin-bottom:10px;
+            background-color:#fff;
+        }
+        .rightpart .btockval{
+            color:#000;
+            text-align:center;
+            margin-top:10px;
+        }
+        .btocktop{
+            text-align:center;
+            background-color:#007bff;
+            border-top-left-radius:10px;
+            border-top-right-radius:10px;
+            margin-top:-3px;
+            padding-top:5px;
+        }
+        .btocktop >span {
+            float:right;
+            font-size:10px;
+            margin-top:10px;
+        }
+        #blockheight {
+            display: block;
+        }
+        .centerblock{
+            display:block;
+            margin-top:5px;
+            margin-bottom:5px;
+        }
+        .labelswitch{
+            margin-left:auto;
+            color:#000;
+        }
+        .k-switch-off .k-switch-container {
+            border: 1px solid grey;
+        }
+        .centerbottom{
+            margin-top:30px;
+            text-align:center;
+            color:#000;
+        }
+        #blockhaltbottom{
+            border:0;
+            text-align:center;
+            width:95%;
+        }
+        .switchlabel{
+            width:50px;
+            display:inline-block;
+        }
+        .block{
+            border-radius:10px;
+            border:2px solid #007AFC;
+            background-color:#007AFC;
+        }
+        .block .blocklabel, .centerbottom .blocklabel{
+            color: #ffffff;
+            font-size: 20px;
+            display: inline-block;
+            text-align:center;
+            background-color:#007bff;
+            border-top-left-radius:10px;
+            border-top-right-radius:10px;
+            width:100%;
+        }
+        .centerbottom{
+            border-top-left-radius:10px;
+            border-top-right-radius:10px;
+        }
+        .block #gauge5, .blockbottom {
+            background-color: #fff;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .blockbottom{
+            border:2px solid #007AFC;
+            background-color:#fff;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="leftpart">
+        <div class="chart">
+            <span class="labelchart">Rotary Speed</span>
+            @(Html.Kendo().ArcGauge()
+                    .Name("gauge")
+                    .Value(Model.RotarySpeed)
+                    .Scale(x => x.Min(0).Max(140))
+                    .CenterTemplate("#:value#")
+            )
+        </div>
+        <div class="chart">
+            <span class="labelchart">Pump 1</span>
+            @(Html.Kendo().ArcGauge()
+                    .Name("gauge2")
+                    .Value(Model.PumpRate1)
+                    .Scale(x => x.Min(0).Max(200))
+                    .CenterTemplate("#:value#")
+            )
+        </div>
+        <div class="chart">
+            <span class="labelchart">Standpipe</span>
+            @(Html.Kendo().ArcGauge()
+                    .Name("gauge3")
+                    .Value(Model.Standpipe)
+                    .Scale(x => x.Min(0).Max(2200))
+                    .CenterTemplate("#:value#")
+            )
+        </div>
+        <div class="chart">
+            <span class="labelchart">Pump 2</span>
+            @(Html.Kendo().ArcGauge()
+                    .Name("gauge4")
+                    .Value(Model.PumpRate2)
+                    .Scale(x => x.Min(0).Max(2200))
+                    .CenterTemplate("#:value#")
+            )
+        </div>
+    </div>
+    <div class="centerpart">
+        <div class="centertop">
+            <div class="block">
+                <span class="blocklabel">Block Height</span>
+                @(Html.Kendo().LinearGauge()
+                  .Name("gauge5")
+                  .Pointer(pointer => pointer
+                      .Value(Model.BlockHeight)
+                      .Shape(GaugeLinearPointerShape.Arrow).Color("#000")
+                  )
+                  .Scale(scale => scale
+                      .MajorUnit(0)
+                      .MinorUnit(10)
+                      .Max(60)
+                      .MajorTicks(x => x.Color("#000"))
+                      .MinorTicks(x => x.Color("#000"))
+                      .Labels(x => x.Color("#000"))
+                      )
+                )
+            </div>
+            </div>
+        <div class="centerbottom">
+            <span class="blocklabel">Halt of Bottom (ft)</span>
+            <div class="blockbottom">
+                @(Html.Kendo().TextBox().Enable(false)
+                     .Name("blockhaltbottom")
+                     .Value(Model.HaltOfBootom.ToString())
+                )
+                <div class="centerblock">
+                    <span class="switchlabel">CIRC</span>
+                    @(Html.Kendo().Switch()
+                       .Name("switchcirc").Checked(Model.Circ).Enabled(false)
+                       .Messages(c => c.Checked("ON").Unchecked("OFF"))
+                    )
+                    <span class="switchlabel">@(Model.Circ ? "ON" : "OFF")</span>
+                </div>
+                <div class="centerblock">
+                    <span class="switchlabel">DRILL</span>
+                    @(Html.Kendo().Switch()
+                       .Name("switchdrill").Checked(Model.Drill).Enabled(false)
+                       .Messages(c => c.Checked("ON").Unchecked("HALT"))
+                    )
+                    <span class="switchlabel">@(Model.Drill ? "ON" : "HALT")</span>
+                </div>
+                <div class="centerblock">
+                    <span class="switchlabel">WOB</span>
+                    @(Html.Kendo().Switch()
+                       .Name("switchwob").Checked(Model.WobRop).Enabled(false)
+                       .Messages(c => c.Checked("WOB").Unchecked("ROP"))
+                    )
+                    <span class="switchlabel">@(Model.WobRop ? "WOB" : "ROP")</span>
+                </div>
+                <span class="labelswitch">Autodriller</span>
+            </div>
+        </div>
+    </div>
+    <div class="rightpart">
+        <div class="block">
+            <div class="btocktop">@Model.BitDepth<span>FT</span></div>
+            <div class="btockval">Bit Depth</div>
+        </div>
+        <div class="block">
+            <div class="btocktop">@Model.HoleDepth<span>FT</span></div>
+            <div class="btockval">Hole Depth</div>
+        </div>
+        <div class="block">
+            <div class="btocktop">@Model.Hookload<span>KLBS</span></div>
+            <div class="btockval">Hookload</div>
+        </div>
+        <div class="block">
+            <div class="btocktop">@Model.WOB<span>KLBS</span></div>
+            <div class="btockval">Hole Depth</div>
+        </div>
+        <div class="block">
+            <div class="btocktop">@Model.ROP<span>FPH</span></div>
+            <div class="btockval">Hole Depth</div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,195 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadFileWellModelMud
+@{
+    ViewData["Title"] = "Mud Programs";
+    Layout = null;
+
+    var wellsdata = (List<WellAI.Advisor.Model.OperatingCompany.Models.WellMasterDataViewModel>)ViewData["wells"];
+}
+
+<style>
+    .k-grid-header .k-header {
+        text-transform: uppercase !important;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 15px;
+    }
+    #Upload > span {
+        padding-right: 5px;
+    }
+    #uploaddocsm {
+        margin-top: 10px;
+    }
+    .k-dropzone {
+        height: 38px !important;
+    }
+    #WellIdMud{
+        height:0px;
+        visibility:hidden;
+        width:0px !important;
+        border:0;
+        padding:0;
+        margin:0;
+    }
+    .field-validation-error{
+        color:red;
+    }
+    .k-upload .k-dropzone{
+        background-color:#fff;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    /*.linkstyle{
+        margin-left:40%;
+    }*/
+    .k-button.k-primary{
+        color:#fff !important;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+    .k-grid-Delete, .k-grid-Delete:hover {
+        border: none !important;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#uploaddocsm").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    $(function () {
+        $("form").kendoValidator();
+    });
+    function onClick() {
+        var fileNotSelected = false;
+        var validator = $("#myForm").kendoValidator({
+            rules: {
+                upload: function (input) {
+                    if (input[0].type == "file") {
+                        fileNotSelected = true;
+                        var len = input.closest(".k-upload").find(".k-file").length;
+                        return len > 0;
+                    }
+                    return true;
+                }
+            }
+        }).data("kendoValidator");
+        $("#myForm").submit(function (e) {
+            $("#filesm").removeAttr("disabled");
+            if (!validator.validate()) {
+                if (fileNotSelected) {
+                    alert('please select a file');
+                    fileNotSelected = false;
+                }
+                e.preventDefault()
+            }
+        });
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                $.ajax({
+                    url: "DocumentManager/MudPrograms_Destroy?fileId=" + dataItem.FileId + "&well=" + dataItem.WellName,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        setTimeout(function () {
+                            $('#uploaddocsm').data('kendoGrid').dataSource.read().then(function () {
+                                $('#uploaddocsm').data('kendoGrid').refresh();
+                            });
+                        });
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+</script>
+
+<section>
+    @using (Html.BeginForm("UploadMudPrograms", "DocumentManager", FormMethod.Post,new { @id="myForm",@name="myForm"}))
+    {
+        <div class="row">
+            <div class="col-sm-5">
+                @(Html.Kendo().Upload()
+                        .Name("filesm")
+                        .HtmlAttributes(new { aria_label = "files" }))
+            </div>
+            <div class="col-sm-5">
+                @(Html.Kendo().DropDownList()
+                    .Name("ddlWellsm")
+                    .OptionLabel("Select Well...")
+                    .DataValueField("wellId")
+                    .DataTextField("wellName")
+                    .Events(e => e.Change("wellChangeMud"))
+                    .BindTo(wellsdata)
+                    .HtmlAttributes(new { @class = "ddlwell" })
+                )
+                @Html.EditorFor(x => x.WellIdMud)
+                @Html.ValidationMessageFor(model => model.WellIdMud)
+            </div>
+            <div class="col-sm-2">
+                <button id="Upload" onclick="onClick()" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="fa fa-floppy-o"></span>Upload</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.UploadsGridFileModel>()
+                        .Name("uploaddocsm")
+                        .HtmlAttributes(new { @class = "ra-section" })
+                        .Columns(columns =>
+                        {
+                            columns.Bound(p => p.WellName).Title("Well").Width(20);
+                            columns.Bound(p => p.FileName).Title("File").Width(50);
+                            columns.Bound(p => p.Date).Format("{0: MM/dd/yyyy}").Width(6);
+                            columns.Bound(p => p.FileId).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                             "<a href='" + @Url.Action("DownloadUploadFile", "DocumentManager", new { fileId = "#=FileId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                           "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=FileId#\",\"#=VendorId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></a>" +
+                           "#}else{#" +
+                            "<a href='" + @Url.Action("DownloadUploadFile", "DocumentManager", new { fileId = "#=FileId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                            "#} #"
+                           ).Width(6);
+                            columns.Command(command => { command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete"); }).Title("Action").Width(5);
+                        })
+                         .Pageable(p =>
+                            p.Info(true)
+                             .Numeric(false)
+                            .PreviousNext(false)
+                          )
+                     .Scrollable(scrollable => scrollable.Virtual(true))
+                        .Search(search =>
+                        {
+                            search.Field(p => p.WellName);
+                            search.Field(p => p.FileName);
+                        })
+                        .ToolBar(toolbar =>
+                        {
+                            toolbar.Search();
+                        })
+                        .DataSource(dataSource => dataSource
+                                .Ajax()
+                                .PageSize(10)
+                                .Batch(false)
+                                .Model(model => model.Id(p => p.FileId))
+                                .Read(read => read.Action("MudPrograms_Read", "DocumentManager"))
+                        )
+                )
+            </div>
+        </div>
+    }
+</section>

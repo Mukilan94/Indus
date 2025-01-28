@@ -1,0 +1,204 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using WellAI.Advisor.Areas.OperatingCompany.Models;
+//using WellAI.Advisor.Data;
+using WellAI.Advisor.Helper;
+
+namespace WellAI.Advisor
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //services.AddIdentity<IdentityUser, IdentityRole>()
+            //    .AddDefaultTokenProviders()
+            //    .AddDefaultUI()
+            //    .AddEntityFrameworkStores<WebAIAdvisorContext>();
+
+            services.AddMvc(mvcOtions=>mvcOtions.EnableEndpointRouting = false)
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+            services.AddKendo();
+            services.AddSession();
+            services.AddHttpContextAccessor();
+            services.AddTransient<IUserService, UserService>();
+            services.AddAutoMapper(typeof(Startup));
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+            }
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
+
+            app.UseSession();
+
+            WellAIAppContext.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());  
+
+            app.UseMvc(routes =>
+            {
+                routes.MapAreaRoute(
+                    name: "default",
+                    areaName: "identity",
+                    template: "{controller=account}/{action=Login}");
+                routes.MapAreaRoute(
+                    name: "Dashboard",
+                    areaName: "OperatingCompany",
+                    template: "{controller=Dashboard}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "LoginAdvisor",
+                    areaName: "OperatingCompany",
+                    template: "{controller=LoginAdvisor}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "ProviderDirectoryProfile",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ProviderDirectory}/{action=Index}/{id}");
+                routes.MapAreaRoute(
+                    name: "ProviderDirectory",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ProviderDirectory}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "ProjectAuctions",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ProjectAuctions}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "ActivityView",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ActivityView}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "FieldTickets",
+                    areaName: "OperatingCompany",
+                    template: "{controller=FieldTickets}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "WellManager",
+                    areaName: "OperatingCompany",
+                    template: "{controller=WellManager}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "OngoingProjects",
+                    areaName: "OperatingCompany",
+                    template: "{controller=OngoingProjects}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "UpcomingProjects",
+                    areaName: "OperatingCompany",
+                    template: "{controller=UpcomingProjects}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "UpcomingProjectDetails",
+                    areaName: "OperatingCompany",
+                    template: "{controller=UpcomingProjects}/{action=Details}");
+                routes.MapAreaRoute(
+                    name: "OpenBids",
+                    areaName: "OperatingCompany",
+                    template: "{controller=OpenBids}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "TechnicianTracker",
+                    areaName: "OperatingCompany",
+                    template: "{controller=TechnicianTracker}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "WellData",
+                    areaName: "OperatingCompany",
+                    template: "{controller=WellData}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "DocumentManager",
+                    areaName: "OperatingCompany",
+                    template: "{controller=DocumentManager}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "WellMetrics",
+                    areaName: "OperatingCompany",
+                    template: "{controller=WellMetrics}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "SupportTickets",
+                    areaName: "OperatingCompany",
+                    template: "{controller=SupportTickets}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "Support",
+                    areaName: "OperatingCompany",
+                    template: "{controller=Support}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "Communication",
+                    areaName: "OperatingCompany",
+                    template: "{controller=Communication}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "VoiceTextVideoChat",
+                    areaName: "OperatingCompany",
+                    template: "{controller=VoiceTextVideoChat}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "History",
+                    areaName: "OperatingCompany",
+                    template: "{controller=History}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "Profile",
+                    areaName: "OperatingCompany",
+                    template: "{controller=Profile}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "CorporateProfile",
+                    areaName: "OperatingCompany",
+                    template: "{controller=CorporateProfile}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "PaymentMethods",
+                    areaName: "OperatingCompany",
+                    template: "{controller=PaymentMethods}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "BillingInvoiceHistory",
+                    areaName: "OperatingCompany",
+                    template: "{controller=BillingInvoiceHistory}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "UserManager",
+                    areaName: "OperatingCompany",
+                    template: "{controller=UserManager}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "AddUpdateUsers",
+                    areaName: "OperatingCompany",
+                    template: "{controller=AddUpdateUsers}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "ManageRoles",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ManageRoles}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "ManagePermissions",
+                    areaName: "OperatingCompany",
+                    template: "{controller=ManagePermissions}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "DataManager",
+                    areaName: "OperatingCompany",
+                    template: "{controller=DataManager}/{action=Index}");
+
+                //ServiceCompany
+                routes.MapAreaRoute(
+                    name: "Sales",
+                    areaName: "ServiceCompany",
+                    template: "{controller=Sales}/{action=Index}");
+                routes.MapAreaRoute(
+                    name: "AddUpdateUsersSRV",
+                    areaName: "ServiceCompany",
+                    template: "{controller=AddUpdateUsersSRV}/{action=Index}");
+                
+                routes.MapAreaRoute(
+                    name: "SupportticketSRV",
+                    areaName: "ServiceCompany",
+                    template: "{controller=SupportticketSRV}/{action=Index}");
+            });
+        }
+    }
+}

@@ -1,0 +1,23 @@
+﻿@model WellAI.Advisor.Model.Administration.ManageCallModel
+
+@{
+    Layout = null;
+}
+
+
+<section class="content1">
+    <div id="call-status">
+    </div>
+    <button class="k-button k-button-icontext k-grid-cancel hangup-button" id="btnHangUp">Hang up</button>
+    @*<button class="k-button k-button-icontext k-grid-cancel hangup-button" style="display:none" id="btnTrigger" onclick="callCustomer(@Model.Phone)"></button>*@
+</section>
+
+<script src="~/js/phonecall.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        setTimeout(function () {
+            callCustomer(@Html.Raw(Model.Phone));
+        },1000);
+    });
+</script>

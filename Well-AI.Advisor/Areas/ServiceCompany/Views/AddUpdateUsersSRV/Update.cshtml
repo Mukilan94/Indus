@@ -1,0 +1,52 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.UserUpdateInputSRVModel;
+@{
+    ViewData["Title"] = "Update";
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+    var modelUser = (WellAI.Advisor.Model.ServiceCompany.Models.UserViewSRVModel)ViewData["user"];
+}
+<section class="content-header">
+    <div class="row">
+        <div class="col-md-6" style="padding-left:10%;">
+            <h4>Update User</h4>
+        </div>
+    </div>
+    <hr />
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-7" style="padding-left:10%;">
+            <form asp-action="Update">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div style="display:none" class="form-group">
+                    <label asp-for="UserId"></label>
+                    <input asp-for="UserId" value="@modelUser.UserID" class="form-control" />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" value="@modelUser.Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" value="@modelUser.PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <select asp-for="Name" class="form-control" asp-items='new SelectList(roles, "Id", "Name", "")'></select>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

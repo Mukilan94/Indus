@@ -1,0 +1,12 @@
+﻿@{
+    string Pages = @ViewContext.RouteData.Values["Page"].ToString();
+    if (Pages == "/Account/Productsubscriptionpaymentdetails")
+    {
+         Layout = "/Views/Shared/_LayoutSubscription.cshtml";
+    }
+    else
+    {
+         Layout = "/Views/Shared/_LayoutLogin.cshtml";
+    }
+   
+}

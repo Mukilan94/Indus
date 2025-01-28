@@ -1,0 +1,1024 @@
+﻿@{
+    ViewData["Title"] = "Dispatch";
+
+}
+
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<head>
+    <script src="~/js/OperatoreDispatchRoute.js"></script>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    @*<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.js"></script>
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.css" rel="stylesheet">*@
+</head>
+<section class="content-header">
+    <style>
+
+        .locationnotshared {
+            color: black;
+        }
+
+        .k-scrollbar {
+            position: relative;
+        }
+
+        .locationshared {
+            color: lightgreen;
+        }
+
+        .k-prompt-container .k-textbox {
+            display: none;
+        }
+
+        /* .k-confirm .k-window-titlebar::before {
+            content: 'Information';
+        }*/
+
+        .k-command-cell > .k-button {
+            margin-left: 0.16em;
+            margin-right: 0.16em;
+            background-color: transparent;
+        }
+
+        .SendDistination {
+            background-color: #c96634;
+            margin-left: 10px;
+        }
+
+        .AcceptChanges {
+            background-color: #2bcf44;
+            margin-left: 10px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #Dispatch {
+            height: 100%;
+        }
+
+        #outerWrapper {
+            overflow: hidden;
+        }
+
+        .k-numerictextbox {
+            width: 17.4em;
+        }
+
+        .map_box_container {
+            /* position: relative;*/
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        .customtrash {
+            margin-left: 10px;
+        }
+
+        #map {
+            position: absolute;
+            top: 160px;
+            bottom: 0;
+            width: 53%;
+            /*transition: all 0.3s;*/
+            display: inline-block;
+            overflow: hidden;
+            /*height: fit-content;*/
+        }
+
+        .mapboxgl-canvas {
+            /* top: 50px;*/
+        }
+
+        .button {
+            color: #fff;
+            background-color: #555;
+            padding: 1em;
+            margin: 1em;
+            position: absolute;
+            right: 1em;
+            top: 1em;
+            border-radius: 0.5em;
+            border-bottom: 2px #222 solid;
+            cursor: pointer;
+        }
+
+        #resizeMap {
+            top: 5em;
+        }
+
+        .mapboxgl-ctrl-top-right {
+            /* top: 50px;*/
+        }
+
+        /* .map_box_container {
+            position: absolute;
+            height: 100% !important;
+            width: 100% !important;
+        }*/
+
+
+        .marker {
+            background-image: url('/img/oil-rig.png');
+            /* background-image: url('/img/Destinations.png');*/
+            /* background-image: url('/img/mapbox-icon.png');*/
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+        .markeruser {
+            background-image: url('/img/truck.png');
+            /*background-image: url('/img/LOGISTIC.png');*/
+            /* background-image: url('/img/mapbox-icon.png');*/
+            background-size: cover;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .markerstart {
+            background-image: url('/img/start_pinplaceholder.png');
+            /*background-image: url('/img/mapicon-start.png');*/
+            background-size: cover;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 250px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            color: black;
+        }
+
+        .mapboxgl-popup .mapboxgl-popup-anchor-bottom {
+            max-width: 280px;
+            transform: translate(-50%, -100%) translate(688px, 391px);
+        }
+
+        .mapboxgl-map {
+            position: relative;
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .k-edit-label {
+            margin-left: 15px !important;
+            margin-top: 5px !important;
+        }
+
+        .operatorfilter {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+        }
+
+            .operatorfilter .k-dropdown {
+                display: block;
+            }
+
+                .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                    background-color: #fff;
+                    color: #000;
+                }
+
+        .k-dropdown {
+            border: 2px solid blue !important;
+        }
+
+        @@media (max-width: 570px) {
+            .card-header {
+                height: auto !important;
+            }
+
+            .chart-header, .operatorfilter {
+                position: inherit !important;
+                display: block !important;
+                width: auto !important;
+            }
+        }
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .customEdit {
+            margin-left: 10px;
+        }
+
+        #Dispatch {
+            height: 100%;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        .rightpart {
+            /* display: inline-block;*/
+            min-height: 100% !important;
+            margin-left: 5px;
+            top: 0px;
+        }
+
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+            display: block !important;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+            width: unset !important;
+            height: calc(1*(2px + 0.75rem + 1.5em));
+            box-sizing: border-box;
+            border-color: inherit;
+            margin: 0 0.375rem;
+        }
+
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+        .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+            margin: 0;
+            border-width: 0;
+            width: unset !important;
+            height: unset !important;
+        }
+
+        .k-pager-numbers {
+            display: contents !important;
+        }
+
+        div.k-loading-mask {
+            z-index: 3;
+        }
+       
+
+        span.k-loading-text {
+            font-size: 20px !important;
+            text-indent: 0;
+            top: 55%;
+            left: 45%;
+            color: black;
+            font-weight: 900 !important;
+        }
+
+        .chathisttitle {
+            color: #ffffff;
+        }
+
+        .leftpart {
+            width: 38%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .rightpart {
+            width: 61%;
+            display: inline-block;
+        }
+
+        .leftpartPreview {
+            width: 80%;
+            display: inline-block;
+            vertical-align: top;
+            /* margin-left: 150px;*/
+        }
+
+        .rightpartPreview {
+            width: 40%;
+            display: inline-block;
+            /* margin-right: 50px; */
+            /*margin-left: 150px;*/
+        }
+
+
+        .content {
+        }
+
+        .k-pager-numbers {
+            padding-top: 11px;
+        }
+
+        .km-widget {
+            border: 4px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-pos-left {
+            right: 0;
+            left: unset;
+        }
+
+        .k-pos-top {
+            top: unset;
+            bottom: 10px;
+        }
+
+        .k-window div.k-window-content {
+            overflow: auto;
+        }
+
+        .k-grid tbody tr:not(.k-grouping-row) {
+            cursor: move;
+        }
+
+        label.customMap {
+            cursor: pointer;
+        }
+
+       /* .truckcolor {
+            color: indianred;
+            top: -30px;
+            font-size: 3em;
+        }*/
+        .truckcolor {
+            color: indianred;
+            top: -30px;
+            font-size: 3em;
+            background-image: url('/img/truck.png');
+            /*background-image: url('/img/LOGISTIC.png');*/
+            background-size: cover;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .actioncolumn {
+            color: black;
+        }
+    </style>
+</section>
+<section class="content">
+    @*<div class="row">
+    *@
+    <div class="leftpart">
+        <div style="padding-bottom:10px">
+            <div class="col-md-7" style="padding-left:0px !important;display: inline-block;">
+                <button class="btn btn-primary" id="btnAssignUser" onclick="LoadDispatchRouteUsers()"><i class='fa fa-search'></i> Assign User</button>
+                <button class="btn btn-primary" id="btnUsersLocation" onclick="LoadUserRoutes()"><i class='fa fa-map-marker'></i>  Users Location </button>
+            </div>
+
+            <div class="col-md-4 float-right" style="display: inline-block; padding-right: 0px !important">
+                @*<button class="btn btn-primary float-right" id="btnRefreshRoutes" onclick="RefreshRoutes()"><i class="fa fa-refresh"></i> Refresh All Routes</button>*@
+                <button class="btn btn-primary float-right" id="btnRefreshRoutes" onclick="RefreshRoutes()"><i class="fa fa-refresh"></i> Refresh Routes</button>
+            </div>
+            <input type="hidden" id="hdnCurrentUser" />
+            <input type="hidden" id="hdnDispatchNotes" />
+            <input type="hidden" id="hdnDispatchId" />
+
+        </div>
+        <div id="Dispatchgrid">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.DispatchRoutesModel>
+                ()
+                .Name("Dispatch")
+
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+
+                    //  columns.Bound(p => p.username).Title("User").Hidden().ClientGroupHeaderTemplate("<label class='customMap' for='user'>User : #= value # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button>");
+                    //columns.Bound(p => p.username).Title("User").Hidden().ClientGroupHeaderTemplate("#if(recordstatus=='0' || recordstatus=='1' || (currentrouterorder!='' && routeorder!=currentrouterorder)){# <label class='customMap' for='user'>User : #= value # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button> <button class='btn btn-primary customEdit SendDistination'>Send Destination Changes</button>#}     else {#  <label class='customMap' for='user'>User : #= value # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button>#}#");
+                    //columns.Bound(p => p.username).Title("User").Hidden().ClientGroupHeaderTemplate("#if(modificationStatus==true){# <label class='customMap' for='user'>User : #= value # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button> <button class='btn btn-primary customEdit SendDistination'>Send Destination Changes</button>#}     else {#  <label class='customMap' for='user'>User : #= value # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button>#}#");
+                    columns.Bound(p => p.username).Title("User").Hidden().ClientGroupHeaderTemplate("<label class='customMap'  for='user'>User : #= value.substr(0,value.length-2) # </label> <button class='btn btn-primary customEdit'><i class='fa fa-plus'></i></button> <button class='btn btn-primary customtrash'><i class='fa fa-trash'></i></button> #if(value.substr(value.length-1,1)=='1'){# <button class='btn btn-primary SendDistination' >Send Destination Changes</button>#} else if(value.substr(value.length-1,1)=='2'){# <button class='btn btn-primary AcceptChanges'>Waiting for Driver's Cofirmation</button>#}#");
+                    columns.Bound(p => p.rigname).ClientTemplate("#= rigwellandlocation #").Title("Location");
+                    columns.Bound(p => p.customer).ClientTemplate("#= customer #").Title("Operator");
+                    columns.Bound(p => p.dispatchid).Hidden(true);
+                    columns.Bound(p => p.dispatchnotes).Hidden(true);
+                    columns.Bound(p => p.userid).Hidden(true);
+                    columns.Bound(p => p.subscriptionstatus).Hidden(true);
+                    columns.Bound(p => p.islocationshared).Hidden(true);
+                    columns.Bound(p => p.routeorder).Hidden(true);
+                    columns.Bound(p => p.activityid).Hidden(true);
+
+                    columns.Bound(p => p.customer).Title("Customer").Hidden(true);
+
+                    columns.Command(command =>
+                    {
+                        command.Custom("Delete").Visible("deleteVisible").Text("<i class='fa fa-trash CustomDelete' style='font-size:20px; text-align: right;'></i>").Click("customDelete");
+                      //  command.Custom("Share").Visible("shareVisible").Text("<i class='fa fa-share-alt' style='font-size:20px; text-align: right;'></i>").Click("customShare");
+
+
+                    }).Title("Action").Width(70);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_AddDispatch").Window(w => w.Title("Assign Dispatch").Width(1000)))
+                .Pageable(p =>
+                p.Info(true)
+                .Numeric(false)
+                .PreviousNext(false)
+                )
+                .Scrollable(scrollable => scrollable.Enabled(true))
+
+                .Selectable()
+                .Resizable(r => r.Columns(true))
+                .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("GetDispatchList_V2", "Dispatch"))
+                .PageSize(20)
+                .Model(model => model.Id(p => p.dispatchid))
+                .Group(x =>
+                {
+                    x.Add(y => y.username);
+
+                }).Sort(x => { x.Add("userName").Ascending();  x.Add("currentRouterOrder").Ascending(); })
+                ).Events(e =>
+                {
+                    //e.DataBound("onDataBound");
+                    e.DataBound("onDataBoundSRV1");
+                    e.Edit("gridEdit");
+
+                })
+                )
+        </div>
+    </div>
+
+    <script type="kendo-template" id="my-template">
+        #= islocationshared  #
+    </script>
+
+    @*<div id="map" class="mapboxgl-map"><div class="mapboxgl-canvas-container mapboxgl-interactive"><canvas class="mapboxgl-canvas" tabindex="0" width="2212" height="1210" style="position: absolute; width: 1106px; height: 605px;"></canvas></div><div class="mapboxgl-control-container"><div class="mapboxgl-ctrl-top-left"></div><div class="mapboxgl-ctrl-top-right"></div><div class="mapboxgl-ctrl-bottom-left"></div><div class="mapboxgl-ctrl-bottom-right"><div class="mapboxgl-ctrl mapboxgl-ctrl-attrib"><a href="https://www.mapbox.com/about/maps/" target="_blank" title="Mapbox" aria-label="Mapbox" role="listitem">© Mapbox</a> <a href="https://www.openstreetmap.org/about/" target="_blank" title="OpenStreetMap" aria-label="OpenStreetMap" role="listitem">© OpenStreetMap</a> <a class="mapbox-improve-map" href="https://www.mapbox.com/map-feedback/#/-74.63292893271544/40.2792745303461/9" target="_blank" title="Improve this map" aria-label="Improve this map" role="listitem">Improve this map</a></div></div></div></div>*@
+
+    <div class="rightpart">
+        <div class="col-md-4 float-right ml-0 mapicons" style="display: none; z-index: 99; position: relative; top: 4rem; right: 68px">
+            <button class="btn float-right" id="btnTruck" onclick="LoadAllUserPaths()"><i class="fa fa-truck fa-2x"></i></button>
+            <button class="btn float-right" id="btnLocation" onclick="LoadUserLocation()"><i class="fa fa-map-marker fa-2x"></i></button>
+            <button class="btn float-right" id="btnDispatchNotes" onclick="LoadDispatchNotes()"><i class="fa fa-file fa-2x"></i></button>
+        </div>
+        @*<section class="map_box_container">
+        *@
+        <!--MAP-->
+        <div id='menu'>
+            <input id="satellite-v9" type="radio" name="rtoggle" value="satellite">
+            <!-- See a list of Mapbox-hosted public styles at -->
+            <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
+            <label for="satellite-v9">Satellite</label>
+            <input id="streets-v11" type="radio" name="rtoggle" value="streets" checked="checked">
+            <label for="streets-v11">Streets</label>
+            <input type="hidden" id="gridclick" value="0" />
+        </div>
+        <div id='map'></div>
+        @*
+            </section>*@
+    </div>
+    @*<div id="dialog"></div>*@
+    @*
+        </div>*@
+
+</section>
+
+<section class="content">
+    @(Html.Kendo().Window().Name("DispatchAssignUserWindow")
+    .Title("Advisor Users")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+
+)
+    @(Html.Kendo().Window().Name("DispatchAssignWindow")
+    .Title("Assign Dispatch")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+
+    )
+
+    .Draggable(true)
+    .Width(1410)
+    .Height(750)
+)
+    @(Html.Kendo().Window().Name("DispatchNotesWindow")
+            .Title("Dispatch Instructions / Notes")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text><div id="wndContent">Loading...</div></text>)
+            .Actions(actions => actions
+                .Close()
+            )
+            .Draggable(true)
+            .Width(700)
+    )
+    @*@(Html.Kendo().Window().Name("DispatchUserRoutesWindow")
+        .Title("Reorder Destinations")
+        .Visible(false)
+        .Modal(true)
+        .Content(@<text><div id="wndContent">Loading...</div></text>)
+        .Actions(actions => actions
+            .Close()
+        )
+        .Draggable(true)
+        .Width(500)
+        .Height(510) )*@
+
+
+    @(Html.Kendo().Window().Name("SelectOperator")
+                .Title("Select Operator")
+                .Content(@<text>
+
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.CorporateProfileViewModel>()
+                    .Name("vendors")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+
+                        columns.Bound(p => p.ID).Hidden();
+                        columns.Bound(p => p.UserId).Hidden();
+                        columns.Bound(p => p.TenantId).Hidden();
+                        columns.Bound(p => p.Name);
+                        columns.Bound(p => p.Website);
+                        columns.Bound(p => p.City).Width(120);
+                        columns.Bound(p => p.State).Width(120);
+                    })
+                    //.Pageable(p =>
+                    //               p.Info(true)
+                    //                .Numeric(false)
+                    //                .PreviousNext(false)
+                    //           )
+                    .Scrollable(scrollable => scrollable.Endless(true))
+                    .PersistSelection()
+                    .Sortable()
+                    .Selectable()
+                    .ToolBar(toolbar =>
+                    {
+                        toolbar.Search();
+                    })
+                    .Events(ev => ev.Change("onChange").Save("onGridSave"))
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                       // .PageSize(10)
+                        .Batch(false)
+                        .Model(model => model.Id(p => p.ID))
+                        .Read(read => read.Action("Providers_Read", "ProductSubscriptionSRV"))
+                )
+
+                )
+
+                <div class= "buttons">
+                     @Html.Kendo().Button().Name("Primary").Content("Submit").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-update", type = "submit", onclick = "saveOperator();", style="margin-left:85%"})
+                      @Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeProvider();"})
+                </div>
+                </text>
+                )
+
+        .Visible(false)
+        .Actions(actions => actions
+        .Close()
+        )
+
+        .Modal(true)
+        .Draggable(true).Width(1000)
+        )
+
+
+</section>
+<script>
+
+    $(".k-pager-wrap k-grid-pager k-widget k-floatwrap").removeClass("k-pager-md");
+
+    function UserFilter() {
+        debugger;
+        return {
+            userId: $("#hdnCurrentUser").val()
+        };
+    }
+
+    function userInfo() {
+        return {
+            user: $("#hdnCurrentUser").val()
+        }
+    }
+    var gridElement = $("#Dispatch");
+
+
+
+    function resizeWrapper() {
+
+    }
+
+
+
+    function gridEdit(e) {
+        debugger;
+
+    }
+
+
+    function customDelete(e) {
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                $.ajax({
+                    url: "/Dispatch/DispatchDataDestroy?dispatchId=" + dataItem.dispatchid + "&userId=" + $("#hdnCurrentUser").val(),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#Dispatch").data("kendoGrid");
+                        grid.dataSource.read();
+                        grid.refresh();
+
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+
+    $(document).ready(function () {
+        $(window).resize(function () {
+            resizeGrid();
+        });
+        //resizeWrapper();
+        resizeGrid();
+    });
+
+    window.addEventListener('resize', function (event) {
+        var newWidth = window.innerWidth;
+        var newHeight = window.innerHeight;
+    });
+
+
+</script>
+
+<script>
+
+
+
+    //public - pk.eyJ1Ijoia2FydGhpa3RoYW5nYXZlbCIsImEiOiJjbDFkZHk5MjYwZ21lM2NwMm9tcTVueGMyIn0.jufh1E3v_JpXizuN7Rfudg
+    //Well AI - pk.eyJ1Ijoid2VsbC1haSIsImEiOiJjbDFxZ25yMnIwN3c3M2JzNml1dWdpMmR0In0.l-lDzOnU03tFScjiMkRObg
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid2VsbC1haSIsImEiOiJjbDFxZ25yMnIwN3c3M2JzNml1dWdpMmR0In0.l-lDzOnU03tFScjiMkRObg';
+
+
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-102.36896137371849, 31.846556737999546],
+        zoom: 4
+    });
+
+    $.when(map.on('load', () => {
+        //    debugger;
+
+        //if (!this.map.getLayer('route')) {
+        if (!map.getSource('routesrc')) {
+            map.addSource('routesrc', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [
+                        ]
+                    }
+                }
+            });
+
+            map.addSource('routecurrentsrc', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': [
+                        ]
+                    }
+                }
+            });
+
+        }
+        if (!map.getLayer('route')) {
+            map.addLayer({
+                'id': 'route',
+                'type': 'line',
+                'source': 'routesrc',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#888',
+                    'line-width': 8
+                }
+            });
+
+            map.addLayer({
+                'id': 'routecurrent',
+                'type': 'line',
+                'source': 'routecurrentsrc',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#3da118',
+                    'line-width': 8
+                }
+            });
+        }
+
+        map.addControl(new mapboxgl.NavigationControl());
+        map.resize();
+        
+    })
+    ).then(function (data, textStatus, jqXHR) {
+        //LoadAllUserDestinations();
+        //$.when(loadroutes()).done(function (x) {
+
+        //    setTimeout(function () {
+        //        $(".mapboxgl-map").height(parseInt($("#Dispatch").height()));
+        //    }, 4000);
+        //});
+    });
+    map.on('idle', function () {
+        map.resize()
+
+    })
+    function loadroutes() {
+        LoadUserRoutes();
+        //$("#Dispatch").height(parseInt($(window).height()) - 185);
+        var dataArea = gridElement.find(".k-grid-content")
+        //dataArea.height(parseInt($(window).height()) - 280);
+
+        $("#Dispatch").height(627);
+
+        dataArea.height(parseInt(627));
+
+    }
+
+    //-----------------------------------
+
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+        input.onclick = (layer) => {
+            const layerId = layer.target.id;
+            map.setStyle('mapbox://styles/mapbox/' + layerId);
+        };
+    }
+
+</script>
+<script>
+    var noHint = $.noop;
+
+    function placeholder(element) {
+        return element.clone().addClass("k-state-hover").css("opacity", 0.65);
+    }
+
+    function onChange(e) {
+
+        var grid = $("#Dispatch").data("kendoGrid"),
+            skip = grid.dataSource.skip(),
+            oldIndex = e.oldIndex + skip,
+            newIndex = e.newIndex + skip,
+            data = grid.dataSource.data(),
+            dataItem = grid.dataSource.getByUid(e.item.data("uid"));
+
+        grid.dataSource.remove(dataItem);
+        grid.dataSource.insert(newIndex, dataItem);
+        grid.dataSource.read();
+    }
+
+    $(document).ready(function () {
+        $(window).resize(function () {
+            resizeGrid();
+        });
+        //resizeWrapper();
+        resizeGrid();
+    });
+
+    function deleteVisible(dataItem) {
+        // debugger;
+        if (dataItem.rigwellandlocation == "No Destinations Found") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function shareVisible(dataItem) {
+        // debugger;
+        if (dataItem.routeorder == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+
+
+
+    function customPrompt(content) {
+        return $("<div></div>").kendoPrompt({
+            title: "Information",
+            content: content
+        }).data("kendoPrompt").open().result;
+    }
+
+</script>
+
+
+
+
+
+
+
+
+<style>
+    .pop-up {
+        color: #F3F3DD;
+        /* background-color: #91785D;*/
+        /*  border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*      min-width: 450px;*/
+    }
+
+    .pop-up-op {
+        color: #F3F3DD;
+        /*background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        min-width: 50px;
+        text-align: left;
+    }
+
+    .pop-up-op2 {
+        color: #F3F3DD;
+        /*background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        min-width: 50px;
+        text-align: left;
+    }
+
+    .pop-head {
+        color: #F3F3DD;
+        background-color: #ab3a0e;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+    }
+    .k-grid-content.k-auto-scrollable, .k-grid-footer-wrap.k-auto-scrollable {
+        display: block;
+        max-height: 550px;
+        overflow-y: auto;
+    }
+    .pop-head2 {
+        color: white;
+        background-color: #15ad07;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /*  box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+    }
+
+    .pop-head3 {
+        color: #171711;
+        background-color: #c9c608;
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+    }
+
+
+    .pop-bootom {
+        /* background-color: #91785D;*/
+        /* border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        min-height: 50px;
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-bootom1 {
+        /* background-color: #91785D;*/
+        /*   border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        /*  min-height: 50px;*/
+        /*  min-width: 450px;*/
+        /*  min-height: 50px;*/
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-bootomnew {
+        /* background-color: #91785D;*/
+        /*   border-color: #91785D;*/
+        /* max-width: 50px;*/
+        /* box-shadow: 3px 3px 2px #8B5D33;*/
+        /* font-family: 'Oswald';*/
+        /*  min-width: 350px;*/
+        /*  min-height: 50px;*/
+        min-width: 450px;
+        min-height: 50px;
+        text-align: left;
+        font-size: small;
+    }
+
+    .pop-head-font {
+        font-weight: 200;
+        font-size: small;
+        /* font-weight: bold;*/
+    }
+</style>

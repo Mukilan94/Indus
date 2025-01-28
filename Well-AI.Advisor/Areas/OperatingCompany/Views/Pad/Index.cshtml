@@ -1,0 +1,338 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.WellsCountModel
+@{
+    ViewData["Title0"] = "Registration";
+    ViewData["Title"] = "Pad Register";
+}
+
+<section class="content-header">
+    <style>
+        .k-window {
+            width: 550px !important;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-i-close {
+            padding-left: 5px;
+        }
+        /*.fa-trash {
+            display: none !important;
+        }*/
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-delete, .k-grid-delete:hover, .k-grid-delete:active {
+            border-radius: 10px;
+            border: 1px solid #007BFF;
+        }
+
+        .k-grid-delete {
+            border: none !important;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            border: 1px solid #007BFF !important;
+        }
+
+        .blockstyle {
+            height: 75px;
+            width: auto;
+            min-width: 130px;
+            display: inline-block;
+            margin: 10px 5px 0 5px;
+            background-color: #fff;
+            border: 4px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        .topblocks {
+            margin-left: -22px;
+        }
+
+        .Wells-total {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .Wells-totalval {
+            color: #007bff;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 20px !important;
+        }
+
+        #paddatamaster {
+            margin-top: 20px;
+        }
+
+        .toptitle {
+            color: #fff;
+        }
+
+        .Wells-toptitle {
+            font-family: Roboto;
+            margin-bottom: 0px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .Wells-topdescription {
+            color: #f1f2f8;
+            font-weight: 300;
+            letter-spacing: .75px;
+            font-size: 10pX;
+            width: 100%;
+        }
+
+        .inner > label {
+            color: #000;
+            display: block;
+            text-align: left;
+        }
+
+        .inner {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .small-box {
+            box-shadow: none;
+        }
+
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row toptitle col-12">
+        <h4 class="Wells-toptitle">At a Glance</h4>
+        <span class="Wells-topdescription">Click on any of key metrics to open the related screen</span>
+    </div>
+    <div class="row topblocks col-12">
+        <div class="blockstyle" id="DrillingPlanCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Plans</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="DrillingPlanCounts">@Model.DrillingPlanCounts</a></span>
+        </div>
+
+        <div class="blockstyle" id="WellCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Wells</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="WellCounts1">@Model.WellCounts</a></span>
+        </div>
+        <!-- ./col -->
+        <div class="blockstyle" id="RigCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Rigs</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="RigCounts1">@Model.RigCounts</a></span>
+        </div>
+        <div class="blockstyle" id="PadCounts">
+            <!-- small box -->
+            <div class="small-box box-shad">
+                <div class="inner">
+                    <span class="Wells-total">Pads</span>
+                </div>
+            </div>
+            <span class="Wells-totalval"><a id="PadCounts1">@Model.PadCounts</a></span>
+        </div>
+
+    </div>
+    @(Html.Kendo().Grid<WellAI.Advisor.DLL.Entity.Pad_register>
+    ()
+    .Name("paddatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Pad_id).Hidden();
+        columns.Bound(p => p.Pad_Name).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Title("Pad").Width(80);
+        columns.Bound(p => p.Latitude).Title("Latitude").Hidden();
+        columns.Bound(p => p.Longitude).Title("Longitude").Hidden();
+        columns.Command(command => { //command.Edit().Text(" ");
+            command.Destroy().Template("<i class='fa fa-trash k-grid-delete' style='font-size:20px;'></i>");
+        }).Width(10).Title("Delete");
+    })
+    .Sortable()
+    .Pageable()
+    .ToolBar(toolbar => toolbar.Create().Text("Add New Pad"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditPad").Window(w => w.Title("Edit Pad Details").Width(700)).ConfirmDelete("Do you want to REMOVE the PAD ?").DisplayDeleteConfirmation("Do you want to REMOVE the PAD ?"))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+   .Pageable(p =>
+        p.Info(true)
+         .Numeric(false)
+         .PreviousNext(false)
+    )
+     .Scrollable(scrollable => scrollable.Virtual(true))
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.Pad_id))
+    .PageSize(10)
+    .Batch(false)
+    .Create(update => update.Action("PadData_Create", "Pad"))
+    .Read(read => read.Action("GetPadMasterRead", "Pad"))
+    .Update(update => update.Action("PadData_Update", "Pad"))
+    .Destroy(update => update.Action("PadData_Destroy", "Pad"))
+   )
+    .Events(e =>
+    {
+        e.Save("onGridSave").Edit("RenameWindow").DataBound("onDataBound");
+    })
+    )
+</section>
+
+@(Html.Kendo().Window().Name("Creates")
+    .Title("Add Pad")
+    .Visible(false)
+    .Modal(true)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1000)
+)
+@(Html.Kendo().Window().Name("Details")
+    .Title("Pad Details")
+    .Visible(false)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Modal(true)
+    .Draggable(true).Width(300)
+)
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+    </div>
+</script>
+<script>
+    $(document).ready(function () {
+        var GridObject = $("#paddatamaster").data("kendoGrid");
+        var URL = "/pad/GetPadMasterRead";
+        $("#PadCounts").click(function () {
+            GridObject.dataSource.transport.options.read.url = URL;
+            GridObject.dataSource.read();
+            GridObject.dataSource.filter({});
+        });
+        $("#RigCounts").click(function () {
+            window.location.href = "/rigs";
+        });
+        $("#WellCounts").click(function () {
+            window.location.href = "/welldata";
+        });
+        $("#DrillingPlanCounts").click(function () {
+            window.location.href = "/DrillingPlan/Index";
+        });
+    });
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        RefreshGrid();
+    });
+    function CountsRefresh() {
+        $.ajax({
+            url: '/Pad/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('WellCounts1').innerHTML = ResponseData.WellCounts;
+                document.getElementById('RigCounts1').innerHTML = ResponseData.RigCounts;
+                document.getElementById('PadCounts1').innerHTML = ResponseData.PadCounts;
+                document.getElementById("DrillingPlanCounts") = ResponseData.DrillingPlanCounts;
+            }
+        });
+        setInterval(CountsRefresh, 60000);
+    }
+    function RefreshGrid() {
+        var IntTime = 150000;
+        setInterval(function () {
+            $("#paddatamaster").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    function onGridSave(e) {
+        setTimeout(function () {
+            $('#paddatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#paddatamaster').data('kendoGrid').refresh();
+            });
+        }, 1500);
+    }
+    function onDataBound() {
+        var grid = this
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function RenameWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Pad");
+        }
+    }
+    function DataBound(e) {
+        var grid = this;
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+    }
+</script>
+<script type="text/javascript">
+    var detailsTemplate = kendo.template($("#template").html());
+    function showDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+</script>

@@ -1,0 +1,1404 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.DrillingPlanList
+@{
+    ViewData["Title0"] = "Drill Plan";
+    ViewData["Title"] = "Plan Details";
+
+    var WellsList = (List<WellAI.Advisor.DLL.Entity.WellRegister>)ViewBag.WellList;
+    var StageList = (List<WellAI.Advisor.DLL.Entity.Stage>)ViewBag.Stage;
+
+    //var employee = (List<WellAI.Advisor.Model.OperatingCompany.Models.Employeelist>)ViewData["employeeList"];
+}
+<script src="~/js/OperatingCompany/ServiceTasks.js"></script>
+
+<section class="content">
+    @using (Html.BeginForm("SaveDrillingPlan", "Drillingplan", FormMethod.Post, new { id = "form" }))
+    {
+    <div id="wrapper">
+        <div class="row">
+            <div class="col-12">
+                <div class="blockstyle" id="DrillingPlan">
+                    <div class="small-box box-shad">
+                        <div class="inner">
+                            <div class="row" id="atglanceinput">
+                                <div class="col-3">
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.DrillingPlanName, "Plan Name")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @Html.HiddenFor(m => m.DrillingPlanId)
+                                        @Html.TextBoxFor(model => model.DrillingPlanName, new { @Class = "k-textbox" })
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="k-edit-label">
+                                        @Html.LabelFor(model => model.PlanStartDate, "Start On")
+                                    </div>
+                                    <div class="k-edit-field">
+                                        @(Html.Kendo().DateTimePickerFor(m => m.PlanStartDate)
+                                            .Format("MM/dd/yyyy HH:mm")
+                                            .TimeFormat("HH:mm")
+                                            .HtmlAttributes(new { style = "width: 100%", title = "datetimepicker" })
+                                            )
+                                    </div>
+                                </div>
+                                @*<div class="col-2">
+                                    <div class="Labelfield" style="width:35% !important;">
+                                        @Html.LabelFor(model => model.Predictable, "Predictable")
+                                    </div>
+                                    <div class="Textfield" style="width:43% !important;">
+                                        @(Html.Kendo().SwitchFor(m => m.Predictable))
+                                    </div>
+                                </div>*@
+                            </div>
+                            <div class="row">
+                                <div class="col-11">
+                                    <div class="label1">
+                                        @Html.LabelFor(model => model.WellId, "Wells")
+                                    </div>
+                                    <div class="text1">
+                                        <div style="height:0px;">
+                                            @Html.TextBoxFor(model => model.WellIdList, new { id = "txtWellIds" })
+                                        </div>
+                                        @(Html.Kendo().MultiSelect()
+                                              .Name("wellname")
+                                              .AutoClose(true)
+                                              .Placeholder("Select Wells...")
+                                              .DataTextField("wellname")
+                                              .DataValueField("well_id")
+                                              .Filter(FilterType.Contains)
+                                              .DataSource(source =>
+                                              {
+                                                  source.Read(read =>
+                                                  {
+                                                      read.Action("GetWellIds", "DrillingPlan").Data("FilterWells");
+                                                  }).ServerFiltering(true);
+                                              })
+                                              .HtmlAttributes(new {  })
+                                              .Events(e => e.Select("OnSelect").Deselect("OnDeselect ").Change("WellChange"))
+                                            )
+                                    </div>
+                                </div>
+
+                                <div class="col-1">
+                                    <div id="divsave">
+                                        <button id="btnSaveplan" onclick="SavePlan()" class="btn btn-primary pull-right">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                <div id="appendto" class="demo-section-1 k-content"></div>
+                <span id="toastNotification"></span>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
+        <div class="row" id="Tab">
+            <div class="col-md-12 demo-section k-content" style="padding:0px !important;">
+                @(Html.Kendo().TabStrip()
+                     .Name("DrillPlanTabStrip")
+                     .Animation(animation =>
+                     animation.Open(effect =>
+                     effect.Fade(FadeDirection.In)))
+                     .SelectedIndex(0)
+                     .Events(events => events
+                     .Select("onDrillPlanTabStripSelect"))
+                     .Items(tabstrip =>
+                     {
+                         tabstrip.Add();
+                     }))
+            </div>
+        </div>
+    </div>
+    }
+</section>
+<style type="text/css">
+
+    .demo-section-1 {
+        text-align: center;
+        line-height: 4em;
+    }
+
+    .demo-section-1 .k-button {
+        width: 250px;
+    }
+
+    .k-grid-edit-row td > .k-textbox,
+    .k-grid-edit-row td > .k-widget,
+    .k-command-cell > .k-button,
+    .k-edit-cell > .k-textbox,
+    .k-edit-cell > .k-widget {
+        margin-top: calc((1.5em - 1*(2px + 0.75rem + 1.5em))/2);
+        margin-bottom: calc((1.5em - 1*(2px + 0.75rem + 1.5em))/2);
+        vertical-align: unset !important;
+    }
+
+    #addTasks:hover {
+        color: white !important;
+    }
+    .k-tabstrip-items .k-item {
+        color: unset !important;
+    }
+
+    #divStage {
+        margin: 7px;
+    }
+
+    #stage {
+        width: 150px;
+        /* margin: 18px;
+            height: 50% !important;*/
+    }
+
+    #tabstrip-1, #tabstrip-2 {
+        overflow-x: hidden !important;
+    }
+
+    .k-tabstrip-top > .k-tabstrip-items .k-item {
+        margin-bottom: -1px;
+        border-color: white !important;
+        border-width: 1px !important;
+    }
+
+    .k-grid-edit, .k-grid-delete {
+        background-color: white !important;
+    }
+
+    .k-tabstrip {
+        border-radius: 5px;
+        border-width: 5px !important;
+        border-style: solid !important;
+        border-color: #007BFF !important;
+        color: white !important;
+        background-color: #011627 !important;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+    }
+
+    .k-tabstrip-items .k-item.k-state-active, .k-tabstrip-items .k-item.k-state-selected {
+        background-color: #007BFF !important;
+        color: white;
+    }
+
+    .k-tabstrip-items {
+        color: white !important;
+    }
+
+    #Tab {
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-top: 10px;
+    }
+
+    #PlanList .k-grid-content {
+        height: 300px !important;
+    }
+
+    #PlanList {
+        margin: 10px !important;
+        width: 100% !important;
+    }
+
+    #PlanList1 .k-grid-content {
+        height: 300px !important;
+    }
+
+    #PlanList1 {
+        margin: 10px !important;
+        width: 100% !important;
+    }
+
+    .content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .k-grid thead, .k-grid tbody, .k-grid tfoot {
+        text-align: left;
+        border-color: #007BFF !important;
+        border-style: solid;
+    }
+
+    .group-header-column {
+        text-align: center;
+    }
+
+    #AddButton, #btnSave, #btnSaveplan {
+        width: 100px;
+    }
+
+    #divsave {
+    }
+
+    .k-switch-off .k-switch-container {
+        background-color: silver !important;
+    }
+
+    .Labelfield {
+        padding: calc(0.5rem - 1px) 0;
+        width: 46%;
+        line-height: 1.5;
+        text-align: left;
+        float: left;
+        clear: both;
+    }
+
+    .Textfield {
+        padding: calc(0.5rem - 1px) 0;
+        margin: 0 0 1rem 0;
+        width: 50%;
+        float: right;
+        clear: right;
+    }
+
+    .Labelfield1 {
+        width: 25%;
+        line-height: 1.5;
+        text-align: left;
+        float: left;
+        clear: both;
+    }
+
+    .Textfield1 {
+        margin: 0 0 1rem 0;
+        width: 71%;
+        float: right;
+        clear: right;
+    }
+
+    .label1 {
+        width: 7%;
+        line-height: 1.5;
+        text-align: left;
+        float: left;
+        clear: both;
+        padding: calc(0.5rem - 1px) 0;
+    }
+
+    .text1 {
+        margin: 0 0px 1rem 0;
+        width: 91%;
+        float: right;
+        clear: right;
+    }
+
+    #wellname {
+        min-width: 200px;
+        width: auto;
+    }
+
+    .k-multiselect, .k-dropdowntree {
+        min-width: 100%;
+        width: auto !important;
+        height: auto;
+        max-height: 80px;
+        overflow-y: scroll;
+    }
+
+    .k-textbox {
+        width: 100%;
+    }
+
+    .k-i-filter-clear {
+        color: #007bff !important;
+    }
+
+    .k-window {
+        border-radius: 5px !important;
+        height: 619px;
+        border-radius: 5px !important;
+    }
+
+    
+    .k-window-content {  
+    padding: 1rem 1rem;
+    border-width: 0;
+    color: inherit;
+    background: none;
+    outline: 0;
+    overflow:hidden;
+    position: relative;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+
+    .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+        border-radius: 10px;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+
+    .k-window-content #sidebar .k-edit-label {
+        margin-left: -50px;
+    }
+
+    /* .k-grid-content {
+            height: auto !important;
+        }*/
+
+    .k-window-content .k-edit-form-container {
+        width: inherit;
+    }
+
+    .blockstyle {
+        border-radius: 5px;
+        min-height: 116px;
+        height: auto;
+        width: 100%;
+        min-width: 130px;
+        display: inline-block;
+        margin: 10px 0px 0 0px;
+        background-color: #fff;
+        border: 4px solid #007AFC;
+        position: relative;
+        justify-content: space-between;
+    }
+
+    .toptitle {
+        color: #fff;
+    }
+
+    .inner > label {
+        color: #000;
+        display: block;
+        text-align: left;
+    }
+
+    .inner {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .small-box {
+        box-shadow: none;
+    }
+
+    .k-switch {
+        width: 50px !important;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 5px !important;
+        font-weight: bold !important;
+        min-width:100px;
+        width:auto !important;
+        margin-left: 10px !important;
+    }
+
+    #DrillingPlanList {
+        margin-top: 15px;
+    }
+
+    .k-grid-edit {
+        background-color: white !important;
+    }
+
+    #topblocks {
+        padding-right: 0px;
+    }
+
+    #atglanceinput {
+        padding-top: 9px !important;
+    }
+
+    .k-grid-header .k-header {
+        position: relative;
+        vertical-align: bottom;
+        cursor: default;
+        text-align: center !important;
+    }
+
+    .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-hover,
+    .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-active {
+        border-color: white !important;
+        border-width: 1px !important;
+    }
+
+    .k-content {
+        background-color: unset;
+    }
+
+    .k-grid-down, .k-grid-up {
+        background-color: white;
+    }
+
+        .k-grid-down:hover {
+            background-color: white;
+        }
+
+        .k-grid-up:hover {
+            background-color: white;
+        }
+        
+
+    #plantitle {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .ActiveStagebtn, .ActiveStagebtn:hover {
+        background-color: #42ab27;
+        border-color: #42ab27 !important;
+    }
+    .CloseTab{
+        margin-left:10px;
+    }
+</style>
+<script type="text/javascript">
+    var buttons;
+    let removedTabsList = [];
+    var IsPlanDetailsChanged = false;
+    $(document).ready(function () {
+        debugger;
+            var wellList = [];
+            var list = '@Html.Raw(Json.Serialize(Model.WellIds))';
+            wellList.push(JSON.parse(list));
+            var DrillingPlanId = '@Model.DrillingPlanId';
+            if (wellList[0].length > 0) {
+                wellList[0].forEach(function (welldata) {
+                    var tabstrip = $("#DrillPlanTabStrip").data("kendoTabStrip");
+                    tabstrip.append({
+                        text: welldata.wellName + " " + "<button id='" + welldata.wellId +"' data-type='remove' class='k-button k-button-icon CloseTab'><span class='k-icon k-i-close'></span></button>",
+                        encoded: false,
+                        animation: { open: { effects: "fadeIn" } },
+                        contentUrl: "@Url.Content("/DrillingPlan/DrillingPlanTabContent")" + "?wellid=" + welldata.wellId + "&DrillingPlanId=" + DrillingPlanId
+                    });
+
+                    var items = tabstrip.items();
+                    for (var i = 0; items.length > i; i++) {
+                        if (items[i].innerText === "") {
+                            tabstrip.remove(i);
+                        }
+                        tabstrip.select(items.length - 1);
+                    }
+                });
+
+            } else {
+                $("#Tab").hide();
+            }
+
+            //remove tab
+            var tabsTrip = $("#DrillPlanTabStrip").data("kendoTabStrip");
+        tabsTrip.tabGroup.on("click", "[data-type='remove']", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var item = $(e.target).closest(".k-item");
+                tabsTrip.remove(item.index());
+                var items = tabsTrip.items();
+                tabsTrip.select(items.length - 1);
+                var Tabid = e.currentTarget.id;
+                var multiselect = $("#wellname").data("kendoMultiSelect");
+                var items = multiselect.value();
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i] == Tabid) {
+                        const id = items.indexOf(Tabid); // 2
+                        items.splice(id, 1);
+                        break;
+                    }
+                }
+                $("#wellname").data("kendoMultiSelect").value(items);
+                $("#wellname").data("kendoMultiSelect").trigger("change");
+
+                removedTabsList.push(Tabid);
+                //document.getElementById("RemovedTabs").value = removedTabsList.join();
+            });
+
+            var Stagebtn = document.getElementsByClassName("Stagebtn");
+
+            $(document).on('click', '.Stagebtn', function () {
+                $("form").submit(function (e) {
+                    e.preventDefault();
+                });
+                let IsActive = false;
+                let stageValue = [];
+                var Stage = document.getElementsByClassName("ActiveStagebtn");
+                var id = $(this).attr('id');
+                var className = $(this).attr('class');
+                var stageBtnText = $(this).attr('innerText');
+                var stageId = id.split(";")[0];
+                var wellId = id.split(";")[1];
+
+                var ClassList = className.split(" ");
+                ClassList.forEach(function (val) {
+                    if (val == "ActiveStagebtn") {
+                        IsActive = true;
+                    }
+                });
+
+                if (stageId == "ShowAllTasks") {
+                    for (var i = 0; Stagebtn.length > i; i++) {
+                        if (Stagebtn[i].innerHTML !== "Show All Tasks") {
+                            Stagebtn[i].className = Stagebtn[i].className.replace(" ActiveStagebtn", "");
+                        }
+                        if (Stagebtn[i].innerHTML == "Show All Tasks") {
+                            Stagebtn[i].className += " ActiveStagebtn";
+                        }
+                    }
+                    $(this).addClass('ActiveStagebtn');
+                    for (var i = 0; Stage.length > i; i++) {
+                        stageValue.push(Stage[i].innerHTML);
+                    }
+                    StageFilter(stageValue, wellId);
+                    return;
+                }
+
+                if (IsActive == true) {
+                    if (stageId !== "ShowAllTasks") {
+                        $(this).removeClass('ActiveStagebtn');
+                    }
+                } else {
+                    $(this).addClass('ActiveStagebtn');
+                }
+
+                for (var i = 0; Stage.length > i; i++) {
+                    stageValue.push(Stage[i].innerHTML);
+                }
+
+                if (Stage.length > 1) {
+                    for (var i = 0; Stagebtn.length > i; i++) {
+                        if (Stagebtn[i].innerHTML == "Show All Tasks") {
+                            Stagebtn[i].className = Stagebtn[i].className.replace(" ActiveStagebtn", "");
+                        }
+                    }
+                } else if (Stage.length == 0) {
+                    for (var i = 0; Stagebtn.length > i; i++) {
+                        if (Stagebtn[i].innerHTML == "Show All Tasks") {
+                            Stagebtn[i].className += " ActiveStagebtn";
+                        }
+                    }
+                }
+
+                StageFilter(stageValue, wellId);
+
+            });
+        });
+    $(function () {
+                debugger;
+                if ($("#DrillingPlanName").val()) {
+                    document.getElementById("btnSaveplan").textContent = "Update";
+                } else {
+                    document.getElementById("btnSaveplan").textContent = "Save";
+                    $("#Tab").hide();
+                }
+
+
+            var wellIdTxt = $("#txtWellIds").val();
+            if (wellIdTxt) {
+
+                let id = wellIdTxt.split(";");
+                var multiselect = $("#wellname").data("kendoMultiSelect");
+                multiselect.value(id);
+            }
+    });
+
+    function WellChange(e) {
+            var multiselect = $("#wellname").data("kendoMultiSelect");
+            var selectedData = "";
+            var items = multiselect.value();
+            for (var i = 0; i < items.length; i++) {
+                selectedData += items[i] + ";";
+            }
+            $("#txtWellIds").val(selectedData);
+            $("#txtWellIds").trigger("change");
+    }
+
+    function OnSelect(e) {
+            var dataItem = e.dataItem
+            const wellname = dataItem.wellname;
+            const wellId = dataItem.well_id;
+            const drillingplanid = '@Model.DrillingPlanId';
+            var multiselect = $("#wellname").data("kendoMultiSelect");
+        var items = multiselect.dataItem();
+        if (items !== undefined) {
+            //for (var i = 0; items.length > i; i++) {
+                if (items.RigID == dataItem.RigID) {
+                  if (wellname && wellId) {
+                        var tabstrip = $("#DrillPlanTabStrip").data("kendoTabStrip");
+                        tabstrip.append({
+                            text: wellname + " " + "<button data-type='remove' class='k-button k-button-icon CloseTab'><span class='k-icon k-i-close'></span></button>",
+                            encoded: false,
+                            animation: { open: { effects: "fadeIn" } },
+                            contentUrl: "@Url.Content("/DrillingPlan/DrillingPlanTabContent")" + "?wellid=" + wellId + "&DrillingPlanId=" + drillingplanid
+                        });
+                        $("#Tab").show();
+                        var items = tabstrip.items();
+                        tabstrip.select(items.length - 1);
+                        for (var i = 0; items.length > i; i++) {
+                            if (items[i].innerText === "") {
+                                tabstrip.remove(i);
+                            }
+                        }
+                    }
+                }
+                else {
+                    e.preventDefault();
+                    planalert("Rig mismatch with existing Plan Wells. Please select another well. ","Information");
+                }
+            //}
+        }
+        else {
+              if (wellname && wellId) {
+                        var tabstrip = $("#DrillPlanTabStrip").data("kendoTabStrip");
+                        tabstrip.append({
+                            text: wellname + " " + "<button data-type='remove' class='k-button k-button-icon CloseTab'><span class='k-icon k-i-close'></span></button>",
+                            encoded: false,
+                            animation: { open: { effects: "fadeIn" } },
+                            contentUrl: "@Url.Content("/DrillingPlan/DrillingPlanTabContent")" + "?wellid=" + wellId + "&DrillingPlanId=" + drillingplanid
+                        });
+                        $("#Tab").show();
+                        var items = tabstrip.items();
+                        tabstrip.select(items.length - 1);
+                        for (var i = 0; items.length > i; i++) {
+                            if (items[i].innerText === "") {
+                                tabstrip.remove(i);
+                            }
+                        }
+                    }
+        }
+    }
+
+    function OnDeselect(e) {
+            var dataItem = e.dataItem;
+            console.log(dataItem.value + " " + dataItem.text);
+            var tabstrip = $("#DrillPlanTabStrip").data("kendoTabStrip");
+            var items = tabstrip.items();
+            var item = $(e.target).closest(".k-item");
+            //tabstrip.remove(item.index());
+            for (var i = 0; items.length > i; i++) {
+
+                if (items[i].innerText === dataItem.wellname) {
+                    var classlist = items[i].classList;
+                    for (var j = 0; classlist.length > j; j++) {
+                        if (classlist[j] === "k-state-active") {
+                            tabstrip.select(0);
+                        }
+                    }
+                    tabstrip.remove(i);
+                    tabstrip.select(0);
+                    var index = tabstrip.tabGroup.children("li").eq(i)
+
+                }
+            }
+
+            if (items.length == 0) {
+                $("#Tab").hide();
+            }
+        }
+    function moveUp(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            moveRow(this, dataItem, -1);
+            IsPlanDetailsChanged = true;
+        }
+    function moveDown(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        moveRow(this, dataItem, 1);
+        IsPlanDetailsChanged = true;    
+        }
+    function swap(a, b, propertyName) {
+            var temp = a[propertyName];
+            a[propertyName] = b[propertyName];
+            b[propertyName] = temp;
+        }
+    function moveRow(grid, dataItem, direction) {
+        var record = dataItem;
+        if (!record) {
+            return;
+        }
+        var newIndex = index = grid.dataSource.indexOf(record);
+        direction < 0 ? newIndex-- : newIndex++;
+
+        swap(grid.dataSource._data[newIndex], grid.dataSource._data[index], 'position');
+
+        //Change Date of moving item according to Move up / down
+        if (direction == 1) { //Move Down logic to set PlanModified flag for recalculation starts
+
+            var planToBeModifyTaskIndex = parseInt(index) + 1;
+            //alert('parseInt(grid.dataSource.total())' + parseInt(grid.dataSource.total()));
+            if (parseInt(planToBeModifyTaskIndex) <= parseInt(grid.dataSource.total())) {
+                //alert('Set Flag at Move Down logic 1 alert ' + planToBeModifyTaskIndex);
+                var newDataItem = grid.dataSource.at(parseInt(planToBeModifyTaskIndex));
+                //alert('Set Flag at Move Down logic 2 alert ');
+                //dataItem.set("id", 4);
+                //console.log('Set Flag at starts at Move Down logic 3 alert');
+                newDataItem.set("IsPlanModified", true);
+                //alert('Change date at moving down item' + newDataItem.PlanStart);
+
+                //Set Plan Start Date
+                var planStartDate = newDataItem.PlanStart;
+                record.set("PlanStart", planStartDate);
+            }
+        } else if (direction == -1) { //Move up logic to set PlanModified flag for recalculation starts
+            var newdataItem = grid.dataSource.at(index - 1);
+            console.log('Set Flag complete at Move up logic');
+            var planStartDate = newdataItem.PlanStart;
+            //newdataItem.set("IsPlanModified", true);
+            record.set("PlanStart", planStartDate);
+        }
+
+        grid.dataSource.remove(record);
+        grid.dataSource.insert(newIndex, record);
+    }
+
+    function SaveDrillPlanStage(wellId, tenantId, stageUpdate) {
+        debugger;
+        $("form").submit(function (e) {
+            e.preventDefault();
+        });
+
+        //url: "/DrillingPlan/RecalculatePlan",
+        if ($("#DrillingPlanId").val() == "") {
+            planalert('Please save the Plan !');
+            return;
+        }
+
+        var planJSON = "";//= DrillPlanDetails(wellId);
+        kendo.ui.progress($("#progessbardiv"), true); //Here progess bar will intiate
+        $.when(planJSON = DrillPlanDetails(wellId, tenantId, stageUpdate)).done(function (x) {          
+                    $.ajax({
+                        url: "/DrillingPlan/SaveAndUpdateDrillPlanTasks",
+                        type: "POST",
+                        data: planJSON,
+                        dataType: "json",
+                        async: false,
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            console.log("response :" + response);
+                            IsPlanDetailsChanged = false;
+                            setTimeout(function () {
+                                $('#DrillPlan_' + wellId).data('kendoGrid').dataSource.read().then(function () {
+                                    $('#DrillPlan_' + wellId).data('kendoGrid').refresh();
+                                });
+                            }, 6000);
+                        }, error: function (xhr, status, error) {
+                            //var err = eval("(" + xhr.responseText + ")");
+                            planalert(xhr.responseText, "Error");
+                        },
+                        complete: function () {
+                            kendo.ui.progress($("#progessbardiv"), false); //close the progress bar
+                        }
+                    });               
+        });
+    }
+    function ClearFilter(wellId) {
+        setTimeout(function () {
+            var grid = $("#DrillPlan_" + wellId).data("kendoGrid");
+            var dataSource = grid.dataSource;
+            dataSource.filter({});
+
+            var tenantid = sessionStorage.getItem("tenantId");
+            var isStageFilterEnabled = false;
+            var Stagebtn = document.getElementsByClassName("ActiveStagebtn");
+            for (var i = 0; Stagebtn.length > i; i++) {
+                if (Stagebtn[i].innerHTML !== "Show All Tasks") {
+                    Stagebtn[i].className = Stagebtn[i].className.replace(" ActiveStagebtn", "");
+                    isStageFilterEnabled = true;
+                }
+                if (Stagebtn[i].innerHTML == "Show All Tasks") {
+                    Stagebtn[i].className += " ActiveStagebtn";
+                }
+            }
+            if (isStageFilterEnabled) {
+                SaveDrillPlanStage(wellId, tenantid, true);
+            }
+        }, 6000);
+
+    }
+
+    function SaveDrillPlanDetails(wellId, tenantId, stageUpdate) {
+        debugger;
+        $("form").submit(function (e) {
+            e.preventDefault();
+        });
+
+       //url: "/DrillingPlan/RecalculatePlan",
+        if ($("#DrillingPlanId").val() == "") {
+            planalert('Please save the Plan !');
+            return;
+        }
+        var planJSON = "";//= DrillPlanDetails(wellId);
+        kendo.ui.progress($("#progessbardiv"), true); //Here progess bar will intiate
+       $.when(ClearFilter(wellId)).done(function (x) {
+            $.when(planJSON = DrillPlanDetails(wellId, tenantId, stageUpdate)).done(function (x) {
+                //planalert(planJSON,"planJSON");
+                //kendo.confirm("Save and Recalculation is processing")
+                //    .done(function () {
+                var staticNotification = $("#toastNotification").kendoNotification({
+                    appendTo: "#appendto"
+                }).data("kendoNotification");
+
+                staticNotification.show("Save and Recalculation is processing", "info");
+                var container = $(staticNotification.options.appendTo);
+                container.scrollTop(container[0].scrollHeight);
+
+                        $.ajax({
+                            url: "/DrillingPlan/RecalculatePlan",
+                            type: "POST",
+                            data: planJSON,
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (response) {
+                                //console.log("response :" + response);
+                                IsPlanDetailsChanged = false;
+                                var staticNotification = $("#toastNotification").kendoNotification({
+                                    appendTo: "#appendto"
+                                }).data("kendoNotification");
+
+                                staticNotification.show("Save and Recalculation done", "info");
+                                var container = $(staticNotification.options.appendTo);
+                                container.scrollTop(container[0].scrollHeight);
+                                //planalert("Save and Recalculation done", "Information");
+                                setTimeout(function () {
+                                    $('#DrillPlan_' + wellId).data('kendoGrid').dataSource.read().then(function () {
+                                        $('#DrillPlan_' + wellId).data('kendoGrid').refresh();
+                                    });
+                                }, 2000);
+                            }, error: function (xhr, status, error) {
+                                //var err = eval("(" + xhr.responseText + ")");
+                                //planalert(xhr.responseText, "Error");
+                            },
+                            //complete: function () {
+                            //    kendo.ui.progress($("#progessbardiv"), false); //close the progress bar
+                            //}
+                        });
+                    //})
+                    //.fail(function () {
+                    //    return false;
+                    //});
+            });
+        });
+        
+    }
+    function DrillPlanDetails(wellId, tenantId, stageUpdate) {
+        var WellId = wellId;
+        var DrillingPlanId = $("#DrillingPlanId").val();
+        var planStartDate = $("#PlanStartDate").data("kendoDateTimePicker").value();
+        var rigRealese = $("#RegRelease_" + wellId).data("kendoDateTimePicker").value();
+        var LastBOPTest = $("#LastBopTest_" + wellId).data("kendoDatePicker").value();
+        var PlannedTD = $("#PlannedTD_" + wellId).val();
+        var SPUDWell = $("#SpudWell_" + wellId).data("kendoDateTimePicker").value();
+        var NextBOPTest = $("#NextBopTest_" + wellId).data("kendoDatePicker").value();
+        var RigId = $("#RigId").val();
+        var grid = $('#DrillPlan_' + wellId).data('kendoGrid');
+        var tasks = grid.dataSource._data;
+
+        var Details = {
+            DrillingPlanId: DrillingPlanId,
+            PlanStartDate: planStartDate,
+            RigRealese: rigRealese ,
+            SpudWell: SPUDWell,
+            LastBopTest: LastBOPTest,
+            NextBopTest: NextBOPTest,
+            PlannedTD: PlannedTD,
+            RigId: RigId,
+            WellId: WellId,
+            drillPlanTasks: TasksList(tasks),
+            DeleteTasks: DeleteTasks(wellId),
+            TenantId: tenantId,
+            isStageUpdate: stageUpdate == true ? true : false
+        };
+        var DetailsJson = JSON.stringify(Details);
+
+        //alertbox(DetailsJson, 'DrillPlanDetails json');
+        console.log('DetailsJson' + DetailsJson);
+        return DetailsJson;
+    }
+    function GetDate(DateValue) {
+        var os = DateValue.getTimezoneOffset();
+        newDate = new Date(DateValue.getTime() - os * 60 * 1000);
+        return newDate.toJSON();
+    }
+
+    // Alert
+    function planalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function TasksList(tasks) {
+        var TasksList = [];
+
+        var TaskIndex = 0;
+        tasks.forEach(function (value) {
+            TaskIndex += 1
+            var Task = {
+                TaskId: value.TaskId,
+                TaskName: value.TaskName,
+                IsBiddable: value.IsBiddable,
+                OperationHours: value.OperationHours,
+                EmployeeId: value.EmployeeId,
+                ServiceCategoryId: value.ServiceCategoryId,
+                Depth: value.Depth,
+                Description: value.Description,
+                IsSpecialServices: value.IsSpecialServices,
+                SeletedDependency: value.SeletedDependency,
+                ServiceDuration: value.ServiceDuration,
+                StageType: value.StageType,
+                LeadTime: value.LeadTime,
+                Day: value.Day,
+                IsActive: value.IsActive,
+                ServiceDurationDays: value.ServiceDurationDays,
+                ServiceDurationHours: value.ServiceDurationHours,
+                ServiceDurationMinutes: value.ServiceDurationMinutes,
+                PlanStart: value.PlanStart == null ? null : GetDate(value.PlanStart),
+                IsPlanTask: value.IsPlanTask,
+                ScheduleTime: value.ScheduleTime == null ? "00:00" : value.ScheduleTime,
+                Dependency: value.Dependency,
+                TaskOrder: TaskIndex,
+                existingTaskOrder: value.TaskOrder,
+                IsPreSpud: value.IsPreSpud,
+                IsBenchMark: value.IsBenchMark,
+                ExportToMaster: value.ExportToMaster
+            }
+            //alert('value.PlanStart' + value.PlanStart);
+
+            TasksList.push(Task);
+        });
+
+        return TasksList;
+    }
+
+    function GetDate(DateValue) {
+        var os = DateValue.getTimezoneOffset();
+        newDate = new Date(DateValue.getTime() - os * 60 * 1000);
+        return newDate.toJSON();
+    }
+
+    function DeleteTasks(wellId) {
+            const tasks = [];
+            deletedTasks.forEach(function (value) {
+                if (value.wellId == wellId)
+                {
+                    tasks.push(value.taskId);
+                }
+            });
+
+            return tasks;
+        }
+    function SavePlan() {
+            document.getElementById('form').submit();
+        }
+    let deletedTasks = [];
+    function customDelete(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            console.log('dataItem.TaskId' + dataItem.TaskId);
+            var wellId = sessionStorage.getItem("wellId");
+        kendo.confirm("Are you sure you want to delete this item?")
+            .done(function () {
+                IsPlanUpdate = true;
+                    $.ajax({
+                        url: "/ActiveDrillPlan/TaksValidation?taskId=" + dataItem.TaskId,
+                        type: "GET",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        success: function (data) {
+                            if (data.isTasksExisted > 0) {
+                                planalert("This Task " + "<b>" + dataItem.TaskName + "</b>" + " is being used in Bids. ", "Information");
+                            } else {
+                                IsPlanDetailsChanged = true;
+                                deletedTasks.push({ taskId: dataItem.TaskId, wellId: wellId });
+                                var dataSource = $("#DrillPlan_" + wellId).data("kendoGrid").dataSource;
+                                dataSource.remove(dataItem);
+                                dataSource.sync();
+                            }
+                        }
+                    });                  
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+    function RenameWindow(e) {
+            if (e.model.isNew()) {
+                e.container.data("kendoWindow").title("New Task");
+            }
+        }
+    var isLoadedStage = [];
+    var Filter = [];
+    var IsPlanUpdate = false;
+
+    function DrillplanDataBound(e) {
+            var grid = this;
+            grid.tbody.find("tr[role='row']").each(function () {
+                var model = grid.dataItem(this);
+            });
+            grid.element.off('dblclick');
+            grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+                var model = grid.dataItem(this);
+                grid.editRow($(e.target).closest('tr'));
+            });
+
+         grid.tbody.find('>tr').each(function () {
+            var dataItem = grid.dataItem(this);
+            if (dataItem.IsRowModified == true) {
+                $(this).css('background', '#FFC04C');
+             }
+
+             if (dataItem.ActualPlanFinishedDate !== null && dataItem.ActualPlanFinishedDate != undefined) {
+                 $(this).css('background', '#B3F5B3');
+             }
+         })
+
+        var wellId = e.sender._cellId.split("_")[1];
+        var data = grid.dataSource.data();
+        var Stages = [];
+        var unique = [];
+        var Stagebtn = document.getElementsByClassName("Stagebtn");
+
+        if (Filter.length > 0)
+        {
+                var status = 0;
+
+                Filter.forEach(function (value) {
+                    if (value.wellid == wellId && value.IsFilter == true) {
+                        status = 1;
+                    }
+                });
+
+                if (status !== 1) {
+                    Filter.push({ wellid: wellId, IsFilter: true });
+                    for (let i = 0; i < data.length; i++) {
+                        if (!unique[data[i].StageTypeName]) {
+                            Stages.push({ StageTypeName: data[i].StageTypeName, StageType: data[i].StageType });
+                            unique[data[i].StageTypeName] = 1;
+                        }
+                    }
+                    Stages.sort(function (a, b) {
+                        var nameA = a.StageTypeName;
+                        var nameB = b.StageTypeName;
+                        if (nameA < nameB) {
+                            return -1;
+                        }
+                        if (nameA > nameB) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    Stages.forEach(function (value) {
+                        if (value.StageType != null && value.StageTypeName != null) {
+                            console.log('value.StageType' + value.StageType);
+                            $('#divStage_' + wellId).append("<button id='" + value.StageTypeName + ";" + wellId + "'  class='btn btn-primary Stagebtn'>" + value.StageTypeName + "</button>");
+                        }
+                    });
+                }
+                else if (IsPlanUpdate == true) {
+                    $('#divStage_' + wellId).empty();
+                    for (let i = 0; i < data.length; i++) {
+                        if (!unique[data[i].StageTypeName]) {
+                            Stages.push({ StageTypeName: data[i].StageTypeName, StageType: data[i].StageType });
+                            unique[data[i].StageTypeName] = 1;
+                        }
+                    }
+                    //if (Stages.length > Stagebtn.length || Stages.length < Stagebtn.length) {
+
+                        Stages.sort(function (a, b) {
+                            var nameA = a.StageTypeName;
+                            var nameB = b.StageTypeName;
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+
+                        Stages.forEach(function (value) {
+                            if (value.StageType != null && value.StageTypeName != null) {
+                                console.log('value.StageType' + value.StageType);
+                                $('#divStage_' + wellId).append("<button id='" + value.StageTypeName + ";" + wellId + "'  class='btn btn-primary Stagebtn'>" + value.StageTypeName + "</button>");
+                            }
+                        });
+                    //}
+                    IsPlanUpdate = false;
+                 }
+            }
+        else {
+                    Filter.push({ wellid: wellId, IsFilter: true });
+                    for (let i = 0; i < data.length; i++) {
+                        if (!unique[data[i].StageTypeName]) {
+                            Stages.push({ StageTypeName: data[i].StageTypeName, StageType: data[i].StageType });
+                            unique[data[i].StageTypeName] = 1;
+                        }
+                      }
+
+                    Stages.sort(function (a, b) {
+                        var nameA = a.StageTypeName;
+                        var nameB = b.StageTypeName;
+                        if (nameA < nameB) {
+                            return -1;
+                        }
+                        if (nameA > nameB) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+
+                    
+                    Stages.forEach(function (value) {
+                        if (value.StageType != null && value.StageTypeName != null) {
+                            //var id = value.StageTypeName + ";" + wellId;
+                            //for (var i = 0; Stagebtn.length > 0; i++) {
+                            //    if (Stagebtn[i].id !== id) {
+                            //alert('Stage binding ');
+                            $('#divStage_' + wellId).append("<button id='" + value.StageTypeName + ";" + wellId + "'  class='btn btn-primary Stagebtn'>" + value.StageTypeName + "</button>");
+                            //    }
+                            //}
+                        }
+                    });
+        }
+    }
+
+    function StageFilter(values, wellId) {
+        debugger;
+        var tenantid = sessionStorage.getItem("tenantId");
+        //SaveDrillPlanDetails(wellId, tenantid, true);
+        SaveDrillPlanStage(wellId, tenantid, true);
+        Filter.push({ wellid: wellId, IsFilter: true });
+        var grid = $("#DrillPlan_" + wellId).data("kendoGrid");
+        var dataSource = grid.dataSource;
+        var filter = { logic: "or", filters: [] };
+        $.each(values, function (i, val) {
+            if (val !== "Show All Tasks") {
+                filter.filters.push({
+                    field: "StageTypeName", operator: "eq", value: val
+                });
+            }
+            else {
+                dataSource.filter({});
+            }
+        });
+
+        dataSource.filter(filter);
+    }
+    function LoadTasksByStage(stageId, wellId) {
+        Filter.push({ wellid: wellId, IsFilter: true });
+        var DrillingPlanId = $("#DrillingPlanId").val();
+        var GridObject = $("#DrillPlan_" + wellId).data("kendoGrid");
+        var Url = "/DrillingPlan/DrillingPlanDetail_Read?wellId=" + wellId + "&drillPlanId=" + DrillingPlanId+"&StageId=" + stageId;
+        GridObject.dataSource.transport.options.read.url = Url;
+        GridObject.dataSource.read();
+    }
+    function LoadTasksPopup(wellId) {
+        var DrillingPlanId = $("#DrillingPlanId").val();
+        //alert(DrillingPlanId);
+        var win = $("#AddTaskListWindow").data("kendoWindow");
+        win.refresh({
+            url: "/DrillingPlan/Tasks?wellId=" + wellId + "&DrillPlanId=" + DrillingPlanId
+        });
+        win.center();
+        win.open();
+        win.wrapper.find('.k-window').css({
+            'top': '210px !important'
+        });
+    }
+
+
+    function OnDrillplanSaveChanges(e) {
+        IsPlanUpdate = true;
+        const Hours = CalculateDays(e.model.ServiceDurationDays, e.model.ServiceDurationHours, e.model.ServiceDurationMinutes);
+        $("#OperationDays").data("kendoMaskedTextBox").value(Math.round(Hours / 24, 2));
+        $("#OperationDays").data("kendoMaskedTextBox").trigger("change");
+
+        $("#OperationHours").data("kendoMaskedTextBox").value(Hours);
+        $("#OperationHours").data("kendoMaskedTextBox").trigger("change");
+
+        $("#StageTypeName").data("kendoMaskedTextBox").value($("#StageType").data("kendoMultiColumnComboBox").text());
+        $("#StageTypeName").data("kendoMaskedTextBox").trigger("change");
+
+        $("#AccumulatedDays").data("kendoMaskedTextBox").value(Math.round(Hours / 24, 2));
+        $("#AccumulatedDays").data("kendoMaskedTextBox").trigger("change");
+
+
+        $("#EmployeeId").data("kendoDropDownList").value(e.model.EmployeeId);
+       // $("#EmployeeId").data("kendoDropDownList").trigger("change");
+        $("#EmployeeNameField").data("kendoMaskedTextBox").value(e.model.EmployeeName);
+        $("#EmployeeNameField").data("kendoMaskedTextBox").trigger("change");
+
+    }
+
+
+    function CalculateDays(days, hours, minutes) {
+        var calDays = days != 00 ? days * 24 : 00;
+        var calMinutes = (minutes / 100.00);
+        var result = parseFloat(calDays) + parseFloat(hours) + parseFloat(calMinutes);
+        return result;
+    }
+
+	function FilterWells() {
+        var rigId = '@Model.RigId';
+        var planId = '@Model.DrillingPlanId';
+        return { PlanId: planId}
+    }
+
+    //Handle IsPlanDetailsChanged
+    function OnRigReleaseDateChange() {
+        IsPlanDetailsChanged = true;
+    }
+    function onPlannedTDTextChange() {
+        IsPlanDetailsChanged = true;
+    }
+    function OnSPUDWellDateChange() {
+        IsPlanDetailsChanged = true;
+    }
+    function OnNextBOPTestDateChange() {
+        IsPlanDetailsChanged = true;
+    }
+
+    function OnLastBopTestDateChange() {
+        var LastBop = this.value();
+        IsPlanDetailsChanged = true;
+        if (LastBop != null && LastBop != "") {
+            $.ajax({
+                url: "/ActiveDrillPlan/GetNextBopValue?wellId=" + sessionStorage.getItem("wellId"),
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json; chartset=uft-8",
+                async: false,
+                success: function (data) {
+                    var dateNextBOP = $("#NextBopTest_" + sessionStorage.getItem("wellId")).data("kendoDatePicker");
+                    if (data.templateDetails != undefined || data.templateDetails != null) {
+                        if (data.templateDetails.BopFrequency != undefined || data.templateDetails.BopFrequency != null) {
+                            var date = new Date(LastBop);
+                            var days = parseInt(data.templateDetails.BopFrequency);
+                            date.setDate(date.getDate() + days);
+                            dateNextBOP.value(date);
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            var dateNextBOP = $("#NextBOPTest_" + sessionStorage.getItem("wellId")).data("kendoDatePicker");
+            dateNextBOP.value(null);
+        }
+    }
+
+    function onDrillPlanTabStripSelect(e) {
+
+        if (IsPlanDetailsChanged == true) {
+
+            e.preventDefault();
+            kendo.confirm("Unsaved Changes! Do you want to save the changes ?")
+                .done(function () {
+                    $(".btnSave").click();
+                    IsPlanDetailsChanged = false;
+                })
+                .fail(function () {
+                    kendo.alert("You can select another Well now", "Information");
+                    IsPlanDetailsChanged = false;
+                });
+        }
+    }
+
+
+
+    function ImportChanges(drillPlanWellId, tenantId, wellId) {
+        kendo.confirm("Do you want to import the changes from Tasks Master ?")
+            .done(function () {
+                var drillingPlanId = $("#DrillingPlanId").val();
+                ImportTasksAndOverWriteChanges(drillPlanWellId, drillingPlanId, tenantId, wellId);
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    function ImportTasksAndOverWriteChanges(drillPlanWellId, drillingPlanId, tenantId, wellId) {
+        kendo.ui.progress($("#progessbardiv"), true);
+        $.ajax({
+            url: "/DrillingPlan/ImportTaskChanges?wellId=" + drillPlanWellId + "&drillPlanId=" + drillingPlanId,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                if (response.result.toString() == "1") {
+                    planalert("Changes importing done", "Information");
+                    $('#DrillPlan_' + wellId).data('kendoGrid').dataSource.read().then(function () {
+                        $('#DrillPlan_' + wellId).data('kendoGrid').refresh();
+                    });
+                    setTimeout(function () {                      
+                        //kendo.confirm("Save and Recalculation is processing")
+                           //.done(function () {
+                        debugger;
+                                SaveDrillPlanDetails(wellId, tenantId, false);
+                            //})
+                            //.fail(function () {
+                                return false;
+                            //});
+                    }, 6000);
+                    kendo.ui.progress($("#progessbardiv"), false);
+                }
+                else if (response.result == 0) {
+                    planalert("No changes to import", "Information");
+                }
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            },
+            complete: function () {
+                kendo.ui.progress($("#progessbardiv"), false); //close the progress bar
+            }
+        });
+    }
+
+
+    function onBenchMarkChange(e) {
+        var ChkValue = $('#BenchMark').is(':checked');
+        if (ChkValue) {
+            $("#PreSpud").attr("disabled", true);
+        } else {
+            $("#PreSpud").attr("disabled", false);
+        }
+    }
+
+    function onPreSpudChange() {
+        var ChkValue = $('#PreSpud').is(':checked');
+        if (ChkValue) {
+            $("#BenchMark").attr("disabled", true);
+        } else {
+            $("#BenchMark").attr("disabled", false);
+        }
+    }
+</script>

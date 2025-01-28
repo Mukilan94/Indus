@@ -1,0 +1,136 @@
+﻿
+@{
+ 
+    ViewData["Title"] = "Fleet";
+}
+
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .k-edit-buttons{
+            border-style:none;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 0;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="k-edit-buttons k-state-default">
+        <button type="button" onclick="updateVehicle()" role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Update</button>
+    </div>
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.ServiceVehicleViewModel>()
+        .Name("Vehicle")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Id).Hidden();
+            columns.Bound(p => p.VehicleName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            columns.Bound(p => p.Serial).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            columns.Bound(p => p.Vin).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            columns.Bound(p => p.Model).Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+            //columns.Bound(p => p.Year).Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false)));
+            columns.Bound(p => p.Year).Width(150).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false)));
+        })
+        .Sortable(s => s.Enabled(true))
+        .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Batch(false)
+                .Model(model => model.Id(p => p.Id))
+                .Read(read => read.Action("ServiceVehicle_Read", "FleetSRV"))
+        )
+        .Events(e =>
+        {
+
+        })
+    )
+</section>
+<script>
+
+    $(document).ready(function () {
+        RefreshGrid();
+    });
+
+    function RefreshGrid() {
+        var IntTime = 60000;
+        setInterval(function () {
+            $("#Vehicle").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+    function updateVehicle() {
+        displayLoading("#Vehicle", true);
+
+        $.ajax({
+            url: "/FleetSRV/Update",
+            type: 'get',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+                var grid = $("#Vehicle").data("kendoGrid");
+                grid.dataSource.read();
+                displayLoading("#Vehicle", false);
+            },
+            error: function () {
+                displayLoading("#Vehicle", false);
+            }
+        });
+    }
+
+</script>

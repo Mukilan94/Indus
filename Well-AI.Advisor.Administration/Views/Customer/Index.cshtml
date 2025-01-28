@@ -1,0 +1,1946 @@
+﻿@using System.Collections.Generic;
+@using WellAI.Advisor.DLL.Data;
+@using WellAI.Advisor.Model.Common
+@*@await Html.PartialAsync("/Views/Shared/_ValidationScriptsPartial.cshtml")*@
+@model Registration
+<style>
+
+    /* #WindowContent {
+            color: white !important;
+        }*/
+
+    /*  .demo-section {
+            border: 2px solid #007AFC;
+            border-radius: 5px;
+        }*/
+
+    .demo-grid {
+        background-color: #007AFC;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .cardbodycenter {
+        /* padding: 30px;*/
+    }
+
+    .card-header {
+        padding-left: 0px;
+        background-color: #007AFC;
+    }
+
+    .cardheadeselect {
+        background-color: #52b53c;
+    }
+
+    .border-success {
+        border-top-color: #3b6da5 !important;
+    }
+
+    .bordersuccessselect {
+        border-top-color: #338050 !important;
+    }
+
+    .border-success1 {
+        border-top-color: #007afc !important;
+    }
+
+    .chart-header {
+        display: inline-block;
+        width: 72%;
+    }
+
+    .operatorfilter {
+        display: inline-block;
+        width: 23%;
+    }
+
+
+
+    .nav_list_dispacth li {
+        text-align: left;
+        font-size: 15px;
+        list-style-type: "  ✓  ";
+        color: #338050;
+    }
+
+    .nav_list_ap li {
+        text-align: left;
+        font-size: 15px;
+        list-style-type: "  ✓  ";
+        color: #254678;
+    }
+
+    .nav_list_ao li {
+        text-align: left;
+        font-size: 15px;
+        list-style-type: "  ✓  ";
+        color: #007afc;
+    }
+
+    .k-card {
+        padding: 0px;
+        display: inline-block;
+        margin: 0 2px 0 2px;
+        width: 31%;
+        background-color: #ffff;
+        border: 7px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .k-grid-content {
+        height: 100px;
+    }
+
+    .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .RigValidation .k-window-titlebar {
+        background-color: red !important;
+    }
+</style>
+
+@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Product Subscription";
+    //WellAI.Advisor.Model.Common.CustomerSubscriptions subscriptions = ViewBag.CustomerSubscriptions;
+    //WellAI.Advisor.DLL.Entity.ProductSubscriptionModel subscriptions = ViewBag.CustomerSubscriptions;
+    //WellAI.Advisor.DLL.Entity.SubscriptionPackage CustomerSubscriptionsPackage = ViewBag.CustomerSubscriptionsPackage;
+    //WellAI.Advisor.DLL.Entity.PaymentMethod PaymentDetails = ViewBag.PaymentDetails;
+
+    //var Providers = (List<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>)ViewData["Providers"];
+    //var Name = WellAIAppContext.Current.Session.GetString("CompanyName");
+
+
+    WellAI.Advisor.DLL.Entity.ProductSubscriptionModel subscriptions = ViewBag.CustomerSubscriptions;
+    WellAI.Advisor.DLL.Entity.SubscriptionPackage CustomerSubscriptionsPackage = ViewBag.CustomerSubscriptionsPackage;
+    WellAI.Advisor.DLL.Entity.PaymentMethod PaymentDetails = ViewBag.PaymentDetails;
+    WellAI.Advisor.Model.OperatingCompany.Models.CorporateProfile CustomerDetails = ViewBag.CustomerDetails;
+
+    WellAI.Advisor.Model.Common.Registration Registration = ViewBag.Registration;
+
+    List<WellAI.Advisor.DLL.Entity.SubscriptionPackage> packageDetails = ViewBag.PackageDetailsList;
+
+    var Providers = (List<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>)ViewData["Providers"];
+    var Name = WellAIAppContext.Current.Session.GetString("CompanyName");
+
+    var SubscriptionOperatorCount = 0;
+    var SubscriptionProviderCount = 0;
+    var SubscriptionDispatchCount = 0;
+
+    var SubscriptionOperatorPrice = "";
+    var SubscriptionProviderPrice = "";
+    var SubscriptionDispatchPrice = "";
+    var ExpireMonths = "";
+
+    if (PaymentDetails.ExpireMonth.Length == 1)
+    {
+        ExpireMonths = "0" + PaymentDetails.ExpireMonth;
+    }
+    else
+    {
+        ExpireMonths = PaymentDetails.ExpireMonth;
+
+    }
+    var SubStartDate = subscriptions.SubStartdate.Value.Date;
+
+    var paytypes = "";
+
+    if (PaymentDetails.PayType == "1") // operator only
+    {
+        paytypes = "Credit Card";
+    }
+    else if (PaymentDetails.PayType == "2") // operator only
+    {
+        paytypes = "Debit Card";
+    }
+    else if (PaymentDetails.PayType == "3") // operator only
+    {
+        paytypes = "ACH Payment";
+    }
+
+    var AccountType = subscriptions.SubscriptionType;
+
+    if (AccountType == 0) // operator only
+    {
+        SubscriptionOperatorCount = (int)subscriptions.SubscriptionCount;
+        SubscriptionOperatorPrice = CustomerSubscriptionsPackage.PackageAmount;
+
+
+    }
+    else if (AccountType == 1) // Provider only
+    {
+        SubscriptionProviderCount = (int)subscriptions.SubscriptionCount;
+        SubscriptionProviderPrice = CustomerSubscriptionsPackage.PackageAmount;
+
+
+    }
+    else if (AccountType == 2) // Dispatch only
+    {
+        SubscriptionDispatchCount = (int)subscriptions.SubscriptionCount;
+        SubscriptionDispatchPrice = CustomerSubscriptionsPackage.PackageAmount;
+    }
+    else if (AccountType == 3) // operatorwithdispatch
+    {
+        SubscriptionOperatorCount = (int)subscriptions.SubscriptionCount;
+        SubscriptionDispatchCount = (int)subscriptions.SubscriptionDispatchCount;
+        SubscriptionOperatorPrice = CustomerSubscriptionsPackage.PackageAmount;
+        SubscriptionDispatchPrice = CustomerSubscriptionsPackage.PackageAmount;
+
+    }
+    else if (AccountType == 4) // Providerwithdispatch
+    {
+        SubscriptionProviderCount = (int)subscriptions.SubscriptionCount;
+        SubscriptionDispatchCount = (int)subscriptions.SubscriptionDispatchCount;
+
+        SubscriptionProviderPrice = CustomerSubscriptionsPackage.PackageAmount;
+        SubscriptionDispatchPrice = CustomerSubscriptionsPackage.PackageAmount;
+    }
+
+}
+
+@*@model2 IEnumerable<WellAI.Advisor.DLL.Entity.PaymentMethod>*@
+
+<style>
+    .disablelink {
+        pointer-events: none;
+        background-color: #a29e9e !important;
+        border-color: #a29e9e !important;
+    }
+
+    .k-numerictextbox, #State, #Country, #PayType, #Agreement {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .k-dropdown .k-dropdown-wrap {
+        background-color: #fff;
+        color: #000;
+        border-color: #80808054;
+    }
+
+    #accordion {
+        display: inline-block;
+        width: 800px;
+    }
+
+    .card-body label {
+        white-space: nowrap;
+    }
+
+    .card-header {
+        background-color: #007BFF;
+    }
+
+        .card-header .btn-link {
+            color: #fff;
+        }
+
+    #content .lbl {
+        width: 14% !important;
+        margin-right: 20px;
+        text-align: left;
+    }
+
+    #content .edt {
+        width: 28% !important;
+        float: left !important;
+    }
+
+    .k-edit-form-container {
+        width: 100%;
+    }
+
+    .switchwrap .k-tooltip-validation {
+        display: none !important;
+    }
+
+    .switchwrap {
+        display: inline-block;
+        width: 10%;
+    }
+
+    .switchlbl {
+        display: inline-block;
+        margin-top: 20px;
+        width: 85%
+    }
+
+    .k-switch-off .k-switch-container {
+        background-color: #c1c2c3 !important;
+    }
+
+    .switchwrap .k-switch {
+        margin-bottom: 20px;
+    }
+
+    .doclink {
+        margin-top: 10px;
+    }
+
+        .doclink a, .doclink a:hover {
+            color: #000;
+        }
+
+    .custom-default {
+        vertical-align: top;
+        text-align: left
+    }
+
+        .custom-default input[type=checkbox] {
+            vertical-align: middle;
+            margin-left: 5px
+        }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .div-visible {
+        display: block;
+    }
+
+    .div-invisible {
+        display: none;
+    }
+</style>
+
+<link rel="stylesheet" href="styles/kendo.common.min.css" />
+<link rel="stylesheet" href="styles/kendo.default.min.css" />
+<link rel="stylesheet" href="styles/kendo.default.mobile.min.css" />
+
+<script src="js/jquery.min.js"></script>
+
+
+<script src="js/kendo.all.min.js"></script>
+<script src="~/js/ServiceCompany/Update.js"></script>
+<section class="content-header"></section>
+<!-- Main content -->
+@*@(Html.Kendo().Window().Name("NewPayment")
+    .Title("New Payment")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+    .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+    .Height(800)
+    )*@
+<section class="content">
+    <div>
+        <div calss=col-md-12>
+            <div class="divsubscriptions">
+                <div class="row">
+
+                </div>
+
+                <div class="container-fluid dashboard">
+
+                    <div class="col-md-12">
+                        <div id="list">
+                            <div class="container">
+                                @{
+                                    var count = 0;
+                                    var count2 = 0;
+                                    foreach (var item in packageDetails)
+                                    {
+
+
+                                        @if (@count == 0)
+                                        {
+                                            <div class="card border-success mb-2" style="width: 32%; min-width:20rem; border: 2px solid #338050 !important; ">
+
+                                                <div class="card-header cardheadeselect text-center" style="margin:10px;color:white;">
+                                                    <h5 id="DispatchName">@item.PackageName</h5>
+                                                    <h4></h4>
+                                                </div>
+                                                <div class="card-body cardbodycenter text-lg-center" style="color: #338050; ">
+                                                    <h4>Monthly</h4>
+                                                    @if (item.AccountType == 1 || item.AccountType == 3)
+                                                    {
+                                                        <h6>$ @item.PackageAmount / User</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6>$ @item.PackageAmount / Rig</h6>
+                                                    }
+                                                    <input type="hidden" id="hdnDispatchPrice" value="@item.PackageAmount" />
+                                                    <h4></h4>
+                                                    <p style="text-align:left">
+
+                                                        <input id="hdnDispatch" type="hidden" value="@item.Description" />
+                                                        <ul class="nav_list_dispacth" id="uldispatch"></ul>
+
+
+
+
+                                                        @*@item.Description.Replace("<li>", "").Replace("</li>", "").Replace("</li>", "")*@
+                                                        @*<input id="hdnOperator" type="hidden" value='@Model.SubscriptionDetails.OperatorDescription' />
+                                                            <ul class="nav_list_ao" id="uloperator"></ul>*@
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer bg-transparent border-success bordersuccessselect">
+
+
+
+                                                    @*<input type="checkbox" class="checkbox" value="update" style="color: #338050; " id="chkDispatch" name="chkDispatch">*@
+
+                                                    @if (AccountType == 2 || AccountType == 4 || AccountType == 3)
+                                                    {<span id="mySpan" style="border-block-color: #338050; color: #338050">
+
+                                                            <input type="checkbox" class="checkbox" value="update" style="color: #338050; " id="chkDispatch" onclick="updcheck()" name="chkDispatch" checked>
+                                                            Subscribe
+
+                                                        </span> }
+                                                    else
+                                                    { <span id="mySpan" style="border-block-color: #338050; color: #338050">
+
+                                                            <input type="checkbox" class="checkbox" value="update" style="color: #338050; " id="chkDispatch" onclick="updcheck()" name="chkDispatch">
+                                                            Subscribe
+
+                                                        </span>}
+
+
+
+
+                                                </div>
+
+                                            </div>
+
+                                            count = count + 1;
+
+                                        }
+
+                                        else @if (@count == 1)
+                                   {
+                                    <div class="card border-success mb-2" style="width: 32%; min-width: 20rem; border: 2px solid #3b6da5 !important; ">
+
+                                        <div class="card-header cardheadeselect text-center" style="margin: 10px; color: white; background-color: #3b6da5; ">
+                                            <h5 id="ProviderName">@item.PackageName</h5>
+                                            <h4></h4>
+                                        </div>
+                                        <div class="card-body cardbodycenter text-lg-center" style="color: #254678; ">
+                                            <h4>Monthly</h4>
+                                            @if (item.AccountType == 1 || item.AccountType == 3)
+                                            {
+                                                <h6>$ @item.PackageAmount / User</h6>
+                                            }
+                                            else
+                                            {
+                                                <h6>$ @item.PackageAmount / Rig</h6>
+                                            }
+                                            <input type="hidden" id="hdnProviderPrice" value="@item.PackageAmount" />
+                                            <h4></h4>
+                                            <p style="text-align:left">
+
+                                                <input id="hdnProvider" type="hidden" value="@item.Description" />
+                                                <ul class="nav_list_ap" id="ulprovider"></ul>
+
+                                                @*@item.Description.Replace("<li>", "").Replace("</li>", "").Replace("</li>", "")*@
+                                                @*<input id="hdnOperator" type="hidden" value='@Model.SubscriptionDetails.OperatorDescription' />
+                                                    <ul class="nav_list_ao" id="uloperator"></ul>*@
+                                            </p>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-success">
+
+
+
+                                            @if (CustomerSubscriptionsPackage.AccountType == 1 || CustomerSubscriptionsPackage.AccountType == 4)
+                                            {<span id="mySpan" style="color: #254678">
+                                                    <input type="checkbox" class="checkbox" value="update" id="chkProvider" name="chkProvider" onclick="upduncheck()" checked>
+                                                    Subscribe
+
+                                                </span> }
+                                            else
+                                            {<span id="mySpan" style="color: #254678">
+                                                    <input type="checkbox" class="checkbox" value="update" id="chkProvider" name="chkProvider" onclick="upduncheck()">
+                                                    Subscribe
+
+                                                </span>}
+
+
+
+                                        </div>
+
+                                    </div>
+
+                                    count = count + 1;
+
+                                }
+
+                                else @if (@count == 2)
+                               {
+                                <div class="card border-success mb-2" style=" width: 32%; min-width: 23rem; border: 2px solid #007afc !important; ">
+
+                                    <div class="card-header text-center" style="margin:10px;color:white;">
+                                        <h5 id="OperatorName">@item.PackageName</h5>
+                                        <h4></h4>
+                                    </div>
+                                    <div class="card-body cardbodycenter text-lg-center" style="color: #007afc; ">
+                                        <h4>Monthly</h4>
+                                        @if (item.AccountType == 1 || item.AccountType == 3)
+                                        {
+                                            <h6>$ @item.PackageAmount / User</h6>
+                                        }
+                                        else
+                                        {
+                                            <h6>$ @item.PackageAmount / Rig</h6>
+                                        }
+                                        <input type="hidden" id="hdnOperatorPrice" value="@item.PackageAmount" />
+                                        <h4></h4>
+                                        <p style="text-align:left">
+
+                                            <input id="hdnOperator" type="hidden" value="@item.Description" />
+                                            <ul class="nav_list_ao" id="uloperator"></ul>
+
+                                            @*@item.Description.Replace("<li>", "").Replace("</li>", "").Replace("</li>", "")*@
+                                            @*<input id="hdnOperator" type="hidden" value='@Model.SubscriptionDetails.OperatorDescription' />
+                                                <ul class="nav_list_ao" id="uloperator"></ul>*@
+                                        </p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-success1">
+
+                                        @if (CustomerSubscriptionsPackage.AccountType == 0 || CustomerSubscriptionsPackage.AccountType == 3)
+                                        {
+                                            <span id="mySpan" style="color: #007afc">
+
+
+
+                                                <input type="checkbox" class="checkbox" value="update" style="color: #007afc" id="chkOperator" name="chkOperator" onclick="upduncheck1()" disabled>
+
+                                                Subscribe
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+                                            <span id="mySpan" style="color: #007afc">
+
+
+
+
+                                                <input type="checkbox" class="checkbox" value="update" id="chkOperator" name="chkOperator" onclick="upduncheck1()" disabled>
+                                                Subscribe
+                                            </span>
+                                        }
+
+
+                                    </div>
+
+                                </div>
+
+                                count = count + 1;
+
+                            }
+
+                            }
+
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="divplan">
+
+                <div class="card border mb-2" style="width:77%;margin-left:11.45%; border: 1px solid steelblue !important; ">
+                    <div class="card-header" id="YourPlan" style="color:white;background-color:#34587e">
+                        <h5 style="margin-left:10px">Your Plan</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" style="padding-left:25px">
+                            <table>
+                                <tbody>
+                                    <tr id="header" style="display:block;height:35px">
+                                        <th style="width:150px;"><label>Package</label></th>
+                                        <th style="min-width: 150px; text-align: center;">Price <label id="lblUnitType"></label></th>
+                                        <th style="min-width: 60px;width:60px; text-align: center;"><label id="lblUnitTypeForCount"></label> </th>
+                                        <th style="min-width: 150px; text-align: center;"><label>Total</label></th>
+                                    </tr>
+
+                                    <tr id="trDispatch" style="display:none">
+                                        <td style="width:150px;">Dispatch(User)</td>
+                                        <td style="min-width: 150px; text-align: center">$ <label id="lblDispatchUnitPrice"></label></td>
+                                        <td style="min-width: 60px;width:60px; text-align: center">
+
+                                            <input type="number" id="txtDispatchCount" maxlength="3" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" onkeypress="return isNumberKey(event)" value="@SubscriptionDispatchCount"
+                                                name="number"   min="1" max="999" minlength="1"  style="width:50px;text-align:right" />
+                  
+
+
+
+
+
+                                        </td>
+                                        <td style="min-width: 150px; text-align: center"> <label id="lblDispatchTotal"></label></td>
+                                    </tr>
+                                    <tr id="trProvider" style="display:none">
+                                        <td style="width:150px;">Provider(User)</td>
+                                        <td style="min-width: 150px; text-align: center">$ <label id="lblProviderUnitPrice"></label></td>
+                                        <td style="min-width: 60px;text-align: center">
+                                            <input type="number" id="txtProviderCount"  name="number" maxlength ="3" onkeypress="return isNumberKey(event)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" value="@SubscriptionProviderCount" min="1" max="999" minlength="1" style="width:50px;text-align:right" />
+                                        </td>
+                                        <td style="min-width: 150px; text-align: center"> <label id="lblProviderTotal"></label></td>
+                                    </tr>
+                                    <tr id="trOperator" style="display:none">
+                                        <td style="width:150px;">Operator(Rig)</td>
+                                        <td style="min-width: 150px; text-align: center">$ <label id="lblOperatorUnitPrice"></label></td>
+                                        <td style="min-width: 60px;text-align: center">
+                                            <input type="number" id="txtOperatorCount" name="number"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"  onkeypress="return isNumberKey(event)"  maxlength="3" value="@SubscriptionOperatorCount" min="1" max="999" minlength="1"   style="width:50px;text-align:right" />
+
+                                        </td>
+                                        <td style="min-width: 150px; text-align: center"> <label id="lblOperatorTotal"></label></td>
+                                    </tr>
+                                    <tr id="total" style="display:block">
+                                        <td style="width:360px;">Total</td>
+                                        <td style="width:150px; text-align:center"><label id="lblTotal"></label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table>
+                                <tr><td><label></label></td></tr>
+                                <tr>
+                                    <td><label>SubscriptionCost :</label></td>
+                                    <td style="width:150px; text-align:center"><label id="lblTotal1"></label></td>
+                                </tr>
+                                <tr>
+                                    <td><label>Subscriber Since :</label></td>
+                                    <td style="width:150px; text-align:center"><label id="lblSubSince">@subscriptions.SubStartdate</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label>Next Renewal :</label> </td>
+                                    <td style="width:150px; text-align:center"><label id="lblRenewal">@subscriptions.NextRenewalDate</label></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="divpayment">
+                <div row>
+                    @*<h4 style="margin-left:11%"><span>Payment</span></h4>*@
+                </div>
+                <div>
+                    <div class="card border mb-2" style="width:77%;margin-left:11.45%; border: 1px solid steelblue !important; ">
+                        <div class="card-header" id="PaymentType" style="color:white;background-color:#34587e">
+                            <h5 style="margin-left:10px">Payment Method<button class="k-button k-button-icontext" style="float:right" onclick="newpayment()">Change</button></h5>
+                        </div>
+                        <div id="ordercarddetails" style="display:block;margin-left:10px">
+                            <div class="card-body" style="color: steelblue; margin-top: 5px">
+                                <div class="row">
+                                    <div class="col-md-6 form-field">
+                                        <label class="text-small">Card Holder : </label><label class="text-small" id="lblCardHolder">@PaymentDetails.Holder</label>
+                                    </div>
+                                    <div class="col-md-6 form-field">
+                                        <label class="text-small">Card Number : </label>
+                                        <label class="text-small" style="display:none" id="lblCardNumber">@PaymentDetails.AccountNumber</label>
+                                        <label class="text-small" id="lblCardNumbermask">@PaymentDetails.AccountNumber</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-field">
+                                        <label class="text-small">Payment Type : </label><label class="text-small" id="lblPaymentType">@paytypes</label>
+
+
+                                    </div>
+                                    <div class="col-md-6 form-field">
+                                        <label class="text-small">Expiry on : </label><label class="text-small" id="lblCardMonth">@ExpireMonths </label>/<label class="text-small" id="lblCardYear">@PaymentDetails.ExpireYear</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="orderachdetails" style="display:none">
+                            <div class="card-body" style="color: steelblue; margin-top: 5px">
+                                <div class="row">
+                                    <div class="col-md-5 form-field">
+                                        <label class="text-small">Name : </label><label class="text-small" id="lblCustomerName">@PaymentDetails.CustomerName</label>
+                                    </div>
+                                    <div class="col-md-7 form-field">
+                                        <label class="text-small">Bank Name : </label><label class="text-small" id="lblBankName">@PaymentDetails.BankName</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 form-field">
+                                        <label class="text-small">A/C Type : </label><label class="text-small" id="lblAccountType">@PaymentDetails.TypeofAccount</label>
+                                    </div>
+                                    <div class="col-md-7 form-field">
+                                        <label class="text-small">A/C Number : </label><label class="text-small" id="lblaccountNumber">@PaymentDetails.AccountNumber</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 form-field">
+                                        <label class="text-small">Routing No : </label><label class="text-small" id="lblRoutingNumber">@PaymentDetails.RoutingNumber</label>
+                                    </div>
+                                    <div class="col-md-7 form-field">
+                                        <label class="text-small">Payment Type : </label><label class="text-small" id="lblPT">@PaymentDetails.PayType</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="divaddress">
+                <div row>
+                    @*<h4 style="margin-left:11%"><span>Address</span></h4>*@
+                </div>
+                <div>
+                    <div class="card border mb-2" style="width:77%;margin-left:11.45%; border: 1px solid steelblue !important; ">
+
+                        <div class="card-header" style="color:white;background-color:#34587e">
+                            <h5 style="margin-left:10px">Billing Info<button class="k-button k-button-icontext" style="float:right" onclick="newaddress()">Change</button></h5>
+                        </div>
+                        <div class="card-body" style="color: steelblue; margin-top: 5px;margin-left:10px ">
+                            <div class="row">
+                                <div class="col-md-5 form-field">
+                                    <label class="text-small">Name: </label>
+                                    <label class="text-small" id="lblName">@CustomerDetails.Name</label>
+                                </div>
+                                <div class="col-md-7 form-field">
+                                    <label class="text-small">Email: </label><label class="text-small" id="lblEmail">@CustomerDetails.Phone</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 form-field">
+                                    <label class="text-small">Phone: </label><label class="text-small" id="lblPhone">@CustomerDetails.Phone</label>
+                                </div>
+                                <div class="col-md-7 form-field">
+                                    <label class="text-small">Address: </label><label class="text-small" id="lblAddress">@CustomerDetails.Address1</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 form-field">
+                                    <label class="text-small">City: </label><label class="text-small" id="lblCity">@CustomerDetails.City</label>
+                                </div>
+                                <div class="col-md-7 form-field">
+                                    <label class="text-small">Zip: </label><label class="text-small" id="lblZip">@CustomerDetails.Zip</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="hdnpaymentmethodid" value="@PaymentDetails.ID" />
+
+        <div style="margin-left:72%">
+            <button class="k-button k-button-icontext k-grid-update k-grid-cancel" id="updatepack" sytle="float:right" onclick="updatepackage()" disabled>Update Plan</button>
+            <button class="k-button k-button-icontext k-grid-cancel" sytle="float:right" onclick="Cancelsubscription()">Cancel Subscription</button>
+        </div>
+    </div>
+</section>
+
+
+<section>
+    @(Html.Kendo().Window().Name("addNewPaymentgird")
+    .Title("New Payment")
+    .Visible(false)
+    .Scrollable(true)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+    .Height(550)
+)
+    @(Html.Kendo().Window().Name("addNewbillingaddress")
+            .Title("Update Billing Info")
+            .Visible(false)
+            .Scrollable(true)
+            .Modal(true)
+            .Content(@<text><div id="wndContent">Loading...</div></text>)
+            .Actions(actions => actions
+                .Close()
+            )
+            .Draggable(true)
+            .Width(500)
+            .Height(400)
+        )
+    @(Html.Kendo().Window().Name("ordersummary")
+        .Title("Order Summary")
+        .Visible(false)
+        .Scrollable(true)
+        .Modal(true)
+        .Content(@<text><div id="wndContent">Loading...</div></text>)
+        .Actions(actions => actions
+        .Close()
+        )
+        .Draggable(true)
+        .Width(1200)
+        .Height(550)
+        )
+
+
+</section>
+
+
+
+
+
+
+<section>
+
+    @*@(Html.Kendo().Window().Name("addNewPayment")
+            .Title("Add New Payment")
+            .Content(@<text>
+
+
+             <br />
+             <div class= "buttons">
+                 @Html.Kendo().Button().Name("Primary").Content("Submit").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-update", type = "submit", onclick = "saveOperator();", style="margin-left:85%"})
+                  @Html.Kendo().Button().Name("Primary").Content("Cancel").HtmlAttributes(new { @class = "k-button k-button-icontext k-grid-cancel", type = "submit", onclick = "closeProvider();"})
+
+             </div>
+            </text>
+            )
+
+            .Visible(false)
+            .Actions(actions => actions
+                .Close()
+            )
+
+            .Modal(true)
+            .Draggable(true).Width(1000)
+        )*@
+
+
+    @*@(Html.Kendo().Window().Name("addNewPayment")
+               .Title("Add New Payment")
+            .Visible(false)
+            .Modal(true)
+            .Content(@<text><div id="wndContent">Loading...</div></text>)
+            .Actions(actions => actions
+                .Close()
+
+            )
+
+            .Draggable(true)
+            .Width(1300)
+            .Height(800)
+        )*@
+
+</section>
+
+<script>
+
+    $(document).ready(function () {
+        // create NumericTextBox from input HTML element
+        //$("#txtDispatchCount").kendoNumericTextBox({
+        //    format: "0",
+        //    decimals: 0,
+        //    min: 0,
+
+        //});
+        //$("#txtProviderCount").kendoNumericTextBox({
+        //    //label: ""
+        //    format: "0",
+        //    decimals: 0,
+        //    min: 0,
+
+        //});
+        //$("#txtOperatorCount").kendoNumericTextBox({
+        //    //label: ""
+        //    format: "0",
+        //    decimals: 0,
+        //    min: 0,
+
+        //});
+
+        //// create Curerncy NumericTextBox from input HTML element
+        //$("#currency").kendoNumericTextBox({
+        //    label: "",
+        //    format: "c",
+        //    decimals: 3
+        //});
+
+        //// create Percentage NumericTextBox from input HTML element
+        //$("#percentage").kendoNumericTextBox({
+        //    label: "",
+        //    format: "p0",
+        //    min: 0,
+        //    max: 0.1,
+        //    step: 0.01
+        //});
+
+        // create NumericTextBox from input HTML element using custom format
+        //$("#custom").kendoNumericTextBox({
+        //    label: "",
+        //    format: "#.00 kg"
+        //});
+        //---------------------
+        //  debugger;
+        var DispatchvalDescription = $("#hdnDispatch").val();
+        $("#uldispatch").html(DispatchvalDescription);
+
+        var ProvidervalDescription = $("#hdnProvider").val();
+        $("#ulprovider").html(ProvidervalDescription);
+
+        var OperatorvalDescription = $("#hdnOperator").val();
+        $("#uloperator").html(OperatorvalDescription);
+
+        //------------------
+
+    });
+
+
+</script>
+
+<style>
+    #fieldlist {
+        margin: 0 0 -2em;
+        padding: 0;
+    }
+
+        #fieldlist li {
+            list-style: none;
+            padding-bottom: 2em;
+        }
+</style>
+<script type="text/javascript" src="lib.js"></script>
+@*<script>
+    $("#txtDispatchCount").on('change paste keyup', function () {
+
+        debugger;
+
+        DispatchVal = parseFloat($(this).val() * parseFloat($("#lblDispatchUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+            $("#lblDispatchTotal").text('$' + DispatchVal);
+            $("#lblProviderTotal").text('$' + ProviderVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+            $("#lblTotalValue").text('$' + parseFloat(Total).toFixed(2));
+        }
+
+        else if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === false && $("#chkOperator").prop("checked") === false) {
+            $("#lblDispatchTotal").text('$' + DispatchVal);
+            var Total = $("#lblDispatchTotal").text();
+            $("#lblTotalValue").text($("#lblDispatchTotal").text());
+        }
+        else if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+            $("#lblDispatchTotal").text('$' + DispatchVal);
+            $("#lblOperatorTotal").text('$' + OperatorVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+            $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+        }
+
+    });
+    $("#txtProviderCount").on('change paste keyup', function () {
+        debugger;
+        ProviderVal = parseFloat($(this).val() * parseFloat($("#lblProviderUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+            $("#lblProviderTotal").text('$' + ProviderVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+            $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+        }
+        else if ($("#chkDispatch").prop("checked") === false && $("#chkProvider").prop("checked") === true) {
+            $("#lblProviderTotal").text('$' + ProviderVal);
+            var Total = $("#lblProviderTotal").text();
+            $("#lblTotalValue").text($("#lblProviderTotal").text());
+        }
+    });
+    $("#txtOperatorCount").on('change paste keyup', function () {
+        OperatorVal = parseFloat($(this).val() * parseFloat($("#lblOperatorUnitPrice").text())).toFixed(2);
+        if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+            $("#lblOperatorTotal").text('$' + OperatorVal);
+            var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+            $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+        }
+        else if ($("#chkDispatch").prop("checked") === false && $("#chkOperator").prop("checked") === true) {
+            $("#lblOperatorTotalValue").text('$' + OperatorVal);
+            var Total = $("#lblOperatorTotalValue").text();
+            $("#lblTotal").text($("#lblOperatorTotalValue").text());
+
+        }
+    });
+</script>*@
+
+
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+
+@*<script>
+
+        //1
+        function newpayment() {
+            //   debugger;
+
+
+            var window2 = $("#addNewPaymentgird").data("kendoWindow");
+            window2.refresh({
+                //  url: "/ProductSubscriptionSRVNew/NewPayment"
+                url: "/ProductSubscriptionSRVNew/Changenwepayment"
+            });
+
+            $("#addNewPaymentgird").closest(".k-window").css({
+                top: 150,
+                left: 650
+            });
+
+
+            window2.refresh().center().open();
+
+            //  newpayment2();
+
+        }
+        function newpayment2() {
+            // debugger;
+
+
+            var window2 = $("#addNewPaymentgird").data("kendoWindow");
+            window2.refresh({
+                //  url: "/ProductSubscriptionSRVNew/NewPayment"
+                url: "/ProductSubscriptionSRVNew/Changenwepayment"
+            });
+
+            $("#addNewPaymentgird").closest(".k-window").css({
+                top: 150,
+                left: 650
+            });
+
+
+            window2.refresh().center().open();
+
+
+
+        }
+
+
+        function newaddress() {
+
+            var window2 = $("#addNewbillingaddress").data("kendoWindow");
+            window2.refresh({
+                //  url: "/ProductSubscriptionSRVNew/NewPayment"
+                url: "/ProductSubscriptionSRVNew/Billinginfo"
+            });
+
+            $("#addNewbillingaddress").closest(".k-window").css({
+                top: 150,
+                left: 650
+            });
+
+
+            window2.refresh().center().open();
+
+
+        }
+        //function newpayment() {
+        //    debugger;
+
+
+        //    var window2 = $("#NewPayment").data("kendoWindow");
+        //    window2.refresh({
+        //        //  url: "/ProductSubscriptionSRVNew/NewPayment"
+        //        url: "/PaymentMethodsSRV/Index"
+        //    });
+
+        //    $("#NewPayment").closest(".k-window").css({
+        //        top: 150,
+        //        left: 650
+        //    });
+
+
+        //    window2.refresh().center().open();
+
+
+        //}
+        function addnewpayment() {
+            debugger;
+
+
+            var window3 = $("#addNewPayment").data("kendoWindow");
+            window3.refresh({
+                // url: "/ProductSubscriptionSRVNew/addPayment"
+                url: "../../DispatchSRV/addPayment"
+            });
+
+            $("#addNewPayment").closest(".k-window").css({
+                top: 150,
+                left: 650
+            });
+
+
+            window3.refresh().center().open();
+
+
+        }
+    </script>*@
+
+@*<script type="text/javascript">
+
+        //2
+
+        $(document).ready(function () {
+            RefreshGrid();
+        });
+
+        function OnGridSave() {
+            setTimeout(function () {
+                //$('#paymenthods').data('kendoGrid').dataSource.read().then(function () {
+                //  //  $('#paymenthods').data('kendoGrid').refresh();
+                //});
+            }, 1500);
+        }
+
+        function RefreshGrid() {
+            var IntTime = 600000;
+            setInterval(function () {
+                $("#paymenthods").data("kendoGrid").dataSource.read();
+            }, IntTime);
+        }
+
+        function onDataBound() {
+            var grid = this;
+            grid.element.off('dblclick');
+            grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+                grid.editRow($(e.target).closest('tr'));
+            })
+        }
+
+
+        $(document).ready(function () {
+            var url = window.location.href;
+            if (url.indexOf('modal=true') > 1) {
+                window.setTimeout(function () {
+                    $('.k-grid-add').trigger("click");
+                }, 1000);
+
+            }
+        });
+        function monthChange(e) {
+            var ddlmonthValue = $("#ddlExpireMonth").val();
+            $("#ExpireMonth").data("kendoMaskedTextBox").value(ddlmonthValue);
+            $("#ExpireMonth").data("kendoMaskedTextBox").trigger("change");
+        }
+        function yearChange(e) {
+            var ddlyearValue = $("#ddlExpireYear").val();
+            $("#ExpireYear").data("kendoMaskedTextBox").value(ddlyearValue);
+            $("#ExpireYear").data("kendoMaskedTextBox").trigger("change");
+        }
+        function stateChange(e) {
+            var ddlstateValue = $("#ddlState").val();
+            $("#State").data("kendoMaskedTextBox").value(ddlstateValue);
+            $("#State").data("kendoMaskedTextBox").trigger("change");
+        }
+        function countryChange(e) {
+            var ddlCountryValue = $("#ddlCountry").val();
+            $("#Country").data("kendoMaskedTextBox").value(ddlCountryValue);
+            $("#Country").data("kendoMaskedTextBox").trigger("change");
+        }
+
+        function CardChange(e) {
+            var ddlCardTypevalue = $("#ddlCardType").val();
+            $("#CardType").data("kendoMaskedTextBox").value(ddlCardTypevalue);
+            $("#CardType").data("kendoMaskedTextBox").trigger("change");
+        }
+
+        function paytypeChange(e) {
+            // debugger;
+            var ddlPayTypeValue = $("#ddlPayType").val();
+            if (ddlPayTypeValue != null) {
+                $("#PayType").data("kendoMaskedTextBox").value(ddlPayTypeValue);
+                $("#PayType").data("kendoMaskedTextBox").trigger("change");
+                if (ddlPayTypeValue == "1" || ddlPayTypeValue == "2") {
+                    $("input").removeAttr("required");
+                    $("#NameOnCard").attr("required", "true"); $("#CardNum").attr("required", "true");
+                    $("#NickName").attr("required", "true"); $("#ddlExpireMonth").attr("required", "true");
+                    $("#ddlExpireYear").attr("required", "true"); $("#FirstName").attr("required", "true");
+                    $("#LastName").attr("required", "true"); $("#Address1").attr("required", "true");
+                    $("#ddlState").attr("required", "true"); $("#ZipCode").attr("required", "true");
+                    $("#ddlCountry").attr("required", "true");
+                    $('.creditcard').removeClass('div-invisible').addClass('div-visible');
+                    $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                    $('.check').removeClass('div-visible').addClass('div-invisible');
+                    if (ddlPayTypeValue == "1") {
+                        $('.creditcardType').removeClass('div-invisible').addClass('div-visible');
+                    }
+                    else {
+                        $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                    }
+
+                }
+                if (ddlPayTypeValue == "4") {
+                    $("input").removeAttr("required");
+                    $("#AcHolderName").attr("required", "true");
+                    $("#AcNum").attr("required", "true");
+                    $("#RoutingNum").attr("required", "true");
+                    $('.bankAccount').removeClass('div-invisible').addClass('div-visible');
+                    $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                    $('.check').removeClass('div-visible').addClass('div-invisible');
+                    $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                }
+
+                if (ddlPayTypeValue == "3") {
+
+                    $("input").removeAttr("required");
+                    $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                    $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                    $('.check').removeClass('div-invisible').addClass('div-visible');
+                    $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                    $("#RoutingNum1").attr("required", "true");
+                    $("#checkNum").attr("required", "true");
+                }
+            }
+        }
+        function agreeChange(e) {
+            if (e.checked) {
+                $(".k-grid-update").removeClass("disablelink");
+                $("#Agreement").data("kendoMaskedTextBox").value("true");
+                $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+                $(".switchwrap .k-switch-label-on").show();
+                $(".switchwrap .k-switch-label-off").hide();
+            }
+            else {
+                $(".k-grid-update").addClass("disablelink");
+                $("#Agreement").data("kendoMaskedTextBox").value("false");
+                $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+                $(".switchwrap .k-switch-label-on").hide();
+                $(".switchwrap .k-switch-label-off").show();
+            }
+        }
+        function customDelete(e) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+            kendo.confirm("Are you sure delete this item?")
+                .done(function () {
+                    $.ajax({
+                        url: "PaymentMethods/PaymentMethods_Destroy?methodId=" + dataItem.ID,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+
+                            var grid = $("#paymenthods").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    });
+                })
+                .fail(function () {
+                    return false;
+                });
+        }
+    </script>*@
+
+
+@*<script>
+        //3
+        $(document).ready(function () {
+
+            var string = $("#lblCardNumber").text();
+            var new_string = string.replace(/\b[\dX][-. \dX]+(\d{4})\b/g, function (match, capture) {
+                return Array(match.length - 4).join("X") + capture;
+            });
+
+            $("#lblCardNumbermask").text(new_string);
+            document.querySelector('#updatepack').disabled = true;
+            SetUnitPriceAndLabel();
+            if ($(chkProvider.checked == true)) {
+                $("#chkOperator").prop("disabled", disabled);
+                $("#chkOperator").prop(disabled, true);
+                $(chkOperator.disabled = true);
+            }
+
+            if ($("#lblCardMonth").text().length == 1) {
+                $("#lblCardMonth").text("0" + $("#lblCardMonth").text());
+            }
+
+
+        });
+        function updcheck() {
+            document.querySelector('#updatepack').disabled = false;
+            SetUnitPriceAndLabel();
+            if ($(chkDispatch.checked == true) && $(chkProvider.checked == true)) {
+                if ($("#chkDispatch").prop("checked") && $("#chkProvider").prop("checked")) {
+                    $("#chkOperator").prop("checked", false);
+                }
+            }
+            if ($(chkDispatch.checked == true) && $(chkOperator.checked == true)) {
+                if ($("#chkDispatch").prop("checked") && $("#chkOperator").prop("checked")) {
+                    $("#chkProvider").prop("checked", false);
+                }
+            }
+        }
+        function upduncheck() {
+            document.querySelector('#updatepack').disabled = false;
+            SetUnitPriceAndLabel();
+            if ($(chkDispatch.checked == true) && $(chkProvider.checked == true)) {
+                if ($("#chkDispatch").prop("checked") && $("#chkProvider").prop("checked")) {
+                    $("#chkOperator").prop("checked", false);
+                }
+            }
+            if ($(chkProvider.checked == true)) {
+                if ($("#chkProvider").prop("checked")) {
+                    $("#chkOperator").prop("checked", false);
+                }
+            }
+        }
+
+        function upduncheck1() {
+            document.querySelector('#updatepack').disabled = false;
+            SetUnitPriceAndLabel();
+            if ($(chkDispatch.checked == true) && $(chkOperator.checked == true)) {
+                if ($("#chkDispatch").prop("checked") && $("#chkOperator").prop("checked")) {
+                    $("#chkProvider").prop("checked", false);
+                }
+            }
+            if ($(chkOperator.checked == true)) {
+                if ($("#chkOperator").prop("checked")) {
+                    $("#chkProvider").prop("checked", false);
+                }
+            }
+        }
+
+    </script>*@
+
+@*<script>
+        //0
+        $("#txtDispatchCount").on('change paste keyup', function () {
+
+            DispatchVal = parseFloat($(this).val() * parseFloat($("#lblDispatchUnitPrice").text())).toFixed(2);
+            if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+                $("#lblDispatchTotal").text('$' + DispatchVal);
+                $("#lblProviderTotal").text('$' + ProviderVal);
+                var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+                $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+                $("#lblTotal1").text('$' + parseFloat(Total).toFixed(2));
+            }
+
+            else if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === false && $("#chkOperator").prop("checked") === false) {
+                $("#lblDispatchTotal").text('$' + DispatchVal);
+                var Total = $("#lblDispatchTotal").text();
+                $("#lblTotal").text($("#lblDispatchTotal").text());
+                $("#lblTotal1").text('$' + parseFloat(Total).toFixed(2));
+            }
+            else if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+                $("#lblDispatchTotal").text('$' + DispatchVal);
+                $("#lblOperatorTotal").text('$' + OperatorVal);
+                var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+                $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+                $("#lblTotal1").text('$' + parseFloat(Total).toFixed(2));
+            }
+
+        });
+        $("#txtProviderCount").on('change paste keyup', function () {
+            ProviderVal = parseFloat($(this).val() * parseFloat($("#lblProviderUnitPrice").text())).toFixed(2);
+            if ($("#chkDispatch").prop("checked") === true && $("#chkProvider").prop("checked") === true) {
+                $("#lblProviderTotal").text('$' + ProviderVal);
+                var Total = +parseFloat(DispatchVal) + +parseFloat(ProviderVal);
+                $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+                $("#lblTotal1").text('$' + parseFloat(Total).toFixed(2));
+            }
+            else if ($("#chkDispatch").prop("checked") === false && $("#chkProvider").prop("checked") === true) {
+                $("#lblProviderTotal").text('$' + ProviderVal);
+                var Total = $("#lblProviderTotal").text();
+                $("#lblTotal").text($("#lblProviderTotal").text());
+                $("#lblTotal1").text($("#lblProviderTotal").text());
+            }
+        });
+        $("#txtOperatorCount").on('change paste keyup', function () {
+
+
+            OperatorVal = parseFloat($(this).val() * parseFloat($("#lblOperatorUnitPrice").text())).toFixed(2);
+            if ($("#chkDispatch").prop("checked") === true && $("#chkOperator").prop("checked") === true) {
+                $("#lblOperatorTotal").text('$' + OperatorVal);
+                var Total = +parseFloat(DispatchVal) + +parseFloat(OperatorVal);
+                $("#lblTotal").text('$' + parseFloat(Total).toFixed(2));
+                $("#lblTotal1").text('$' + parseFloat(Total).toFixed(2));
+            }
+            else if ($("#chkDispatch").prop("checked") === false && $("#chkOperator").prop("checked") === true) {
+                $("#lblOperatorTotal").text('$' + OperatorVal);
+                var Total = $("#lblOperatorTotal").text();
+                $("#lblTotal").text($("#lblOperatorTotal").text());
+                $("#lblTotal1").text($("#lblOperatorTotal").text());
+            }
+        });
+        function SetUnitPriceAndLabel() {
+            if ($("#chkDispatch").prop("checked") && $("#chkProvider").prop("checked")) {
+                $("#trDispatch").css("display", "block");
+                $("#trProvider").css("display", "block");
+                $("#trOperator").css("display", "none");
+
+                $("#lblUnitType").text("Per Unit");
+                $("#lblUnitTypeForCount").text("Count");
+                $("txtOperatorCount").val("");
+                $("#lblDispatchUnitPrice").text($("#hdnDispatchPrice").val());
+                $("#lblProviderUnitPrice").text($("#hdnProviderPrice").val());
+                var PackTypes = [$("#DispatchName").text(), $("#ProviderName").text()];
+
+                // $("#lblDispatchTotalValue").val('$' +parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+                //  $("#lblProviderTotalValue").val('$' +parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text()));
+                $("#lblDispatchTotal").text('$' + parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+                $("#lblProviderTotal").text('$' + parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text()));
+
+                var dispatch_total = parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text());
+                var provider_total = parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text());
+                $("#lblTotal").text('$' + (dispatch_total + provider_total));
+                $("#lblTotal1").text('$' + (dispatch_total + provider_total));
+
+            }
+            else if ($("#chkDispatch").prop("checked") && $("#chkOperator").prop("checked")) {
+                $("#trDispatch").css("display", "block");
+                $("#trProvider").css("display", "none");
+                $("#trOperator").css("display", "block");
+
+                $("#lblUnitType").text("Per Unit");
+                $("#lblUnitTypeForCount").text("Count");
+                $("txtProviderCount").val("");
+                $("#lblDispatchUnitPrice").text($("#hdnDispatchPrice").val());
+                $("#lblOperatorUnitPrice").text($("#hdnOperatorPrice").val());
+                var PackTypes = [$("#DispatchName").text(), $("#OperatorName").text()];
+
+                // $("#lblDispatchTotalValue").val('$' +parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+                //
+                //  $("#lblOperatorTotalValue").val('$' +parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text()));
+                $("#lblDispatchTotal").text('$' + parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+                //
+                $("#lblOperatorTotal").text('$' + parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text()));
+
+
+                var dispatch_total = parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text());
+                var operatore_total = parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text());
+                $("#lblTotal").text('$' + (dispatch_total + operatore_total));
+                $("#lblTotal1").text('$' + (dispatch_total + operatore_total));
+            }
+            else if ($("#chkDispatch").prop("checked")) {
+                $("#trDispatch").css("display", "block");
+                $("#trProvider").css("display", "none");
+                $("#trOperator").css("display", "none");
+
+
+                $("#lblUnitType").text("Per Unit");
+                $("txtProviderCount").val("");
+                $("txtOperatorCount").val("");
+                $("#lblUnitTypeForCount").text("Count");
+                $("#lblDispatchUnitPrice").text($("#hdnDispatchPrice").val());
+                var PackTypes = [$("#DispatchName").text()];
+                //  $("#lblDispatchTotalValue").val(parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+                $("#lblDispatchTotal").text('$' + parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text()));
+
+                var dispatch_total = parseInt($("#txtDispatchCount").val()) * parseFloat($("#lblDispatchUnitPrice").text());
+
+                $("#lblTotal").text('$' + (dispatch_total));
+            }
+            else if ($("#chkProvider").prop("checked")) {
+                $("#trDispatch").css("display", "none");
+                $("#trProvider").css("display", "block");
+                $("#trOperator").css("display", "none");
+
+
+                $("#lblUnitType").text("Per Unit");
+                $("#lblUnitTypeForCount").text("Count");
+                $("txtDispatchCount").val("");
+                $("txtOperatorCount").val("");
+                $("#lblProviderUnitPrice").text($("#hdnProviderPrice").val());
+                var PackTypes = [$("#ProviderName").text()];
+
+                //  $("#lblProviderTotalValue").val(parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text()));
+                $("#lblProviderTotal").text('$' + parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text()));
+                var provider_total = parseInt($("#txtProviderCount").val()) * parseFloat($("#lblProviderUnitPrice").text());
+
+                $("#lblTotal").text('$' + (provider_total));
+                $("#lblTotal1").text('$' + (provider_total));
+            }
+            else if ($("#chkOperator").prop("checked")) {
+                $("#trDispatch").css("display", "none");
+                $("#trProvider").css("display", "none");
+                $("#trOperator").css("display", "block");
+
+                $("#lblUnitType").text("Per Unit");
+                $("#lblUnitTypeForCount").text("Count");
+                $("txtProviderCount").val("");
+                $("txtDispatchCount").val("");
+                $("#lblOperatorUnitPrice").text($("#hdnOperatorPrice").val());
+                var PackTypes = [$("#OperatorName").text()];
+                //  $("#lblOperatorTotalValue").val(parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text()));
+                $("#lblOperatorTotal").text('$' + parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text()));
+                var operatore_total = parseInt($("#txtOperatorCount").val()) * parseFloat($("#lblOperatorUnitPrice").text());
+                $("#lblTotal").text('$' + (operatore_total));
+                $("#lblTotal1").text('$' + (operatore_total));
+            }
+
+        }
+    </script>*@
+
+
+
+@*<script type="text/javascript" language="javascript">
+
+        //4
+        $(document).ready(function () {
+            var valmonth = $("#ExpireMonth").val();
+            $("#ddlExpireMonth").data("kendoDropDownList").value(valmonth);
+            var valyear = $("#ExpireYear").val();
+            $("#ddlExpireYear").data("kendoDropDownList").value(valyear);
+            var valstate = $("#State").val();
+            $("#ddlState").data("kendoDropDownList").value(valstate);
+            var valpaytype = $("#PayType").val();
+            $("#ddlPayType").data("kendoDropDownList").value(valpaytype);
+            if (valpaytype !== "") {
+                paytypeChange();
+            }
+            var valcountry = $("#Country").val();
+            $("#ddlCountry").data("kendoDropDownList").value(valcountry);
+
+            var agrreval = $("#Agreement").val();
+            if (agrreval == "true") {
+                $(".k-grid-update").removeClass("disablelink");
+                $("#switchgree").data("kendoSwitch").toggle();
+                $(".switchwrap .k-switch-label-on").show();
+                $(".switchwrap .k-switch-label-off").hide();
+            }
+            else {
+                $(".k-grid-update").addClass("disablelink");
+                $(".switchwrap .k-switch-label-on").hide();
+                $(".switchwrap .k-switch-label-off").show();
+            }
+        });
+
+
+
+    </script>*@
+
+<style>
+    .footer {
+        bottom: 7px !important;
+    }
+    /* #WindowContent {
+                color: white !important;
+            }*/
+    #OperatorRigs {
+        overflow: hidden !important;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #367fa9;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+    }
+
+    @@media (max-width:500px) {
+        .content {
+            margin: 0px !important;
+        }
+    }
+
+    .divsubscriptions {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .divsubscriptions_child {
+        color: #000;
+        padding: 0px 45px 20px;
+        border: brown;
+        border-block: inherit;
+        border-block-end-style: inherit;
+    }
+
+    .divplan {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .divplan_child {
+        color: #000;
+        padding: 0px 45px 20px;
+        border: brown;
+        border-block: inherit;
+        border-block-end-style: inherit;
+    }
+
+    .divpayment {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .divpayment_child {
+        color: #000;
+        padding: 0px 45px 20px;
+        border: brown;
+        border-block: inherit;
+        border-block-end-style: inherit;
+    }
+
+    .divaddress {
+        color: #000;
+        padding: 0px 45px 20px;
+    }
+
+    .divaddress_child {
+        color: #000;
+        padding: 0px 45px 20px;
+        border: brown;
+        border-block: inherit;
+        border-block-end-style: inherit;
+    }
+
+    .center {
+        text-align: center;
+        position: relative;
+    }
+
+    .blockstyle {
+        padding: 0px;
+        display: inline-block;
+        margin: 10px 10px 0 10px;
+        background-color: #fff;
+        border: 2px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .box-shad {
+        box-shadow: none;
+    }
+
+    .dashboard-total {
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dashboard-totalval {
+        color: #007AFC;
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        text-align: right;
+        text-decoration: underline;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .topblocks {
+        margin-left: 10px;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .toptitle {
+        margin-left: 20px;
+        color: #fff;
+    }
+
+    .dashboard-toptitle {
+        margin-bottom: 0px;
+    }
+
+    .dashboard-topdescription {
+        color: #728193;
+        width: 100%;
+    }
+
+    .card-title {
+        margin-bottom: 0px;
+    }
+
+    .demo-section {
+        border: 2px solid #007AFC;
+        border-radius: 5px;
+    }
+
+    .demo-grid {
+        background-color: #007AFC;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .cardbodycenter {
+        padding: 30px;
+    }
+
+    .card-header {
+        padding-left: 0px;
+        background-color: #007AFC;
+    }
+
+    .cardheadeselect {
+        background-color: #52b53c;
+    }
+
+    .border-success {
+        border-top-color: #3b6da5 !important;
+    }
+
+    .bordersuccessselect {
+        border-top-color: #52b53c !important;
+    }
+
+    .chart-header {
+        display: inline-block;
+        width: 72%;
+    }
+
+    .operatorfilter {
+        display: inline-block;
+        width: 23%;
+    }
+
+        .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff;
+            color: #000;
+        }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        /*  height: 500px;*/
+    }
+
+    .content {
+        min-height: 450px;
+        padding: 15px;
+        margin-right: 15px;
+        margin-left: 15px;
+        background-color: white;
+        border: 3px solid #007AFC;
+        border-radius: 10px;
+    }
+
+    .k-card {
+        padding: 0px;
+        display: inline-block;
+        margin: 0 0 2% 0;
+        width: 31%;
+        background-color: #fff;
+        border: 7px solid #007AFC;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .RigValidation .k-window-titlebar {
+        background-color: red !important;
+    }
+</style>
+
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #fff !important;
+            border: 0;
+        }
+
+        .k-grid-View, .k-grid-Delete, .k-grid-View:hover, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-grid-toolbar {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .k-grid-edit, .k-grid-Delete {
+            border: 1px solid #007BFF;
+            border-radius: 10px;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-grid-cancel {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .k-grid-edit, .k-grid-Delete, .k-grid-Details, .k-grid-Delete:hover {
+            border: none !important;
+        }
+    </style>
+
+    @*<script>
+
+            //5
+            function RenameWindow(e) {
+                if (e.model.isNew()) {
+                    $.ajax({
+                        url: "/CorporateProfileSRV/GetCorporateProfile",
+                        type: 'GET',
+                        dataType: 'json', // added data type
+                        success: function (data) {
+                            console.log(data);
+                            $("#Address1").val(data.Address1);
+                            $("#Address2").val(data.Address2);
+                            $("#City").val(data.City);
+                            $("#ZipCode").val(data.Zip);
+                            var dropdownStatelist = $("#ddlState").data("kendoDropDownList");
+                            dropdownStatelist.text(data.State);
+                            dropdownStatelist.trigger("change");
+                            var dropdownCountrylist = $("#ddlCountry").data("kendoDropDownList");
+                            dropdownCountrylist.text(data.Country);
+                            dropdownCountrylist.trigger("change");
+
+                        }
+                    });
+                    e.container.data("kendoWindow").title("New payment");
+                }
+            }
+            function showdelete(e) {
+                e.preventDefault();
+                alert('Are you sure to delete this payment method?')
+            }
+        </script>*@
+</section>
+
+
+
+@*<script type="text/javascript">
+
+        //6
+
+        function submitpayment() {
+            debugger;
+            var sourcegrid = $('#paymenthods').data('kendoGrid');
+
+            const SelectedItems = sourcegrid.select();
+            if (SelectedItems.length > 0) {
+
+                sourcegrid.select().each(function () {
+                    var dataItem = sourcegrid.dataItem($(this));
+                    var vendor =
+                    {
+                        ID: dataItem.ID,
+                        Holder: dataItem.Holder,
+                        Number: dataItem.Number,
+                        ExpireMonth: dataItem.ExpireMonth,
+                        ExpireYear: dataItem.ExpireYear,
+                        PayType: dataItem.PayType,
+                        Secondary: false,
+                    };
+
+
+                    if (vendor.PayType == "1") { $("#lblPaymentType").text("Credit Card"); }
+                    else if (vendor.PayType == "2") { $("#lblPaymentType").text("Debit Card"); }
+                    else if (vendor.PayType == "3") { $("#lblPaymentType").text("ACH Payment"); }
+                    $("#lblCardHolder").text(vendor.Holder);
+
+                    $("#lblCardNumber").text(vendor.Number);
+                    $("#lblCardMonth").text(vendor.ExpireMonth);
+                    $("#lblCardYear").text(vendor.ExpireYear);
+                    $("#hdnpaymentmethodid").val(vendor.ID);
+                    document.querySelector('#updatepack').disabled = false;
+
+                    var string = $("#lblCardNumber").text();
+                    var new_string = string.replace(/\b[\dX][-. \dX]+(\d{4})\b/g, function (match, capture) {
+                        return Array(match.length - 4).join("X") + capture;
+                    });
+                    debugger;
+                    var lm = $("#lblCardMonth").text();
+                    if ($("#lblCardMonth").text().length == 1) {
+                        $("#lblCardMonth").text("0" + $("#lblCardMonth").text());
+                    }
+
+                    $("#lblCardNumbermask").text(new_string);
+
+                    var window = $("#addNewPaymentgird").data("kendoWindow");
+                    window.close();
+                    //  UserDetails.operatorId = vendor.CompanyId;
+
+
+
+
+
+
+
+
+                    //  alert(vendor.CompanyId)
+
+                });
+
+
+            } else {
+                planalert("Please select a Payment", "Information");
+            }
+        }
+        function closepayment() {
+            var window = $("#addNewPaymentgird").data("kendoWindow");
+            window.close();
+        }
+
+
+        function planalert(content, alerttitle) {
+            $("<div></div>").kendoAlert({
+                title: alerttitle,
+                content: content
+            }).data("kendoAlert").open();
+        }
+
+    </script>*@

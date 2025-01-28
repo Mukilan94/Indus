@@ -1,0 +1,317 @@
+﻿@model WellAI.Advisor.Model.Administration.ServiceCategoryModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 70%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .fa-trash {
+            color: black !important;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-delete, .k-grid-delete:hover, .k-grid-delete:active {
+            background-color: #fff;
+            border-radius: 10px;
+            border: 1px solid #007BFF;
+        }
+        .btn-primary{
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+        .k-grid-delete {
+            background-color: #007bff !important;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+        .k-grid .k-grid-details, .k-grid .k-grid-tdetails, .k-grid .k-grid-bdetails, .k-grid .k-grid-edit,.k-grid .k-grid-delete {
+            /*display: block !important;*/
+        }
+
+        dl, ol, ul {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+            
+    </style>
+</section>
+<section class="content">
+    <div class="row">
+        <div id="PageHeading" class="col-md-6"><strong>Phase</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.ServiceCategoryModel>()
+    .Name("CategoryGrid")
+    .ToolBar(toolbar => toolbar.Create().Text("Add Phase"))
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ServiceCategoryId).Hidden(true);
+        columns.Bound(p => p.Name).ClientGroupHeaderTemplate("Phase").Width(250);
+        columns.Bound(p => p.Description);
+        columns.Bound(p => p.IsActive).Title("Active").Width(75).Filterable(false).ClientTemplate("#if (IsActive == true) { #" +
+                               "<a href='javascript:void(0)'><span class='text-success k-icon k-i-check'></span></a>" +
+                               "# } else { #" +
+                               "<a href='javascript:void(0)'><span class='text-danger k-icon k-i-close'></span></a>" +
+                               "# } #");
+        columns.Command(command =>
+        {
+            command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete");
+        }).Title("Action").Width(80);
+    })
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("AddCategories").Window(w => w.Title("Edit Phase")))
+     .Pageable()
+                .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Sortable()
+    .ClientDetailTemplateId("template")
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Sort(s =>s.Add("Name").Ascending())
+        .Read(read => read.Action("ServiceCategory_Read", "ServiceCategory"))
+        .Model(model => model.Id(p => p.ServiceCategoryId))
+        .Create(update => update.Action("AddParentServiceCategory", "ServiceCategory"))
+        .Update(update => update.Action("ServiceCategory_Update", "ServiceCategory"))
+    //.Destroy(upadte => upadte.Action("ServiceCategory_Destroy","ServiceCategory"))
+    .Events(events => events.Error("error"))
+    ).Events(e =>
+    {
+        e.Save("onGridSave");
+        e.Edit("gridEdit").Change("onDataBound");
+    })
+)
+    </div>
+</section>
+
+<script id="template" type="text/kendo-tmpl">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.ServiceCategoryModel>()
+            .Name("grid_#=ParentId#")
+            .ToolBar(toolbar => toolbar.Create().Text("Add Sub-Phase"))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditSeviceCategory").Window(w => w.Title("Edit Sub-Phase")))
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.Name).ClientGroupHeaderTemplate("Sub-Category");
+                columns.Bound(p => p.Description);
+                columns.Bound(p => p.IsActive).Title("Active").Width(75).Filterable(false).ClientTemplate("#if (IsActive == true) { #" +
+                              "<a href='javascript:void(0)'><span class='text-success k-icon k-i-check'></span></a>" +
+                              "# } else { #" +
+                              "<a href='javascript:void(0)'><span class='text-danger k-icon k-i-close'></span></a>" +
+                              "# } #");
+                columns.Command(command =>
+                {
+                    command.Destroy().Template("<button class='k-grid-delete'>Delete</button>");
+                }).Title("Action");
+            })
+             .Pageable(p =>
+                       p.Info(true)
+                        .Numeric(false)
+                         .PreviousNext(false)
+                   )
+              .Selectable()
+             .Scrollable(scrollable => scrollable.Virtual(true))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(10)
+                .Read(read => read.Action("ServiceCategoryByParentId_Read", "ServiceCategory", new { ParentId = "#=ParentId#" }))
+                .Model(model => model.Id(p => p.ServiceCategoryId))
+                .Create(update => update.Action("ServiceCategory_Create", "ServiceCategory"))
+                .Update(update => update.Action("ServiceCategory_Update", "ServiceCategory"))
+                .Destroy(update => update.Action("ServiceCategory_Destroy", "ServiceCategory"))
+                .Events(events => events.Error("subCatError"))
+            )
+            .Events(e =>
+            {
+                e.Edit("subGridEdit");
+                e.DataBound("DataBound");
+            })
+            .Pageable()
+            .Sortable()
+            .ToClientTemplate()
+    )
+</script>
+
+
+
+<script>
+    function onGridSave(e) {
+        if (!e.model.error) {
+            setTimeout(function () {
+                $('#CategoryGrid').data('kendoGrid').dataSource.read().then(function () {
+                    $('#CategoryGrid').data('kendoGrid').refresh();
+                });
+            }, 1500);
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+    function onDataBound() {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add New Phase");
+            $('.k-grid-update').text("Save");
+            $("#IsActive").prop('checked', true).trigger("change");
+
+        } else {
+            if (e.model.ServiceCategoryId === e.model.ParentId) {
+                $('.k-dropdown').addClass("k-state-disabled").css("pointer-events", "none");
+
+            }
+        }
+    }
+    function subGridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Sub-Phase");
+            $('.k-grid-update').text("Save");
+            var closestGridElement = e.sender.element.closest('[data-role="grid"]');
+            var id = closestGridElement.attr('id');
+            id = id.replace('grid_', '');
+            $("#ParentId").val(id).trigger("change");
+            $("#IsActive").prop('checked', true).trigger("change");
+
+        }
+
+
+    }
+
+    function DataBound(e) {
+        var grid = this;
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $('#CategoryGrid').data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function subCatError(args) {
+        if (args.errors) {
+            id = $("#ParentId").val();
+            var grid = $('#grid_' + id).data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        kendo.confirm("Are you sure you want to delete this item?")
+            .done(function () {
+                $.ajax({
+                    url: "/ServiceCategory/ServiceCategory_Delete?ServiceCategoryId=" + dataItem.ServiceCategoryId,
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+                        if (response.isUsed === true) {
+                            Kendoalert("Phase cannot Delete ! It is using in Checklist/Drilling Plan/Tasks. ","Information");
+                        } else {
+                            $('#CategoryGrid').data('kendoGrid').dataSource.read().then(function () {
+                                $('#CategoryGrid').data('kendoGrid').refresh();
+                            });
+                        }                      
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+    function Kendoalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+</script>

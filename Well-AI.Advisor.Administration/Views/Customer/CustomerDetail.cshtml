@@ -1,0 +1,1707 @@
+﻿@model WellAI.Advisor.Model.Administration.CustomerProfileModel
+@{
+    ViewData["Title"] = "CustomerDetail";
+
+}
+@using System.Security.Claims;
+@{
+    var userIdentity = (ClaimsIdentity)User.Identity;
+
+    var senderUser = ViewBag.AdminSupportUser;
+
+    var SubscriptionStatus = Model.IsEnableSubscription;
+}
+
+<section class="content-header">
+    <style>
+        .k-calendar .k-state-hover .k-link {
+            border-color: #f2f2f2;
+            color: #261c15 !important;
+            background-color: #f2f2f2;
+        }
+
+        .linkstyle {
+            text-decoration: underline !important;
+        }
+
+        .k-chat {
+            max-width: 570px;
+        }
+
+        .RowHighlight {
+            background-color: #ff6344 !important;
+            color: white !important;
+        }
+
+        .wrapper {
+            background: #151d32 !important;
+        }
+
+        .logo-txt {
+            margin-left: 20px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .logo-txt1 {
+            margin-left: 35px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center !important;
+            font-weight: 600;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .k-listbox {
+            width: 100% !important;
+            height: 350px;
+            text-align: left;
+        }
+
+        .content {
+            margin: 13px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding: 5px 5px 0 5px;
+        }
+
+        div#tabstrip-1 {
+            overflow: hidden !important;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            border: none;
+        }
+
+        .k-grid-Details .k-button {
+            width: 30px !important;
+        }
+
+        input[type="text"] {
+            width: 100%
+        }
+
+        .k-button {
+        }
+
+        #appendto {
+            margin-top: 5px;
+            height: 15px;
+        }
+
+            #appendto .k-i-error {
+                padding-right: 8px;
+            }
+
+        .k-widget.k-window {
+        }
+
+        .h4 {
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid #cac3c3;
+            line-height: 0.1em;
+            margin: 20px 0px 17px 1px;
+        }
+
+            .h4 span {
+                background: #fff;
+                padding: 0 10px;
+            }
+
+        .k-tabstrip-items .k-item, .k-tabstrip-items .k-item:hover {
+            color: #ffffff;
+            padding: 10px !important;
+        }
+
+        .kbuttonkprimary {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff;
+        }
+
+        .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-hover,
+        .k-tabstrip-top > .k-tabstrip-items .k-item.k-state-active {
+            color: #FFFFFF !important;
+            width: auto;
+            padding: 10px !important;
+            font-weight: 900 !important;
+        }
+
+        .k-link:hover {
+            color: #FFFFFF !important;
+            text-decoration: solid;
+            font-weight: bold !important;
+        }
+
+        .k-link {
+            font-size: 15px !important;
+            font-weight: bold !important;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #CustomerDetails {
+            font-size: 16px;
+            margin: 15px;
+            margin-top: 25px;
+        }
+
+        .hideResetPassword {
+            display: none;
+        }
+
+        .k-chat .k-message-time {
+            opacity: 1 !important;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: opacity .2s ease-in-out;
+        }
+
+        .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+            color: white !important;
+        }
+    </style>
+
+    @* Package style*@
+
+    <style>
+        .divsubscriptions {
+            color: #000;
+            padding: 0px 45px 20px;
+        }
+
+        .center {
+            text-align: center;
+            position: relative;
+        }
+
+        .blockstyle {
+            padding: 0px;
+            display: inline-block;
+            margin: 10px 10px 0 10px;
+            background-color: #fff;
+            border: 2px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .box-shad {
+            box-shadow: none;
+        }
+
+        .dashboard-total {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .dashboard-totalval {
+            color: #007AFC;
+            position: absolute;
+            bottom: 0px;
+            right: 10px;
+            text-align: right;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .topblocks {
+            margin-left: 10px;
+        }
+
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+
+        .toptitle {
+            margin-left: 20px;
+            color: #fff;
+        }
+
+        .dashboard-toptitle {
+            margin-bottom: 0px;
+        }
+
+        .dashboard-topdescription {
+            color: #728193;
+            width: 100%;
+        }
+
+        .card-title {
+            margin-bottom: 0px;
+        }
+
+        .demo-section {
+            border: 2px solid #007AFC;
+            border-radius: 5px;
+        }
+
+        .demo-grid {
+            background-color: #007AFC;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .card-header {
+            padding-left: 0px;
+            background-color: #007AFC;
+        }
+
+        .border-success {
+            border-top-color: #007AFC !important;
+        }
+
+        .chart-header {
+            display: inline-block;
+            width: 72%;
+        }
+
+        .operatorfilter {
+            display: inline-block;
+            width: 23%;
+        }
+
+            .operatorfilter .k-dropdown .k-dropdown-wrap .k-input {
+                background-color: #fff;
+                color: #000;
+            }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .k-card {
+            padding: 0px;
+            display: inline-block;
+            margin: 0 0 2% 0;
+            width: 31%;
+            background-color: #fff;
+            border: 7px solid #007AFC;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .centerpart {
+            display: inline-block;
+            width: 50%;
+            height: 87vh;
+        }
+
+        .k-button.k-flat.k-primary {
+            color: #007bff !important;
+        }
+    </style>
+
+
+</section>
+
+
+@*<section class="content-header">
+    <style>
+        .k-upload {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: -45px;
+        }
+
+        #preview {
+            display: inline-block;
+        }
+
+        .k-dropzone, .k-upload-button {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .k-dropzone {
+            float: left;
+        }
+
+        .k-upload-files {
+            float: right;
+        }
+
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-left: -15px;
+            margin-top: 10px;
+        }
+
+        label {
+            margin-top: 4.5px;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+
+        .k-dropdown .k-dropdown-wrap .k-input, .k-dropdowntree .k-dropdown-wrap .k-input {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .k-textbox, .k-textarea, .k-input.k-textbox, .k-dropdown {
+            margin-left: -8%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        #txtcity, #txCountry {
+            margin-left: -26%;
+        }
+
+        #txtphone {
+            margin-left: -12%;
+        }
+    </style>
+</section>*@
+
+<script type="text/x-kendo-template" id="templateChat">
+    <div id="details-container">
+        <div class="centerpart">
+            Chat Window
+        </div>
+        <div class="chatrightpart">
+            <div id="chat-local-media"></div>
+        </div>
+    </div>
+</script>
+
+
+
+<section class="content">
+    <div id="loadingId">
+        @if (Model != null)
+        {
+        <div class="wrapper">
+            @(Html.Kendo().TabStrip()
+            .Name("tabstrip")
+            .Items(tabstrip =>
+            {
+
+                  @*tabstrip.Add().Text("Profile")
+            .Selected(true)
+            .Content(@<text>
+                    <hr />
+       <div class="row">
+           <div class="col-12">
+             <h4 class="h4"><span>  Account # - @Model.TenantId</span></h4>
+           </div>
+            <div class="col-md-4 ">
+                    <div class="row col-md-12"><h4 class="h4"><span>Logo</span></h4></div>
+                    <div class="row col-md-12">
+                            <img class="logo-txt pull-left" height=75 src="@Model.LogoPath" />
+                    </div>
+                </div>
+
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                         <div class="row">
+                        <div class="col-md-2">Company</div>
+                        <div class="col-md-10">@Model.Name</div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-2">Contact</div>
+                        <div class="col-md-10">@Model.ContactName</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">Address</div>
+                        <div class="col-md-10">@Model.Address1 @Model.Address2</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">City</div>
+                        <div class="col-md-10">@Model.City</div>
+                    </div>
+                    </div>
+                     <div class="col-md-6">
+                         <div class="row">
+                              <div class="col-md-2">State</div>
+                              <div class="col-md-10">@Model.State</div>
+                         </div>
+                    <div class="row">
+                        <div class="col-md-2">Phone</div>
+                        <div class="col-md-10">@Model.Phone</div>
+                    </div>
+                         <div class="row">
+
+                             <div class="col-md-2">Website</div>
+                        <div class="col-md-10">@Model.Website</div>
+                         </div>
+                    </div>
+                </div>
+
+ @if (Model.SubscriptionName != null)
+                    {
+                    <div class="row">
+                        <h4 class="h4"><span>Current Subscription:</span></h4>
+                    </div>
+
+<div class="row">
+<div class="col-md-3">@Html.LabelFor(m => m.SubscriptionName)</div>
+<div class="col-md-3">@Model.SubscriptionName</div>
+<div class="col-md-3">@Html.Label("Account Type")</div>
+<div class="col-md-3">@Model.SubscriptionDescription</div>
+</div>
+<div class="row">
+
+<div class="col-md-3">@Html.LabelFor(m => m.SubscriptionRigsCount)</div>
+<div class="col-md-3">@Model.SubscriptionRigsCount</div>
+<div class="col-md-3">@Html.LabelFor(m => m.SubscriptionTotalAmount)</div>
+<div class="col-md-3">$ @Model.SubscriptionTotalAmount</div>
+</div>
+<div class="row">
+<div class="col-md-3">@Html.LabelFor(m => m.SubscriptionStart)</div>
+<div class="col-md-3">@Model.SubscriptionStart.Value.ToString("MM/dd/yyyy")</div>
+</div>
+<form method="post">
+    @Html.HiddenFor(m=>m.SubscriptionId)
+<div class="row" id="loaderId">
+
+    <div class="col-md-3">Subscription Status</div>
+    <div class="col-md-3" id="IsEnableSubscription">@Model.IsEnableSubscription</div>
+    <div class="col-md-3"><input type="button" id="btnChageSubscription" class="k-button k-button-icontext k-primary" value="Change Status" /></div>
+</div>
+</form>
+                    }
+                </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                        <h4 class="h4"><span>Change / Update Subscription</span></h4>
+                        </div>
+                    </div>
+           <div class="col-md-12">
+               <div class="container-fluid dashboard">
+        <div id="list">
+            <div class="container">
+                @foreach (var item in Model.SubscriptionPackages)
+                {
+                    <div class="card border-success mb-3" style="min-width: 25rem; border:5px solid #007AFC !important;">
+                        <div class="card-header text-center" style="margin:10px;color:white;">
+                            <h4>@item.Name</h4>
+                            <h4>@item.PackageAmount</h4>
+                        </div>
+                        <div class="card-body text-left" style="color:black;">
+                            @Html.Raw(item.Description)
+                        </div>
+                        <div class="card-footer bg-transparent border-success">
+                            @using (Html.BeginForm("Index", "Subscription", FormMethod.Post, new {id="AdminSubcribeForm", enctype = "multipart/form-data" }))
+                            {
+                                @Html.HiddenFor(x => item.PackageId)
+                                @Html.HiddenFor(x => item.AccountType)
+                                @Html.HiddenFor(x=>x.TenantId)
+
+                            <span class="k-card-actions k-card-actions-vertical" id="mySpan">
+                                @if (Model.SubscriptionName  != null && item.PackageOrder == Model.PackageOrder)
+                                {
+                                    <button class="k-button k-flat k-primary btnaddfree" type="submit" id="btnaddfree" name="btnaddfree" value="Update">
+                                        Update
+                                    </button>
+                                }
+                                else if (Model.SubscriptionName != null && Model.PackageOrder > item.PackageOrder)
+                                {
+                                    <button class="k-button k-flat k-primary btnaddfree" type="submit" id="btnaddfree" name="btnaddfree" value="Downgrade">
+                                        Downgrade
+                                    </button>
+                                }
+                                else if (Model.SubscriptionName != null && Model.PackageOrder < item.PackageOrder)
+                                {
+                                    <button class="k-button k-flat k-primary btnaddfree" type="submit" id="btnaddfree" name="btnaddfree" value="Upgrade">
+                                        Upgrade
+                                    </button>
+                                }
+                                else
+                                {
+                                <button class="k-button k-flat k-primary btnaddfree" type="submit" id="btnaddfree" name="btnaddfree" value="addfree">
+                                    SUBSCRIBE
+                                </button>
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+                </text>);*@
+
+
+
+               
+
+                
+      tabstrip.Add().Text("Profile")
+    .Selected(true)
+    .Content(@<text>
+                    <hr />
+            @using (Html.BeginForm("Update", "Customer", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                                    <section class="content">
+                                        @Html.HiddenFor(x => x.ID)
+                                        @*@Html.HiddenFor(x => x.CreatedDate)*@
+                                        <div class="row">
+                                            <div class="col-sm-7">
+                                                <div class="row">
+                                                    <div class="col-sm-3"> @Html.LabelFor(x => x.Name, "Company Name")</div>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(x => x.Name, new { @Class = "k-textbox", style = "width:100%"})
+                                                        @Html.ValidationMessageFor(model => model.Name)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3"> @Html.LabelFor(x => x.Address1)</div>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(x => x.Address1, new { @Class = "k-textbox", style = "width:100%"})
+                                                        @Html.ValidationMessageFor(model => model.Address1)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3"> @Html.LabelFor(x => x.Address2)</div>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(x => x.Address2, new { @Class = "k-textbox", style = "width:100%" })
+                                                        @Html.ValidationMessageFor(model => model.Address2)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">@Html.LabelFor(x => x.City)</div>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(x => x.City, new { @Class = "k-textbox", @id = "txtcity", style = "width:100%" })
+                                                        @Html.ValidationMessageFor(model => model.City)
+                                                    </div>
+                                                    <div class="col-sm-1">@Html.LabelFor(x => x.State)</div>
+                                                    <div class="col-sm-5">
+                                                    @Html.TextBoxFor(x => x.State, new { @Class = "k-textbox", @id = "txtstate", style = "width:93%" })
+                                                    @*@(Html.Kendo().DropDownListFor(m => m.State)
+                                                    .DataValueField("StateId")
+                                                    .DataTextField("Name")
+                                                    .BindTo((System.Collections.IEnumerable)ViewData["Statelist"])
+                                                    .HtmlAttributes(new { style = "width:94%" })
+                                                    )*@
+                                                        @*@Html.TextBoxFor(x => x.State, new { @Class = "k-textbox", @id = "txtstate", style = "width:100%" })*@
+                                                        @Html.ValidationMessageFor(model => model.State)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">@Html.LabelFor(x => x.Country)</div>
+                                                    <div class="col-sm-3">
+                                                        @Html.TextBoxFor(x => x.Country, new { @Class = "k-textbox", @id = "txCountry", style = "width:100%" })
+                                                        @Html.ValidationMessageFor(model => model.Country)
+                                                    </div>
+                                                    <div class="col-sm-1">@Html.LabelFor(x => x.Zip)</div>
+                                                    <div class="col-sm-5">
+                                                        @Html.TextBoxFor(x => x.Zip, new { @Class = "k-textbox", @id = "txtzip", style = "width:93%"})
+                                                        @Html.ValidationMessageFor(model => model.Zip)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">@Html.LabelFor(x => x.Phone)</div>
+                                                    <div class="col-sm-6">
+                                                        @Html.TextBoxFor(x => x.Phone, new { @Class = "k-textbox", @id = "txtphone", style = "width:100%" })
+                                                        @Html.ValidationMessageFor(model => model.Phone)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">@Html.LabelFor(x => x.Website)</div>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextBoxFor(x => x.Website, new { @Class = "k-textbox", style = "width:100%"})
+                                                        @Html.ValidationMessageFor(model => model.Website)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <div class="row">
+                                                    <div class="col-sm-1">
+                                                        @if (@Model.LogoPath != null && @Model.LogoPath != "")
+                                                        {
+                                             <label>Logo</label>
+                                                        }
+
+                                                    </div>
+                                                   
+                                                    <div class="col-sm-10">
+                                                        @Html.HiddenFor(x => x.LogoPath)
+                                                         <img class="logo-txt pull-left" style="height: 250px; width: 250px "  src="@Model.LogoPath" />
+                                                             @*@Html.HiddenFor(x => x.logofilesNull)*@
+                                                        <input type="file" id="logofiles" name="logofiles">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    @*<div class="col-sm-12">
+                                                        <div id="preview"></div>
+                                                    </div>*@
+                                                </div>
+                                                <div>
+                                                    <br />
+                                                    <p></p><br />
+                                                    @*<p><span style=" font-size: medium; color: red;">Suggested Logo Size : </span><span style=" font-size: medium;">  200px X 45px</span></p>
+                                                    <p><span style=" font-size: medium; color: red;">Suggested aspect ratio is :</span><span style=" font-size: medium;"> 40 : 9</span></p>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="k-edit-buttons k-state-default">
+                                                <button id="Apply" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Apply</button>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+                                    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+                                    <script type="text/javascript">
+                                        $(document).ready(function () {
+                                            var logopath = $("#LogoPath").val();
+                                            if (logopath != undefined && logopath != "") {
+                                                $("<img width=250>").attr("src", logopath).appendTo($("#preview"));
+                                            }
+                                            //$("#logofiles").kendoUpload({
+                                            //    "multiple": false,
+                                            //    remove: function (e) {
+                                            //        $("#preview").empty();
+                                            //        $("#LogoPath").val("");
+                                            //        $("#LogoPath").trigger("change");
+                                            //    },
+                                            //    select: function (e) {
+                                            //        $("#preview").empty();
+                                            //        for (var i = 0; i < e.files.length; i++) {
+                                            //            var file = e.files[i].rawFile;
+
+                                            //            if (file) {
+                                            //                var reader = new FileReader();
+
+                                            //                reader.onloadend = function () {
+                                            //                    $("<img width=150 height=150>").attr("src", this.result).appendTo($("#preview"));
+                                            //                    $("#LogoPath").val(this.result);
+                                            //                    $("#LogoPath").trigger("change");
+                                            //                };
+
+                                            //                reader.readAsDataURL(file);
+                                            //            }
+                                            //        }
+                                            //    }
+                                            //});
+
+                                            });
+                                       
+                                    </script>
+
+              }
+
+                </text>);
+
+                tabstrip.Add().Text("Subscription")
+
+                          //.LoadContentFrom(Url.Content("~/Customer/Index?id=" + Model.TenantId))
+                          .LoadContentFrom(Url.Content("~/ProductSubscriptionSRVNew/Index?id=" + Model.TenantId));
+                //.Selected(true);
+
+                tabstrip.Add().Text("Users")
+                    .LoadContentFrom(Url.Content("~/Customer/CustomerUser?id=" + Model.TenantId));
+
+                tabstrip.Add().Text("Invoice History")
+                        .LoadContentFrom(Url.Content("~/Customer/CustomerInvoiceHistory?id=" + Model.TenantId));
+
+
+                if (Model.AccountType == 2)
+                {
+
+                    //tabstrip.Add().Text("Dispatch")
+                    //   .LoadContentFrom(Url.Content("~/Customer/DispatchService?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Dispatch")
+                     .LoadContentFrom(Url.Content("~/DispatchSRV/Indexmain?id=" + Model.TenantId));
+                }
+                else if (Model.AccountType == 0 || Model.AccountType == 3)
+                {
+                    tabstrip.Add().Text("Wells")
+                       .LoadContentFrom(Url.Content("~/Customer/CustomerWellData?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Rigs")
+                        .LoadContentFrom(Url.Content("~/Customer/CustomerRigs?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Pads")
+                            .LoadContentFrom(Url.Content("~/Customer/CustomerPads?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Workstation")
+                           .LoadContentFrom(Url.Content("~/Customer/CustomerWorkStation?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Provider")
+                           .LoadContentFrom(Url.Content("~/Customer/CustomerVendors?id=" + Model.TenantId));
+                    //tabstrip.Add().Text("Dispatch")
+                    //   .LoadContentFrom(Url.Content("~/Customer/Dispatch?id=" + Model.TenantId));
+
+                    //tabstrip.Add().Text("Dispatch")
+                    //       .LoadContentFrom(Url.Content("~/Customer/DispatchService?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Dispatch")
+                  .LoadContentFrom(Url.Content("~/DispatchSRV/Indexmain?id=" + Model.TenantId));
+                }
+                else if (Model.AccountType == 1 || Model.AccountType == 4)
+                {
+
+                    tabstrip.Add().Text("Subscribed Operators")
+                        .LoadContentFrom(Url.Content("~/Customer/SubscribedOperators?id=" + Model.TenantId));
+
+                    //tabstrip.Add().Text("Dispatch")
+                    //        .LoadContentFrom(Url.Content("~/Customer/DispatchService?id=" + Model.TenantId));
+                    tabstrip.Add().Text("Dispatch")
+                  .LoadContentFrom(Url.Content("~/DispatchSRV/Indexmain?id=" + Model.TenantId));
+
+                }
+
+            })
+    )
+        </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-5">
+            <div class="k-edit-buttons k-state-default pull-right">
+                @if (Model.AccountType == 0)
+                {
+                    <a href="~/Customer/CustomerManagePermissions?id=@Model.TenantId&accountType=1" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Manage Permissions</a>
+                    <a href="~/Customer/CustomerManageRole?id=@Model.TenantId" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Manage Role</a>
+                }
+                else
+                {
+                    <a id="btnPermission" href="~/Customer/CustomerManagePermissions?id=@Model.TenantId&accountType=2" class="k-button k-primary k-button-icontext k-grid-update"><span class="k-icon k-i-check"></span>Manage Permissions</a>
+                    <a id="btnRole" href="~/Customer/CustomerManageRole?id=@Model.TenantId" class="k-button k-primary k-button-icontext k-grid-update"><span class="k-icon k-i-check"></span>Manage Role</a>
+                }
+                <button id="btnCancel" onclick="btnBack()" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Back</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+@(Html.Kendo().Window().Name("TwilioChat")
+    .Title("Chat")
+    .Visible(false)
+	.Content(@<text>
+         @(Html.Kendo().Chat()
+                    .Name("chat")
+                    .Toolbar(toolbar =>
+                    {
+                        toolbar.Toggleable(true);
+                        toolbar.Buttons(buttons =>
+                        {
+
+                        });
+                    })
+                    .Events(e =>
+                    {
+                        e.Post("onPost");
+                    })
+            )
+   </text>
+    )
+    .Actions(actions => actions
+        .Close()
+    )
+    .Events(e =>
+        {
+            e.Close("onClose");
+        })
+    .Modal(true)
+    .Draggable(true).Width(600)
+)
+@(Html.Kendo().Window().Name("DepthRigValidation")
+    .Title("Alert : Unable to Delete the Subscribed Operator")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="WindowContent"></div>
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(500)
+    .Draggable(true)
+)
+
+
+<script type="text/x-kendo-template" id="templateWorkstation">
+    <div id="details-container">
+    </div>
+</script>
+<script>
+    function OnDataBound(e) {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+
+        var InsurencecolumnIndex = this.wrapper.find(".k-grid-header [data-field=" + "InsuranceExpire" + "]").index();
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+            var ExpireDate = dataItem.get("InsuranceExpire");
+
+            if (ExpireDate != null) {
+                var ExpirationDate = ExpireDate;
+                var CurrentDate = new Date();
+
+                var diffDays = parseInt((ExpirationDate - CurrentDate) / (1000 * 60 * 60 * 24), 10);
+                if (diffDays <= 7) {
+                    var cell = row.children().eq(InsurencecolumnIndex);
+                    cell.addClass("RowHighlight");
+                }
+            }
+        }
+    }
+
+    //Strat Workstation
+    function refreshWorkstation() {
+        $("#workstationdatamaster").data("kendoGrid").dataSource.read();
+    }
+    var detailsTemplate = kendo.template($("#templateWorkstation").html());
+
+    function showWorkstationDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        dataItem.CreatedDate = kendo.toString(kendo.parseDate(dataItem.CreatedDate), 'MM/dd/yyyy');
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+
+    function OnSaveWorkstationChanges(e) {
+        setTimeout(function () {
+
+            $('#workstationdatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#workstationdatamaster').data('kendoGrid').refresh();
+            });
+
+        }, 1500);
+
+    }
+    function RenameWorkstationWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Workstation Register");
+        }
+    }
+    //End Workstation
+    //start Gig and Pads
+    function RenameRigWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Rig");
+        } else {
+
+            $("#Rig_id")
+                .val(e.model.Rig_id)
+                .trigger("change");
+        }
+        var id = getUrlParameter('id');
+        $("#TenantID")
+            .val(id)
+            .trigger("change");
+    }
+    function RenamePadWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Pad");
+        } else {
+            $("#Pad_id")
+                .val(e.model.Pad_id)
+                .trigger("change");
+        }
+        var id = getUrlParameter('id');
+        $("#TenantID")
+            .val(id)
+            .trigger("change");
+    }
+
+    //End Rigs and Pads
+
+    // start Well data
+
+    function onGridSave(e) {
+        setTimeout(function () {
+            $('#welldatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#welldatamaster').data('kendoGrid').refresh();
+            });
+        }, 1600);
+    }
+    function RenameWindow(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("New Well");
+        }
+        else {
+            $("#OldPredictionForUpdate").val(e.model.OldPredictionForUpdate).trigger("change");
+            var colorPicker = $("#chartColor").data("kendoColorPicker");
+            if (e.model.chartColor !== null && $.trim(e.model.chartColor).length > 1)
+            colorPicker.value(e.model.chartColor);
+        }
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        kendo.confirm("Do you want remove this item?.")
+            .done(function () {
+                $.ajax({
+                    url: "/Customer/WellDataDestroy?wellId=" + dataItem.wellId,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+
+                        var grid = $("#welldatamaster").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+
+
+    // End Well data
+    $('#btnChageSubscription').click(function () {
+        displayLoading("#loaderId", true);
+
+        var id = $("#SubscriptionId").val();
+               $.ajax({
+                  type: "GET",
+                  contentType: "application/json; charset=utf-8",
+                  dataType: "json",
+                   url: '/Customer/UpdateSubscriptioIsEnable?id='+id,
+                   success: function (response) {
+                       $("#IsEnableSubscription").empty();
+                       $("#IsEnableSubscription").text(response);
+                       var Value = document.getElementsByClassName('btnaddfree');
+                       if (response == "Deactivate")
+                       {
+                           for (var i = 0; i < Value.length; i++) {
+                               Value[i].disabled = true;
+                           }
+                       }
+                       else {
+                           for (var i = 0; i < Value.length; i++) {
+                               Value[i].disabled = false;
+                           }
+                       }
+                       displayLoading("#loaderId", false);
+
+                  },
+                  error: function (xhr, status, error) {
+
+                      displayLoading("#loaderId", false);
+
+                  }
+              });
+            })
+
+    function btnBack() {
+        if (@Convert.ToInt32(TempData["accountType"]) === 1) {
+            @{TempData.Keep();}
+
+            window.location.href = "/Customer/Service";
+        }
+        else  if (@Convert.ToInt32(TempData["accountType"]) === 2) {
+        @{TempData.Keep();}
+
+            window.location.href = "/Customer/Dispatch";
+        } else {
+            window.location.href = "/Customer/Operator";
+        }
+    }
+    function UsergridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add New User");
+            $("#IsActive").prop('checked', true).trigger("change");
+            $("#hideResetPassword").addClass("hideResetPassword");
+        }
+       if (e.model.WellOfficeUser === false) {
+           $('#divUserwells').addClass('k-state-disabled')
+        }
+
+        var Id = e.model.UserTenantId;
+
+        BindUserRoles(Id, e.model.UserID);
+        BindUserWells(Id, e.model.UserID);
+    }
+
+    function DataBound(e) {
+        var grid = this;
+        this.expandRow(this.tbody.find("tr.k-master-row").first());
+        //Grid Row Clik
+            grid.element.off('dblclick');
+            grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+                grid.editRow($(e.target).closest('tr'));
+            })
+
+    }
+    function officeCheckfunction() {
+
+            $('#officeCheck').prop('checked', true);
+        $('#wellCheck').prop('checked', false);
+        $('#divUserwells').addClass('k-state-disabled')
+
+            var multiselect = $("#userwells").data("kendoMultiSelect");
+            multiselect.enable(false);
+    }
+    function wellCheckfunction() {
+            $('#wellCheck').prop('checked', true);
+        $('#officeCheck').prop('checked', false);
+        $('#divUserwells').removeClass('k-state-disabled')
+            var multiselect = $("#userwells").data("kendoMultiSelect");
+            multiselect.enable(true);
+    }
+
+    function customerDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = "/Customer/customerDetail?id=" + dataItem.TenantId;
+    }
+    function BindUserRoles(id, userId) {
+        var id = getUrlParameter("id");
+        $("#userroles").kendoMultiSelect({
+            placeholder: "Select Role...",
+            dataTextField: "Name",
+            dataValueField: "Id",
+            autoBind: true,
+            dataSource: {
+                type: "json",
+                serverFiltering: true,
+                transport: {
+                    read: {
+                        url: "/Customer/GetUserRolesList?id=" + id,
+                    }
+                }
+            },
+            change: multiUserChange,
+            dataBound: setSelectedRoles(userId)
+        });
+    }
+    function errorUser(args) {
+        if (args.errors) {
+            var grid = $("#CustomerUserGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+    function multiUserChange(e) {
+        var multiselect = $("#userroles").data("kendoMultiSelect");
+        var selectedData = "";
+        var items = multiselect.value();
+        for (var i = 0; i < items.length; i++) {
+            selectedData += items[i] + ";";
+        }
+        $("#SelectedRoles").val(selectedData);
+        $("#SelectedRoles").trigger("change");
+    }
+    function refrashUserGrid() {
+        $("#CustomerUserGrid").data("kendoGrid").dataSource.read();
+    }
+    function setSelectedRoles(userId) {
+        var row = $(event.srcElement).closest("tr");
+        var grid = $(event.srcElement).closest("[data-role=grid]").data("kendoGrid");
+        $.ajax({
+            url: "/Customer/SetSelectedRoles?userId=" + userId,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                $("#userroles").data("kendoMultiSelect").value(data);
+                multiUserChange();
+            }
+        });
+    }
+
+    function BindUserWells(id, userId) {
+        var id = getUrlParameter("id");
+        $("#userwells").kendoMultiSelect({
+            placeholder: "Select Rigs...",
+            dataTextField: "rigName",
+            dataValueField: "rigID",
+            autoBind: true,
+            dataSource: {
+                type: "json",
+                serverFiltering: true,
+                transport: {
+                    read: {
+                        url: "/Customer/GetRigMasterList?id=" + id,
+                    }
+                }
+            },
+            change: multiChangeWells,
+            dataBound: setSelectedWells(userId)
+
+        });
+    }
+
+    function multiChangeWells() {
+        var multiselect = $("#userwells").data("kendoMultiSelect");
+        var selectedData = "";
+        var items = multiselect.value();
+        for (var i = 0; i < items.length; i++) {
+            selectedData += items[i] + ";";
+        }
+        $("#SelectedWells").val(selectedData);
+        $("#SelectedWells").trigger("change");
+    }
+    function setSelectedWells(userId) {
+        var row = $(event.srcElement).closest("tr");
+        var grid = $(event.srcElement).closest("[data-role=grid]").data("kendoGrid");
+        $.ajax({
+            url: "/Customer/SetSelectedWells?userId=" + userId,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                $("#userwells").data("kendoMultiSelect").value(data);
+                multiChangeWells();
+            }
+        });
+    }
+
+    function resetpasswordUserPassword() {
+        var email = $("#Email").val();
+        var fullname = $("#FirstName").val();
+        var dialog = $("#dialog");
+        dialog.kendoDialog({
+            width: "500px !important",
+            title: "Reset Password",
+            closable: true,
+            modal: true,
+            content: "<p><input type='hidden' id='userEmail' value='" + email + "'>Are You sure want to reset password for <strong>" + fullname + " </strong>? Once you click yes, Reset password e-mail sent to <strong> " + email + " </strong><p>",
+            actions: [
+                { text: 'No', action: onCancel },
+                { text: 'Yes', primary: false, action: onOK }
+            ]
+        });
+        dialog.data("kendoDialog").open();
+    }
+
+    function onCancel(e) {
+
+    }
+
+    function onOK(e) {
+        var email = $("#userEmail").val();
+        $.ajax({
+            url: "/Customer/ForgotPassword?Email=" + email,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    //Twilio Phone Call, Video Call and Chat
+    $(document).ready(function () {
+        isAnswerCall = false;
+        chatHub.on('ReceiveVideoNotification', function (sender, receiver, roomName) {
+            if (sender === '@senderUser' && roomName==='Close') {
+                windowClose();
+
+            }
+        });
+
+        var Value = document.getElementsByClassName('btnaddfree');
+        if ('@SubscriptionStatus' == "Deactivate") {
+
+            for (var i = 0; i < Value.length; i++) {
+                Value[i].disabled = true;
+            }
+        }
+        else {
+            for (var i = 0; i < Value.length; i++) {
+                Value[i].disabled = false;
+            }
+        }
+
+    });
+
+    function MakePhoneCall(phone) {
+        console.log("Calling : " + phone);
+        $("#wndCall").empty();
+        $("#wndCall").text("Calling....");
+        var wnd = $("#Call").data("kendoWindow");
+        wnd.content();
+        wnd.center().open();
+        $('#wndCall').load('/CommunicationAdmin/ManageCall', { phone: phone }, function (response, status, xhr) {
+            if (status == "error") {
+                try {
+                    var msge = $.parseJSON(response);
+                } catch (e) {
+                }
+            }
+        });
+    }
+
+    function showVideo(userName, receiver, contactUserID) {
+
+         var url = '@Url.Action("GenerateRoomName", "Token")';
+        $.getJSON(url, function (data) {
+
+            videoRoom = data;
+            chatHub.invoke("SendVideoNotification", '@senderUser', receiver, videoRoom);
+            openVideoPoupu(userName);
+            //Phase II Changes - 03/11/2021
+	        var callMessage = 'Video Call From ' + '@senderUser';
+            SaveCommunicationNotification(contactUserID, callMessage, 'Video Call');
+        });
+
+    }
+    var videoTemplate = kendo.template($("#template").html());
+    var answerCallTemplate = kendo.template($("#templateAnswerCall").html());
+
+
+    //Phase II Changes
+    //Message Type - Chat/Video Call
+    function SaveCommunicationNotification(receiver, msg, msgType) {
+        var posturl = 'CommunicationAdmin/SaveMessageNotification?toUser=' + receiver + "&message=" + msg + "&type=1" + "&messageType=" + msgType;
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+
+                }
+            }
+        });
+    }
+
+    //Twilio Chat Integration
+    function UpdateStatusDisconnected() {
+        var posturl = '@Html.Raw(Url.Action("UpdateStatusNotification", "CommunicationAdmin"))';
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+
+                }
+            }
+        });
+    }
+
+    function showTwilioChat(userName, receiver, contactUserID) {
+
+        UpdateStatusDisconnected();
+        console.log('receiver ' + receiver);
+
+
+        selectedProfile = receiver;
+
+        var dataItem = {
+            UserName: userName
+        };
+
+        var wnd = $("#TwilioChat").data("kendoWindow");
+        var title = "Chat with " + userName;
+        wnd.title(title);
+
+        wnd.center().open();
+
+        window.chat = $("#chat").data("kendoChat");
+        chat.view.element[0].childNodes[0].innerHTML = "";
+
+        CreateOrJoinChatChannel(receiver);
+    }
+
+    function CreateOrJoinChatChannel(receiver) {
+
+        var profileEmail = receiver;
+        GetTwilioUserChannels(profileEmail);
+    }
+    function LeaveChatRoom(profileEmail) {
+        LeaveTwilioChatRoom(profileEmail);
+    }
+    //Karthik
+
+    function LeaveTwilioChatRoom(profileEmail,userId) {
+        var loginUser = '@senderUser';
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+        var leaveChannelSuccess = false;
+        var bChannelExists = false;
+        console.log("profileEmail @@ LeaveChatRoom: " + profileEmail);
+        console.log("loginUser @@ LeaveChatRoom : " + loginUser);
+
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+
+                $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+                    Twilio.Conversations.Client.create(data.token).then(client => {
+                console.log('Created chat client @@Twilio');
+                chatClient = client;
+                chatClient.getSubscribedConversations().then(function (paginator) {
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+
+                        console.log('Channel: ' + channel.friendlyName);
+                        //check for touser (profileEmail) and fromuser (UserName)
+
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+
+                            JoinUserChannel(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+
+                            JoinUserChannel(channel, profileEmail);
+                            leaveChannelSuccess = LeaveUserChannel(userId);
+                            if (leaveChannelSuccess == true) {
+                                $("#li_" + userId).remove();
+                            }
+
+                            break;
+                        }
+                    }
+
+                });
+
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+
+
+        return leaveChannelSuccess;
+    }
+
+
+        //profileEmail is toUser
+    function GetTwilioUserChannels(profileEmail) {
+        var loginUser = '@senderUser';
+
+        if (loginUser == "" || loginUser == undefined || profileEmail == "") {
+            return;
+        }
+
+        var bChannelExists = false;
+       console.log("profileEmail : " + profileEmail);
+       console.log("loginUser : " + loginUser);
+
+        //Invited/Second user identity
+        $.post("/Token/GenerateUserChatToken", { userName: profileEmail }, function (data) {
+            currentChatUserId = data.identity;
+        });
+
+       window.chat = $("#chat").data("kendoChat");
+        $.post("/Token/GenerateUserChatToken", { userName: loginUser }, function (data) {
+            loginUserId = data.identity;
+            // Initialize the Chat client
+            Twilio.Conversations.Client.create(data.token).then(client => {
+
+                console.log('Created chat client');
+                    chatClient = client;
+                //chatClient.getSubscribedConversations().then(createOrJoinGeneralChannel);
+                // Alert the user they have been assigned a random loginUserId
+
+                //Join the new invitations from other users
+                //chatClient.on('channelInvited', function (channel) {
+
+                //    console.log('Invited to channel ' + channel.friendlyName);
+                //    // Join the channel that you were invited to
+                //    channel.join();
+                //    JoinUserChannel(channel, profileEmail);
+                //});
+
+                chatClient.getSubscribedConversations().then(function (paginator) {
+
+                    for (i = 0; i < paginator.items.length; i++) {
+                        var channel = paginator.items[i];
+
+                        console.log('Channel: ' + channel.friendlyName);
+                        //check for touser (profileEmail) and fromuser (UserName)
+
+                        if (channel.friendlyName == 'c_' + loginUser + '_' + profileEmail ) {
+                            bChannelExists = true;
+
+                            JoinUserChannel(channel, profileEmail);
+                            break;
+                        }
+                        else if (channel.friendlyName == 'c_' + profileEmail + '_' + loginUser) {
+                            bChannelExists = true;
+
+                            JoinUserChannel(channel, profileEmail);
+                            break;
+                        }
+
+                    }
+
+                     if (bChannelExists.toString() == 'false') {
+                        var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "CommunicationAdmin",
+                                        new { fromUser = "sender", toUser = "receiver" }))'
+                            .replace("sender", loginUser)
+                            .replace("receiver", profileEmail)
+                        $.ajax({
+                            url: posturl,
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+
+                                var result = data.toString();
+
+                                if (result == 'undefined' || result == '') {
+
+                                    CreateUserChannel('c_' + loginUser + '_' + profileEmail, profileEmail);
+                                }
+                                else {
+
+                                }
+                            }
+                        });
+                    }
+                });
+
+                //chatClient
+                loginUserId = data.identity;
+            }).catch(error => {
+                console.error(error);
+            });
+
+
+        });
+    }
+
+    function saveChannelInTwilioUserMapping(receiver, sid, userIdentity, uniqueName) {
+
+        var posturl = '@Html.Raw(Url.Action("AddUserChannelInTwilioMappings", "CommunicationAdmin",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID", userIdentity= "userid", channelUniqueName = "channelname"}))'
+            .replace("sender", loginUserId)
+            .replace("receiver", receiver)
+            .replace("channelSID", sid)
+            .replace("userid", userIdentity)
+            .replace("channelname", uniqueName)
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+            }
+        });
+    }
+
+    function inviteUsertoChannel(sid, receiver) {
+
+         var posturl = '@Html.Raw(Url.Action("UpdateUserChannelInvitationStatus", "CommunicationAdmin",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+
+                }
+            }
+        });
+    }
+
+    function leaveUserFromChannel(sid, receiver) {
+
+         var posturl = '@Html.Raw(Url.Action("UpdateLeaveUserChannelStatus", "CommunicationAdmin",
+                       new { fromUser = "sender", toUser = "receiver", channelId = "channelSID" }))'
+             .replace("sender", loginUserId)
+             .replace("receiver", receiver)
+             .replace("channelSID", sid);
+        $.ajax({
+            url: posturl,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                if (data) {
+                    console.log('Status updated');
+                }
+            },
+            error: function (request, error) {
+                console.log('leaveUserFromChannel ' + error);
+
+            },
+        });
+    }
+
+    function getUserChannelId(fromuser, touser) {
+
+        var channelId = "";
+         var posturl = '@Html.Raw(Url.Action("GetChannelForFromAndToUser", "CommunicationAdmin",
+                       new { fromUser = "sender", toUser = "receiver" }))'
+                         .replace("sender", fromuser)
+                         .replace("receiver", touser)
+        $.ajax({
+            url: posturl,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+                if (data) {
+                   channelId = data;
+                }
+            }
+        });
+
+        return channelId;
+    }
+
+
+    function SubOprDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+       kendo.confirm("Are you sure you want to UnRegister this?")
+           .done(function () {
+                    $.ajax({
+                        url: "/Customer/SubscribedOperator_Destroy?companyId=" + dataItem.CompanyId + "&TenantId=" + sessionStorage.getItem("TenantId"),
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            if (data.IsDepthPermission == true) {
+                                $('#DepthRigValidation').html("Depth Permission set on Operator Rigs");
+                                var wnd = $("#DepthRigValidation").data("kendoWindow");
+                                wnd.center().open();
+
+                            }
+                            var grid = $("#SubscribedOperators").data("kendoGrid");
+                            grid.dataSource.read();
+                        }
+                    });
+                 })
+                .fail(function () {
+                   return false;
+                 });
+    }
+
+    function OnRigGridSave()
+    {
+        setTimeout(function () {
+            $('#rigdatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#rigdatamaster').data('kendoGrid').refresh();
+            });
+        }, 1500);
+    }
+
+    function OnPadGridSave()
+    {
+        setTimeout(function () {
+            $('#paddatamaster').data('kendoGrid').dataSource.read().then(function () {
+                $('#paddatamaster').data('kendoGrid').refresh();
+            });
+        },1500);
+
+    }
+
+    function OnSubscribedGridEdit(e) {
+        sessionStorage.setItem("CompanyId", e.model.CompanyId);
+        var readURL = "/Customer/ReadSubscibeOPerator_Rigs?TenantId=" + e.model.CompanyId;
+        gridObject = $("#SubscribeOperatorRigs").data("kendoGrid");
+        gridObject.dataSource.transport.options.read.url = readURL;
+        gridObject.dataSource.read();
+
+        var window = e.container.data('kendoWindow')
+        window.setOptions({
+            position: {
+                top: 110,
+            }
+        });
+        if (e.model.isNew()) {
+            window.title(e.model.Name);
+        } else {
+            window.title(e.model.Name)
+        }
+    }
+
+    //DWOP
+      function onFilter() {
+        return {
+            text: $("#numAPI").val()
+        };
+    }
+
+
+     //DWOP
+    function onApiNumChange() {
+         if ('@TempData["Error"]') {
+             var autocomplete = $("#numAPI").data("kendoAutoComplete");
+                    autocomplete.setOptions({ noData: "Permission dined to access data." });
+           }
+    }
+
+
+    //DWOP
+    function onApiNumSelect(e) {
+        var dataItem = this.dataItem(e.item.index());
+        console.log(' dataItem api_number' + dataItem.api_number);
+        console.log(' dataItem name ' + dataItem.name);
+        if (dataItem.api_number != "") {
+            $("#wellName").val(dataItem.name).trigger("change");
+            $("#state").val(dataItem.state).trigger("change");
+            $("#county").val(dataItem.county).trigger("change");
+            $("#latitude").val(dataItem.latitude).trigger("change");
+            $("#longitude").val(dataItem.longitude).trigger("change");
+        }
+    }
+    function deleteVisible(dataItem) {
+
+        if (dataItem.rigwellandlocation == "No Destinations Found") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>
+

@@ -1,0 +1,58 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.RigModel
+@{
+    ViewData["Title"] = "Edit Rig";   
+}
+<script type="text/javascript">
+    
+    //Phase II changes - 02/17/2021
+    $(".k-grid-update").click(function (e) {
+        alert('EditRigWindowClose');
+    });
+    $(".k-grid-cancel").click(function (e) {
+        alert('EditRigWindowClose');
+    });
+</script>
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Rig_Name, "Rig")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Rig_Name, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Rig_Name)
+            </div>
+        </div>
+    </div>
+    <div class="row" style="display:none;">
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Latitude, "Latitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Latitude, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Latitude)
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="k-edit-label" style="padding-right: 5%;">
+                @Html.LabelFor(model => model.Longitude, "Longitude")
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Longitude, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Longitude)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+</style>

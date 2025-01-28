@@ -1,0 +1,169 @@
+﻿
+@{
+    Layout = null;
+}
+
+<section>
+
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.OperatingProviderProfile>()
+        .Name("SubscribedOperators")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ProviderId);
+            columns.Bound(p => p.Name).Width(200);
+            columns.Bound(p => p.Address1).Title("Address");
+            columns.Bound(p => p.Phone).Width(120);
+            columns.Bound(p => p.City).Width(110);
+            columns.Bound(p => p.State).Width(110);
+            columns.Bound(p => p.MSADocument).ClientTemplate("<a href='" + @Url.Action("Download", "Customer", new { tenId = "#=CompanyId#", fileId = "#=MSADocumentId#" }) + "' class='linkstyle'>#=MSADocument#</a>");
+            columns.Bound(p => p.InsuranceDocument).Title("Ins. Document").ClientTemplate("<a href='" + @Url.Action("InsurenceDownload", "Customer", new { tenId = "#=ServiceTenantId#", fileId = "#=InsuranceId#" }) + "' class='linkstyle'>#=InsuranceDocument#</a>");
+            columns.Bound(p => p.InsuranceExpire).Width(120).Title("Ins. Expire").Format("{0: MM/dd/yyyy}");
+            columns.Bound(p => p.Website).ClientTemplate("<a href='#=Website#' target='_blank' class='linkstyle'>#=Website#</a>").Hidden(true);
+            columns.Bound(p => p.RigName).Title("Subscribed Rigs").Width(250);
+            columns.Command(command =>
+            {
+                command.Custom("Delete").Text("<button class='btn btn-primary'>UnRegister</button>").Click("SubOprDelete");
+            }).Title("Action").Width(110);
+        })
+        .Pageable(p =>
+                    p.Info(true)
+                     .Numeric(false)
+                     .PreviousNext(false)
+                )
+        .Scrollable(scrollable => scrollable.Virtual(true))
+        .Sortable(s => s.Enabled(true))
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditSubscribeOperator").Window(w => w.Title("Edit Rigs").Width(700)).DisplayDeleteConfirmation("Are you sure you want to UnRegister this item?").ConfirmDelete("Are you sure you want to UnRegister this item ?"))
+        .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .PageSize(10)
+                    .ServerOperation(true)
+                    .Model(model => model.Id(p => p.ProviderId))
+                    .Read(read => read.Action("SubscribedOperators_Read", "Customer",new { TenantId = ViewBag.TenantId}))
+                    )
+                     .Events(e =>
+                     {
+                         e.Edit("OnSubscribedGridEdit");
+                         e.DataBound("OnDataBound");
+                     })
+                    )
+
+</section>
+
+@(Html.Kendo().Window().Name("OperatorRigs")
+    .Title("Alert : Unable to Register New Rigs")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="WindowContent">You have subscribed for access to<strong> @TempData["SubscriptionRigsCount"]  Rigs</strong>. Would you like to Upgrade
+      you subscription or change your selection ?</div>
+
+        <div class="text-center footer">
+            <button id="UpgradeteBtn" class="k-button k-primary" onclick="SubscribeUpdate()">Upgrade</button>
+            <button id="ReturBtn" class="k-button k-cancel-button" onclick="Cancel()">Return</button>
+        </div>
+
+    </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Width(500)
+    .Height(100)
+    .Draggable(true)
+)
+<style>
+    .linkstyle {
+        text-decoration: underline !important;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    /*.k-i-close {
+        display: none !important;
+    }*/
+    .k-i-close
+    {
+        height:auto !important;
+    }
+    .RowHighlight {
+        background-color: #ff6344 !important;
+        color: white !important;
+    }
+
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () {
+            sessionStorage.setItem("TenantId",'@ViewBag.TenantId');
+        },2000);
+    });
+
+    function SubscribeUpdate() {
+        document.getElementById('AdminSubcribeForm').submit();
+    }
+
+    function Cancel() {
+        var wnd = $("#OperatorRigs").data("kendoWindow");
+        wnd.close();
+    }
+
+    function OnDataBound(e)
+    {
+        var Grid = this;
+        Grid.element.off("Double click");
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+
+
+    function OnRigEdit(e) {
+        var selectedIds = e.sender.selectedKeyNames().join(";");
+        var CompanyId = sessionStorage.getItem("CompanyId");
+        var status = SelectedEditRigs.findIndex(x => x.CompanyId === CompanyId);
+        if (status !== -1) {
+            SelectedEditRigs.forEach(function (Compid) {
+                if (Compid.CompanyId == CompanyId) {
+                    Compid.RigId = selectedIds
+                }
+            });
+        } else {
+            var Rigs =
+            {
+                ID: '@ViewBag.TenantId',
+                RigId: selectedIds,
+                CompanyId: CompanyId,
+            };
+            SelectedEditRigs.push(Rigs);
+        }
+    }
+
+    function OnRigDataBound(e) {
+        var CompanyId = sessionStorage.getItem("CompanyId");
+        var grid = $('#SubscribeOperatorRigs').data('kendoGrid');
+        var rows = grid.items();
+        console.log("rows:" + rows);
+        console.log(e);
+        $.ajax({
+            url: "/Customer/Read_SubscribeOPerator_Rigs?CompanyId=" + CompanyId + "&TenantId=" + '@ViewBag.TenantId',
+            type: 'GET',
+            dataType: "Json",
+            async: false,
+            success: function (ResponseData) {
+                $(rows).each(function (e) {
+                    var row = this;
+                    var dataItem = grid.dataItem(row);
+                    for (var i = 0; i < ResponseData.Result.length; i++) {
+                        if (dataItem.RigId === ResponseData.Result[i].RigId) {
+                            grid.select(row);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,319 @@
+﻿@model WellAI.Advisor.Model.Common.Registration
+@using (Html.BeginForm("Registration", "_CompanyDetails", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{<div class="form" id="companyform">
+        <div class="row">
+            <div class="col-md-6 cmp info">
+                <h2>Company Info</h2>
+                <div class="form-fields-wrapper row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.Name, "Name *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.Name, new { @Class = "k-textbox", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.Name)
+                                @*<input type="text" id="CpName" name="CpName" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CName, "Company Name *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CName, new { @Class = "k-textbox", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CName)
+                                @*<label for="CpCName" class="text-small">Company Name *</label>
+                                    <input type="text" id="CpCName" name="CpCName" maxlength="50" />*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.Title, "Title *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.Title, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.Title)
+                                @*<label for="CpTitle" class="text-small">Title *</label>
+                                    <input type="text" id="CpTitle" name="CpTitle" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyPhone, "Phone *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyPhone, new { @Class = "k-textbox", @min = "0", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyPhone)
+                                @*<label for="CpPhone" class="text-small">Phone *</label>
+                                    <input type="text" id="CpPhone" name="CpPhone" maxlength="50">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyEmail, "Email *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyEmail, new { @Class = "k-textbox", @type = "email", onblur = "CompanyvalidateEmail()", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyEmail)
+                                @*<label for="CpEmail" class="text-small">Email *</label>
+        <input type="text" id="CpEmail" name="CpEmail" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyAddress1, "Address 1 *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyAddress1, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyAddress1)
+                                @*<label for="CpAddress1" class="text-small">Address 1 *</label>
+                                    <input type="text" id="CpAddress1" name="CpAddress1" maxlength="50">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyAddress2, "Address 2")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyAddress2, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyAddress2)
+                                @*<label for="CpAddress2" class="text-small">Address 2</label>
+                                    <input type="text" id="CpAddress2" name="CpAddress2" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyCity, "City *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyCity, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyCity)
+                                @*<label for="CpCity" class="text-small">City *</label>
+                                    <input type="text" id="CpCity" name="CpCity" maxlength="500">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyState, "State *")
+                                @(Html.Kendo().DropDownListFor(m => m.CompanyDetails.CompanyState)
+                            .DataValueField("StateId")
+                            .DataTextField("Name")
+                            .BindTo((System.Collections.IEnumerable)ViewData["StateList"])
+                            .HtmlAttributes(new { style = "width:100%"})
+                                )
+                                @Html.ValidationMessageFor(x => x.CompanyDetails.CompanyState)
+
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.CompanyZip, "Zip *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.CompanyZip, new { @Class = "k-textbox", @type = "number", @min = "0", @max = "6", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.CompanyZip)
+                                @*<label for="CpZip" class="text-small">Zip *</label>
+            <input type="text" id="CpZip" name="CpZip" maxlength="6">*@
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 cmp info">
+                <h2>
+                    Billing Info
+                    <input type="checkbox" id="fill" name="filladdress" onclick="fillAddress()" />
+                    <label for="same" style="font-size:15px">Same as Company</label>
+                </h2>
+                <div class="form-fields-wrapper row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingName, "Name *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingName, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingName)
+                                @*<label for="biFirstName" class="text-small">Name *</label>
+                                    <input type="text" id="biFirstName" name="biFirstName" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingEmail, "Email *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingEmail, new { @Class = "k-textbox", @type = "email", onblur = "BillingvalidateEmail()", required = "required", style = "width:100%" })
+
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingEmail)
+                                @*<label for="biEmail" class="text-small">Email *</label>
+        <input type="text" id="biEmail" name="biEmail" maxlength="50">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingPhone, "Phone *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingPhone, new { @Class = "k-textbox",  @min = "0", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingPhone)
+                                @*<label for="biPhone" class="text-small">Phone*</label>
+                                    <input type="text" id="biPhone" name="biPhone" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingAddress1, "Address 1 *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingAddress1, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingAddress1)
+                                @*<label for="biAddress1" class="text-small">Address 1*</label>
+                                    <input type="text" id="biAddress1" name="biAddress1" maxlength="50">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingAddress2, "Address 2")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingAddress2, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingAddress2)
+                                @*<label for="biAddress2" class="text-small">Address 2</label>
+                                    <input type="text" id="biAddress2" name="biAddress2" maxlength="50">*@
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingCity, "City *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingCity, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingCity)
+                                @*<label for="biCity" class="text-small">City *</label>
+                                    <input type="text" id="biCity" name="biCity" maxlength="500">*@
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingState, "State *")
+                                @(Html.Kendo().DropDownListFor(m => m.CompanyDetails.BillingState)
+                            .DataValueField("StateId")
+                            .DataTextField("Name")
+                            .BindTo((System.Collections.IEnumerable)ViewData["StateList"])
+                            .HtmlAttributes(new { style = "width:100%"})
+                                )
+                                @Html.ValidationMessageFor(x => x.CompanyDetails.BillingState)
+                            </div>
+                            <div class="col-md-6 form-field">
+                                @Html.LabelFor(x => x.CompanyDetails.BillingZip, "Zip *")
+                                @Html.TextBoxFor(x => x.CompanyDetails.BillingZip, new { @Class = "k-textbox", @type = "number", @min = "0", @max = "6", required = "required", style = "width:100%" })
+                                @Html.ValidationMessageFor(model => model.CompanyDetails.BillingZip)
+                                @*<label for="biZip" class="text-small">Zip *</label>
+            <input type="text" id="biZip" name="biZip" maxlength="6">*@
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+     function CompanyvalidateEmail()
+    {
+        var emailTextBox = document.getElementById("CompanyDetails_CompanyEmail");
+        var email = emailTextBox.value;
+         var emailRegEx = /^[a-zA-Z0-9._+-]+@("@")[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$/;
+
+            if (!emailRegEx.test(email)) {
+                emailTextBox.style.borderColor = "red";
+                //alert("Email is incorrect Format");
+               //emailTextBox.value = "";
+            }
+            else{
+                emailTextBox.style.backgroundColor = "white";
+                 emailTextBox.style.borderColor = "rgba(33, 37, 41, 0.15)";
+
+            }
+    }
+
+    function BillingvalidateEmail()
+    {
+        var emailTextBox1 = document.getElementById("CompanyDetails_BillingEmail");
+        var email1 = emailTextBox1.value;
+         var emailRegEx1 = /^[a-zA-Z0-9._+-]+@("@")[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$/;
+
+            if (!emailRegEx1.test(email1)) {
+                emailTextBox1.style.borderColor = "red";
+                //alert("Email is incorrect Format");
+               //emailTextBox.value = "";
+            }
+            else{
+                emailTextBox1.style.backgroundColor = "white";
+                 emailTextBox1.style.borderColor = "rgba(33, 37, 41, 0.15)";
+
+            }
+    }
+
+
+
+    function fillAddress() {
+        if (fill.checked == true) {
+            $("#CompanyDetails_BillingName").val($("#CompanyDetails_Name").val());
+            $("#CompanyDetails_BillingEmail").val($("#CompanyDetails_CompanyEmail").val());
+            $("#CompanyDetails_BillingPhone").val($("#CompanyDetails_CompanyPhone").val());
+            $("#CompanyDetails_BillingAddress1").val($("#CompanyDetails_CompanyAddress1").val());
+            $("#CompanyDetails_BillingAddress2").val($("#CompanyDetails_CompanyAddress2").val());
+            $("#CompanyDetails_BillingCity").val($("#CompanyDetails_CompanyCity").val());
+            $("#CompanyDetails_BillingState").data("kendoDropDownList").text(($("#CompanyDetails_CompanyState").data("kendoDropDownList").text()));
+            $("#CompanyDetails_BillingZip").val($("#CompanyDetails_CompanyZip").val());
+        }
+        else {
+            $("#CompanyDetails_BillingName").val('');
+            $("#CompanyDetails_BillingEmail").val('');
+            $("#CompanyDetails_BillingPhone").val('');
+            $("#CompanyDetails_BillingAddress1").val('');
+            $("#CompanyDetails_BillingAddress2").val('');
+            $("#CompanyDetails_BillingCity").val('');
+            $("#CompanyDetails_BillingState").data("kendoDropDownList").text('');
+            $("#CompanyDetails_BillingZip").val('');
+        }
+
+    }
+    $("#CompanyDetails_CompanyPhone").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46 || code == 45 || code == 43 || code == 40 || code == 41)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+
+    $("#CompanyDetails_BillingPhone").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46 || code == 45 || code == 43 || code == 40 || code == 41)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+</script>
+<link href="~/css/common.css" rel="stylesheet" />
+<style>
+    .form-fields-wrapper.row {
+        font-size: 12px;
+        font-weight: normal;
+        padding-left: 0px;
+    }
+
+    .k-wizard {
+        font-size: 12px;
+    }
+
+    .form-control1 {
+        width: 100px;
+        margin-top: 25px;
+    }
+
+    .form-control2 {
+        width: 100px;
+        margin-top: 25px;
+    }
+
+    .form-control3 {
+        width: 100px;
+        margin-top: 25px;
+    }
+
+    .form-control4 {
+        width: 100px;
+        margin-top: 25px;
+        padding-inline-end: unset;
+    }
+
+    /*    .lable1 {
+        margin-bottom: 10px;
+    }
+
+    .p {
+        text-align: center;
+    }*/
+</style>

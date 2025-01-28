@@ -1,0 +1,639 @@
+﻿@model WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel
+@{
+    ViewData["Title"] = "Service Details";
+    var TechnicineName = (List<WellAI.Advisor.Model.Identity.WellIdentityUser>)ViewData["TechName"];
+
+}
+<style>
+    #PdfFile {
+        width: auto !important;
+    }
+
+    .k-grid-header .k-header {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+
+    .k-editor {
+        border-color: black !important;
+    }
+
+    .k-grid-content {
+        height: auto !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+
+    .k-pager-numbers {
+        display: contents !important;
+    }
+
+    div.k-loading-mask {
+        z-index: 3; /* must be larger than the z-index:2 of #container */
+    }
+
+    .content {
+        margin: 10px;
+        border: 4px solid #007bff;
+        border-radius: 10px;
+        background-color: white !important;
+        color: black !important;
+        padding-top: 0px;
+    }
+
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+
+    .row {
+        margin-top: 5px;
+    }
+
+    .k-edit-form-container {
+        width: 100%;
+        min-width: 100%;
+        border-color: inherit;
+        position: relative;
+    }
+
+    .k-dateinput, .k-datepicker, .k-datetimepicker, .k-timepicker {
+        width: 16.4em;
+    }
+
+    .k-dropdown, .k-dropdowntree {
+        width: 14.4em;
+    }
+
+        .k-dropdown .k-dropdown-wrap .k-input {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+    .k-grid-Download, .k-grid-Download:hover {
+        background-color: white;
+        color: black;
+    }
+
+    .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+        color: #000 !important;
+        background-color: #fff !important;
+        border: 0;
+    }
+
+    .k-upload-button:hover {
+        border-color: #ffff;
+        color: black;
+        background-color: #ffff;
+    }
+
+    .k-upload .k-dropzone {
+        border-color: #ffff !important;
+        color: black !important;
+        background-color: #ffff !important;
+    }
+
+    .k-button.k-upload-button {
+        background-color: white;
+        border-color: white;
+        color: black;
+    }
+
+    a.k-button.k-button-icontext.k-grid-Delete, .k-grid-Details:hover {
+        background-color: white;
+        color: black;
+    }
+
+    a.k-button.k-button-icontext.k-grid-Delete, .k-grid-Details {
+        background-color: white;
+        color: black;
+    }
+
+    .hideButtom {
+        display: none !important;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+        padding-top: 5px;
+        margin-top: 0px;
+        height: 35px;
+    }
+    .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav {
+        color: white !important;
+    }
+</style>
+
+<section class="content-header">
+
+    <script>
+        function startChange() {
+            var start = $("#AuctionStart").data("kendoDateTimePicker");
+            var end = $("#AuctionEnd").data("kendoDateTimePicker");
+            var startDate = start.value();
+            var endDate = end.value();
+
+            if (startDate) {
+                startDate = new Date(startDate);
+                startDate.setDate(startDate.getDate());
+                end.min(startDate);
+            } else if (endDate) {
+                start.max(new Date(endDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+        }
+
+        function endChange() {
+            var start = $("#AuctionStart").data("kendoDateTimePicker");
+            var end = $("#AuctionEnd").data("kendoDateTimePicker");
+            var endDate = end.value();
+            var startDate = start.value();
+
+            if (endDate) {
+                endDate = new Date(endDate);
+                endDate.setDate(endDate.getDate());
+                start.max(endDate);
+            } else if (startDate) {
+                end.min(new Date(startDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+        }
+        function onChange(e) {
+            var orders = $("#AuctionBidStatusId").data("kendoDropDownList");
+            $("#AuctionBidStatusName").val(orders._oldText);
+        }
+    </script>
+
+    <section class="content">
+        @using (Html.BeginForm("UpdateUpcommingProjectDetails", "UpcomingProjectsSRV", FormMethod.Post))
+        {
+            <div class="row k-window-titlebar">
+                <h5 class="col-md-12" style=" text-align: left"> @Model.RigName - @Model.WellName: @Model.Job</h5>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.Job)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.Job)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.DateAwared)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.DateAwared)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorCompanyName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorCompanyName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.WellName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.WellName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorUserName)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorUserName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.OperatorMobile)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.OperatorMobile)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ExpectedStartDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ExpectedStartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ExpectedEndDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ExpectedEndDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ActualStartDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ActualStartDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ActualEndDate)
+                        </div>
+                        <div class="col-sm-8">
+                            @Html.DisplayFor(model => model.ActualEndDate)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" style="margin-left:0px;margin-right:0px;">
+                <div class="form-group">
+                    <label for="Description">@Html.LabelFor(model => model.Description)</label>
+                    @(Html.Kendo().EditorFor(model => model.Description)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "height:250px", required = "required" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage()))
+                </div>
+            </div>
+            <hr />
+            <div id="example">
+                @(Html.Kendo().Dialog()
+                        .Name("dialog")
+                        .Title("Unassign Technician")
+                        .Content("<p>Are you sure want to unassign <strong>Technician</strong>?<p>")
+                        .Width(400)
+                        .Modal(false)
+                        .Actions(actions =>
+                        {
+                            actions.Add()
+                            .Text("No")
+                            .Action("onCancel");
+                            actions.Add().Text("Yes")
+                            .Primary(false)
+                            .Action("onOK");
+                        }).Events(ev => ev
+                        .InitOpen("onInitOpen")
+                        )
+                    )
+            </div>
+            <div class="row">
+                <div class="col-sm-6 auction-bottom">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.TechnicianViewModel>()
+                .Name("technician")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.TechName).Filterable(false).Title("Name");
+                    columns.Bound(p => p.Id).Filterable(false).Title("#").Hidden(true);
+                    columns.Bound(p => p.ProjectId).Filterable(false).Title("ProjectId").Hidden(true);
+                    columns.Bound(p => p.TechMobile).Filterable(false).Hidden(true);
+                    columns.Bound(p => p.TechUserId).Filterable(false).Hidden(true);
+                    columns.Bound(p => p.TechAssignEndDate).Filterable(false).Hidden(true);
+                    columns.Bound(p => p.Notes).Filterable(false).Hidden(true);
+                    columns.Bound(p => p.TechWorkingStatus).Filterable(false).ClientTemplate("#=templateFunction(data)#").Title("Status");
+                    columns.Bound(p => p.TechAssignStartDate).Filterable(false).Title("Assign Date").Format("{0:MM/dd/yyyy HH:mm}");
+                    columns.Command(command =>
+                    {
+                        command.Custom("Details").Click("showDetails");
+                        command.Custom("Delete").Click("customDelete").Visible("setVisible");
+                    }).Title("Action");
+                })
+                .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .ToolBar(toolbar => toolbar.Create().Text("Assign Technician"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("AddTechnician").Window(w => w.Title("Update Technician Details").Width(1000)))
+                .Scrollable(s => s.Enabled(false))
+                .DataSource(dataSource => dataSource.Ajax()
+                        .Model(model => model.Id(p => p.Id))
+                        .Read(read => read.Action("GetAssignedTechnicianByProjectId", "UpcomingProjectsSRV").Data("onBidsGridRead"))
+                        .Create(update => update.Action("AddTechnicianByProjectId_Create", "UpcomingProjectsSRV"))
+                        .PageSize(5)
+                ).Events(e =>
+        {
+            e.Edit("RenameWindow");
+            e.DataBound("DataBound");
+        }))
+                </div>
+                <div class="col-sm-6 auction-bottom">
+                    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.AuctionProposalAttachmentViewModel>()
+                .Name("auctionsFile")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.FileName).Filterable(false).Width(500);
+                    columns.Bound(p => p.AttachmentId).Hidden(true);
+                    columns.Bound(p => p.DateUploaded).Title("Date").Filterable(false).Format("{0:MM/dd/yyyy}").Width(400);
+                    columns.Bound(p => p.TenantId).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                        "#if (TableName != 'AU') { #" +
+                         "<a href='" + @Url.Action("Download", "UpcomingProjectsSRV", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "#}else{#" +
+                         "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "#}#" +
+                         "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=AttachmentId#\",\"#=TenantId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                         "#}else{#" +
+                         "#if (TableName != 'AU') { #" +
+                         "<a href='" + @Url.Action("Download", "UpcomingProjectsSRV", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "#}else{#" +
+                         "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "#}#" +
+                          "#} #"
+                         ).Width(100);                  
+                })
+                .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .ToolBar(toolbar => toolbar.Create().Text("Attach Documents"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("AttachDocuments").Window(w => w.Title("Edit User Details").Width(1000)))
+                .Scrollable(s => s.Enabled(false))
+                .DataSource(dataSource => dataSource.Ajax()
+                        .Model(model => model.Id(p => p.AttachmentId))
+                        .Read(read => read.Action("GetProjectProposalAttachments", "UpcomingProjectsSRV", new { proposalId=Model.ProposalId, projectId=Model.ProjectId, operTenantId=Model.OperatorTenantId}))
+                        .Create(update => update.Action("AddMoreAttachment_Create", "UpcomingProjectsSRV"))
+                        .PageSize(5)
+                ).Events(e =>
+                {
+                    e.Edit("RenameWindowAttachment");
+                    e.DataBound("DataBoundAttach");
+                }))
+                </div>
+            </div>
+            <hr />
+
+        }
+    </section>
+</section>
+@(Html.Kendo().Window().Name("Details")
+    .Title("Technician Details")
+    .Visible(false)
+    .Modal(true)
+    .Draggable(true)
+    .Width(500)
+)
+@(Html.Kendo().Window().Name("PdfFileViewer")
+    .Title("Document")
+    .Visible(false)
+    .Modal(true)
+	 .Content(@<text>
+                <div id="PdfFile"> </div> </text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Height(850)
+    .Width(1400)
+    .Draggable(true)
+)
+
+<script type="text/x-kendo-template" id="templateUser">
+    <div id="details-container">
+        <p>Technician Name  : #= TechName !=null ? TechName : '' #</p>
+        <p>Mobile     : #= TechMobile !=null ? TechMobile : '' #</p>
+        <p>Assign Date      : #= TechAssignStartDate !=null ? kendo.toString(TechAssignStartDate, 'MM/dd/yyyy') : '' #</p>
+        <p>End Date      : #= TechAssignEndDate !=null ? kendo.toString(TechAssignEndDate, 'MM/dd/yyyy') : '' #</p>
+        <p>Notes: #= Notes != null ? Notes : '' #</p>
+    </div>
+</script>
+<script>
+
+    //Open or View Operating Company Pdf Document files in PdfViewer - 01/28/2021
+    function ViewPdfInPdfViewer(MsaId,TenId,FileName) {
+        var wnd = $("#PdfFileViewer").data("kendoWindow");
+        wnd.title(FileName);
+        wnd.center().open();
+        $("#PdfFile").empty();
+        $("#PdfFile").kendoPDFViewer({
+            dplProcessing: {
+                read: {
+                    url: "/UpcomingProjectsSRV/GetPdfFile?fileId=" + MsaId + "&TenId=" + TenId,
+                },              
+            },
+            toolbar: {
+                items: [
+                    "pager", "spacer"
+                ]
+            }
+        });
+    }
+
+    function setVisible(dataItem) {
+
+        return dataItem.TechWorkingStatus == "Assigned";
+
+    }
+
+    var detailsTemplate = kendo.template($("#templateUser").html());
+    var dialog = $("#dialog");
+    var dataItem = '';
+    $(document).ready(function () {
+        if (@Model.ProjectStatus== 2) {
+            $('[class="k-header k-grid-toolbar"]').addClass("hideButtom").css("pointer-events", "none");
+            $('[class="k-button k-button-icontext k-grid-Delete"]').addClass("hideButtom").css("pointer-events", "none");
+        }
+    });
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+    function customDelete(e) {
+        dialog.data("kendoDialog").open();
+        dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    }
+
+    function onInitOpen(e) {
+        $("#dialog").data("kendoDialog").close();
+    }
+    function onOK(e) {
+        displayLoading("#technician", true);
+
+        $.ajax({
+            url: "/UpcomingProjectsSRV/RemoveTechUserIdFromProject?Id=" + dataItem.Id,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+
+                var grid = $("#technician").data("kendoGrid");
+                grid.dataSource.read();
+                displayLoading("#technician", false);
+            },
+            error: function () {
+                displayLoading("#technician", false);
+            }
+        });
+    }
+    function displayLoading(target, bool) {
+        var element = $(target);
+        kendo.ui.progress(element, bool);
+    }
+    function onCancel(e) {
+
+    }
+
+    function DataBound(e) {
+        if (@Model.ProjectStatus!== 2) {
+            $(".k-grid-Delete").empty().append("<i class='fa fa-times'></i>");
+        } else {
+            $(".k-grid-Delete").remove();
+        }
+        $(".k-grid-Details").empty().append("<i class='fa fa-address-card'></i>");
+    }
+    function DataBoundAttach(e) {
+        $(".k-grid-Download").empty().append("<i class='fa fa-download'></i>");
+
+    }
+    function templateFunction(item) {
+
+        if (item.TechWorkingStatus == "N/A") {
+
+            return "<span class='text-warning'>" + item.TechWorkingStatus + "</span>";
+        } else {
+            return "<span class='text-success'>" + item.TechWorkingStatus + "</span>";
+
+        }
+
+    }
+    function RenameWindow(e) {
+        counterTech = 1;
+
+            if (e.model.isNew()) {
+                e.container.data("kendoWindow").title("Add Technician");
+            $('[class="setProjectId"]').val('@Model.ProjectId').trigger("change");
+            }
+    }
+    function RenameWindowAttachment(e) {
+
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Upload Attachment");
+            e.container.find('.k-edit-buttons').empty();
+                e.container.find('.k-edit-buttons').addClass("hideButtom").css("pointer-events", "none");
+            $('[class="setProjectId"]').val('@Model.ProjectId').trigger("change");
+            $('#ProposalId').val('@Model.ProposalId').trigger("change");
+            $('#ProjectCode').val('@Model.ProjectCode').trigger("change");
+            $('#OperatorTenantId').val('@Model.OperatorTenantId').trigger("change");
+            }
+        }
+
+    function onBidsGridRead(e) {
+        return {
+            projectId: '@Model.ProjectId'
+        };
+    }
+
+    function downloadFile(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        var table = dataItem.TableName;
+        if (table === 'AU') {
+            window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+        }
+        else {
+            window.location = '/UpcomingProjectsSRV/Download?AttachmentId=' + id;
+        }
+
+    }
+    function onbtnCancelClick() {
+        $(this).closest("#Details").data("Details").close();
+    }
+    function uploadprojectFile() {
+        var form = $("#data");
+
+        var formData = new FormData(form[0]);
+        displayLoading('[class="k-widget k-window"]', true);
+        $.ajax({
+            url: "/UpcomingProjectsSRV/AddMoreAttachment_Create",
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                var grid = $("#auctionsFile").data("kendoGrid");
+                grid.dataSource.read();
+                displayLoading('[class="k-widget k-window"]', false);
+
+
+            },
+            error: function () {
+                displayLoading('[class="k-widget k-window"]', false);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+</script>

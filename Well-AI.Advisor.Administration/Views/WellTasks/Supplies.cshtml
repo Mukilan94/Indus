@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Supplies";
+}
+<section class="content-header">
+    <style>
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid-AssignTask, .k-grid-AssignTask:hover {
+            background-color: #ffff
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .row {
+            padding-top: 3px;
+        }
+        #PageHeading {
+            font-size: 16px;
+            margin: 15px;
+        }
+    </style>
+</section>
+<section class="content">
+    <div class="row">
+        <div id="PageHeading" class="col-md-6"><strong>Supplies</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.Administration.SuppliesModel>()
+            .Name("SuppliesGrid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.SupplyName);
+                columns.Bound(p => p.Description);
+                columns.Bound(p => p.IsActive).Title("Active").Width(80).Filterable(false).ClientTemplate("#if (IsActive == true) { #" +
+                                                "<a href='javascript:void(0)'><span class='text-success k-icon k-i-check'></span></a>" +
+                                                "# } else { #" +
+                                                "<a href='javascript:void(0)'><span class='text-danger k-icon k-i-close'></span></a>" +
+                                                "# } #");
+                columns.Bound(p => p.SupplyId).Hidden();
+                
+            })
+            .ToolBar(toolbar => toolbar.Create().Text("Add Supplies"))
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("SupplyEdit").Window(w => w.Title("Edit Supplies").Width(500)))
+            .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+             .Scrollable(scrollable => scrollable.Virtual(true))
+            .Sortable()
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(30)
+                .Read(read => read.Action("Supplies_Read", "WellTasks"))
+                .Model(model => model.Id(p => p.SupplyId))
+                .Create(update => update.Action("Supplies_Create", "WellTasks"))
+                .Update(update => update.Action("Supplies_Update", "WellTasks"))
+                .Events(events => events.Error("error"))
+            ).Events(e =>
+            {
+                e.Edit("gridEdit");
+                e.DataBound("DataBound");
+            }))
+    </div>
+</section>
+
+<script>
+    function gridEdit(e) {
+        if (e.model.isNew()) {
+            e.container.data("kendoWindow").title("Add Supplies");
+            $('.k-grid-update').text("Save");
+            $("#IsActive").prop('checked', true).trigger("change");
+        }
+    }
+
+    function DataBound(e) {
+        var grid = this;
+
+        grid.tbody.find("tr[role='row']").each(function () {
+            var model = grid.dataItem(this);
+        });
+
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+    function error(args) {
+        if (args.errors) {
+            var grid = $("#SuppliesGrid").data("kendoGrid");
+            grid.one("dataBinding", function (e) {
+                e.preventDefault();
+
+                $.each(args.errors, function (propertyName) {
+                    var messages = this.errors[0];
+                    $('.errors').text(messages);
+                    $('.errors').addClass("alert alert-danger");
+                });
+            });
+        }
+    }
+
+
+</script>
+

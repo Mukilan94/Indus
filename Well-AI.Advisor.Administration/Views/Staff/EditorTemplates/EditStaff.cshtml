@@ -1,0 +1,71 @@
+﻿
+@model WellAI.Advisor.Model.Administration.RegisterStaffViewModel
+@using Kendo.Mvc.UI
+<div class="row">
+    @Html.HiddenFor(x => x.Id)
+</div>
+<div class="row">
+    <div class="col-md-12 errors"></div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.FullName)</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.FullName, new { style = "width:100%", @Class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.FullName)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.Email)</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.Email, new { style = "width:100%", @Class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.Email)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.PhoneNumber)</div>
+    <div class="col-md-9">
+        @Html.TextBoxFor(model => model.PhoneNumber, new { @type = "number", @id = "txtphone", @Class = "k-textbox", style = "width:100%", @maxlength = "100" })
+        @Html.ValidationMessageFor(model => model.PhoneNumber)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">@Html.LabelFor(x => x.IsActive, "Active")</div>
+    <div class="col-md-1">
+        @Html.CheckBoxFor(model => model.IsActive, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.IsActive)
+    </div>
+</div>
+<style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>

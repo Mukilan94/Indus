@@ -1,0 +1,55 @@
+﻿@model IEnumerable<WellAI.Advisor.Model.OperatingCompany.Models.CommunicationModel>
+
+<ul class="k-list">
+    @foreach (var item in Model)
+    {
+        <li class="k-item activeuser" role="option" onclick="updateProfile('@item.UserName', '@item.CompanyName','@item.Email', '@item.Phone','@item.CompanyWebsite','@item.LogoPath','@item.UserLogoPath','@item.TenantId','@item.ClientContactId','@item.ClientUserId');">
+            <span class="k-state-default">
+                @if (@item.UserLogoPath == "" || @item.UserLogoPath == null)
+                {
+                    <img class="profile-user-img img-fluid img-circle" id="@item.ClientContactId"
+                         src="/img/nophotouser1.png">
+                }
+                else
+                {
+                    <img class="profile-user-img img-fluid img-circle" id="@item.ClientContactId"
+                         src="@item.UserLogoPath">
+                }
+            </span>
+            <div class="k-state-default">
+                <div class="chatuser">@item.UserName</div>
+                <div class="chatjobtitle">@item.CompanyName</div>
+            </div>
+            <div>
+                <p style="text-align:center;">
+                    <i class="fa fa-remove" onclick="clientContactDelete('@item.ClientContactId');"></i>
+                </p>
+            </div>
+        </li>
+    }
+</ul>
+
+<style>
+    .k-pager-wrap.k-pager-lg .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-md .k-pager-numbers li:not(.k-current-page), .k-pager-wrap.k-pager-sm .k-pager-numbers li:not(.k-current-page) {
+        display: block !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-lg .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-md .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-md .k-pager-numbers .k-state-selected, .k-pager-wrap.k-pager-sm .k-pager-numbers .k-link,
+    .k-pager-wrap.k-pager-sm .k-pager-numbers .k-state-selected {
+        margin: 0;
+        border-width: 0;
+        width: unset !important;
+        height: unset !important;
+    }
+    .k-pager-wrap.k-pager-lg .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-md .k-pager-nav + .k-pager-numbers-wrap, .k-pager-wrap.k-pager-sm .k-pager-nav + .k-pager-numbers-wrap {
+        width: unset !important;
+        height: calc(1*(2px + 0.75rem + 1.5em));
+        box-sizing: border-box;
+        border-color: inherit;
+        margin: 0 0.375rem;
+    }
+    .k-pager-numbers {
+        display: contents !important;
+    }
+</style>

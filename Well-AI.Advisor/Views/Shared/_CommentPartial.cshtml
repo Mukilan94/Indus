@@ -1,0 +1,14 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.Comment
+<div class="row-comment" style="word-wrap: break-word">
+    <div class="commentphoto">
+        <img class="profile-user-img img-fluid img-circle"
+             src="~/img/nophotouser.png">
+    </div>
+    <div class="comment-author">
+        <span>@Model.Author</span>
+        <div class="comment-date">@Model.Date</div>
+    </div>
+    <div class="comment-content">@Html.Raw(System.Web.HttpUtility.HtmlDecode(@Model.Content))</div>
+</div>
+<br />
+

@@ -1,0 +1,264 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WellAI.Advisor.Model.Identity;
+@using WellAI.Advisor.DLL.Data;
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims;
+@using Microsoft.Extensions.Configuration
+@inject SignInManager<StaffWellIdentityUser> SignInManager
+@inject IConfiguration Configuration
+@{
+    var UserSessionRefresh = Configuration.GetSection("UserSessionRefresh")["RefreshTime"];
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>@ViewData["Title"] - Well-AI.Advisor</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/css/ionicons.min.css" />
+    <link rel="stylesheet" href="~/css/AdminLTE.css">
+    <link rel="stylesheet" href="~/css/telerik.css" />
+    <link rel="stylesheet" href="~/css/brand.css">
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/scripts/jszip.min.js"></script>
+    <script src="~/lib/scripts/kendo.all.min.js"></script>
+    <script src="~/lib/scripts/kendo.aspnetmvc.min.js"></script>
+
+    <script src="~/lib/Twilio/twilio.min.js"></script>
+    <script src="https://media.twiliocdn.com/sdk/js/conversations/v2.0/twilio-conversations.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//media.twiliocdn.com/sdk/js/video/releases/2.17.1/twilio-video.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/video.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script src="~/js/notification.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <style>
+        .k-pager-numbers-wrap .k-dropdown {
+            display: none;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            color: black;
+            font-size: 10px;
+            margin-left: 10px;
+        }
+
+        .k-window-content {
+            overflow: initial !important;
+        }
+        #Maincontent {
+           /* overflow-y: auto;*/
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <header class="main-header">
+                <!-- Header Navbar -->
+                <nav class="navbar-static-top" role="navigation">
+                    <!-- Sidebar toggle button-->
+
+                    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                        <span class="sr-only"></span>
+                    </a>
+                    <a class="sidebar-logo">
+                        <img class="logo-img" src="~/img/logoname.png">
+                    </a>
+                </nav>
+                <nav class="navbar navbar-static-top" role="navigation">
+                    <!-- Navbar Right Menu -->
+                    <div class="navbar-custom-menu">
+                        <div class="nav-profile-wrapper">
+                            <ul class="nav navbar-nav left-nav">
+                                <!-- User Account Menu -->
+                                @*<partial name="_LoginPartial" />*@
+                                <li class="dropdown user user-menu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <img src="/img/nophotouser.png" class="user-image" alt="User Image">
+                                        <span class="hidden-xs">Hello <span> @User.Claims.LastOrDefault(c => c.Type == "FullName").Value</span>!</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="user-header">
+                                            <img src="/img/nophotouser.png" class="img-circle" alt="User Image">
+                                            <p>
+                                                Hello <span> @User.Claims.LastOrDefault(c => c.Type == "FullName").Value</span>
+                                            </p>
+                                        </li>
+                                        <li class="user-footer">
+                                            <div class="pull-left">
+                                                @*<form method="post" id="logoutForm" class="form-inline" action="/Account/Logout">*@
+                                                <button type="submit" class="btn btn-link navbar-btn navbar-link" onclick="OnPassWordChange()">Change Password</button>
+                                                @*</form>*@
+                                            </div>
+                                            <div class="pull-right">
+                                                <form method="post" id="logoutForm" class="form-inline" action="/Account/Logout">
+                                                    <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <partial name="_VideoTemplate" />
+                </nav>
+            </header>
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="main-sidebar">
+
+                <section class="sidebar">
+                    @await Component.InvokeAsync("AdminNav")
+                </section>
+
+                <footer class="footer navbar-fixed-bottom">
+                    <span>Copyright © @DateTime.Now.Year Well-AI</span>
+                </footer>
+
+            </aside>
+        }
+        <!-- Content Wrapper. Contains page content -->
+        <div id="Maincontent" class="content-wrapper">
+            @RenderBody()
+        </div>
+
+        <footer class="main-footer">
+            <span class="footer-copy">Copyright © @DateTime.Now.Year Well-AI</span>
+        </footer>
+        <!-- /.content-wrapper -->
+        <!-- Main Footer -->
+
+    </div>
+    @(Html.Kendo().Window().Name("Call")
+    .Title("Calling...")
+    .Visible(false)
+    .Content(@<text><div id="wndCall">Calling....</div></text>)
+.Modal(true)
+.Draggable(true)
+.Width(300)
+)
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/wellai.js" asp-append-version="true"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#Menu").click(function () {
+                $("#treeview-menu").toggle('fast');
+                $(this).find('b').toggleClass('fa fa-angle-right fa fa-angle-down')
+            });
+            $("#Menu1").click(function () {
+                $("#treeview-menu1").toggle('fast');
+                $(this).find('b').toggleClass('fa fa-angle-right fa fa-angle-down')
+            });
+            $("#Menu2").click(function () {
+                $("#treeview-menu2").toggle('fast');
+                $(this).find('b').toggleClass('fa fa-angle-right fa fa-angle-down')
+            });
+            $("#Menu3").click(function () {
+                $("#treeview-menu3").toggle('fast');
+                $(this).find('b').toggleClass('fa fa-angle-right fa fa-angle-down')
+            });
+            //Phase II Changes - 03/17/2021
+            UserSessionRefresh();
+        });
+
+        function UserSessionRefresh()
+        {
+            var Time = parseInt('@UserSessionRefresh');
+            if (setTimeout(UserSessionRefresh, Time)) {
+                $.ajax({
+                    url: '/Account/RefreshUserSession',
+                    type: 'POST',
+                    async: true,
+                    success: function (data) {
+                        console.log("Session Refresh completed");
+                    }
+                });
+            }
+        }
+
+        function displayLoading(target, bool) {
+            var element = $(target);
+            kendo.ui.progress(element, bool);
+        }
+        function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+
+@(Html.Kendo().Window().Name("PassWordChangesWindow")
+    .Title("Change Password")
+    .Visible(false)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(500)
+    .Height(350)
+
+)
+
+<script>
+
+    function OnPassWordChange() {
+        debugger;
+        var window = $("#PassWordChangesWindow").data("kendoWindow");
+        window.refresh({
+            url: "/Account/OnPassWordChange"
+        });
+
+        $("#PassWordChangesWindow").closest(".k-window").css({
+            top: 150,
+            left: 800,
+            height: 400
+        });
+
+        window.open();
+        window.center();
+    }
+
+
+
+    function CancelEdit() {
+        var dialog = $("#PassWordChangesWindow").data("kendoWindow");
+        setTimeout(function () {
+            dialog.close();
+        }, 500);
+    }
+
+    function Cancel() {
+       // window.location.href = "/ServiceDashboard/Index";
+    }
+
+</script>

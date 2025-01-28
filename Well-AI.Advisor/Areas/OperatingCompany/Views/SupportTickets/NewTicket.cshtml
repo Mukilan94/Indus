@@ -1,0 +1,229 @@
+﻿@{
+    ViewData["Title0"] = "Support";
+    ViewData["Title"] = "New Ticket";
+}
+@model WellAI.Advisor.Model.OperatingCompany.Models.TicketHistoryItem
+
+@using (Html.BeginForm("SaveNewTicket", "SupportTickets", FormMethod.Post, new { id = "newticketform" }))
+{
+    <section class="content-header">
+        <h2 class="ticketlabel">New Ticket</h2>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Status)
+                </div>
+                <div class="k-edit-field">
+                    @Html.HiddenFor(model => model.StatusID)
+                    @Html.TextAreaFor(model => model.Status, new { @Class = "k-textbox", @Readonly = "readonly",@id="TicketStatus" })
+                </div>
+                <div class="k-edit-label">
+                    @Html.LabelFor(model => model.Department)
+                </div>
+                <div class="k-edit-field">
+                    @(Html.Kendo().DropDownListFor(model => model.CategoryID).HtmlAttributes(new { required = "required", validationmessage = "Select Category" })
+                            .DataValueField("CategoryID")
+                            .DataTextField("Name")
+                    .BindTo((System.Collections.IEnumerable)ViewBag.category)
+                    )
+                </div>
+                <div class=" k-edit-label">
+                    @Html.LabelFor(model => model.HelpTopic, "Subject", new { @class = "subjectlabel" })
+                </div>
+                <div class="k-edit-field">
+                    @Html.TextBoxFor(model => model.HelpTopic, new { @Class = "k-textbox", placeholder ="Enter The Subject ", validationmessage = "Enter The Subject", required = "required",style="margin-left:-40%" })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="comment-replylabel">Description:</div>
+        <div class="comment-replytext">
+            @(Html.Kendo().EditorFor(model => model.ReplyMessage)
+                           .Encoded(false)
+                           .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                           .HtmlAttributes(new { style = "width: 100%;height:440px;border-color:black !important;", required = "required", validationMessage = "Description field is required" })
+                           .Tools(tools => tools.Clear().Bold()
+                           .Italic().Underline().FontName()
+                           .SubScript().SuperScript().InsertImage())
+            )
+        </div>
+        <div class="comment-replybtn">
+            @(Html.Kendo().Button()
+                            .Name("Submit")
+                            .HtmlAttributes(new { type = "submit", @class = "k-primary hide-on-narrow", name = "submit", value = "Submit", onclick = "checkvalid();" })
+                            .Content("<strong>SUBMIT</strong>")
+            )
+            @(Html.Kendo().Button()
+                            .Name("Cancel")
+                            .HtmlAttributes(new { type = "button", @class = "k-primary hide-on-narrow", value = "Cancel", onclick = "cancelnew();" })
+                            .Content("<strong> CANCEL</strong>")
+            )
+        </div>
+    </section>
+}
+<script>
+
+    $(function () {
+
+
+        if (sessionStorage.getItem("Body") != null && sessionStorage.getItem("Subject") != null) {
+            var Body = sessionStorage.getItem("Body");
+            var Subject = sessionStorage.getItem("Subject");
+            $("#HelpTopic").val(Subject);
+            $("#ReplyMessage").val(Body);
+            var dropdownlist = $("#CategoryID").data("kendoDropDownList");
+            dropdownlist.value(8);
+            var editor = $("#ReplyMessage").data("kendoEditor");
+            editor.value(Body);
+
+            document.getElementById('TicketStatus').setAttribute("style", "display:none;");
+            document.getElementById('Ticket').setAttribute("style", "display:none;");
+
+            sessionStorage.clear();
+        }
+
+    });
+
+    function checkvalid() {
+        var validator = $("#newticketform").kendoValidator().data('kendoValidator');
+        if (validator.validate()) {
+            return true
+        }
+        else {
+            return false;
+        }
+    }
+    function cancelnew() {
+        window.location.href = "/SupportTickets";
+    }
+</script>
+<style>
+    .content {
+        margin: 25px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        background-color: white ;
+        color:black !important;
+    }
+    .k-editor {
+        border-color:black !important;
+    }
+    .k-textbox {
+        border-color: black;
+    }
+    .k-textbox:active {
+        border-color: black;
+        margin:5px;
+    }
+    .ticketlabel {
+        margin-left: 20px;
+    }
+    .comment-replybtn {
+        display: block;
+        margin-top: 10px;
+    }
+    #Status {
+        background-color: #fdfde1 !important;
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+    .comment-replylabel {
+        display: block;
+    }
+    #ReplyMessage {
+        width: 500px;
+        height: 100px;
+    }
+    #comments {
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+    .k-edit-label {
+        text-align: left;
+        padding: calc(0.5rem - 1px) 10px !important;
+    }
+    .k-textbox {
+        width: 70% !important;
+        resize: none !important;
+    }
+    .k-dropdown .k-dropdown-wrap .k-input {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+    .k-dropdown .k-dropdown-wrap {
+        background-color:#fff;
+        color:#000;
+        resize: none !important;
+    }
+    .k-edit-field > .k-widget{
+        width:70% !important;
+    }
+    .k-edit-field textarea {
+        width: 70% !important;
+        resize: none !important;
+    }
+    .comment-replytext {
+        display: block;
+    }
+    .profile-user-img {
+        border: 0px !important;
+        width: 70px;
+    }
+   .comment-content {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .comment-author {
+        width: 83%;
+        background-color: #fff;
+        color: #000;
+        height: 53px;
+        margin-top: 3px;
+    }
+    .comment-author > span {
+        margin-left: 10px;
+    }
+    .comment-date {
+        font-size: 13px;
+        margin-left: 10px;
+    }
+    .commentphoto {
+        margin-right: 20px;
+    }
+    .row {
+        margin-top: 10px;
+    }
+    /*.subjectlabel{
+        font-size:19px;
+    }*/
+/*    OPR Comp issue#66*/
+    /*.k-textbox, .k-input.k-textbox, .k-textarea {
+        padding: 0px !important;
+    }*/
+    .k-dropdown
+         {
+            padding: 0px !important;  
+            margin-left: -40%;
+        }
+    .k-textbox1{
+        margin-left:-40%;
+    }
+    .k-textbox{
+        float:left;
+    }
+
+    #TicketStatus {
+        margin-left: -40%;
+    }
+    #HelpTopic {
+        margin-left: 0%;
+    }
+
+</style>

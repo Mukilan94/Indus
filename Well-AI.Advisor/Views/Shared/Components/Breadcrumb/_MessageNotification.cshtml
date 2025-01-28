@@ -1,0 +1,115 @@
+﻿@using WellAI.Advisor.DLL.Data;
+@model IEnumerable<WellAI.Advisor.DLL.Entity.MessageQueue>
+
+
+<ul class="notification-list friend-requests" onmouseleave="togglePanal(this)" style="padding:0">
+	@foreach (var item in Model)
+	{
+		@if (item.Type != 0 & (item.Type == 5 || item.Type == 3))
+		{
+
+			<li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+
+				<div class="notification-event">
+					<a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+					<span class="chat-message-item">@item.TaskName</span>&nbsp;
+					<span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+				</div>
+				
+				<div class="more">
+					<svg class="olymp-three-dots-icon"><use xlink:href="#olymp-three-dots-icon"></use></svg>
+				</div>
+			</li>
+
+		}
+		@if (item.Type != 0 & item.Type != 5 & item.Type != 3)
+		{
+			<li id="li_@item.Messagequeue_id" data-type="@item.Type" data-entiyid="@item.EntityId">
+
+				<div class="notification-event">
+					<a href="#" class="h6 notification-friend" style="color: #0257B1;text-align:center">@item.JobName</a>
+					<span class="chat-message-item"> @item.TaskName</span>&nbsp;
+					<span class="chat-message-item-duration">@item.CreatedDate.ToShortDateString()&nbsp;@item.CreatedDate.ToShortTimeString()</span>
+				</div>
+				<div class="more">
+					<svg class="olymp-three-dots-icon"><use xlink:href="#olymp-three-dots-icon"></use></svg>
+				</div>
+			</li>
+			}
+		}
+	</ul>
+
+
+
+<script type="text/javascript">
+	$('.notification-list li').click(function () {
+		var item = $(this);
+		var messageQueueId = $(this).attr('id').substr($(this).attr('id').indexOf('_') + 1);
+		$.ajax({
+			url: '/Identity/Account/Login?handler=UpdateNotificationStatus',
+			type: 'GET',
+			data: { MessageQueueId: messageQueueId },
+			contentType: 'application/json; charset=utf-8',
+			beforeSend: function (xhr) {
+				$(".loadingimg").show();
+
+				xhr.setRequestHeader("XSRF-TOKEN",
+					$('input:hidden[name="__RequestVerificationToken"]').val());
+			},
+			success: function (data) {
+				if (data) {
+					console.log(data);
+					var MessageCount = data.messageValue /*+ ' Notifications'*/;
+                    $('#messageCount').text(MessageCount);
+					var taskType = item.data('type');
+					if (taskType == 2) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/SupportTickets/TicketDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/SupportTicketsSRV/TicketDetail?id=" + ticketId
+						}
+					}
+					else if (taskType == 3) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/ProjectAuctions/AddUpdateAuctionsProposalDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/ProjectAuctionsSRV/AuctionBidContent?id=" + ticketId
+						}
+					}
+
+					else if (taskType == 4) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+                            alert(ticketId);
+							window.location.href = "/InDepthRigData/GetWellPrediction?wellId = " + ticketId;
+							
+						}
+						else {
+							window.location.href = "/InDepthRigDataSrv/Index?wellId=" + ticketId
+						}
+					}
+					else if (taskType == 5) {
+						var ticketId = item.data('entiyid');
+						var userType =  @WellAIAppContext.Current.Session.GetString("AccountType");
+						if (userType == 0) {
+							window.location.href = "/ProjectAuctions/AddUpdateAuctionsProposalDetail?id=" + ticketId;
+						}
+						else {
+							window.location.href = "/ProjectAuctionsSRV/AuctionBidContent?id=" + ticketId
+						}
+					}
+				}
+
+			}
+		});
+    });
+
+
+</script>

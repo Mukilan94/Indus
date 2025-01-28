@@ -1,0 +1,531 @@
+﻿@model WellAI.Advisor.Model.Administration.CustomerUsersModel
+@using Kendo.Mvc.UI
+@{
+    int accountType = Convert.ToInt32(TempData["accountType"]);
+    TempData.Keep();
+}
+<style>
+    .k-edit-buttons {
+        border-style: none;
+    }
+
+    #hideResetPassword {
+        margin-left: 0px;
+    }
+
+    .k-button {
+        border-color: #011627 !important;
+        color: #ffffff !important;
+        background-color: #011627 !important;
+    }
+
+    .k-grid .k-grid-add:hover {
+        color: #fff !important;
+    }
+
+    .k-window-content #sidebar .k-edit-label {
+        margin-left: -50px;
+    }
+
+    .k-window-content .k-edit-form-container {
+        width: inherit;
+    }
+
+    .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .k-widget.k-window {
+    }
+
+    span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+        color: #000000 !important;
+        background-color: #ffff !important;
+        width: 100%;
+    }
+
+    .row {
+        padding-top: 3px;
+    }
+
+    .k-button.k-primary {
+        background-color: #007bff !important;
+    }
+</style>
+<script type="text/javascript">
+
+</script>
+@if (Model == Model)
+{
+    @*<div class="row">
+            <div class="col-md-12 errors"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    @Html.Hidden("AccountType", accountType)
+                    <div class="col-md-4">First Name</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.FirstName,new {  required = "required" })</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Middle Name</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.MiddleName)</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Last Name</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.LastName)</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Job Title</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.JobTitle)</div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-2">Address</div>
+                    <div class="col-md-10">@Html.TextBoxFor(model => model.Address)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Email</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.Email)</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Phone</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.PhoneNumber, new { @id = "txtphone" })</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Mobile</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.Mobile, new { @id = "txtmobile" })</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">City</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.City)</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">State</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.State)</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">Zip</div>
+                    <div class="col-md-8">@Html.TextBoxFor(model => model.Zip, new { @id = "txtzip" })</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @if (accountType == 0)
+            {
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-4">Primary</div>
+                        <div class="col-md-8">
+                            @Html.CheckBoxFor(model => model.IsPrimary)
+                            @Html.ValidationMessageFor(model => model.IsPrimary)
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-4">Field</div>
+                    <div class="col-md-8">
+                        @Html.CheckBoxFor(model => model.Field)
+                        @Html.ValidationMessageFor(model => model.Field)
+                    </div>
+                </div>
+            </div>
+            @if (accountType == 0)
+            {
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">User Type</div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="radio" id="officeCheck" onchange="officeCheckfunction()" name="WellOfficeUser" value="false">
+                                    <label for="officeCheck">Office</label>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="radio" id="wellCheck" onchange="wellCheckfunction()" name="WellOfficeUser" value="true">
+                                    <label for="wellCheck">Rig</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div>Roles</div>
+                        <div>
+                            @Html.HiddenFor(model => model.SelectedRoles)
+                            <select id="userroles"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                @if (accountType == 0)
+                {
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div>Rigs</div>
+                            <div id="divUserwells">
+                                @Html.HiddenFor(model => model.SelectedWells)
+                                <select id="userwells"></select>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <div>Notes</div>
+                            <div>
+                                @Html.TextAreaFor(x => x.AdditionalNotes, new { style = "width:100%;" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row" id="hideResetPassword">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-7">@Html.Label("Reset password")</div>
+                    <div class="col-md-2">
+                        <a href="javascript:void(0)" onclick="resetpasswordUserPassword()"><i class="fa fa-share-square-o" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+
+                @Html.Hidden("AccountType", accountType)
+                <div class="k-edit-label">First Name</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.FirstName, new { required = "required" })</div>
+
+            </div>
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Middle Name</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.MiddleName)</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Last Name</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.LastName)</div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Job Title</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.JobTitle)</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Address</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.Address)</div>
+
+            </div>
+
+
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Email</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.Email)</div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="row">
+
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Phone</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.PhoneNumber, new { @id = "txtphone" })</div>
+
+            </div>
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Mobile</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.Mobile, new { @id = "txtmobile" })</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="k-edit-label">City</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.City)</div>
+
+            </div>
+            <div class="col-md-6">
+
+                <div class="k-edit-label">State</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.State)</div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-md-12">
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Zip</div>
+                <div class="k-edit-field">@Html.TextBoxFor(model => model.Zip, new { @id = "txtzip" })</div>
+
+            </div>
+
+            <div class="col-md-6">
+                @if (accountType == 0)
+                {
+
+                    <div class="k-edit-label">User Type</div>
+
+                    <div class="k-edit-field">
+
+
+                        <div>
+                            <input type="radio" id="officeCheck" onchange="officeCheckfunction()" name="WellOfficeUser" value="false">
+                            <label for="officeCheck">Office</label>
+
+
+
+                            <input type="radio" id="wellCheck" onchange="wellCheckfunction()" name="WellOfficeUser" value="true">
+                            <label for="wellCheck">Rig</label>
+                        </div>
+                    </div>
+
+                }
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                @if (accountType == 0)
+                {
+
+                    <div class="k-edit-label">Primary</div>
+                    <div class="k-edit-field">
+                        @Html.CheckBoxFor(model => model.IsPrimary)
+                        @Html.ValidationMessageFor(model => model.IsPrimary)
+                    </div>
+
+                }
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="k-edit-label">Field</div>
+                <div class="k-edit-field">
+                    @Html.CheckBoxFor(model => model.Field)
+                    @Html.ValidationMessageFor(model => model.Field)
+                </div>
+
+            </div>
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+
+
+                <div class="k-edit-label">Roles</div>
+                <div class="k-edit-field">
+                    @Html.HiddenFor(model => model.SelectedRoles)
+                    <select id="userroles"></select>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+                @if (accountType == 0)
+                {
+
+
+                    <div class="k-edit-label">Rigs</div>
+                    <div class="k-edit-field">
+                        @Html.HiddenFor(model => model.SelectedWells)
+                        <select id="userwells"></select>
+                    </div>
+
+
+                }
+
+
+                else
+                {
+
+                    <div class="k-edit-label">Notes</div>
+                    <div class="k-edit-field">
+                        @Html.TextAreaFor(x => x.AdditionalNotes, new { style = "width:100%;" })
+                    </div>
+
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="row" id="hideResetPassword">
+
+
+            <div class="k-edit-label">@Html.Label("Reset password")</div>
+            <div class="k-edit-field" style="margin-left: 20px;">
+                <a href="javascript:void(0)" onclick="resetpasswordUserPassword()"><i class="fa fa-share-square-o" aria-hidden="true"></i></a>
+            </div>
+
+        </div>
+    </div>
+
+
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtmobile").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtzip").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>

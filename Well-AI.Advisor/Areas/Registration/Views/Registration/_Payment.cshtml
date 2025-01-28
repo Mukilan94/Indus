@@ -1,0 +1,280 @@
+﻿@model WellAI.Advisor.Model.Common.Registration
+
+
+<h2 style="text-align:center">Payment Details</h2>
+<div class="form-fields-wrapper row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 form-field">
+                @Html.LabelFor(x => x.PaymentDetails.PaymentType, "Payment Type *", new { @Class = "k-label", style = "margin-left:91px" })
+                <select name="card" id="PaymentType" onclick="selecttype()" style="font-family: inherit;margin-left:4px;font-size: 13px; width:50%; height: 30px;">
+                    <option value="0">--Select--</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="ACH Payment">ACH</option>
+                </select>
+            </div>
+        </div>
+        <br />
+
+
+
+        <div id="carddetails" style="display:none">
+            <div class="row">
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.CardName, "Card Name *", new { @Class = "k-label", style = "margin-left:115px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.CardName, new { @Class = "k-textbox", id = "CardName", style = "width:50%;height:30px" })
+                    @*<label for="biCardName" class="text-small">Card Holder's Name *</label>
+                        <br />
+                        <input type="text" id="biCardName" name="biCardName" maxlength="50">*@
+                </div>
+
+
+
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.CardNumber, "Card Number  *")
+                    @Html.TextBoxFor(x => x.PaymentDetails.CardNumber, new { @Class = "k-textbox", id = "CardNumber", @min = "0", style = "width:50%;", maxlength = "16" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-md-4 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.Month, "Vaild Thru *", new { @Class = "k-label", style = "margin-left:115px;" })
+                    <select name="Month" id="biMonth" style="margin-left:5px;height: 30px;width:70px;scroll-margin:inherit">
+                    </select>
+
+                </div>
+                <div class="col-md-2 form-field">
+
+                    <select name="Year" id="biYear" style="margin-left:5px;height: 30px; width:100px; font-size: 13px;">
+                    </select>
+                </div>
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.CardVerificationNumber, "CVV *", new { @Class = "k-label", style = "margin-left:58px" })
+                    @Html.PasswordFor(x => x.PaymentDetails.CardVerificationNumber, new { @Class = "k-textbox", id = "CardVerificationNumber", style = "width:15%" })
+                    @*<label for="biCardVnumber" class="text-small">Card Verification Number *</label>
+                        <input type="password" id="biCardVnumber" name="biCardVnumber" maxlength="3">*@
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+        <div id="achdetails" style="display:none">
+            <div class="row">
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.CustomerName, "Customer Name *", new { @Class = "k-label", style = "margin-left:80px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.CustomerName, new { @Class = "k-textbox", id = "CustomerName", style = "width:50%;height:30px" })
+                </div>
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.BankName, "Bank Name *", new { @Class = "k-label", style = "margin-left:50px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.BankName, new { @Class = "k-textbox", id = "BankName", style = "width:50%;height:30px" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.AccountNumber, "Account Number  *", new { @Class = "k-label", style = "margin-left:75px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.AccountNumber, new { @Class = "k-textbox", id = "AccountNumber", @min = "0", style = "width:50%;", maxlength = "16" })
+                </div>
+                <div class="col-md-6 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.TypeofAccount, "Account Type *", new { @Class = "k-label", style = "margin-left:35px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.TypeofAccount, new { @Class = "k-textbox", id = "TypeofAccount", style = "width:50%;height:30px" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12 form-field">
+                    @Html.LabelFor(x => x.PaymentDetails.RoutingNumber, "Routing Number *", new { @Class = "k-label", style = "margin-left:78px;" })
+                    @Html.TextBoxFor(x => x.PaymentDetails.RoutingNumber, new { @Class = "k-textbox", id = "RoutingNumber", @min = "0", style = "width:24%;", maxlength = "9" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<link href="~/css/common.css" rel="stylesheet" />*@
+<script>
+    //Allow users to enter characters and spaces only
+    $(document).on('keypress', '#CardName', function (event) {
+        var regex = new RegExp("^[a-zA-Z ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    $(document).on('keypress', '#CustomerName', function (event) {
+        var regex = new RegExp("^[a-zA-Z ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    //Allow users to enter numbers only
+    $("#CardNumber").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+    $("#AccountNumber").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+    $("#RoutingNumber").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+    $("#CardVerificationNumber").bind('keypress', function (e) {
+        if (e.keyCode == '9' || e.keyCode == '16') {
+            return;
+        }
+        var code;
+        if (e.keyCode) code = e.keyCode;
+        else if (e.which) code = e.which;
+        if (e.which == 46)
+            return false;
+        if (code == 8 || code == 46)
+            return true;
+        if (code < 48 || code > 57)
+            return false;
+    });
+    var year = new Date().getFullYear(),
+        $selectY = $("#biYear").empty();
+    for (var i = 0; i <= 10; i++) {
+        $('<option>')
+            .val(year)
+            .text(year)
+            .appendTo($selectY)
+            ;
+        year++;
+    }
+    var month = new Date('2022-01-01').getMonth(),
+        $selectM = $("#biMonth").empty();
+    for (var i = 01; i <= 12; i++) {
+        //$('<option>')
+        //        .val(i)
+        //        .text(i)
+        //        .appendTo($selectM);
+        if (i <= 9) {
+            $('<option>')
+                .val( '0' + i)
+                .text('0' + i)
+                .appendTo($selectM);
+        }
+        else {
+            $('<option>')
+                .val( i)
+                .text( i)
+                .appendTo($selectM);
+        }
+    }
+    function selecttype() {
+
+        var Type = $("#PaymentType").val();
+        if (Type == "ACH Payment") {
+            $("#achdetails").css("display", "block");
+            $("#carddetails").css("display", "none");
+
+        }
+        else if (Type == "Credit Card" || Type == "Debit Card") {
+            $("#achdetails").css("display", "none");
+            $("#carddetails").css("display", "block");
+        }
+        else {
+            $("#achdetails").css("display", "none");
+            $("#carddetails").css("display", "none");
+        }
+    }
+</script>
+
+<style>
+
+    .k-wizard .k-wizard-step {
+        padding-top: 0px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .form-fields-wrapper {
+        font-size: 12px;
+        font-weight: normal;
+        padding-left: 60px;
+    }
+
+    .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .k-wizard {
+        font-size: 12px;
+    }
+
+    .form-control1 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control2 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control3 {
+        width: 200px;
+        margin-top: 25px;
+    }
+
+    .form-control4 {
+        width: 200px;
+        margin-top: 25px;
+        padding-inline-end: unset;
+    }
+
+    .lable1 {
+        margin-bottom: 10px;
+    }
+
+    .p {
+        text-align: center;
+    }
+</style>

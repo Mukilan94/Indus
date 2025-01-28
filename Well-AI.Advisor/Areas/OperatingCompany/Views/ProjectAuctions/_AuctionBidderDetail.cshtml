@@ -1,0 +1,236 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.AuctionBidderDetailsViewModel
+
+@{
+    Layout = null;
+    var roles = (List<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["roles"];
+    @*<script src="~/js/phonecall.js"></script>*@
+}
+    <section class="content1">
+        <div class="row">
+            <!-- </div>-->
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @Html.LabelFor(model => model.ServiceCompany)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.DisplayFor(model => model.ServiceCompany)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6" style="left:6%">
+                                @Html.LabelFor(model => model.BidAmount)
+                            </div>
+                            <div class="col-sm-6">
+                                &dollar; @Html.DisplayFor(model => model.BidAmount)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @Html.LabelFor(model => model.BidDate)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.DisplayFor(model => model.BidDate)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6" style="left:6%">
+                                @Html.LabelFor(model => model.BidderName)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.DisplayFor(model => model.BidderName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @Html.LabelFor(model => model.BidderEmail)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.DisplayFor(model => model.BidderEmail)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6" style="left:6%">
+                                @Html.LabelFor(model => model.BidderMobile)
+                            </div>
+                            <div class="col-sm-6">
+                                <!--Removed customerCall-->
+                                @*<i class="fa fa-phone" onclick="customerCall(@Model.BidderMobile);"></i>*@
+                                <i class="fa fa-phone" onclick="customerCall(@Model.BidderMobile);"></i>
+                                @Html.DisplayFor(model => model.BidderMobile)
+                                <div id="call-status">
+                                </div>
+                                <button class="k-button k-button-icontext k-grid-cancel hangup-button" onclick="hangUp()" id="btnHangUp">Hang up</button>
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        if (Model.BidStatusId != null && Model.BidStatusId != 0)
+                        {
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(model => model.BidStatusId)
+                                    </div>
+                                    <div class="col-sm-6">
+                                        @Html.DisplayFor(model => model.BidStatusName)
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="Description">@Html.LabelFor(model => model.BidDescription)</label>
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.Raw(Model.BidDescription)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                    @(Html.Kendo().Grid(Model.AuctionProposalAttachments)
+                .Name("auctionsFileService")
+                .HtmlAttributes(new { @class = "ra-section", style = "width:100%; margin:5px;" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.AttachmentId).Filterable(false).ClientTemplate("#= renderNumber(data) #").Title("#").Hidden(true);
+                    columns.Bound(p => p.FileName).Filterable(false).Width(70);
+                    columns.Bound(p => p.FileName).Title("Action").ClientTemplate("#if (FileName.split('.').reverse()[0] == 'pdf' ){#" +
+                        "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                        "" +
+                        "<a href='javaScript:void(0)' onclick='ViewPdfInPdfViewer(\"#=AttachmentId#\",\"#=TenantId#\",\"#=FileName#\")' class='linkstyle'><i class='fa fa-file-pdf-o' style='font-size:20px;font-weight:bold;'></i></ a>" +
+                        "#}else{#" +
+                         "<a href='" + @Url.Action("Download", "ProjectAuctions", new { fileId = "#=AttachmentId#" }) + "' class='linkstyle'><i class='fa fa-download' style='font-size:20px;padding:3px;'></i></a>" +
+                         "#} #"
+                        ).Width(30);
+                })
+               .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .HtmlAttributes(new { width="100%"})
+                .DataSource(dataSource => dataSource.Ajax()
+                        .PageSize(3)
+                ))
+            </div>
+            <div class="col-sm-12" style="display: inline-block; text-align: right; width: 100%">
+                @using (Html.BeginForm("AuctionsBidAAcceptedRejectedCounter", "ProjectAuctions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.HiddenFor(x => x.ProposalId)
+                    @Html.HiddenFor(x => x.BidId)
+                    @Html.HiddenFor(x => x.ServiceTenantId)
+                    @Html.HiddenFor(x => x.Title)
+                    <div class="k-edit-buttons k-state-default">
+                        <button type="submit" name="Accept" value="Accept" role="button" class="k-button k-button-icontext k-primary k-grid-update" href="#"><span class="k-icon k-i-check"></span>Accept</button>
+                        <button type="submit" name="Reject" value="Reject" role="button" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Reject</button>
+                        <button type="button" onclick="onCancelClick()" name="Cancel" value="Cancel" role="button" class="k-button k-button-icontext k-grid-cancel" href="#"><span class="k-icon k-i-cancel"></span>Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>  
+    <script src="~/js/phonecall.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".k-grid-Download").empty().append("<i class='fa fa-download'></i>");
+       var wnd = $("#Details").data("kendoWindow");
+        var bidStatus =  @Model.BidStatusId;
+        if (bidStatus > 1) {
+            $('[name="Reject"]').addClass("k-state-disabled")
+            $('[name="Accept"]').addClass("k-state-disabled")
+        }
+        $('[name="Cancel"]').click(function (e) {
+            wnd.close();
+        });
+    });
+    function customerCall(phoneNumber) {
+        callCustomer(phoneNumber);
+    }
+</script>
+<style>
+    label{
+        font-weight:bold;
+    }
+    .row {
+        margin-right: -12px;
+    }
+    .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+        background-color: #fff;
+    }
+    .k-window-titlebar {
+        background-color: #007BFF;
+        color: white;
+    }
+    .k-grid-content {
+        height: auto !important;
+    }
+    a.k-button.k-button-icontext.k-grid-Download {
+        background: bottom;
+    }
+    .k-edit-label {
+        width: 35%;
+        text-align: left;
+        font-weight: 500;
+    }
+    .k-grid-header .k-header > .k-link {
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+    .k-edit-form-container {
+        width: 100%
+    }
+    .k-link k-state-selected {
+        padding-top: 17px !important;
+    }
+    .k-pager-numbers {
+        padding-top: 17px !important;
+    }
+    .k-edit-field {
+        margin: 7px 0 1rem 0;
+        width: 65%;
+        float: right;
+        clear: right;
+        text-align: center;
+    }
+    .k-upload .k-dropzone {
+        border-color: #022f54;
+        color: #ffffff;
+        background-color: #fff;
+    }
+    .k-button.k-upload-button {
+        background: #fff;
+        color: #000;
+        border: none;
+    }
+    span.k-dropdown-wrap.k-state-default {
+        background: #fff;
+        color: #000;
+    }
+    .callbidder{
+        cursor:pointer;
+    }
+    .fa-phone{
+        font-size:24px !important;
+        cursor:pointer;
+    }
+</style>

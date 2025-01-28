@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title0"] = "Provider Directory";
+    ViewData["Title"] = "Ongoing Projects";
+}
+@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>
+
+<section class="content-header">
+    <style>
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-tdetails, .k-grid-tdetails:hover {
+            background-color: #fff;
+            border-color: #007BFF;
+            border-radius: 10px;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>()
+        .Name("onprojects")
+        .HtmlAttributes(new { @class = "ra-section" })
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ProjectId).Hidden(true);
+            columns.Bound(p => p.OperatorCompanyName).Title("Customer");
+            columns.Bound(p => p.ActualStartDate).Title("Start Date").Format("{0: MM/dd/yyyy}");
+            columns.Bound(p => p.ActualEndDate).Title("End Date").Format("{0: MM/dd/yyyy}");
+            
+            columns.Bound(p => p.Title).Title("Title");
+            columns.Command(command => command.Custom("Details").Click("showDetails")).Title("Action").Width(180);
+        })
+         .ClientDetailTemplateId("template-tickets")
+        .Pageable()
+        .Sortable()
+        
+        .Filterable()
+        .Reorderable(r => r.Columns(true))
+        .Resizable(r => r.Columns(true))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Read(read => read.Action("OnGoingProject_Read", "OngoingProjectsSRV"))
+
+        )
+  
+
+    )
+
+    <script id="template-tickets" type="text/kendo-tmpl">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.FieldTicketSRV>()
+            .Name("onprojects_#=ProjectID#")
+            .HtmlAttributes(new { @class = "ra-section" })
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.fdId).Hidden(true);
+                columns.Bound(p => p.Ticket).Title("Project ID");
+                columns.Bound(p => p.Invoice).Title("Invoice No");
+                columns.Bound(p => p.Date).Title("Invoice Date").Format("{0: MM/dd/yyyy}");
+                columns.Bound(p => p.Amount).Format("{0:c}");
+                columns.Command(command => command.Custom("tdetails").Text("Details").Click("showtDetails")).Title("Action").Width(180);
+            })
+        .Pageable()
+        .Sortable()
+       
+        .Filterable()
+        .Reorderable(r => r.Columns(true))
+        .Resizable(r => r.Columns(true))
+            .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Read(read => read.Action("GetProjectInvoice_Read", "OngoingProjectsSRV", new { jobID = "#=ProjectID#" }))
+            )
+        .ToClientTemplate()
+        )
+    </script>
+    
+</section>
+
+@(Html.Kendo().Window().Name("Details")
+    .Title("Project Details")
+    .Visible(false)
+    .Modal(true)
+    .Draggable(true)
+    .Resizable()
+    .Actions(actions => actions
+        .Pin()
+        .Minimize()
+        .Maximize()
+        .Close()
+    )
+    .Events(events => events.Close("close"))
+    .Width(1000)
+)
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= CustomerName #</h2>
+        <em>Start on #= kendo.toString(StartDate, 'MM/dd/yyyy') #</em>
+        <p>Description: #= Description #</p>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var detailsTemplate = kendo.template($("#template").html());
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var wnd = $("#Details").data("kendoWindow");
+
+        wnd.content(detailsTemplate(dataItem));
+        wnd.center().open();
+    }
+
+    function showtDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = "/ongoingprojectssrv/FieldTicketSRV?id=" + dataItem.fdId + "&pId=" + dataItem.ProjectID;
+    }
+
+
+    function close() {
+        $("#undo").fadeIn(300);
+    }
+    $(document).ready(function () {
+        $("#undo").bind("click", function () {
+            $("#window").data("kendoWindow").open();
+            $("#undo").hide();
+        });
+    });
+</script>

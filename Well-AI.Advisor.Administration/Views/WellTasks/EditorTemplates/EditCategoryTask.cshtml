@@ -1,0 +1,67 @@
+﻿@model WellAI.Advisor.Model.Administration.CategoryTaskModel
+@using Kendo.Mvc.UI
+<div class="row">
+    <div class="col-md-12 errors"></div>
+    @Html.HiddenFor(x => x.ServiceCategoryName)
+    @Html.HiddenFor(x => x.TaskName)
+
+</div>
+<div class="row">
+    <div class="col-md-4">Phase</div>
+    <div class="col-md-8">
+        @(Html.Kendo().DropDownListFor(m=>m.CategoryId)
+            .DataTextField("ParentName")
+            .DataValueField("ParentId")
+            .OptionLabel("Select Phase...")
+            .Events(x => x.Select("onCategoryName"))
+            .DataSource(source => {
+                source.Read(read =>
+                {
+                    read.Action("GetCategoryList", "WellTasks");
+                });
+            }).HtmlAttributes(new { style="100%"}))
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">Sub Phase</div>
+    <div class="col-md-8">
+        @(Html.Kendo().DropDownListFor(m=>m.SubCategoryId)
+            .DataTextField("Name")
+            .OptionLabel("Select Sub Phase...")
+            .DataValueField("ServiceCategoryId")
+            .Events(x => x.Select("onSubCategoryName"))
+            .DataSource(source => {
+                source.Read(read =>
+                {
+                    read.Action("GetSubCategoryList", "WellTasks").Data("filterSubCategory");
+                }).ServerFiltering(true);
+            }).HtmlAttributes(new { style="100%"}).Enable(false)
+              .AutoBind(false).CascadeFrom("CategoryId"))
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">Task</div>
+    <div class="col-md-8">
+        @(Html.Kendo().DropDownListFor(m=>m.TaskId)
+            .DataTextField("Name")
+            .DataValueField("TaskId")
+            .Events(x => x.Select("onSelectedTaskName"))
+            .DataSource(source => {
+                source.Read(read =>
+                {
+                    read.Action("GetTaskList", "WellTasks");
+                });
+            }).HtmlAttributes(new { style="100%"}))
+        @Html.ValidationMessageFor(model => model.TaskId)
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">Active</div>
+    <div class="col-md-8">
+        @(Html.Kendo().CheckBoxFor(m=>m.IsActive))
+    </div>
+</div>
+
+<script>
+   
+</script>

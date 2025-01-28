@@ -1,0 +1,73 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        @Html.Label("Dispatch Instructions / Notes")
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-12 spancols">
+            @Html.TextArea("instructionsNotes", "", new { @class = "k-textbox", style = "width: 100%; height: 150px;", maxlength = "500" })
+        </div>
+        
+    </div>
+</div>
+
+<!--//.Events(e => e.Change("OnChange")))-->
+<div class="k-edit-buttons k-state-default">
+    <button id="btnSaveDispatchUser" class="k-button k-button-icontext k-primary k-grid-update" onclick="UpdateDispatch()"><span class="k-icon k-i-save"></span>Update</button>
+    <button id="btnCloseDispatch" class="k-button k-button-icontext k-grid-cancel"><span class="k-icon k-i-cancel"></span>Cancel</button>
+</div>
+<style type="text/css">
+    .textarea {
+        height: 100px;
+    }
+
+    .k-dialog {
+        min-width: 290px;
+        width: auto;
+    }
+
+    .k-edit-field {
+        width: 100%;
+    }
+
+    .spancols {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .k-textbox, .k-input.k-textbox, .k-textarea {
+        width: unset;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+       /* debugger;*/
+         var userId = $("#hdnCurrentUser").val();
+         $("#instructionsNotes").empty();
+
+          $.ajax({
+            url: '/DispatchSRV/GetActiveUserNotes?userId=' + userId,
+            type: 'GET',
+            dataType: "json",
+            contentType: "application/json; chartset=uft-8",
+            success: function (response, textStatus, jqXHR) { 
+
+                debugger;
+                $("#hdnDispatchNotes").val(response.data);
+             //   $("#instructionsNotes").val($("#hdnDispatchNotes").val());
+                $("#instructionsNotes").val(response.data);
+                $("#instructionsNotes").text(response.data);
+
+            },
+            error: function (xhr, status, error) {
+                planalert(xhr.responseText, "Error");
+            }
+        })
+
+        
+        
+    });
+    $(".k-grid-cancel").click(function () {
+        var window = $("#DispatchNotesWindow").data("kendoWindow");
+        window.close();
+    });
+</script>

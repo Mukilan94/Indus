@@ -1,0 +1,459 @@
+﻿@{
+  
+    ViewData["Title"] = "Bids";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidsModel
+
+
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        a.k-button.k-button-icontext.k-grid-Details {
+            background: #fff;
+            color: #000;
+            border-radius: 10px !important;
+        }
+        .Upcoming {
+            background-color: #007BFF;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            
+        }
+
+        .Active {
+            background-color: #77BD27;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+             
+        }
+
+        .closed {
+            background-color: #F4AF00;
+            border-color: white !important;
+            border-width: 4px !important;
+            color: white;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            
+        }
+        .auction-wrapper {
+            color: #fff;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+        .auctiontop {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        .k-i-filter-clear {
+            color: #007bff !important;
+        }
+
+        .topblock, .topblock1, .topblock2 {
+            display: inline-block;
+            width: 32%;
+            margin-bottom:20px;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 10px;
+            border: 4px solid #007BFF;
+        }
+
+        .topblock1 {
+            border: 4px solid #77BD27;
+            margin-left: 2px;
+        }
+
+        .topblock2 {
+            border: 4px solid #F4AF00;
+            margin-left: 32px;
+        }
+
+        .topblock {
+            border: 4px solid #007BFF;
+            margin-left: 32px;
+        }
+
+        .lastmonthtitle {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .topblocktitle1 {
+            margin-bottom: 20px;
+            background-color: #007BFF;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .topblocktitle2 {
+            margin-bottom: 20px;
+            background-color: #77BD27;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .topblocktitle3 {
+            margin-bottom: 20px;
+            background-color: #F4AF00;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .startedcount, .startedvalue {
+            display: inline-block;
+        }
+
+        .startedcount {
+            margin-left: 5px !important;
+        }
+
+        .startedvalue {
+            margin-right: 5px !important;
+        }
+
+            .startedcount > span, .startedvalue > span {
+                display: block;
+                text-transform: uppercase;
+            }
+
+        .topblock-top {
+            margin-top: 20px;
+        }
+
+        .topblock-bottom {
+            border-top: 1px solid grey;
+        }
+
+        .activelastmonthdate {
+            margin-top: 50px;
+        }
+
+        .bgInitiate {
+            background-color: #00B855 !important;
+        }
+
+        .bgPlan {
+            background-color: #3288B7 !important;
+        }
+
+        .bgEvaluate {
+            background-color: #B87033 !important;
+        }
+
+        .allprojectbids {
+            display: inline-block;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .bids-search {
+            margin-left: 25%;
+            margin-bottom: 10px;
+        }
+
+
+            .bids-search .labelchart {
+                display: inline-block;
+            }
+
+        .k-filtercell {
+            border: 1px solid #007BFF;
+        }
+        .cntSize {
+            font-size: 2.5rem;
+        }
+    </style>
+    <script>
+        function onDataBound() {
+            var grid = this;
+            grid.tbody.find('tr').each(function () {
+                var dataItem = grid.dataItem(this);
+
+                $(this).addClass('bg' + dataItem.BidStatusName);
+            })
+        }
+
+        function onBidsGridRead(e) {
+        }
+    </script>
+</section>
+@(Html.Kendo().Window().Name("Details")
+    .Title("Project Details")
+    .Visible(false)
+    .Content(@<text><div id="wndContent">Loading....</div></text>)
+    .Modal(true)
+    .Draggable(true)
+    .Width(1000)
+)
+<!-- Main content -->
+<section class="content">
+    <div class="auction-wrapper">
+        <div class="auctiontop">
+
+
+            <div class="topblock1" onclick="ActiveCounts()">
+                <div class="topblockborder">
+                    <div class="topblocktitle2">Active</div>
+
+                    <div class="startedcount pull-left"> <span id="ActiveBidsCount" class="cntSize">@Model.ActiveBidsCount</span></div>
+                    <div class="startedvalue pull-right"><span id="ActiveBidsValue" class="cntSize">@Model.ActiveBidsValue.ToString("c")</span></div>
+                </div>
+            </div>
+
+            <div class="topblock2" onclick="CompletedCounts()">
+                <div class="topblockborder">
+                    <div class="topblocktitle3">Completed</div>
+                    <div>
+                        <div class="startedcount pull-left"> <span id="AwardedBidsThisMonthCount" class="cntSize">@Model.AwardedBidsThisMonthCount</span></div>
+                        <div class="startedvalue pull-right"><span id="AwardedBidsThisMonthValue" class="cntSize"> @Model.AwardedBidsThisMonthValue.ToString("c")</span></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="topblock" onclick="UpcomingCounts()">
+                <div class="topblockborder">
+                    <div class="topblocktitle1">Upcoming</div>
+                    <div>
+                        <div class="startedcount pull-left"> <span id="ProjectsStartedThisMonthCount" class="cntSize">@Model.ProjectsStartedThisMonthCount</span></div>
+                        <div class="startedvalue pull-right"> <span id="ProjectsStartedThisMonthValue" class="cntSize">@Model.ProjectsStartedThisMonthValue.ToString("c")</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="auction-bottom">
+
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.AuctionBidViewModel>()
+                .Name("auctions")
+                .HtmlAttributes(new { @class = "ra-section" })
+                
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ProposalId).Filterable(false).ClientTemplate("<a href='" + @Url.Action("AuctionBidContent", "ProjectAuctionsSRV", new { id = "#=ProposalId#" }) + "' class='linkstyle'>#=AuctionNumber#</a>").Title("Id").Width(0).Hidden(true);
+                    columns.Bound(p => p.AuctionBidStatusName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(150);
+                    columns.Bound(p => p.Bids).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                    columns.Bound(p => p.JobId).Title("Service").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                    columns.Bound(p => p.Depth).Title("Depth").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false))).Width(80);
+                    columns.Bound(p => p.TenantID).Title("Operator").Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(250);
+                    columns.Bound(p => p.ProjectDuration).Title("Hours").Format("{0:0.0} Hours").Filterable(false).Width(100);
+                    columns.Bound(p => p.RigName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(120);
+                    columns.Bound(p => p.WellName).Filterable(ftb => ftb.Cell(cell => cell.Operator("contains").SuggestionOperator(FilterType.Contains).ShowOperators(false))).Width(200);
+                    columns.Bound(p => p.AuctionEnd).Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Hidden(true);
+                    columns.Bound(p => p.AuctionStart).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Width(100);
+                    columns.Bound(p => p.ModifyDate).Title("Date").Format("{0:MM/dd/yyyy}").Filterable(ftb => ftb.Cell(cell => cell.Operator("gte").ShowOperators(false))).Hidden(true);
+                })
+                .Sortable(s => s.Enabled(true))
+                 .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                .Pageable(p =>
+                        p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                    )
+                .Selectable()
+                .Scrollable(scrollable => scrollable.Virtual(true))
+                .DataSource(dataSource => dataSource.Ajax()
+                        .Model(model => model.Id(p => p.ProposalId))
+                        .Read(read => read.Action("GetBidsDataGridAction", "ProjectAuctionsSRV").Data("onBidsGridRead"))
+                        .PageSize(10)
+                         .Sort(sort =>
+                         {
+                             sort.Add("AuctionBidStatus").Ascending();
+                             sort.Add("ModifyDate").Descending();
+                         })
+                )
+                .Events(e =>
+                {
+                    e.DataBound("onDataBound");
+                    e.Change("Grid_OnRowSelect");
+                })
+            )
+        </div>
+    </div>
+
+</section>
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= AuctionBidStatusName #</h2>
+        <em>Start on #= kendo.toString(ProjectStartDate, 'MM/dd/yyyy') #</em>
+        <p>TenantID: #= TenantID #</p>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="template">
+    <div id="details-container">
+        <h2>#= ProposalId #</h2>
+        <em>Start on #= kendo.toString(AuctionEnd, 'MM/dd/yyyy') #</em>
+        <p>Description: #= Subject #</p>
+
+    </div>
+</script>
+
+
+<script type="text/javascript">
+ 
+    $(document).ready(function () {
+        setInterval(CountsRefresh, 60000);
+        RefreshGrid();
+    });
+
+    function RefreshGrid() {
+        var IntTime = 300000;
+        setInterval(function () {
+            $("#auctions").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+
+    function CountsRefresh() {
+        $.ajax({
+            url: '/ProjectAuctionsSRV/Counts',
+            type: 'GET',
+            success: function (ResponseData) {
+                document.getElementById('ActiveBidsCount').innerHTML = ResponseData.ActiveBidsCount;
+                document.getElementById('ActiveBidsValue').innerHTML = ResponseData.ActiveBidsValue == 0 ? "$" + 0.00 : "$" + ResponseData.ActiveBidsValue;
+                document.getElementById('AwardedBidsThisMonthCount').innerHTML = ResponseData.AwardedBidsThisMonthCount;
+                document.getElementById('AwardedBidsThisMonthValue').innerHTML = ResponseData.AwardedBidsThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.AwardedBidsThisMonthValue;
+                document.getElementById('ProjectsStartedThisMonthCount').innerHTML = ResponseData.ProjectsStartedThisMonthCount;
+                document.getElementById('ProjectsStartedThisMonthValue').innerHTML = ResponseData.ProjectsStartedThisMonthValue == 0 ? "$" + 0.00 : "$" + ResponseData.ProjectsStartedThisMonthValue;
+            }
+        });
+
+    }
+
+    function funFilterStatusList(values) {
+        var grid = $("#auctions").data("kendoGrid");
+        var dataSource = grid.dataSource;
+        dataSource.filter(
+            {
+                logic: "and",
+                filters: [
+                    { field: "AuctionBidStatusName", operator: "eq", value: values }
+                ]
+            });
+    }
+
+    function UpcomingCounts() {
+        funFilterStatusList("Upcoming");
+    }
+    function ActiveCounts() {
+        funFilterStatusList("Active");
+    }
+    function CompletedCounts() {
+        funFilterStatusList("Completed");
+    }
+
+
+    $(function () {
+
+        var grid = $("#auctions").data("kendoGrid");
+        var dataSource = grid.dataSource;
+            if (sessionStorage.getItem("AwardedBids") === 'Completed') {
+            dataSource.filter(
+                {
+                    logic: "and",
+                    filters: [
+
+                        { field: "AuctionBidStatusName", operator: "eq", value: "Completed" }
+                    ]
+                });
+            } else if (sessionStorage.getItem("OpenBidsCount") === 'Active') {
+            dataSource.filter(
+                {
+                    logic: "and",
+                    filters: [
+                        { field: "AuctionBidStatusName", operator: "eq", value: "Active" }
+                    ]
+                });
+        } else {
+            dataSource.filter({});
+        }
+        sessionStorage.clear();
+    });
+
+
+
+
+    var counter = 1;
+    function templateFunction(units) {
+        switch (units) {
+            case "Active":
+                return "Active";
+            case "Upcoming":
+                return "Upcoming";
+            case "Completed":
+                return "closed";
+        }
+    }
+    var counter = 1;
+
+    function onDataBound(e) {
+        counter = 1;
+        var columns = e.sender.columns;
+        var columnIndex = this.wrapper.find(".k-grid-header [data-field=" + "AuctionBidStatusName" + "]").index();
+
+        var rows = e.sender.tbody.children();
+        for (var j = 0; j < rows.length; j++) {
+            var row = $(rows[j]);
+            var dataItem = e.sender.dataItem(row);
+
+            var units = dataItem.get("AuctionBidStatusName");
+
+            var cell = row.children().eq(columnIndex);
+            cell.addClass(templateFunction(units));
+        }
+    }
+
+    var selectedRow = null;
+    function Grid_OnRowSelect(e) {
+        var row = this.select();
+        if (row.length > 0) {
+            selectedRow = e.sender.select();
+            var item = e.sender.dataItem(selectedRow);
+            var id = item.ProposalId;
+            window.location = '/ProjectAuctionsSRV/AuctionBidContent?id=' + id;
+        }
+    }
+    function onCancelClick() {
+        window.location.href = "/ProjectAuctionsSRV";
+    }
+
+    function renderNumber(data) {
+        return counter++;
+    }
+
+    var detailsTemplate = kendo.template($("#template").html());
+
+
+
+    function downloadFile(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var id = dataItem.AttachmentId;
+        window.location = '/ProjectAuctions/Download?AttachmentId=' + id;
+
+    }
+
+</script>

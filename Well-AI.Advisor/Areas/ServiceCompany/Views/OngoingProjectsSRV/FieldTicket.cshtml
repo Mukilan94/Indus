@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title0"] = "Ongoing Projects";
+    ViewData["Title"] = "Field Ticket";
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.FieldTicketSRV
+
+<section class="content-header">
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="tickets-wrap">
+        <div class="tickets-top">
+            <div class="tickets-topleft">
+                <div class="tickets-toplefttop">
+                    <span class="imgspan">
+                        <img class="serviceimg"
+                             src="~/img/prov1.png">
+                    </span>
+                    <div class="imgdiv">
+                        <div class="opername">Petro Mechanical Services, LLC</div>
+                        <div class="opertable">
+                            <div class="operrow">
+                                <div class="opercol">PO Box 9083</div>
+                                <div class="opercolr">billing@petroms.com</div>
+                            </div>
+                            <div class="operrow">
+                                <div class="opercol">Longview, TX 75608</div>
+                                <div class="opercolr">petroms.com</div>
+                            </div>
+                            <div class="operrow">
+                                <div class="opercol">ph 800.727.1398</div>
+                                <div class="opercolr">fax 713.366.8048</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tickets-topleftbot">
+                    <div>Bill to</div>
+                    <span>Diamondback E&P, LLC</span>
+                    <span>515 Central Park Drive, Suite 500</span>
+                    <span>Oklahoma City, OK 73105</span>
+                </div>
+            </div>
+            <div class="tickets-topright">
+                <div class="invoicetitle">Invoice</div>
+                <div class="invoicesettings">
+                    <div class="invtable">
+                        <div class="invrowh">
+                            <div class="invcol">Date</div>
+                            <div class="invcol">Invoice</div>
+                        </div>
+                        <div class="invrow">
+                            <div class="invcol">9/13/2019</div>
+                            <div class="invcol">19575</div>
+                        </div>
+                        <div class="invrowh">
+                            <div class="invcol">Terms</div>
+                            <div class="invcol">Ticket</div>
+                        </div>
+                        <div class="invrow">
+                            <div class="invcol">Net 30</div>
+                            <div class="invcol">18795</div>
+                        </div>
+                        <div class="invrowh">
+                            <div class="invcol">Due Date</div>
+                            <div class="invcol">Job</div>
+                        </div>
+                        <div class="invrow">
+                            <div class="invcol">10/13/2019</div>
+                            <div class="invcol"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tickets-bottom">
+            <div class="div-table">
+                <div class="div-table-row">
+                    <div class="div-table-h">Rig</div>
+                    <div class="div-table-h">Lease</div>
+                    <div class="div-table-h">PO/AFE</div>
+                </div>
+                <div class="div-table-row">
+                    <div class="div-table-col">@Model.Rig</div>
+                    <div class="div-table-col">@Model.Lease</div>
+                    <div class="div-table-col">@Model.PoAfe</div>
+                </div>
+            </div>
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.ServiceCompany.Models.TicketFieldItemSRV>()
+                .Name("fielditems")
+                .HtmlAttributes(new { @class = "ra-section" })
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.Item);
+                    columns.Bound(p => p.Description);
+                    columns.Bound(p => p.Qty);
+                    columns.Bound(p => p.Rate);
+                    columns.Bound(p => p.Amount).Width(100);
+                })
+                .Pageable(e=>e.Enabled(false))
+                .Sortable(s => s.Enabled(true))
+                .Scrollable(s => s.Enabled(false))
+                .DataSource(dataSource => dataSource
+                        .Ajax()
+                ).BindTo(Model.Items)
+            )
+            <div class="tickets-agg">
+                <div class="tickets-aggtext"><span>Subtotal</span>@Model.Subtotal.ToString("c")</div>
+                <div class="tickets-aggtext"><span>Sales Tax(@Model.SalesTaxCount%)</span>@Model.SalesTaxValue.ToString("c")</div>
+                <div class="tickets-aggtext"><span>Total</span>@Model.Total.ToString("c")</div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    .tickets-agg {
+        color: #000;
+        background-color: #fff;
+        border-top: 1px solid #000;
+    }
+
+    .tickets-topleft {
+        color: #fff;
+        width: 70%;
+        display: inline-block;
+    }
+
+    .tickets-topright {
+        width: 28%;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .tickets-top {
+        margin-bottom: 10px;
+    }
+
+    .tickets-aggtext {
+        text-align: right;
+    }
+
+        .tickets-aggtext > span {
+            margin-right: 180px;
+        }
+
+    .div-table {
+        display: table;
+        width: 100%;
+        background-color: #eee;
+        background-color: transparent;
+        border-spacing: 0px;
+        margin-bottom: 10px;
+    }
+
+    .div-table-row {
+        display: block;
+        width: auto;
+        clear: both;
+        margin-right: -13px;
+    }
+
+    .div-table-col {
+        float: left;
+        display: table-column;
+        width: 33%;
+        background-color: #fff;
+        text-align: center;
+        border: 1px solid #eee;
+        color: #000;
+    }
+
+    .div-table-h {
+        float: left;
+        display: table-column;
+        width: 33%;
+        color: #fff;
+        text-align: center;
+        background-color: #007BFF;
+    }
+
+    .k-grid {
+        border: 0 !important;
+        border-radius: 0px !important;
+    }
+
+    .invoicetitle {
+        font-size: 27px;
+        font-weight: bold;
+        text-align: right;
+    }
+
+    .invtable {
+        width: 300px;
+        display: block;
+        background-color: #fff;
+        color: #000;
+        margin-left: auto;
+        margin-right: 0px;
+    }
+
+    .invrowh {
+        background-color: grey;
+    }
+
+    .invcol {
+        display: inline-block;
+        width: 49%;
+        text-align: center;
+    }
+
+    .imgspan {
+        width: 120px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .imgdiv {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .opertable {
+        width: 400px;
+        display: block;
+    }
+
+    .opercol {
+        display: inline-block;
+        width: 49%;
+        text-align: left;
+    }
+
+    .opercolr {
+        display: inline-block;
+        width: 49%;
+        text-align: right;
+    }
+
+    .serviceimg {
+        height: 120px;
+    }
+
+    .opername {
+        font-size: 27px;
+        font-weight: bold;
+    }
+
+    .tickets-topleftbot {
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+
+        .tickets-topleftbot span {
+            display: block;
+        }
+
+        .tickets-topleftbot > div {
+            font-weight: bold;
+        }
+</style>

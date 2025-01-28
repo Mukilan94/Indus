@@ -1,0 +1,451 @@
+﻿@*@using Kendo.Mvc.UI
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    @addTagHelper *, Kendo.Mvc*@
+@using WellAI.Advisor.Model.Common
+@model Registration
+
+
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/font-awesome.min.css" />
+<link rel="stylesheet" href="~/css/ionicons.min.css" />
+<link rel="stylesheet" href="~/css/AdminLTE.css">
+<link rel="stylesheet" href="~/css/telerik.css" />
+<link rel="stylesheet" href="~/css/brand.css">
+<link href="~/css/site.css" rel="stylesheet" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/scripts/jszip.min.js"></script>
+<script src="~/lib/scripts/kendo.all.min.js"></script>
+<script src="~/lib/scripts/kendo.aspnetmvc.min.js"></script>
+<script src="~/lib/scripts/kendo.timezones.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+@*timer scripts*@
+<script src="~/lib/jquery/dist/moment.js"></script>
+<script src="~/lib/jquery/dist/moment-timezone.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<title>Well-AI Advisor: @ViewData["Title"]</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/font-awesome.min.css" />
+<link rel="stylesheet" href="~/css/ionicons.min.css" />
+<link rel="stylesheet" href="~/css/AdminLTE.css">
+<link rel="stylesheet" href="~/css/telerik.css" />
+<link rel="stylesheet" href="~/css/brand.css">
+
+
+
+<link href="https://cdn.kendostatic.com/2022.2.802/styles/kendo.default-ocean-blue.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.kendostatic.com/2022.2.802/js/jquery.min.js"></script>
+<script src="https://cdn.kendostatic.com/2022.2.802/js/jszip.min.js"></script>
+<script src="https://cdn.kendostatic.com/2022.2.802/js/kendo.all.min.js"></script>
+<script src="https://cdn.kendostatic.com/2022.2.802/js/kendo.aspnetmvc.min.js"></script>
+
+
+
+
+@*<link rel="stylesheet" href="styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="styles/kendo.default.min.css" />
+    <link rel="stylesheet" href="styles/kendo.default.mobile.min.css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.all.min.js"></script>*@
+
+
+<script src="~/js/OperatingCompany/Registration.js"></script>
+<div class="login-row">
+
+    <div class="demo-section wide" style="padding-top:150px;width:75%;padding-left:400px;">
+        @(Html.Kendo().Wizard()
+.Name("wizard")
+.LoadOnDemand(true)
+.ReloadOnSelect(false)
+.Steps(steps =>
+{
+    steps.Add().ContentUrl(Url.Action("_SubscriptionSelector", "Registration",Model))
+    .Buttons(b =>
+    {
+        b.Previous();
+        b.Next();
+    });
+    steps.Add().ContentUrl(Url.Action("_CostSummary", "Registration",Model))
+     .Buttons(b =>
+     {
+         b.Previous();
+         b.Next();
+     });
+    steps.Add().ContentUrl(Url.Action("_CompanyDetails", "Registration", Model))
+    .Buttons(b =>
+    {
+        b.Previous();
+        b.Next();
+    });
+    steps.Add().ContentUrl(Url.Action("_Payment", "Registration", Model))
+   .Buttons(b =>
+   {
+       b.Previous();
+       b.Next();
+   });
+    steps.Add().ContentUrl(Url.Action("_OS", "Registration"))
+    .Buttons(b =>
+    {
+        b.Previous();
+        b.Done().Text("Pay now");
+    });
+
+})/*.HtmlAttributes(new { style = "height:630px" })*/
+        .Events(events =>
+        {
+            events.Done("onDone");
+            events.Select("onSelect");
+            events.Reset("onReset");
+            events.ContentLoad("onContentLoad");
+        })
+    )
+    </div>
+    <input type="hidden" id="hdnType" />
+    <input type="hidden" id="hdnPrice" />
+</div>
+
+
+@(Html.Kendo().Window().Name("TermsandCondition")
+    .Title("Terms & Conditions")
+    .Visible(false)
+    .Scrollable(true)
+    .Modal(true)
+    .Content(@<text><div id="wndContent">Loading...</div></text>)
+    .Actions(actions => actions
+        .Close()
+    )
+    .Draggable(true)
+    .Width(1200)
+    .Height(550)
+)
+
+<script>
+    //const { type } = require("jquery");
+
+    //const { each } = require("jquery");
+
+    function CalculateTotalValue() {
+
+        $("#txtDispatchCount").change(function () {
+            // alert("The text has been changed.");
+            $("#lblDispatchTotalValue").val(parseInt($("#txtDispatchCount").val()) * parseFloat(("#lblDispatchUnitPrice").text()));
+        });
+        $("#txtProviderCount").change(function () {
+            // alert("The text has been changed.");
+            $("#lblProviderTotalValue").val(parseInt($("#txtProviderCount").val()) * parseFloat(("#lblProviderUnitPrice").text()));
+        });
+        $("#txtOperatorCount").change(function () {
+            // alert("The text has been changed.");
+            $("#lblOperatorTotalValue").val(parseInt($("#txtOperatorCount").val()) * parseFloat(("#lblOperatorUnitPrice").text()));
+        });
+    }
+
+    $(document).ready(function () {
+        document.getElementsByClassName("k-button k-button-md k-rounded-md k-button-solid k-button-solid-base")[0].style.visibility = "hidden"
+    });
+    function SubscriptionSelect(type, price) {
+        $("#hdnType").val(type);
+        $("#hdnPrice").val(price);
+        setTimeout(
+            function (x) {
+                var wizard = $("#wizard").data("kendoWizard");
+                wizard.select(1);
+            }, 200);
+    }
+
+    function DetailsForOrderSummary() {
+        if ($("#chkDispatch").prop("checked") && $("#chkProvider").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "block");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal").text($("#lblDispatchTotalValue").text());
+            $("#lblProviderCount").text($("#txtProviderCount").val());
+            $("#lblProviderTotal").text($("#lblProviderTotalValue").text())
+        }
+        else if ($("#chkDispatch").prop("checked") && $("#chkOperator").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "block");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal").text($("#lblDispatchTotalValue").text());
+            $("#lblOperatorCount").text($("#txtOperatorCount").val());
+            $("#lblOperatorTotal").text($("#lblOperatorTotalValue").text());
+        }
+        else if ($("#chkDispatch").prop("checked")) {
+            $("#trDispatch1").css("display", "block");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblDispatchCount").text($("#txtDispatchCount").val());
+            $("#lblDispatchTotal").text($("#lblDispatchTotalValue").text());
+        }
+        else if ($("#chkProvider").prop("checked")) {
+            $("#trDispatch1").css("display", "none");
+            $("#trProvider1").css("display", "block");
+            $("#trOperator1").css("display", "none");
+
+            $("#lblUnitType").text("Per Unit");
+            $("#lblProviderCount").text($("#txtProviderCount").val());
+            $("#lblProviderTotal").text($("#lblProviderTotalValue").text());
+
+        }
+        else if ($("#chkOperator").prop("checked")) {
+            $("#trDispatch1").css("display", "none");
+            $("#trProvider1").css("display", "none");
+            $("#trOperator1").css("display", "block");
+
+            $("#lblUnitType").text("Rig");
+            $("#lblOperatorCount").text($("#txtOperatorCount").val());
+            $("#lblOperatorTotal").text($("#lblOperatorTotalValue").text());
+        }
+    }
+
+    function onSelect(e) {
+        var chkD = $("#chkDispatch").prop("checked");
+        var chkP = $("#chkProvider").prop("checked");
+        var chkO = $("#chkOperator").prop("checked");
+        if (e.step.options.index == 1) {
+            if (chkD == false && chkP == false && chkO == false) {
+                kendo.alert("Please Choose Package first").title("Alert");
+                e.preventDefault();
+            }
+            else {
+                SetUnitPriceAndLabelCaptions();
+            }
+        }
+        var Name = $("#CompanyDetails_Name").val();
+        var CName = $("#CompanyDetails_CName").val();
+        var Title = $("#CompanyDetails_Title").val();
+        var CompanyPhone = $("#CompanyDetails_CompanyPhone").val();
+        var CompanyEmail = $("#CompanyDetails_CompanyEmail").val();
+        var CompanyAddress1 = $("#CompanyDetails_CompanyAddress1").val();
+        var CompanyAddress2 = $("#CompanyDetails_CompanyAddress2").val();
+        var CompanyCity = $("#CompanyDetails_CompanyCity").val();
+        var CompanyState = $("#CompanyDetails_CompanyState").val();
+        var CompanyZip = $("#CompanyDetails_CompanyZip").val();
+        var BName = $("#CompanyDetails_BillingName").val();
+        var BillingPhone = $("#CompanyDetails_BillingPhone").val();
+        var BillingEmail = $("#CompanyDetails_BillingEmail").val();
+        var BillingAddress1 = $("#CompanyDetails_BillingAddress1").val();
+        var BillingAddress2 = $("#CompanyDetails_BillingAddress2").val();
+        var BillingCity = $("#CompanyDetails_BillingCity").val();
+        var BillingState = $("#CompanyDetails_BillingState").val();
+        var BillingZip = $("#CompanyDetails_BillingZip").val();
+        var check = $("#fill").prop("checked");
+        if (e.step.options.index == 3) {
+            if ((Name == '' || CName == '' || Title == '' || CompanyPhone == '' || CompanyEmail == '' ||
+                CompanyAddress1 == '' || CompanyCity == '' || CompanyState == '' || CompanyZip == '' ||
+                BName == '' || BillingPhone == '' || BillingEmail == '' || BillingAddress1 == '' ||
+                BillingCity == '' || BillingState == '' || BillingZip == '')) {
+                kendo.alert("Please fill all * required fields").title("Alert");
+                e.preventDefault();
+            }
+            else if (check == true && (Name == BName && CompanyPhone == BillingPhone && CompanyEmail == BillingEmail && CompanyAddress1 == BillingAddress1
+                && CompanyAddress2 == BillingAddress2 && CompanyCity == BillingCity && CompanyState == BillingState && CompanyZip == BillingZip)) {
+            }
+            else if (check == false) {
+
+            }
+            else {
+                kendo.alert("Your Details are not same. Please check it !").title("Alert");
+                e.preventDefault();
+
+            }
+
+
+              //COMPANY EMAIL ALERT
+              var emailTextBox = document.getElementById("CompanyDetails_CompanyEmail");
+              var email = emailTextBox.value;
+              var emailRegEx = /^[a-zA-Z0-9._+-]+@("@")[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$/;
+             if (!emailRegEx.test(email)) {
+                emailTextBox.style.borderColor = "red";
+                kendo.alert("Please Enter valid email.!").title("Alert");
+                e.preventDefault();
+             }
+             //BILLING EMAIL ALERT
+
+              var emailTextBox1 = document.getElementById("CompanyDetails_BillingEmail");
+              var email1 = emailTextBox1.value;
+              var emailRegEx1 = /^[a-zA-Z0-9._+-]+@("@")[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$/;
+             if (!emailRegEx1.test(email1)) {
+                emailTextBox1.style.borderColor = "red";
+                kendo.alert("Please Enter valid email.!").title("Alert");
+                e.preventDefault();
+             }
+
+            //if (CompanyEmail.style.borderColor == "rgba(33, 37, 41, 0.15)") {
+            //    kendo.alert("Please Enter valid email.!").title("Alert");0
+            //    e.preventDefault();
+            //}
+        }
+
+        //COST SUMMARY ALERT
+        var dispatchcount = $("#txtDispatchCount").val();
+        var providercount = $("#txtProviderCount").val();
+        var operatorcount = $("#txtOperatorCount").val();
+        if (e.step.options.index == 2) {
+
+            if (types == 'Dispatch') {
+
+                if (dispatchcount === "" || dispatchcount === "0") {
+                    kendo.alert("Please Enter the User Count").title("Alert");
+                    e.preventDefault();
+                }
+            }
+            else if (types == 'Advisor Provider') {
+
+                if (providercount === "" || providercount === "0") {
+                    kendo.alert("Please Enter the User Count").title("Alert");
+                    e.preventDefault();
+                }
+            }
+            else if (types == 'Advisor Operator') {
+
+                if (operatorcount === "" || operatorcount === "0") {
+                    kendo.alert("Please Enter the Rig Count").title("Alert");
+                    e.preventDefault();
+                }
+            }
+
+            else if (types[0] == 'Dispatch' && types[1] == 'Advisor Operator') {
+
+                if ((dispatchcount === "" || dispatchcount === "0") || (operatorcount === "" || operatorcount === "0")) {
+                    kendo.alert("Please Enter the User & Rig Count").title("Alert");
+                    e.preventDefault();
+                }
+            }
+            else if (types[0] == 'Dispatch' && types[1] == 'Advisor Provider') {
+
+                if ((dispatchcount === "" || dispatchcount === "0") || (providercount === "" || providercount === "0")) {
+                    kendo.alert("Please Enter the User Count").title("Alert");
+                    e.preventDefault();
+                }
+            }
+
+
+        }
+        //PAYMENT DEATAILS
+        var PaymentType = $("#PaymentType").val();
+        var CustomerName = $("#CustomerName").val();
+        var BankName = $("#BankName").val();
+        var AccountNumber = $("#AccountNumber").val();
+        var TypeofAccount = $("#TypeofAccount").val();
+        var RoutingNumber = $("#RoutingNumber").val();
+        var CardName = $("#CardName").val();
+        var CardNumber = $("#CardNumber").val();
+        var Month = $("#biMonth").val();
+        var Year = $("#biYear").val();
+        var CardVnumber = $("#CardVerificationNumber").val();
+        if (e.step.options.index == 4) {
+
+            if (PaymentType == '0') {
+                kendo.alert("Please Fill all the Card Details").title("Alert")
+                e.preventDefault();
+            }
+            else if ((PaymentType == "ACH Payment") && (CustomerName == '' || BankName == '' || AccountNumber == '' || TypeofAccount == '' || RoutingNumber == '')) {
+                kendo.alert("Please Fill all the Account Details").title("Alert")
+                e.preventDefault();
+            }
+
+
+            else if ((PaymentType == "Credit Card" || PaymentType == "Debit Card") && (CardName == '' || CardNumber == '' || Month == '' || Year == '' || CardVnumber == '')) {
+                kendo.alert("Please Fill all the Card Details").title("Alert")
+                e.preventDefault();
+            }
+            else {
+                DetailsForOrderSummary();
+                loaddatasummary();
+            }
+        }
+
+    };
+    function onReset(e) {
+        var form = $('#attendeeDetails').getKendoForm();
+        if (form) {
+            form.clear();
+        }
+    };
+
+    function onContentLoad(e) {
+        if (e.step.options.index == 1) {
+            SetUnitPriceAndLabelCaptions()
+        }
+        else if (e.step.options.index == 4) {
+            DetailsForOrderSummary();
+        }
+    };
+
+    function updateSelection(e) {
+        var Name = e.sender.wrapper.find('#Name').getElementsByClassName('form').dataItem();
+        var Cname = e.sender.wrapper.find('#CName').getElementsByClassName('form').dataItem();
+        $('#Name').html(selectedTalk.id === '' ? '' : selectedTalk.title);
+        $('#CName').html(SelectedName.id === '' ? '' : selectedWorkshop.title);
+    };
+
+
+</script>
+
+<style>
+    .wizardContainer {
+        display: flex;
+        height: 250px;
+        justify-content: center;
+        align-items: center;
+    }
+    /*.content-wrapper
+    {
+        color:white;
+    }*/
+    .k-wizard {
+        padding: 20px 20px;
+        border-width: 0;
+        border-style: solid;
+        box-sizing: border-box;
+        outline: 0;
+        font-size: 14px;
+        line-height: 1.42857143;
+        font-family: inherit;
+        position: relative;
+        color: inherit;
+        background: 0 0;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: stretch;
+        align-items: stretch;
+        overflow: hidden;
+        background-color: white;
+    }
+
+
+        .k-wizard .k-wizard-buttons .k-wizard-pager {
+            vertical-align: middle;
+            color: black;
+        }
+
+        .k-wizard .k-wizard-content {
+            color: steelblue;
+            overflow: hidden;
+        }
+
+    .k-wizard-horizontal .k-wizard-steps {
+        margin-top: 0px;
+    }
+
+    .visa {
+        background-image: url(https://cdn-icons-png.flaticon.com/128/196/196578.png);
+    }
+</style>

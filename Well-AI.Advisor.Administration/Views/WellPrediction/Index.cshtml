@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<section class="content-header">
+    <style>
+        html,
+        body {
+            height: auto;
+            min-height: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        li.k-button {
+            color: black;
+            background-color: white;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        .k-grid .k-grid-add:hover {
+            color: #fff !important;
+        }
+
+        .k-window-content #sidebar .k-edit-label {
+            margin-left: -50px;
+        }
+
+        .k-window-content .k-edit-form-container {
+            width: inherit;
+        }
+
+        .k-grid-Details, .k-grid-Details:hover, .k-grid-Delete, .k-grid-Delete:hover {
+            background-color: transparent !important;
+        }
+
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        a.k-button.k-button-icontext.k-grid-Details {
+            border: none;
+        }
+
+        .k-grid-Details .k-button {
+            width: 30px;
+        }
+
+        .k-grid-content {
+            height: auto !important;
+        }
+
+        .k-widget.k-window {
+        }
+
+        span.k-dropdown-wrap.k-state-default, .k-dropdown, .k-dropdown:hover {
+            color: #000000 !important;
+            background-color: #ffff !important;
+            width: 100%;
+        }
+
+        .row {
+            padding-top: 3px;
+        }
+
+        #CustomerDetails {
+            font-size: 16px;
+            margin: 15px;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div id="CustomerDetails" class="col-md-6"><strong>Well Prediction</strong></div>
+    </div>
+    <div class="auction-bottom">
+        @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.WellMasterDataViewModel>
+    ()
+    .Name("welldatamaster")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.wellId).Title("Well ID").Filterable(false).Width(350);
+        columns.Bound(p => p.wellName).Width(200).Title("Well").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.OperatorName).Title("Operator").Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.basin).Title("Basin").Width(125).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.county).Title("County/Parish").Width(125).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.wellType).Title("Design").Width(175).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.rigName).Title("Rig").Width(165).Filterable(ftb => ftb.Cell(cell => cell.ShowOperators(false)));
+        columns.Bound(p => p.taskCount).Title("Jobs").Width(75).Filterable(false);
+        columns.Bound(p => p.minSchdDate).Title("Min.Schd.Date").Format("{0: MM/dd/yyyy hh:mm:ss}").Hidden();
+        columns.Bound(p => p.maxSchdDate).Title("Max.Schd.Date").Format("{0: MM/dd/yyyy hh:mm:ss}").Hidden();
+        columns.Bound(p => p.wellId).Width(85).Title("Action").Filterable(false).ClientTemplate("<button type='button' onclick='processRequest(\"#=wellId#\")' class='k-button k-primary'>Process</button>");
+    })
+    .Sortable()
+    .Pageable(p =>p.Info(true).Numeric(false).PreviousNext(false))
+    .Selectable()
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .Filterable(ftb => ftb.Mode(GridFilterMode.Row)).Sortable()
+    .Pageable()
+    .Reorderable(r => r.Columns(true))
+    .Resizable(r => r.Columns(true))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p => p.wellId)).ServerOperation(true)
+    .PageSize(13)
+    .Batch(false)
+    .Read(read => read.Action("GetWellData", "WellPrediction"))
+    )
+    .Events(e =>
+    {
+        e.Save("onGridSave").Edit("RenameWindow").DataBound("OnDataBound");
+    })
+    )
+    </div>
+</section>
+<script>
+    function processRequest(wellId) {
+       
+    }
+    //Phase II Changes - Alert
+    function predictionalert(content, alerttitle) {
+        $("<div></div>").kendoAlert({
+            title: alerttitle,
+            content: content
+        }).data("kendoAlert").open();
+    }
+
+    function onGridSave() {
+
+    }
+
+    function RenameWindow() {
+
+    }
+
+    function OnDataBound() {
+
+    }
+</script>

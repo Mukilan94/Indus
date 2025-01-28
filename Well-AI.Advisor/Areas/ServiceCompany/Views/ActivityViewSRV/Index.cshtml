@@ -1,0 +1,341 @@
+﻿@{
+    ViewData["Title"] = "Schedule";
+}
+<section class="content-header">
+    <style>
+        .k-scheduler-table th {
+            color: #000;
+        }
+        #scheduler{
+            overflow-y:auto !important;
+        }
+        .k-views-dropdown {
+            display: none !important;
+        }
+        
+
+        .k-dropdown .k-dropdown-wrap, .k-dropdowntree .k-dropdown-wrap {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .k-edit-label {
+            margin-left: 15px !important;
+            margin-top: 5px !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row" style="padding-top:30px !important;">           
+            <div class="col-md-3" style="padding-left:0px !important;">
+                <div class="k-edit-label">
+                    @Html.Label("RigsList", "Rig")
+                </div>
+                <div class="k-edit-field">
+                    @(Html.Kendo().DropDownList()
+                          .Name("RigsList")
+                          .DataTextField("Rig_Name")
+                          .DataValueField("Rig_Id")
+                          .OptionLabel("Select All")
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetServiceRigs", "WellDataSRV");//.Data("FilterWells");
+                              });//.ServerFiltering(true);
+                          })
+                          .Events(e => e.Change("OnRigChange"))
+                           
+                )
+                </div>
+            </div>
+            <div class="col-md-3" style="padding-left:0px !important;">
+                <div class="k-edit-label">
+                    @Html.Label("WellsList", "Well")
+                </div>
+                <div class="k-edit-field">
+                    @(Html.Kendo().DropDownList()
+                          .Name("WellsList")
+                          .DataTextField("wellName")
+                          .DataValueField("wellId")
+                          .OptionLabel("Select All")
+                          .DataSource(source =>
+                          {
+                              source.Read(read =>
+                              {
+                                  read.Action("GetServiceWells", "WellDataSRV").Data("filterWells");
+                              }).ServerFiltering(true);
+                          })
+                          .Events(e => e.Change("OnWellChange"))
+                          .CascadeFrom("RigsList")
+                          .Enable(false)
+                          .AutoBind(false)
+                )
+                </div>
+            </div>
+            
+    </div>
+
+    @(Html.Kendo().Scheduler<WellAI.Advisor.Model.ServiceCompany.Models.ActivityViewModel>()
+     .Name("scheduler") .Mobile(MobileMode.Auto)
+     .Date(DateTime.Now)
+     .Height(750)
+     .WorkDays(new int[] { 1, 2, 3, 4, 5, 6, 7 })
+     .StartTime(new DateTime(2020, 1, 1, 0, 00, 00))
+     .EndTime(new DateTime(2050, 12, 31, 23, 59, 59))
+     .ShowWorkHours(false)
+     .Timezone("Etc/UTC")
+     .Events(e =>
+     {
+         e.Edit("scheduler_edit");
+         e.Navigate("onShedularNavigate");
+     })
+    .Views(views =>
+    {
+        views.DayView(wDay =>
+        {
+            wDay.ShowWorkHours(false);
+            wDay.Footer(false);
+        });
+        views.WeekView(mWeek =>
+        {
+            mWeek.ShowWorkHours(false);
+            mWeek.Footer(false);
+        });
+        views.MonthView(yMonth =>
+        {
+            yMonth.EventsPerDay(4);
+            yMonth.AdaptiveSlotHeight(true);
+            yMonth.EventSpacing(5);
+            yMonth.EventHeight(60);
+        });
+        views.AgendaView(av =>
+        {
+            av.Selected(true);
+        });
+        views.TimelineView();
+    })
+     .MinorTickCount(1)
+     .Toolbar(t => {
+                         t.Search();
+                     })
+     .Resources(resource =>
+     {
+         resource.Add(m => m.ProjectStatus)
+             .Title("Project Status")
+             .DataTextField("Text")
+             .DataValueField("Value")
+             .DataColorField("Color")
+             .BindTo(new[] {
+                    new { Text = "Ongoing", Value = 1, Color = "#56ca85" } ,
+                    new { Text = "Upcoming", Value = 0, Color = "#51a0ed" } ,
+             });
+     })
+     .DataSource(dataSource => dataSource
+    .Model(m =>
+    {
+        m.Id(f => f.ProjectId);
+        m.Field(f => f.Title).DefaultValue("No title");
+        m.Field(f => f.ProjectStatus).DefaultValue(1);
+        m.Field(f => f.ProjectStatusName);
+        m.Field(f => f.Description).DefaultValue("No Description");
+        m.Field(f => f.Start);
+        m.Field(f => f.End);
+        m.Field(f => f.RecurrenceID);
+        m.Field(f => f.RecurrenceRule);
+        m.Field(f => f.RecurrenceException);
+        m.Field(f => f.IsAllDay);
+        m.Field(f => f.StartTimezone);
+        m.Field(f => f.EndTimezone);
+    })
+    .Create("Create", "ActivityViewSRV")
+    .Read("Read", "ActivityViewSRV")
+    .Destroy("Destroy", "ActivityViewSRV")
+    .Update("Update", "ActivityViewSRV")
+    )
+    )
+</section>
+<style>
+    /*.k-my-button
+    {
+        display:none;
+    }*/
+
+    .k-nav-current {
+        color: #fff !important;
+    }
+    .hideButtom {
+        visibility: hidden;
+    }
+    .k-edit-field {
+        padding-top: 5px !important;
+    }
+    .k-editor-toolbar {
+        display: none !important;
+    }
+    .toBeReplaced {
+        visibility: hidden;
+        position: relative;
+    }
+        .toBeReplaced:after {
+            visibility: visible;
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: "This text replaces the original.";
+        }
+    .k-link-field {
+        margin: 0 0 1rem 0;
+        width: 77%;
+        float: right;
+        clear: right;
+    }
+    .k-scheduler-views-wrapper .k-dropdown, .k-scheduler-views-wrapper .k-dropdowntree {
+        background-color: floralwhite;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('[class="k-edit-buttons"]').remove();
+        var scheduler = $("#scheduler").data("kendoScheduler");
+        var button = $("<button class='k-button k-my-button'><span class='k-icon k-i-plus'></span> New Event</button>");
+        $(scheduler.toolbar).prepend(button);
+        button.click(function () {
+            var element = scheduler.view().content.find("tr:first td:first");
+
+            if (element != undefined) {
+                if (element.length > 0) {
+                    var slot = scheduler.slotByElement(element);
+                    //scheduler.addEvent({
+                    //    start: slot.startDate,
+                    //    end: slot.endDate
+                    //});
+                    //Slot will be null at Agenda view. So at Agenda view, Start and End date will be current date
+                    if (slot != null) {
+                        scheduler.addEvent({
+                            start: slot.startDate,
+                            end: slot.endDate
+                        });
+                    } else {
+                        var startDate = new Date();
+                        scheduler.addEvent({
+                            start: startDate,
+                            end: startDate
+                        });
+                    }
+                } else {
+                    var startDate = new Date();
+                    scheduler.addEvent({
+                        start: startDate,
+                        end: startDate
+                    });
+                }                
+            }
+
+            
+        });
+       gridObject = $("#scheduler").data("kendoScheduler");
+        var value = sessionStorage.getItem("UpcomingActivity");
+        var readURL = "/ActivityViewSRV/UpcomingRead"
+        if (value == "Upcoming") {
+            gridObject.dataSource.transport.options.read.url = readURL;
+            gridObject.dataSource.read();
+            sessionStorage.clear();
+        }
+    });
+    function scheduler_edit(e) {
+        var projectId = e.event.ProjectId;
+        //TU-10/19/2020-TimeZone Section Hide
+        e.container.find('label[for="timezone"]').parent().hide();
+        e.container.find('div[data-container-for="timezone"]').hide();
+        if (projectId == '' && !e.event.ActivityIsTask) {
+            e.container.find('label[for="ProjectStatus"]').parent().hide();
+            e.container.find('div[data-container-for="ProjectStatus"]').hide();
+            e.container.find('#title').val('');
+            e.container.find('textarea[name="description"]').val('');
+        }
+        else if (e.event.ActivityIsTask) {
+            e.container.find('label[for="ProjectStatus"]').parent().hide();
+            e.container.find('div[data-container-for="ProjectStatus"]').hide();
+        }
+        else {
+            var title = e.event.title;
+            var description = e.event.description;
+            var projectStatus = e.event.ProjectStatus;
+            e.container.find('.k-edit-field').addClass("k-state-disabled").css("pointer-events", "none");
+            e.container.find('.k-scheduler-update').addClass("hideButtom").css("pointer-events", "none");
+            e.container.find('.k-scheduler-delete').addClass("hideButtom").css("pointer-events", "none");
+            e.container.find('.k-editor-toolbar-wrap').addClass("k-editor-toolbar").css("pointer-events", "none");
+            e.container.find('.project-detail').addClass("k-link-field");
+            e.container.find('.k-select').addClass("hideButtom").css("pointer-events", "none");
+            setTimeout(function () {
+                var htmla = '';
+                var html = '';
+                if (projectStatus == 0) {
+                    htmla = '<a href="/upcomingprojectssrv/ProjectDetails?id=' + projectId + '">More Details</a>';
+                } else {
+                    htmla = '<a href="/OngoingProjects/FieldTicket?id=' + projectId + '">More Details</a>';
+                }
+                $('.k-window-title').text(title);
+                if (description) {
+                    if (description.length > 200) {
+                        html = '<p>' + description + '</p>' + htmla;
+                    } else {
+                        html = '<p>' + description + '....!</p>' + htmla;
+                    }
+                }
+                var linkdiv = $('textarea[name="description"]').parent();
+                linkdiv.removeClass("k-state-disabled");
+                linkdiv.css("pointer-events", "all");
+                linkdiv.empty();
+                linkdiv.html(html);
+                var statusDiv = e.container.find('div[data-container-for="ProjectStatus"]');
+                statusDiv.empty();
+                statusDiv.html('<p>' + e.event.ProjectStatusName + '</p>');
+
+            }, 0);
+        }
+    }
+    function scheduler_change(e) {
+        var projectId = e.event.ProjectId;
+        if (projectId.length > 0) {
+        } else {
+            return false;
+       }
+
+    }
+    function filterWells() {
+        return {
+            rigId: $("#RigsList").val()
+        };
+    }
+
+    function onShedularNavigate(e) {
+        $(".k-my-button").css("display", "block");
+    }
+
+     function OnRigChange(e) {
+        var dataItem = e.sender.dataItem();
+        var cookieRigId = getCookie("wellIdCookie");
+            setCookie("rigIdCookie", dataItem.Rig_Id);
+       
+        setTimeout(function () {
+            $("#scheduler").data("kendoScheduler").dataSource.read().then(function () {
+                $("#scheduler").data("kendoScheduler").refresh();
+            });
+        },1000)
+        
+    }
+    function OnWellChange(e) {
+        var dataItem = e.sender.dataItem();
+        var cookiewellid = getCookie("wellIdCookie");
+        setCookie("wellIdCookie", dataItem.wellId);
+        setTimeout(function () {
+            $("#scheduler").data("kendoScheduler").dataSource.read().then(function () {
+                $("#scheduler").data("kendoScheduler").refresh();
+            });
+        }, 1000)
+
+    }
+</script>

@@ -1,0 +1,43 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.ProjectNote
+@{
+    ViewData["Title"] = "Add Note";
+}
+<style>
+    .k-edit-label{
+        width:10% !important;
+    }
+    .k-edit-field{
+        width:85%;
+    }
+    .k-window-content,
+    .k-prompt-container {
+        overflow:hidden !important;
+    }
+</style>
+<div class="k-edit-form-container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Title)
+            </div>
+            <div class="k-edit-field">
+                @Html.TextBoxFor(model => model.Title, new { @Class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="k-edit-label">
+                @Html.LabelFor(model => model.Body)
+            </div>
+            <div class="k-edit-field">
+                @(Html.Kendo().EditorFor(model => model.Body)
+                                .Encoded(false)
+                                .Resizable(resizable => resizable.Content(false).Toolbar(true))
+                                .HtmlAttributes(new { style = "width:400px", required = "required", id = "noteeditor" })
+                                .Tools(tools => tools.Clear().Bold()
+                                .Italic().Underline().SubScript().SuperScript()))
+                @Html.ValidationMessageFor(model => model.Body)
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.GearViewModel
+
+@if (Model != null && Model.Enable)
+{
+    <a href="@Model.ConfigUrl">
+        <i class="fa fa-cog"></i>
+    </a>
+}
+else
+{
+    <i class="fa fa-cog"></i>
+}

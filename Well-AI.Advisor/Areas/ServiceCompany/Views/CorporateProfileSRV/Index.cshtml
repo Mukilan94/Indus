@@ -1,0 +1,331 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Corporate Profile";
+    var categories = (List<WellAI.Advisor.DLL.Entity.ServiceCategory>)ViewData["categories"];
+}
+@model WellAI.Advisor.Model.ServiceCompany.Models.ServiceCorporateProfile
+
+<section class="content-header">
+    <style>
+
+        .k-upload {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: -45px;
+        }
+
+        #preview {
+            display: inline-block;
+        }
+
+        .k-dropzone, .k-upload-button {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .k-dropzone {
+            float: left;
+        }
+
+        .k-upload-files {
+            float: right;
+        }
+    </style>
+    <style>
+        .content {
+            margin: 10px;
+            border: 4px solid #007bff;
+            border-radius: 10px;
+            background-color: white !important;
+            color: black !important;
+            padding-top: 0px;
+        }
+
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-left: -15px;
+            margin-top: 10px;
+        }
+
+        label {
+            margin-top: 4.5px;
+        }
+
+        .k-edit-buttons {
+            border-style: none;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .k-dropdown .k-dropdown-wrap .k-input, .k-dropdowntree .k-dropdown-wrap .k-input {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .k-textbox, .k-textarea, .k-input.k-textbox, .k-dropdown, .k-multiselect {
+            margin-left: -10%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        #txtcity, #txCountry {
+            margin-left: 5%;
+        }
+    </style>
+</section>
+<!-- Main content -->
+@using (Html.BeginForm("Update", "CorporateProfileSRV", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <section class="content">
+        @Html.HiddenFor(x => x.ID)
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.Name, "Company Name")</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.Name, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Name)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.Address1)</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.Address1, new { @Class = "k-textbox", required = "required", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Address1)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3"> @Html.LabelFor(x => x.Address2)</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.Address2, new { @Class = "k-textbox", style = "width:100%" })
+                        @*@Html.ValidationMessageFor(model => model.Address2)*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">@Html.LabelFor(x => x.City)</div>
+                    <div class="col-sm-3">
+                        @Html.TextBoxFor(x => x.City, new { @Class = "k-textbox", @id = "txtcity", @type = "text", required = "required", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.City)
+                    </div>
+                    <div class="col-sm-1">@Html.LabelFor(x => x.State)</div>
+                    <div class="col-sm-5">
+                        @(Html.Kendo().DropDownListFor(m => m.State)
+                            .DataValueField("StateId")
+                            .DataTextField("Name")
+                            .BindTo((System.Collections.IEnumerable)ViewData["StateList"])
+                            .HtmlAttributes(new { style = "width:100%"})
+                        )
+                        @*@Html.TextBoxFor(x => x.State, new { @Class = "k-textbox", @id = "txtstate", required = "required", style = "width:100%" })*@
+                        @Html.ValidationMessageFor(model => model.State)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">@Html.LabelFor(x => x.Country)</div>
+                    <div class="col-sm-3">
+                        @Html.TextBoxFor(x => x.Country, new { @Class = "k-textbox", @id = "txCountry", required = "required", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Country)
+                    </div>
+                    <div class="col-sm-1">@Html.LabelFor(x => x.Zip)</div>
+                    <div class="col-sm-5">
+                        @Html.TextBoxFor(x => x.Zip, new { @Class = "k-textbox", @id = "txtzip", required = "required", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Zip)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">@Html.LabelFor(x => x.Phone)</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.Phone, new { @Class = "k-textbox", @id = "txtphone", style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Phone)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">@Html.LabelFor(x => x.Website)</div>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(x => x.Website, new { @Class = "k-textbox", style = "width:100%" })
+                        @*@Html.ValidationMessageFor(model => model.Website)*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">@Html.LabelFor(x => x.ServiceCategories, "Service Categories")</div>
+                    <div class="col-sm-9">
+                        <div style="height:0px;width:0px;margin:0;padding:0;visibility:hidden;">
+                            @Html.Kendo().MaskedTextBoxFor(model => model.ServiceCategories)
+                        </div>
+                        @(Html.Kendo().MultiSelect()
+                              .Name("categoryddl")
+                             @* .AutoClose(false)*@
+                              .Placeholder("Select categories...")
+                              .DataTextField("Name")
+                              .DataValueField("ServiceCategoryId")
+                              .Filter(FilterType.StartsWith)
+                              .BindTo(categories)
+                              .Events(e => e.Change("categoryChange")) //.DataBound("setSelectedCategories")
+                    )
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label>Logo</label>
+                    </div>
+                    <div class="col-sm-10">
+                        @Html.HiddenFor(x => x.LogoPath)
+                        <input type="file" id="logofiles" name="logofiles">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="preview"></div>
+                    </div>
+                </div>
+                <div>
+                    <br />
+                    <p></p><br />
+                    <p><span style=" font-size: medium; color: red;">Suggested Logo Size : </span><span style=" font-size: medium;">  200px X 45px</span></p>
+                    <p><span style=" font-size: medium; color: red;">Suggested aspect ratio is :</span><span style=" font-size: medium;"> 40 : 9</span></p>
+                </div>
+            </div>
+        </div>
+        <div>
+
+            <div class="k-edit-buttons k-state-default">
+
+                <button type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="k-icon k-i-check"></span>Apply</button>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var logopath = $("#LogoPath").val();
+            if (logopath != undefined && logopath != "") {
+                $("<img width=150 height=150>").attr("src", logopath).appendTo($("#preview"));
+            }
+
+            $("#logofiles").kendoUpload({
+                "multiple": false,
+                remove: function (e) {
+                    $("#preview").empty();
+                    $("#LogoPath").val("");
+                    $("#LogoPath").trigger("change");
+                },
+                select: function (e) {
+                    $("#preview").empty();
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+
+                            reader.onloadend = function () {
+                                $("<img width=150 height=150>").attr("src", this.result).appendTo($("#preview"));
+                                $("#LogoPath").val(this.result);
+                                $("#LogoPath").trigger("change");
+                            };
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                }
+            });
+        });
+        function categoryChange(e) {
+            var multiselect = $("#categoryddl").data("kendoMultiSelect");
+            var selectedData = "";
+            var items = multiselect.value();
+            for (var i = 0; i < items.length; i++) {
+                selectedData += items[i] + ";";
+            }
+            $("#ServiceCategories").val(selectedData);
+            $("#ServiceCategories").trigger("change");
+        }
+        function setSelectedCategories() {
+            $.ajax({
+                url: "/CorporateProfileSRV/SetSelectedCategories",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $("#categoryddl").data("kendoMultiSelect").value(data);
+                }
+            });
+        }
+    </script>
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#txtphone").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+
+        setTimeout(setSelectedCategories(), 2000);
+
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtzip").keydown(function (event) {
+            if (event.shiftKey && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 46 || event.keyCode == 8) {
+            }
+            else {
+                if (event.keyCode < 95) {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+                else {
+                    if (event.keyCode < 96 || event.keyCode > 105 && event.keyCode != 187 && event.keyCode != 107 && event.keyCode != 109 && event.keyCode != 189) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtcity").keydown(function (e) {
+            var pattern = /^[a-zA-Z ]+$/;
+            if (!pattern.test(e.key) && e.key != '') {
+                return false;
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#txtstate").keydown(function (e) {
+            var pattern = /^[a-zA-Z ]+$/;
+            if (!pattern.test(e.key) && e.key != '') {
+                return false;
+            }
+        });
+    });
+</script>

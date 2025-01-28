@@ -1,0 +1,24 @@
+﻿@model WellAI.Advisor.Model.Administration.ServiceCategoryModel
+@using Kendo.Mvc.UI
+<div class="row">
+    <div class="col-md-12 errors"></div>
+</div>
+@Html.HiddenFor(m=>m.ParentId)
+<div class="row">
+    <div class="col-md-4">Sub-Phase</div>
+    <div class="col-md-8">
+        @Html.TextBoxFor(model => model.Name, new { style = "width:100%" })
+        @Html.ValidationMessageFor(model => model.Name)
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">Description</div>
+    <div class="col-md-8">@Html.TextAreaFor(model => model.Description, new { style = "width:100%" })</div>
+</div>
+<div class="row">
+    <div class="col-md-4">Active</div>
+    <div class="col-md-2">
+        @(Html.Kendo().CheckBoxFor(m=>m.IsActive))
+    </div>
+</div>

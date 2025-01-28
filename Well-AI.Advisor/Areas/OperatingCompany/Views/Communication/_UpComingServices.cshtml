@@ -1,0 +1,19 @@
+﻿
+@model IEnumerable<WellAI.Advisor.Model.ServiceCompany.Models.ProjectViewSRVModel>
+
+<ul class="k-list" id="UpComingServicesUlList">
+    @{
+        if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <li class="k-item" role="option">
+                    <div class="k-state-default">
+                        <div class="chatuser"><b>@item.ExpectedStartDate </b> :  @item.Title</div>
+                    </div>
+                    <hr />
+                </li>
+            }
+        }
+    }
+</ul>

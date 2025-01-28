@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "_Layout";
+
+    string AccountType = HttpContextAccessor.HttpContext.Session.GetString("AccountType");
+    string SubscriptionType = HttpContextAccessor.HttpContext.Session.GetString("subscriptiontype");
+
+    string controller = @ViewContext.RouteData.Values["controller"].ToString();
+
+    string action = @ViewContext.ActionDescriptor.RouteValues["action"];
+
+    if ((action == "ServiceIndex" || action == "Dashboard") && (controller == "ServiceDashboard" || controller == "DispatchSRV"))
+    {
+        Layout = "~/Views/Shared/_LayoutAdvisorDispatch.cshtml";
+    }else if (action == "SubscriptionView" || action == "SubscriptionSelector" || action == "CompanyDetails" || action == "Payment")
+    {
+        Layout = "~/Views/Shared/_LayoutSubscription.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+}
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@*@model WellAI.Advisor.Model.ServiceCompany.Models.ServiceDashboardModel*@

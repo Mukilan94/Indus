@@ -1,0 +1,262 @@
+﻿@{
+    ViewData["Title0"] = "Settings";
+    ViewData["Title"] = "Payment Methods";
+}
+
+<section class="content-header">
+    <style>
+        .k-grid-header .k-header > .k-link {
+            text-transform: uppercase;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+        .k-grid-content {
+            height: auto !important;
+        }
+        .k-grid .k-grid-add, .k-grid .k-grid-add:hover {
+            color: #fff !important;
+            border: 0;
+        }
+        .k-grid-View, .k-grid-Delete, .k-grid-View:hover, .k-grid-Delete:hover {
+            background-color: #fff;
+        }
+        .k-link k-state-selected {
+            padding-top: 17px !important;
+        }
+        .k-pager-numbers {
+            padding-top: 17px !important;
+        }
+        .k-grid-edit, .k-grid-Delete{
+            border:1px solid #007BFF;
+            border-radius:10px;
+        }
+        .k-window-titlebar {
+            background-color: #007BFF;
+            color: white;
+        }
+        .k-grid-cancel {
+            border-color: #007bff;
+            color: #ffffff;
+            background-color: #007bff
+        }
+        .k-dropdown .k-dropdown-wrap .k-select{
+            background-color:#000;
+            color:#fff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #367fa9;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+        }
+        .k-grid-Delete, .k-grid-Delete:hover {
+            border: none !important;
+        }
+    </style>
+</section>
+<!-- Main content -->
+<section class="content">
+    @(Html.Kendo().Grid <WellAI.Advisor.DLL.Entity.PaymentMethod> ()
+    .Name("paymenthods")
+    .HtmlAttributes(new { @class = "ra-section" })
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ID).Hidden();
+        columns.Bound(p => p.Holder).Title("Name on card");
+        columns.Bound(p => p.Number).Title("Card number");
+        columns.Bound(p => p.Nickname);
+        columns.Bound(p => p.ExpireMonth).Title("Expires on (month)").Width(120);
+        columns.Bound(p => p.ExpireYear).Title("Expires on (year)").Width(120);
+        columns.Bound(p => p.Default).Width(100);
+        columns.Command(command => { //command.Edit(); 
+            command.Custom("Delete").Text("<i class='fa fa-trash' style='font-size:20px;'></i>").Click("customDelete"); }).Title("Action").Width(70);
+    })
+    .Sortable(s => s.Enabled(true))
+    .Pageable(p =>
+                         p.Info(true)
+                         .Numeric(false)
+                         .PreviousNext(false)
+                        )
+    .Scrollable(scrollable => scrollable.Virtual(true))
+    .ToolBar(toolbar => toolbar.Create().Text("Add new payment method"))
+    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditPayment").Window(w => w.Title("Edit Payment Method").Width(835)))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(10)
+        .Model(model => model.Id(p => p.ID))
+        .Create(update => update.Action("PaymentMethods_Create", "PaymentMethods"))
+        .Read(read => read.Action("PaymentMethods_Read", "PaymentMethods"))
+        .Update(update => update.Action("PaymentMethods_Update", "PaymentMethods"))
+    )
+    .Events(e =>
+    {
+        e.Edit("RenameWindow1").DataBound("onDataBound").Save("OnGridSave");
+    })
+    )
+</section>
+<script type="text/javascript">
+   $(document).ready(function () {
+        RefreshGrid();
+   });
+
+    function OnGridSave() {
+        setTimeout(function () {
+            $('#paymenthods').data('kendoGrid').dataSource.read().then(function () {
+                $('#paymenthods').data('kendoGrid').refresh();
+            });
+        }, 1500);
+    }
+
+    function RefreshGrid() {
+        var IntTime = 600000;
+        setInterval(function () {
+            $("#paymenthods").data("kendoGrid").dataSource.read();
+        }, IntTime);
+    }
+    function onDataBound() {
+        var grid = this;
+        grid.element.off('dblclick');
+        grid.element.on('dblclick', 'tbody tr[data-uid]', function (e) {
+            grid.editRow($(e.target).closest('tr'));
+        })
+    }
+	$(document).ready(function () {
+		var url = window.location.href;
+		if (url.indexOf('modal=true') > 1) {
+			window.setTimeout(function () {
+				$('.k-grid-add').trigger("click");
+			}, 1000);
+		}
+    });
+    function RenameWindow1(e) {
+        if (e.model.isNew()) {
+            $.ajax({
+                url: "/CorporateProfile/GetCorporateProfile",
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (data) {
+                    console.log(data);
+                    $("#Address1").val(data.Address1);
+                    $("#Address2").val(data.Address2);
+                    $("#City").val(data.City);
+                    $("#ZipCode").val(data.Zip);
+                    var dropdownStatelist = $("#ddlState").data("kendoDropDownList");
+                    dropdownStatelist.text(data.State);
+                    dropdownStatelist.trigger("change");
+                    var dropdownCountrylist = $("#ddlCountry").data("kendoDropDownList");
+                    dropdownCountrylist.text(data.Country);
+                    dropdownCountrylist.trigger("change");
+                }
+            });
+            e.container.data("kendoWindow").title("New payment");
+        }
+    }
+    function showdelete(e) {
+        e.preventDefault();
+        alert('Are you sure to delete this payment method?')
+    }
+    function monthChange(e) {
+        var ddlmonthValue = $("#ddlExpireMonth").val();
+        $("#ExpireMonth").data("kendoMaskedTextBox").value(ddlmonthValue);
+        $("#ExpireMonth").data("kendoMaskedTextBox").trigger("change");
+    }
+    function yearChange(e) {
+        var ddlyearValue = $("#ddlExpireYear").val();
+        $("#ExpireYear").data("kendoMaskedTextBox").value(ddlyearValue);
+        $("#ExpireYear").data("kendoMaskedTextBox").trigger("change");
+    }
+    function stateChange(e) {
+        var ddlstateValue = $("#ddlState").val();
+        $("#State").data("kendoMaskedTextBox").value(ddlstateValue);
+        $("#State").data("kendoMaskedTextBox").trigger("change");
+    }
+    function countryChange(e) {
+        var ddlCountryValue = $("#ddlCountry").val();
+        $("#Country").data("kendoMaskedTextBox").value(ddlCountryValue);
+        $("#Country").data("kendoMaskedTextBox").trigger("change");
+    }
+    function onSelectPayType(e) {
+        paytypeChange(e);
+    }
+    function paytypeChange(e) {
+        var selectedVal = $("#ddlPayType").val();
+        if (selectedVal !== "") {
+            $("#PayType").data("kendoMaskedTextBox").value(selectedVal);
+            $("#PayType").data("kendoMaskedTextBox").trigger("change");
+            if (selectedVal == "1" || selectedVal == "2") {
+                $("input").removeAttr("required");
+                $("#NameOnCard").attr("required", "true"); $("#CardNum").attr("required", "true");
+                $("#NickName").attr("required", "true"); $("#ddlExpireMonth").attr("required", "true");
+                $("#ddlExpireYear").attr("required", "true"); $("#FirstName").attr("required", "true");
+                $("#LastName").attr("required", "true"); $("#Address1").attr("required", "true");
+                $("#ddlState").attr("required", "true"); $("#ZipCode").attr("required", "true");
+                $("#ddlCountry").attr("required", "true");
+                $('.creditcard').removeClass('div-invisible').addClass('div-visible');
+                $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-visible').addClass('div-invisible');
+                if (selectedVal == "1") {
+                    $('.creditcardType').removeClass('div-invisible').addClass('div-visible');
+                }
+                else {
+                    $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                }
+            }
+            if (selectedVal == "4") {
+                $("input").removeAttr("required");
+                $("#AcHolderName").attr("required", "true");
+                $("#AcNum").attr("required", "true");
+                $("#RoutingNum").attr("required", "true");
+                $('.bankAccount').removeClass('div-invisible').addClass('div-visible');
+                $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-visible').addClass('div-invisible');
+                $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+            }
+            if (selectedVal == "3") {
+                $("input").removeAttr("required");
+                $('.bankAccount').removeClass('div-visible').addClass('div-invisible');
+                $('.creditcard').removeClass('div-visible').addClass('div-invisible');
+                $('.check').removeClass('div-invisible').addClass('div-visible');
+                $('.creditcardType').removeClass('div-visible').addClass('div-invisible');
+                $("#RoutingNum1").attr("required", "true");
+                $("#checkNum").attr("required", "true");
+            }
+        }
+    }
+    function agreeChange(e) {
+        if (e.checked) {
+            $(".k-grid-update").removeClass("disablelink");
+            $("#Agreement").data("kendoMaskedTextBox").value("true");
+            $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").show();
+            $(".switchwrap .k-switch-label-off").hide();
+        }
+        else {
+            $(".k-grid-update").addClass("disablelink");
+            $("#Agreement").data("kendoMaskedTextBox").value("false");
+            $("#Agreement").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrap .k-switch-label-on").hide();
+            $(".switchwrap .k-switch-label-off").show();
+        }
+    }
+    function customDelete(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        kendo.confirm("Are you sure you want to delete this?")
+            .done(function () {
+                $.ajax({
+                    url: "PaymentMethods/PaymentMethods_Destroy?methodId=" + dataItem.ID,
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var grid = $("#paymenthods").data("kendoGrid");
+                        grid.dataSource.read();
+                    }
+                });
+
+            })
+            .fail(function () {
+                return false;
+            });
+    }
+</script>

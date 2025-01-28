@@ -1,0 +1,221 @@
+﻿@model WellAI.Advisor.Model.OperatingCompany.Models.UploadFileVendorModel
+@{
+    ViewData["Title"] = "Msas";
+    Layout = null;
+    var vendordata = (List<WellAI.Advisor.Model.OperatingCompany.Models.CorporateProfile>)ViewData["vendors"];
+}
+<style>
+    .k-pager-numbers {
+        padding-top: 15px;
+    }
+    .k-pager-numbers {
+        padding-top:15px;
+    }
+    #Upload > span {
+        padding-right: 5px;
+    }
+    #uploaddocs {
+        margin-top: 10px;
+    }
+    .k-dropzone {
+        height: 38px !important;
+    }
+   #VendorId, #IsActive,.maskactive {
+        height: 0px;
+        visibility: hidden;
+        width: 0px !important;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+   .field-validation-error {
+        color: red;
+    }
+    .k-upload .k-dropzone {
+        background-color: #fff;
+    }
+    .linkstyle{
+        margin-left:40%;
+    }
+    .k-switch-off .k-switch-container, .k-switch-off .k-switch-container:hover{
+        background-color:#fff;
+        border: 2px solid #007BFF;
+    }
+    .k-switch-off .k-switch-handle, .k-switch-off .k-switch-handle:hover{
+        background-color:#007BFF !important;
+    }
+    .k-switch {
+        width: 90px;
+    }
+    .k-datetimepicker{
+        height:30px;
+    }
+    .secrow{
+        margin-top:20px;
+        margin-bottom:10px;
+    }
+    .lblExpireDate{
+        padding-top:5px;
+    }
+    #ExpireDate_validationMessage{
+        display:block;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $("form").kendoValidator();
+    });
+    function OnSaveGrid(e) {
+        setTimeout(function () {
+            $('#uploaddocv').data('kendoGrid').dataSource.read().then(function () {
+                $('#uploaddocv').data('kendoGrid').refresh();
+            });
+            location.reload();
+        },2000);
+    }
+    function onClick() {
+        $("#filesv").kendoUpload();
+        var fileNotSelected = false;
+        var validator = $("#myForm").kendoValidator({
+            rules: {
+                upload: function (input) {
+                    if (input[0].type == "file") {
+                        fileNotSelected = true;
+                        var len = input.closest(".k-upload").find(".k-file").length;
+                        return len > 0;
+                    }
+                    return true;
+                }
+            }
+        }).data("kendoValidator");
+        $("#myForm").submit(function (e) {
+            $("#filesv").removeAttr("disabled");
+            if (!validator.validate()) {
+                if (fileNotSelected) {
+                    alert('please select a file');
+                    fileNotSelected = false;
+                }
+                e.preventDefault()
+            }
+        });
+    }
+    function isactiveChangemsa(e) {
+        if (e.checked) {
+            $("#ActiveStatus").data("kendoMaskedTextBox").value("true");
+            $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrapmsa .k-switch-label-on").show();
+            $(".switchwrapmsa .k-switch-label-off").hide();
+        }
+        else {
+            $("#ActiveStatus").data("kendoMaskedTextBox").value("false");
+            $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+            $(".switchwrapmsa .k-switch-label-on").hide();
+            $(".switchwrapmsa .k-switch-label-off").show();
+        }
+    }
+    $(document).ready(function () {
+        $("#ActiveStatus").data("kendoMaskedTextBox").value("false");
+        $("#ActiveStatus").data("kendoMaskedTextBox").trigger("change");
+        $(".switchwrapmsa .k-switch-label-on").hide();
+        $(".switchwrapmsa .k-switch-label-off").show();
+    });
+</script>
+<section>
+    @using (Html.BeginForm("UploadMsas", "Upload", FormMethod.Post ,new { @id= "myForm",@name= "myForm" }))
+    {
+    <div class="row">
+        <div class="col-sm-5">
+            @(Html.Kendo().Upload()
+                        .Name("filesv")
+                        .HtmlAttributes(new { aria_label = "files" })
+                            .Validation(validation => validation.MinFileSize(0)
+               ))
+        </div>
+        <span class="k-invalid-msg" data-for="filesv"></span>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    @(Html.Kendo().DropDownList()
+                            .Name("ddlVendors")
+                            .OptionLabel("Select Provider")
+                            .DataValueField("ID")
+                            .DataTextField("Name")
+                            .Events(e => e.Change("vendorChange"))
+                            .BindTo(vendordata)
+                            .HtmlAttributes(new { @class = "ddlvendor" })
+                    )
+                    @Html.EditorFor(x => x.VendorId)
+                    @Html.ValidationMessageFor(model => model.VendorId)
+                    @Html.ValidationMessage("Error")
+                    @Html.ValidationSummary(true)
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button id="Upload" onclick="onClick()" type="submit" role="button" class="k-button k-button-icontext k-primary k-grid-update"><span class="fa fa-floppy-o"></span>Upload</button>
+        </div>
+    </div>
+    <div class="row secrow">
+        <div class="col-sm-2">
+            @Html.LabelFor(model => model.ExpireDate, "Expire Date", new { @class = "lblExpireDate" })
+        </div>
+        <div class="col-sm-3">
+            @(Html.Kendo().DatePickerFor(model => model.ExpireDate)
+                .Format("MM/dd/yyyy")
+                .Min(DateTime.Today)
+                .DateInput()
+                .ParseFormats(new string[] { "MM/dd/yyyy" })
+                .HtmlAttributes(new { required = "required", validationmessage = "Please select Date of Expiration" })
+            )
+            @Html.ValidationMessageFor(model => model.ExpireDate)
+        </div>
+        <div class="col-sm-4 switchwrapmsa">
+            <div class="maskactive">
+                @Html.Kendo().MaskedTextBoxFor(model => model.ActiveStatus)
+            </div>
+            @(Html.Kendo().Switch()
+                      .Name("switchactive").Enabled(true)
+                      .Messages(c => c.Checked("Active").Unchecked("Inactive"))
+                      .Events(ev => ev.Change("isactiveChangemsa"))
+            )
+            @Html.ValidationMessageFor(model => model.ActiveStatus)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            @(Html.Kendo().Grid<WellAI.Advisor.Model.OperatingCompany.Models.UploadsGridFileModel>()
+                    .Name("uploaddocv")
+                    .HtmlAttributes(new { @class = "ra-section" })
+                    .Columns(columns =>
+                    {
+                        columns.Bound(p => p.WellName).Title("Vendor");
+                        columns.Bound(p => p.FileName).Title("File");
+                        columns.Bound(p => p.Date).Format("{0: MM/dd/yyyy}");
+                        columns.Bound(p => p.FileId).Title("Download").Width("100px").ClientTemplate("<a href='" + @Url.Action("Download", "Upload", new { fileId = "#=FileId#" }) + "' class='linkstyle'><span class='fa fa-file-text-o'></span></a>"); ;
+                        columns.Command(command => { command.Edit();}).Title("Action");
+                    })
+                    .Pageable()
+                    .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("EditMSA").Window(w => w.Title("Edit MSA").Width(450)))
+                    .ToolBar(toolbar =>
+                    {
+                        toolbar.Search();
+                    })
+                    .Search(search =>
+                    {
+                        search.Field(p => p.WellName);
+                        search.Field(p => p.FileName);
+                    })
+                    .DataSource(dataSource => dataSource
+                            .Ajax()
+                            .PageSize(10)
+                            .Batch(false)
+                            .Model(model => model.Id(p => p.FileId))
+                            .Read(read => read.Action("Msas_Read", "Upload"))
+                            .Update(u => u.Action("Msas_Update","Upload"))
+                    )
+                    .Events(e => e.Save("OnSaveGrid"))
+            )
+        </div>
+    </div>
+    }
+</section>
